@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>LED Auto SIM | ShyneTyme.Works</title>
+<meta content="ShyneTyme.Works interactive LED Auto SIM for previewing vehicle lighting effects, colors, music sync, presets, and custom effects." name="description"/>
+<meta content="index,follow,max-image-preview:large" name="robots"/>
+<meta content="#020610" name="theme-color"/>
+<link href="https://shynetyme.works/LEDAutoSim.html" rel="canonical"/>
+<link href="assets/brand/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;family=Road+Rage&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="assets/css/site.css?v=20260815-clean-assets-v1" rel="stylesheet"/>
+<link href="assets/css/auto-sim.css?v=20260815-clean-assets-v1" rel="stylesheet"/>
+</head>
+<body class="v56-page ledautosim-page">
+<nav aria-label="Primary navigation" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold brand-lockup" href="index.html">
+      <img alt="" height="34" src="assets/brand/favicon-32.png" width="34">
+      <span>ShyneTyme.<em>Works</em></span>
+    </a>
+    <button aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navMenu" data-bs-toggle="collapse" type="button">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="aboutme.html">ABOUT DEKE</a>
+        <a class="nav-link" href="LEDexpo.html">LED EXPO</a>
+        <div class="nav-item dropdown shynetyme-build-menu" data-shynetyme-build-menu="true">
+          <button aria-expanded="false" aria-label="Open LED simulator menu" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" type="button">LED SIMS</button>
+          <ul aria-label="LED simulator pages" class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="ledbikesim.html">BIKE SIM</a></li>
+            <li><a aria-current="page" class="dropdown-item active" href="LEDAutoSim.html">AUTO SIM</a></li>
+            <li><a class="dropdown-item" href="ledhomesim.html">HOME SIM</a></li>
+          </ul>
+        </div>
+        <a class="nav-link" href="led-catalog.html">CATALOG</a>
+        <a class="nav-link" href="contact.html">CONTACT</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<nav aria-label="Breadcrumb" id="page-subheader">
+  <div id="page-subheader-row">
+    <ol id="page-subheader-text">
+      <li class="page-subheader-item"><a href="index.html">Home</a></li>
+      <li class="page-subheader-item"><span>LED SIMS</span></li>
+      <li class="page-subheader-item"><span aria-current="page">LED SIM AUTO</span></li>
+    </ol>
+  </div>
+</nav>
+<div class="rotate-gate"><div class="rotate-card"><div aria-hidden="true" class="phone-glyph"></div><h2>TURN PHONE SIDEWAYS</h2><p>The simulator uses the full landscape viewport. The Devices rail lives off the left edge and the control tabs live along the bottom edge.</p></div></div>
+<main class="sim-stage" id="main-content">
+<div class="app-grid" id="appGrid">
+<aside class="side-rail" id="sideRail">
+<div class="brand-mark"><div aria-label="ShyneTyme.Works" class="brand-full"><span class="brand-main">SHYNETYME.</span><span aria-hidden="true" class="brand-star">✦</span><span class="brand-works">WORKS</span></div><span class="brand-mini">ST<span aria-hidden="true">✦</span></span></div>
+<button aria-label="Open sidebar halfway" class="sidebar-toggle" data-state="closed" id="sidebarToggle" title="Open sidebar halfway" type="button"><span aria-hidden="true" class="rail-state-indicator"><span class="rail-step">›</span><span class="rail-step">›</span><span class="rail-step">›</span></span></button>
+<div class="rail-switch"><button class="active" data-rail="devices"><span>DEVICES</span></button><button data-rail="groups"><span>GROUPS</span></button></div>
+<div class="device-stack" id="devicePane"><button aria-label="Underglow. Tap to select. Hold two seconds to toggle power." aria-pressed="true" class="device-tile active" data-name="Underglow" data-on="true" style="--device:#18e9ff" title="Underglow — tap to select, hold 2 seconds for power" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">UNDER<br/>GLOW</span></button><button aria-label="Wheel Lights. Tap to select. Hold two seconds to toggle power." aria-pressed="true" class="device-tile" data-name="Wheel Lights" data-on="true" style="--device:#8b51ff" title="Wheel Lights — tap to select, hold 2 seconds for power" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">WHEEL LIGHTS</span></button><button aria-label="Front Accent. Tap to select. Hold two seconds to toggle power." aria-pressed="true" class="device-tile" data-name="Front Accent" data-on="true" style="--device:#ffd928" title="Front Accent — tap to select, hold 2 seconds for power" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">FRONT ACCENT</span></button><button aria-label="Rear Accent. Tap to select. Hold two seconds to toggle power." aria-pressed="true" class="device-tile" data-name="Rear Accent" data-on="true" style="--device:#ff2ca8" title="Rear Accent — tap to select, hold 2 seconds for power" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">REAR ACCENT</span></button><button aria-label="Interior Light. Tap to select. Hold two seconds to toggle power." aria-pressed="true" class="device-tile" data-name="Interior Light" data-on="true" style="--device:#18e9ff" title="Interior Light — tap to select, hold 2 seconds for power" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">INTERIOR LIGHT</span></button><button aria-label="Add device" class="add-device" title="Add Device" type="button"><span>＋</span><span class="device-label">ADD DEVICE</span></button></div>
+<div class="device-stack" hidden="" id="groupPane"><button aria-label="Street Glow — 3 devices. Tap to select. Hold two seconds to toggle power." aria-pressed="true" class="device-tile group-tile active" data-count="3" data-name="Street Glow" data-on="true" style="--device:#ff2ca8" title="Street Glow — 3 devices — tap to select, hold 2 seconds for power" type="button"><span class="device-label">STREET GLOW</span></button><button aria-label="All Exterior — 4 devices. Tap to select. Hold two seconds to toggle power." aria-pressed="true" class="device-tile group-tile" data-count="4" data-name="All Exterior" data-on="true" style="--device:#3cff70" title="All Exterior — 4 devices — tap to select, hold 2 seconds for power" type="button"><span class="device-label">ALL EXTERIOR</span></button></div>
+<div class="device-pop" id="devicePop">Underglow</div>
+</aside>
+<section class="workspace">
+<header class="topbar">
+
+<div aria-label="Vehicle views" class="view-strip">
+<button class="view-chip active" data-src="assets/images/auto-sim-cyberpunk-rear34.webp" data-view="REAR" style="--chip:#ffd928">REAR</button>
+<button class="view-chip" data-src="assets/images/auto-sim-v55-front34.png" data-view="FRONT 3/4" style="--chip:#18e9ff">FRONT 3/4</button>
+<button class="view-chip" data-src="assets/images/auto-sim-v56-side.png" data-view="SIDE" style="--chip:#ff2ca8">SIDE</button>
+<button class="view-chip top" data-src="assets/images/auto-sim-v55-top.png" data-view="TOP">TOP</button>
+</div>
+<div class="status-right"><span class="connected">● <span class="status-label">CONNECTED</span></span><span aria-label="Wi-Fi" class="wifi"><i></i></span><span class="battery"><span class="battery-box"><i></i></span><span class="status-label">100%</span></span><span aria-label="Menu" class="menu-icon"><i></i><i></i><i></i></span></div>
+</header>
+<div class="viewport" id="viewport"><img alt="ShyneTyme.Works cyberpunk sedan rear three-quarter view" id="mainView" src="assets/images/auto-sim-cyberpunk-rear34.webp"/><span class="active-view-label" id="activeViewLabel">REAR</span></div>
+<div aria-hidden="true" class="fullscreen-callout" id="fullscreenCallout"><span>FULL SCREEN</span><b>➜</b></div>
+<button aria-label="Fullscreen" class="fullscreen-trigger" id="fullscreenTrigger" title="Fullscreen" type="button">⛶</button>
+<section aria-hidden="true" class="drawer-panel" id="drawerPanel">
+<div class="drawer-meta"><span>ACTIVE TARGET</span><strong id="activeTarget">UNDERGLOW</strong></div>
+<div class="panel-page active" data-page="effects">
+<div class="panel-center effects-layout">
+<div class="control-cluster fx-box chrome-box" data-fxbox="effects"><div aria-hidden="true" class="story-led-matrix"><span>CHASE · WAVE · BREATHE · SCANNER · TWINKLE · SOLID · CHASE · WAVE · BREATHE ·</span><span>LED EFFECTS ✦ SPEED ✦ BRIGHTNESS ✦ INTENSITY ✦ DIRECTION ✦ LED EFFECTS ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div><span class="object-tab object-tab-center">LED EFFECTS</span>
+<div class="effect-compact">
+<div><label class="label">EFFECT</label><select class="select"><option>Chase</option><option>Solid</option><option>Breathe</option><option>Scanner</option><option>Twinkle</option><option>Wave</option></select></div>
+<div><label class="label">SPEED</label><div class="slider"><input max="100" min="0" type="range" value="68"/><span>68%</span></div></div>
+<div><label class="label">BRIGHTNESS</label><div class="slider"><input max="100" min="0" type="range" value="82"/><span>82%</span></div></div>
+<div><label class="label">INTENSITY</label><div class="slider"><input max="100" min="0" type="range" value="76"/><span>76%</span></div></div>
+<div class="direction-control"><label class="label">DIRECTION</label><div class="direction"><button aria-label="Reverse direction" class="tiny-square" type="button">←</button><button aria-label="Forward direction" class="tiny-square active" type="button">→</button></div></div>
+</div>
+</div>
+<div class="control-cluster fx-box chrome-box" data-fxbox="colors"><div aria-hidden="true" class="story-led-matrix"><span>PINK · CYAN · YELLOW · VIOLET · SAVED COLORS · PINK · CYAN · YELLOW ·</span><span>SEGMENTS ✦ TRANSITION ✦ COLOR ✦ SEGMENTS ✦ TRANSITION ✦ COLOR ✦</span><span>SAVE THE SHYNE · RECALL THE COLOR · SAVE THE SHYNE · RECALL THE COLOR ·</span></div><span class="object-tab object-tab-center">SAVED COLORS</span>
+<div class="palette" id="savedColors"><button aria-label="Saved hot pink" class="swatch active" data-color="#ff2ca8" style="--sw:#ff2ca8"></button><button aria-label="Saved light blue" class="swatch" data-color="#36bfff" style="--sw:#36bfff"></button><button aria-label="Saved neon yellow" class="swatch" data-color="#ffd928" style="--sw:#ffd928"></button><button aria-label="Saved violet" class="swatch" data-color="#8b51ff" style="--sw:#8b51ff"></button><button aria-label="Add saved color" class="circle-plus" id="addSavedColor" type="button">＋</button><input hidden="" id="savedColorPicker" type="color" value="#ffffff"/></div>
+<div class="saved-grid"><div><label class="label">SEGMENTS</label><div class="stepper"><button type="button">−</button><span>6</span><button type="button">＋</button></div></div><div><label class="label">TRANSITION</label><select class="select"><option>Smooth</option><option>Fade</option><option>Snap</option></select></div></div>
+</div>
+</div>
+</div>
+<div class="panel-page" data-page="music">
+<div class="panel-center music-three-object">
+<section aria-label="Music player" class="chrome-box music-player-box"><div aria-hidden="true" class="story-led-matrix"><span>PLAY · PAUSE · PREVIOUS · NEXT · SEEK · AUDIO · PLAY · PAUSE · NEXT ·</span><span>TRACK ✦ BEAT ✦ MUSIC ✦ SHYNETYME.WORKS ✦ TRACK ✦ BEAT ✦ MUSIC ✦</span><span>RIDE BRIGHT · PLAY IT LOUD · COLOR THE NYTE · RIDE BRIGHT · PLAY IT LOUD ·</span></div>
+<span class="object-tab">MUSIC PLAYER</span>
+<div class="track-now" id="currentTrack">NO TRACK LOADED</div>
+<div aria-label="Playback controls" class="transport">
+<button aria-label="Previous track" class="transport-round" id="prevTrack" type="button">◀</button>
+<button aria-label="Play or pause" class="transport-round play-track" id="playTrack" type="button"><span class="play-glyph">▶</span></button>
+<button aria-label="Next track" class="transport-round" id="nextTrack" type="button">▶</button>
+</div>
+<input aria-label="Track position" class="track-seek" id="trackSeek" max="100" min="0" type="range" value="0"/>
+<div class="player-foot"><span id="trackTime">0:00</span><button class="track-add" id="addTracks" title="Choose local audio files — 150 MB maximum" type="button" aria-label="Choose local audio files, 150 megabytes maximum">＋ ADD AUDIO</button><input accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.oga,.flac,.opus,.webm" hidden="" id="trackPicker" multiple="" type="file"/></div>
+<audio id="musicAudio" preload="metadata"></audio>
+</section>
+<section aria-label="Music scene effects" class="chrome-box music-scene-box" data-fxbox="music"><div aria-hidden="true" class="story-led-matrix"><span>♪ ♫ ♬ SPECTRUM · PIANO · STROBE · RAVE · THUNDER · SPECTRUM ♬ ♫ ♪</span><span>MIC ✦ SENSITIVITY ✦ FREQUENCY ✦ BEAT ✦ MUSIC ✦ MIC ✦ SENSITIVITY ✦</span><span>FOLLOW THE BEAT · LIGHT THE MUSIC · FOLLOW THE BEAT · LIGHT THE MUSIC ·</span></div>
+<span class="object-tab">MUSIC SCENE</span>
+<div class="music-top">
+<div><label class="label" for="micSource">MIC SOURCE</label><select class="select" id="micSource"><option value="off">Select source</option><option value="phone">Phone Mic</option><option value="device">Device Mic</option></select></div>
+<div><label class="label">SENSITIVITY</label><div class="slider"><input max="100" min="0" type="range" value="75"/><span>75%</span></div></div>
+</div>
+<div class="eq" id="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="music-modes"><button class="mini-mode active" type="button">SPECTRUM</button><button class="mini-mode" type="button">PIANO</button><button class="mini-mode" type="button">STROBE</button><button class="mini-mode" type="button">RAVE</button><button class="mini-mode" type="button">THUNDER</button></div>
+</section>
+<aside aria-label="Royalty-free music playlist" class="chrome-box music-playlist-box"><div aria-hidden="true" class="story-led-matrix"><span>PLAYLIST · HIP HOP · HOUSE · DANCE · AUDIO · PLAYLIST · HIP HOP · HOUSE ·</span><span>TRACK 01 ✦ TRACK 02 ✦ LOCAL AUDIO ✦ PLAYLIST ✦ TRACK 01 ✦ TRACK 02 ✦</span><span>PICK A TRACK · FEEL THE BEAT · PICK A TRACK · FEEL THE BEAT ·</span></div>
+<span class="object-tab">PLAYLIST</span>
+<div aria-label="Playable free-use music playlist" class="playlist" id="playlist"></div>
+</aside>
+</div>
+</div>
+<div class="panel-page" data-page="presets">
+<div class="panel-center"><div class="control-cluster fx-box preset-box chrome-box" data-fxbox="presets"><div aria-hidden="true" class="story-led-matrix"><span>SOLID · BREATHE · CHASE · TWINKLE · RAINBOW · SCANNER · STARRY · WAVE ·</span><span>PRESETS ✦ SOLID ✦ BREATHE ✦ CHASE ✦ TWINKLE ✦ RAINBOW ✦ SCANNER ✦</span><span>ONE TAP · FULL SHYNE · ONE TAP · FULL SHYNE · ONE TAP · FULL SHYNE ·</span></div><span class="object-tab object-tab-center">PRESETS</span>
+<div class="preset-grid">
+<button class="preset" style="--p:#18e9ff" type="button"><span class="preset-icon solid-icon"><svg aria-hidden="true" viewbox="0 0 32 32"><rect fill="currentColor" height="16" rx="3" width="16" x="8" y="8"></rect></svg></span>SOLID</button>
+<button class="preset" style="--p:#18e9ff" type="button"><span class="preset-icon"><svg aria-hidden="true" viewbox="0 0 32 32"><circle cx="16" cy="16" r="9"></circle><circle cx="16" cy="16" r="5"></circle></svg></span>BREATHE</button>
+<button class="preset" style="--p:#ff2ca8" type="button"><span class="preset-icon"><svg aria-hidden="true" viewbox="0 0 32 32"><path d="M5 10h10l5 6-5 6H5l5-6z"></path><path d="M14 10h8l5 6-5 6h-8l5-6z"></path></svg></span>CHASE</button>
+<button class="preset" style="--p:#ff2ca8" type="button"><span class="preset-icon"><svg aria-hidden="true" viewbox="0 0 32 32"><path d="M7 8l4 4M11 8l-4 4M14 15l6 6M20 15l-6 6M21 5l8 8M29 5l-8 8"></path></svg></span>TWINKLE</button>
+<button class="preset rainbow-preset" style="--p:#ffd928" type="button"><span class="preset-icon rainbow-icon"><svg aria-hidden="true" viewbox="0 0 32 32"><path d="M5 24a11 11 0 0 1 22 0" stroke="#ff2ca8" stroke-width="4"></path><path d="M9 24a7 7 0 0 1 14 0" stroke="#ffd928" stroke-width="4"></path><path d="M13 24a3 3 0 0 1 6 0" stroke="#18e9ff" stroke-width="4"></path></svg></span>RAINBOW</button>
+<button class="preset" style="--p:#18e9ff" type="button"><span class="preset-icon scanner-icon"><svg aria-hidden="true" viewbox="0 0 38 32"><circle cx="4" cy="16" r="1.5"></circle><circle cx="9" cy="16" r="2"></circle><rect height="4" rx="2" width="7" x="14" y="14"></rect><rect height="6" rx="3" width="11" x="24" y="13"></rect><path d="M35 8l-4 3 4 3"></path></svg></span>SCANNER</button>
+<button class="preset" style="--p:#ffd928" type="button"><span class="preset-icon"><svg aria-hidden="true" viewbox="0 0 32 32"><path d="M16 3l2.3 8.1L27 13l-8.7 1.9L16 23l-2.3-8.1L5 13l8.7-1.9z" fill="currentColor"></path><circle cx="25" cy="24" fill="currentColor" r="2"></circle><circle cx="7" cy="25" fill="currentColor" r="1.5"></circle></svg></span>STARRY</button>
+<button class="preset" style="--p:#ff2ca8" type="button"><span class="preset-icon"><svg aria-hidden="true" viewbox="0 0 32 32"><path d="M3 18c4-8 8 8 13 0s9 8 13 0"></path><path d="M3 12c4-8 8 8 13 0s9 8 13 0"></path></svg></span>WAVE</button>
+</div><button class="more-presets" type="button">MORE PRESETS</button>
+</div></div>
+</div>
+<div class="panel-page" data-page="custom">
+<div class="panel-center"><div class="control-cluster fx-box custom-box chrome-box" data-fxbox="custom"><div aria-hidden="true" class="story-led-matrix"><span>LA NIGHTS · BEAST MODE · CYBER FLOW · CREATE · LA NIGHTS · BEAST MODE ·</span><span>CUSTOM EFFECTS ✦ CREATE ✦ CYBER FLOW ✦ CUSTOM EFFECTS ✦ CREATE ✦</span><span>MAKE IT YOURS · BUILD THE SHYNE · MAKE IT YOURS · BUILD THE SHYNE ·</span></div><span class="object-tab object-tab-center">CUSTOM EFFECTS</span>
+<div class="custom-list"><button class="custom-item" type="button"><span>✦</span><span>LA NIGHTS</span><b style="--dot:#ff2ca8"></b></button><button class="custom-item" type="button"><span>◎</span><span>BEAST MODE</span><b style="--dot:#ff3348"></b></button><button class="custom-item" type="button"><span>⌁</span><span>CYBER FLOW</span><b style="--dot:#18bfff"></b></button></div><button class="create-effect" type="button">＋ CREATE NEW EFFECT</button>
+</div></div>
+</div>
+</section>
+<button aria-label="Open lower controls" class="drawer-edge-toggle" id="drawerEdgeToggle" title="Open lower controls" type="button"><span aria-hidden="true">⌃</span></button>
+<nav aria-label="Auto SIM control tabs" class="bottom-dock"><button class="dock-tab" data-tab="effects" style="--tab:#18e9ff">LED EFFECTS</button><button class="dock-tab" data-tab="music" style="--tab:#36bfff">MUSIC SYNC</button><button class="dock-tab" data-tab="presets" style="--tab:#ffd928">PRESETS</button><button class="dock-tab" data-tab="custom" style="--tab:#ff2ca8">CUSTOM EFFECTS</button></nav>
+</section>
+</div>
+</main>
+<footer aria-label="Site footer" class="site-footer--compact border-top">
+  <div class="container">
+    <span>Copyright © 2026 DeacStudio / ShyneTyme.Works. All rights reserved.</span>
+    <span class="site-footer--compact__notice">Site content and simulator design may not be copied or reused without written permission.</span>
+    <span><a href="PRIVACY.md">Privacy</a> · <a href="TERMS.md">Terms</a> · <a href="contact.html">Contact</a></span>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/auto-sim.js?v=20260815-clean-assets-v1"></script>
+</body>
+</html>

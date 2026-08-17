@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /.github/
+Disallow: /docs/
+Disallow: /archive-ledautosim/
+
+Sitemap: https://shynetyme.works/sitemap.xml
