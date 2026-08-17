@@ -1,0 +1,2353 @@
+{
+  "repository": "Deke206/thethinkingtank",
+  "branch": "main",
+  "generatedAt": "2026-08-08T06:52:57.253Z",
+  "commitCount": 469,
+  "commits": [
+    {
+      "sha": "28172bc6235ffeea85f23c90e7e6c5be2f5f1c44",
+      "date": "2026-07-11T12:22:11Z",
+      "message": "Create copyright"
+    },
+    {
+      "sha": "9c210ed11c1417419c9c0ea8ff3b013363bffe43",
+      "date": "2026-07-11T12:23:28Z",
+      "message": "Rename copyright to Copyright.md"
+    },
+    {
+      "sha": "7d04fbb65e335ebdf2e0356db429bc5e389b7b46",
+      "date": "2026-07-11T13:45:36Z",
+      "message": "Add copyright notice"
+    },
+    {
+      "sha": "16aa7bcacb485b5e5ca62fa5fdebf05d178c9d8a",
+      "date": "2026-07-11T13:45:48Z",
+      "message": "Add third-party notices"
+    },
+    {
+      "sha": "af3b48198605219c553cfb5f5a6f579510acbbd5",
+      "date": "2026-07-11T13:46:05Z",
+      "message": "Add project README"
+    },
+    {
+      "sha": "046c28a91d3c93e7a4def5480e5e6b99fc0850a8",
+      "date": "2026-07-11T13:47:12Z",
+      "message": "Add initial Bootstrap LED effects website"
+    },
+    {
+      "sha": "ad438ebbbc7da6f0c743c5e67476b9b0defc7e9d",
+      "date": "2026-07-11T13:47:26Z",
+      "message": "Add website styling"
+    },
+    {
+      "sha": "f39bf7d75c4a9a9ae57f60cedbdf2d46cbd47543",
+      "date": "2026-07-11T13:48:03Z",
+      "message": "Add initial LED parts catalog"
+    },
+    {
+      "sha": "842d99e71421ae8670cec7d2b45109319de7268e",
+      "date": "2026-07-11T13:48:25Z",
+      "message": "Add catalog rendering and filters"
+    },
+    {
+      "sha": "4aeb0421ebd3638e963e5c16ce09d92e812dcbb9",
+      "date": "2026-07-11T13:48:38Z",
+      "message": "Add privacy notice"
+    },
+    {
+      "sha": "29cafb296f096c2a247fd0170d786351685cbf28",
+      "date": "2026-07-11T13:48:54Z",
+      "message": "Add website terms"
+    },
+    {
+      "sha": "60b5d2a4ad12ab60c88bc671700f5229ce31cc67",
+      "date": "2026-07-11T13:49:02Z",
+      "message": "Configure static GitHub Pages site"
+    },
+    {
+      "sha": "9444bbafe7bee85bd0072c76350f5fb04b398d4b",
+      "date": "2026-07-12T00:20:56Z",
+      "message": "Create CNAME"
+    },
+    {
+      "sha": "12b262b1a8944b3429fb67fec58614f640e5a44f",
+      "date": "2026-07-12T00:59:50Z",
+      "message": "Update CNAME"
+    },
+    {
+      "sha": "7c1c25b1759d164a39989035506ad1ed5a683558",
+      "date": "2026-07-12T10:56:41Z",
+      "message": "Add Build My Bike interactive guide styling"
+    },
+    {
+      "sha": "376476d48ba6669e6e59b621def2b950a7b2b838",
+      "date": "2026-07-12T10:58:19Z",
+      "message": "Add interactive Build My Bike page"
+    },
+    {
+      "sha": "180455e812abfa59a8aec482bcafa2b6f387f7c1",
+      "date": "2026-07-12T10:59:15Z",
+      "message": "Add Build My Bike form and live preview logic"
+    },
+    {
+      "sha": "ad9632e724650fe61a7890d135b5b8b8f9712466",
+      "date": "2026-07-12T10:59:44Z",
+      "message": "Link homepage to Build My Bike planner"
+    },
+    {
+      "sha": "edd741bacbde1ceea206ab2f50247e3eef5f31e7",
+      "date": "2026-07-12T16:21:10Z",
+      "message": "Rebuild interactive preview as a step-through comfort bicycle"
+    },
+    {
+      "sha": "7a2686e02647ac3b10bc88991be7b04cf2391f38",
+      "date": "2026-07-12T16:43:50Z",
+      "message": "Replace selected green zones with twinkling variable LED effects"
+    },
+    {
+      "sha": "cde4322c892a0cd7294204fdc95edf795314ee8c",
+      "date": "2026-07-12T16:52:51Z",
+      "message": "Move helmet preview up and left"
+    },
+    {
+      "sha": "ec69a01289242531ea180d45cef91104caf27b5b",
+      "date": "2026-07-12T17:28:25Z",
+      "message": "Reposition helmet, basket, and tail light assembly with hover guidance"
+    },
+    {
+      "sha": "ba9cb189e806800c87f4ac4939ea8c2ae38787f4",
+      "date": "2026-07-17T20:50:24Z",
+      "message": "Add flag pole and app control builder sections"
+    },
+    {
+      "sha": "38424ce566a9d4f8773eb27d112023f13eb250a7",
+      "date": "2026-07-17T20:51:30Z",
+      "message": "Implement builder animations and controller logic"
+    },
+    {
+      "sha": "f46ccf77755c5650e7efecd84a6624af3a3153bb",
+      "date": "2026-07-17T20:52:16Z",
+      "message": "Style requested builder positions and LED effects"
+    },
+    {
+      "sha": "5110fc1ef93d3a1f90db86c79acb9b51ef8c5404",
+      "date": "2026-07-17T21:01:02Z",
+      "message": "Align turn signals with tail light assembly"
+    },
+    {
+      "sha": "a3d2f28ae695891c690519e3d8b9e2366f8a93bc",
+      "date": "2026-07-18T23:07:37Z",
+      "message": "Add animated LED hero and Pet Chuck branding"
+    },
+    {
+      "sha": "0ebd1b0e617a6ad2577d60f08f87e2037edd1d64",
+      "date": "2026-07-18T23:22:50Z",
+      "message": "Rebrand site as ShyneTyme.Works"
+    },
+    {
+      "sha": "66a1be1aed1edc3669433de140ef3b4b253c388f",
+      "date": "2026-07-19T00:14:41Z",
+      "message": "Replace canvas hero with aligned LED flipbook"
+    },
+    {
+      "sha": "659de8babe94456206dfda7ca6f573ea01a7d185",
+      "date": "2026-07-19T09:05:08Z",
+      "message": "Restore static ShyneTyme.Works hero"
+    },
+    {
+      "sha": "c02be616f01e0b11864abd33046a85491a95d6ed",
+      "date": "2026-07-19T09:26:04Z",
+      "message": "Remove hero demonstration card"
+    },
+    {
+      "sha": "87d53a561f42fd4718836d5b8b182e15e57f06f7",
+      "date": "2026-07-19T09:39:18Z",
+      "message": "Remove custom neon headline font size"
+    },
+    {
+      "sha": "1435a71e5fe76b8435f00f9b803a371d3a6c310f",
+      "date": "2026-07-19T10:51:39Z",
+      "message": "Build responsive neon storefront theme"
+    },
+    {
+      "sha": "272ad96260a829b41c0293c01dbb0c431156b97a",
+      "date": "2026-07-19T11:11:43Z",
+      "message": "Shorten adult bicycle label"
+    },
+    {
+      "sha": "e399da3f8832bab19f158b913cbe3549f895fb5b",
+      "date": "2026-07-19T11:19:59Z",
+      "message": "Add neighborhood backdrop to bike planner"
+    },
+    {
+      "sha": "8ddee7523b1605494a17bec40569dbc58fb0cd32",
+      "date": "2026-07-19T11:40:54Z",
+      "message": "Refine bike planner staging"
+    },
+    {
+      "sha": "931a2651b2bb8686072ecb0b6d1690262b8034d0",
+      "date": "2026-07-19T11:46:02Z",
+      "message": "Lift inactive bike zone contrast"
+    },
+    {
+      "sha": "2c6d612a75ce4ae4d90d98789aee1638538d91db",
+      "date": "2026-07-19T11:55:43Z",
+      "message": "Center app controls between bike wheels"
+    },
+    {
+      "sha": "0ae8e0e4c2749f404e1800583658e0b5d4d7a281",
+      "date": "2026-07-19T12:32:16Z",
+      "message": "Credit DeacStudio in site footers"
+    },
+    {
+      "sha": "027ca471a59ca41e1e7efebb05121d30f3db0f0c",
+      "date": "2026-07-19T18:34:42Z",
+      "message": "Finish ShyneTyme.Works branding cleanup"
+    },
+    {
+      "sha": "6c7e1a6bce27302a9e868f3a76fdb97181f21b79",
+      "date": "2026-07-19T18:39:30Z",
+      "message": "Remove bicycle packages section"
+    },
+    {
+      "sha": "147631ce10b0ad754c1b1ba4d7ec4a2373230a24",
+      "date": "2026-07-19T22:28:39Z",
+      "message": "Add accessible ShyneTyme.Works hero carousel"
+    },
+    {
+      "sha": "85dc34081fc754702069df175efc2e29b5cf6be9",
+      "date": "2026-07-22T10:42:14Z",
+      "message": "Add one-time index hero refinement workflow"
+    },
+    {
+      "sha": "45c0eb7b659ab6f440cb95d42fa923da724bd56e",
+      "date": "2026-07-22T10:49:25Z",
+      "message": "Remove index banner controls"
+    },
+    {
+      "sha": "8c12635324ee8b9104f9a763a8182dce73568b85",
+      "date": "2026-07-22T10:49:39Z",
+      "message": "Shorten hero image timing"
+    },
+    {
+      "sha": "276252c5bce6bd120fb16b516f594b85509cceb4",
+      "date": "2026-07-22T10:51:20Z",
+      "message": "Remove hero side shadow and control styles"
+    },
+    {
+      "sha": "e83a61b87df2da0f12a60ff8230d2505e1a1f9d6",
+      "date": "2026-07-22T10:51:30Z",
+      "message": "Remove temporary hero refinement workflow"
+    },
+    {
+      "sha": "1cf4e4cd0a909a3a1ec087e5234690830e4eb941",
+      "date": "2026-07-22T11:32:49Z",
+      "message": "Add shared LED hero banner styles"
+    },
+    {
+      "sha": "5b8c40816c21fd8dabcc773ad030087bbf02fca6",
+      "date": "2026-07-22T11:33:50Z",
+      "message": "Turn hero copy into scrolling LED banners"
+    },
+    {
+      "sha": "530e85deb6c90f5f4a8be0e0c5e48d88c4ff7d2e",
+      "date": "2026-07-22T11:33:54Z",
+      "message": "Add one-time LED hero banner update"
+    },
+    {
+      "sha": "3e448d8f21709f893d654c060d9725f79365e767",
+      "date": "2026-07-22T11:34:51Z",
+      "message": "Polish reduced-motion LED banners"
+    },
+    {
+      "sha": "3ed394a1f9f7206a0ef4ce98a660aeb51e25057d",
+      "date": "2026-07-22T11:35:24Z",
+      "message": "Add one-time LED banner CSS consolidation"
+    },
+    {
+      "sha": "bdb8caf3955f383b86a04539c78cb666f3607547",
+      "date": "2026-07-22T11:35:30Z",
+      "message": "Consolidate LED hero banners into shared site CSS"
+    },
+    {
+      "sha": "71f956e0ae72df417fe0070198edb362f57b49b6",
+      "date": "2026-07-22T11:39:04Z",
+      "message": "Add one-time effects-on cleanup"
+    },
+    {
+      "sha": "fd40b88cadd26b98e2b89acf89292d8a3e430de4",
+      "date": "2026-07-22T11:39:11Z",
+      "message": "Keep index effects always on"
+    },
+    {
+      "sha": "8b76d094c4cee2fcb058fa18b3d19e4501314395",
+      "date": "2026-07-22T11:47:36Z",
+      "message": "Add one-time LED motion repair workflow"
+    },
+    {
+      "sha": "36d3a6eb8fe94c0327474b3b9dcce0615d169a20",
+      "date": "2026-07-22T11:47:42Z",
+      "message": "Fix visible LED banner motion and refresh CSS cache"
+    },
+    {
+      "sha": "feb016c21a287e610f34077e4772c29593fc8e08",
+      "date": "2026-07-22T11:51:41Z",
+      "message": "Add one-time 5.5 second carousel update"
+    },
+    {
+      "sha": "4cc316fef703902f1a074c01f84c481b2e5dd0d7",
+      "date": "2026-07-22T11:51:47Z",
+      "message": "Set hero carousel to 5.5 seconds and keep it active"
+    },
+    {
+      "sha": "deb8a0fb7b19030d0a97d8357ec61d5fb0e92e39",
+      "date": "2026-07-22T12:23:06Z",
+      "message": "Add one-time carousel image workflow"
+    },
+    {
+      "sha": "5cebd36ede03c5ce539a5868397406e7b9a3f5a8",
+      "date": "2026-07-22T12:23:18Z",
+      "message": "Add community LED night ride to hero carousel"
+    },
+    {
+      "sha": "cb51f12611d1e06e85afeb8281bbba2f88fe0bfa",
+      "date": "2026-07-22T12:55:56Z",
+      "message": "Add one-time hero LED stack positioning workflow"
+    },
+    {
+      "sha": "56c3448ae911664b498aab896d60d2c011d819ec",
+      "date": "2026-07-22T13:07:10Z",
+      "message": "Add exact hero LED container fix"
+    },
+    {
+      "sha": "4a009a07a4c8ca5bc823cf8239fb31cd0496c45a",
+      "date": "2026-07-22T13:07:18Z",
+      "message": "Set exact hero LED container to 450px left aligned"
+    },
+    {
+      "sha": "c21b3573867cefe546875779aa0ff2ad31bcd633",
+      "date": "2026-07-22T13:11:52Z",
+      "message": "Update index.html"
+    },
+    {
+      "sha": "afea8ee956e77c81597bc41ba2fb440948991a8c",
+      "date": "2026-07-22T13:14:47Z",
+      "message": "Update index.html"
+    },
+    {
+      "sha": "e038f0652bc523b2c7df4e6bfb5e396c8e0dfbc6",
+      "date": "2026-07-22T13:19:35Z",
+      "message": "Update index.html"
+    },
+    {
+      "sha": "4cc3cc70b22e54eedfd1e45b3d92c5a87f26245a",
+      "date": "2026-07-22T13:25:56Z",
+      "message": "Add one-time LED catalog page workflow"
+    },
+    {
+      "sha": "b2560cf00a9f93ac19a752a7e597589a138374f3",
+      "date": "2026-07-22T17:46:36Z",
+      "message": "Trigger LED catalog page build"
+    },
+    {
+      "sha": "51d68e746ceb833a6fe2fb699c8e54d7d5c665f3",
+      "date": "2026-07-22T18:04:25Z",
+      "message": "Split LED Catalog from index navigation"
+    },
+    {
+      "sha": "95ecd2af30db425389d6bcf709491159edc828a7",
+      "date": "2026-07-22T18:04:51Z",
+      "message": "Create LED Catalog page"
+    },
+    {
+      "sha": "513d4ce7f569c9ef85a4d2fba5e1c27383a17041",
+      "date": "2026-07-22T18:05:13Z",
+      "message": "Remove one-time LED catalog workflow"
+    },
+    {
+      "sha": "4e2c53b6b2f9076c20facf1ab453798a08fb4d35",
+      "date": "2026-07-22T18:20:47Z",
+      "message": "Add shared navigation flare and breadcrumb ticker CSS"
+    },
+    {
+      "sha": "113bfb72a8210cc3d095fb1916417e26c106a525",
+      "date": "2026-07-22T18:21:01Z",
+      "message": "Inject breadcrumb ticker and navigation click flare"
+    },
+    {
+      "sha": "5aac4a409ca334ad9363cb5cc436989d65530b86",
+      "date": "2026-07-22T18:34:19Z",
+      "message": "Write LED Catalog breadcrumb and interaction styles directly"
+    },
+    {
+      "sha": "6987661d857d93e22d562dcf65ccaad0b4cb221a",
+      "date": "2026-07-22T18:36:06Z",
+      "message": "Write Build banner breadcrumb and interaction styles directly"
+    },
+    {
+      "sha": "6781156773621aae69031b8a9b33db2aef0c8b84",
+      "date": "2026-07-22T18:37:05Z",
+      "message": "Link navigation flare styles directly on home page"
+    },
+    {
+      "sha": "0d87bc733aacc99a33e56cf8cb60b7ae88135671",
+      "date": "2026-07-22T18:46:19Z",
+      "message": "Reduce non-home LED banner header height"
+    },
+    {
+      "sha": "10dc6d111f3d73f7327d33e02005616884649a51",
+      "date": "2026-07-22T18:47:01Z",
+      "message": "Cache bust compact LED Catalog banner"
+    },
+    {
+      "sha": "bde6970231d9b4d09dc035f3956d85c0f20efd09",
+      "date": "2026-07-22T18:49:28Z",
+      "message": "Cache bust compact Build banner"
+    },
+    {
+      "sha": "0bb63523db2838fabc848b2572cf0e61584bf7c3",
+      "date": "2026-07-22T19:00:38Z",
+      "message": "Consolidate shared site behavior into one script"
+    },
+    {
+      "sha": "2884b7dc8a20f6274db41a8425c777f7dc25bad3",
+      "date": "2026-07-22T19:02:56Z",
+      "message": "Unify all banner and interaction styling in site CSS"
+    },
+    {
+      "sha": "0e1656f4ffe311ddeef1db8488658e038aeac15f",
+      "date": "2026-07-22T19:03:56Z",
+      "message": "Point home page to shared site CSS and JS"
+    },
+    {
+      "sha": "552931aeeab26e71f4bb1e7fc4d5c92b8c3b2d9a",
+      "date": "2026-07-22T19:04:34Z",
+      "message": "Point catalog page to shared site CSS and JS"
+    },
+    {
+      "sha": "4d8890aed7da2fd6e80347044d60e127d4d31ff9",
+      "date": "2026-07-22T19:06:26Z",
+      "message": "Point Build page to shared site CSS and JS"
+    },
+    {
+      "sha": "f287a141da2854465a7c85743d743a2aa8ac6622",
+      "date": "2026-07-22T19:06:36Z",
+      "message": "Delete redundant interaction stylesheet"
+    },
+    {
+      "sha": "4b9bc8add6ff367429ec0e9e618226fef065f8cf",
+      "date": "2026-07-22T21:09:14Z",
+      "message": "Patch contact social icon markup"
+    },
+    {
+      "sha": "0986fe6075d184fdc08261798c2b3dae1a903c5b",
+      "date": "2026-07-22T21:34:02Z",
+      "message": "Merge pull request #14 from Deke206/codex/find-last-3-committed-edits"
+    },
+    {
+      "sha": "cbf5b2e284419c03c31df20ec43593d3234972d3",
+      "date": "2026-07-22T22:32:21Z",
+      "message": "Update contact WhatsApp number"
+    },
+    {
+      "sha": "fff7fbe2813e9d190de8834bd54b18ea683b9850",
+      "date": "2026-07-22T23:01:10Z",
+      "message": "Add animated social launchpad styles"
+    },
+    {
+      "sha": "0b3ef6b8a6bb78017e341d47040c27835c62035f",
+      "date": "2026-07-22T23:02:25Z",
+      "message": "Refresh contact social links and icon animations"
+    },
+    {
+      "sha": "04a0ba6e85e04e4aa92116239f09b4594ced5df7",
+      "date": "2026-07-22T23:27:10Z",
+      "message": "Add temporary About Deke page styles"
+    },
+    {
+      "sha": "b6edffccfc5a12897f434ba7cd590c2d80d5fd09",
+      "date": "2026-07-22T23:29:32Z",
+      "message": "Publish temporary About Deke support page"
+    },
+    {
+      "sha": "7448fd23fec0be7b14a281a57a5fe7e56df06112",
+      "date": "2026-07-22T23:44:58Z",
+      "message": "Shorten About Deke page and focus on paid work"
+    },
+    {
+      "sha": "b9a180078917a474b1ab68cdf65456f7dd0a1553",
+      "date": "2026-07-23T00:06:36Z",
+      "message": "Add animated Chuck thought balloons"
+    },
+    {
+      "sha": "55c5cf2ac10f9d89f2eeb3902d4f81d1ad1ae367",
+      "date": "2026-07-23T00:07:54Z",
+      "message": "Animate Chuck with rotating support thoughts"
+    },
+    {
+      "sha": "bacbc2407ac59cdea26bb6c760b1060dda64f750",
+      "date": "2026-07-23T00:08:58Z",
+      "message": "Add Chuck scroll-stop thought balloon behavior"
+    },
+    {
+      "sha": "e16a0c7ec9ac3f0a228289f856fd3eed15935ed0",
+      "date": "2026-07-23T00:11:37Z",
+      "message": "Finish animated Chuck helper on About Deke page"
+    },
+    {
+      "sha": "8ce7e4bb3038720a56b61d65a6cac037680134b7",
+      "date": "2026-07-23T00:26:24Z",
+      "message": "Add Chrome DeX animation compatibility layer"
+    },
+    {
+      "sha": "515d9af8aab2986775bb873a7093c637cc247ecd",
+      "date": "2026-07-23T00:26:53Z",
+      "message": "Animate shared Chuck and link About Deke sitewide"
+    },
+    {
+      "sha": "724791a34864f4f40325aa8011300e97eb9368fe",
+      "date": "2026-07-23T00:27:21Z",
+      "message": "Load DeX motion compatibility on About Deke page"
+    },
+    {
+      "sha": "af37e743f22abd856b404f128dc241c0273ff13d",
+      "date": "2026-07-23T03:59:44Z",
+      "message": "Replace Chuck rocking with real search frames"
+    },
+    {
+      "sha": "3c52c5d3ff481eb15734c345629cadd21cb88dcf",
+      "date": "2026-07-23T04:06:38Z",
+      "message": "Force real Chuck frames and remove rocking fallback"
+    },
+    {
+      "sha": "a4aec0fa1067a59b068e0d28af0a9699071185aa",
+      "date": "2026-07-23T05:09:57Z",
+      "message": "Unify hero headers and preserve carousel images"
+    },
+    {
+      "sha": "9810fa2785a4580ece8dfcd474e1d714f9a6e949",
+      "date": "2026-07-23T05:10:50Z",
+      "message": "Load shared hero system across site"
+    },
+    {
+      "sha": "5ee9f02c4648eb6ee0e811d698ddb1769042324a",
+      "date": "2026-07-23T05:11:30Z",
+      "message": "Apply shared hero system to About Deke"
+    },
+    {
+      "sha": "5c3677cebc6dcbbb39ca23f137aa64e2ce5d3d6e",
+      "date": "2026-07-23T05:21:58Z",
+      "message": "Blend Chuck sprite into page with front ring and thought clouds"
+    },
+    {
+      "sha": "57d427b2c534d438bc107c1a1b49ff58dca0d2a0",
+      "date": "2026-07-23T05:49:02Z",
+      "message": "Unify hero height and left alignment across all pages"
+    },
+    {
+      "sha": "3cdbdb07533c808052b40826ad2253fda60684a5",
+      "date": "2026-07-23T05:50:23Z",
+      "message": "Cache bust unified shared hero styles"
+    },
+    {
+      "sha": "ce0158a185c967625ebeddc9ad4f0e329dd80567",
+      "date": "2026-07-23T05:51:07Z",
+      "message": "Cache bust unified About header styles"
+    },
+    {
+      "sha": "f2d8248afb92773f1d365b874dbf37feeded73cf",
+      "date": "2026-07-23T06:00:57Z",
+      "message": "Upgrade Build My Bike live view"
+    },
+    {
+      "sha": "6e95eed5c082fdcc2c63fdbd1881dd826e9bacc2",
+      "date": "2026-07-23T06:07:57Z",
+      "message": "Preserve child bike sizes in live view"
+    },
+    {
+      "sha": "9e55eb201a903cca81193e9c62558c312dd0a365",
+      "date": "2026-07-23T08:26:53Z",
+      "message": "Rework Build My Bike live view and bicycle bodies"
+    },
+    {
+      "sha": "6a22c9b0b9713633922b581d9fb66d8fb2158e0e",
+      "date": "2026-07-23T08:34:20Z",
+      "message": "Blend Chuck into page with front ring and soft sprite edges"
+    },
+    {
+      "sha": "c5546cb0bb0393e1797f24250cf9bab0244f35f5",
+      "date": "2026-07-23T08:53:03Z",
+      "message": "Keep small bike frames inside preview and remove secondary kid bike"
+    },
+    {
+      "sha": "d51f340767169fe25119a5f0d2d370ac7e1512c4",
+      "date": "2026-07-23T09:06:54Z",
+      "message": "Resize and center shared Chuck thought clouds"
+    },
+    {
+      "sha": "69d6ab0a432cd892e45c57d234c08b8529286c81",
+      "date": "2026-07-23T09:07:48Z",
+      "message": "Make About Deke Chuck the shared sitewide component"
+    },
+    {
+      "sha": "3a8194209b232a741dc0b8527942bf4783a7be55",
+      "date": "2026-07-23T09:08:22Z",
+      "message": "Replace separate site helpers with shared animated Chuck"
+    },
+    {
+      "sha": "d2578d84c8519a0c4077355dc7cf315bc76e46ca",
+      "date": "2026-07-23T09:23:54Z",
+      "message": "Brighten hero carousel and remove image shadow overlay"
+    },
+    {
+      "sha": "ef53d2e1d4e2f281f7b435b113ba998e19b1cd46",
+      "date": "2026-07-23T09:24:11Z",
+      "message": "Repair missing hero slide and suppress broken-image text"
+    },
+    {
+      "sha": "7101152746ee413a254eb124ac841fdaf5a3df28",
+      "date": "2026-07-23T09:25:02Z",
+      "message": "Restore complete shared animated Chuck component"
+    },
+    {
+      "sha": "50fa6c22c4a82031ecad49104c4547c58976b295",
+      "date": "2026-07-23T09:25:40Z",
+      "message": "Restore shared site loader and load bright hero styles"
+    },
+    {
+      "sha": "e0a579d03194433a177cb6ada9fea20d6251dd5b",
+      "date": "2026-07-23T09:26:47Z",
+      "message": "Repair bright home banner and replace broken carousel image"
+    },
+    {
+      "sha": "e80499f44fc5ab8b3883dec9388c26eefbd6d325",
+      "date": "2026-07-23T09:43:49Z",
+      "message": "Add comprehensive Home Builder page"
+    },
+    {
+      "sha": "cc7541ca19319e6c622485f1b3a84518cb602533",
+      "date": "2026-07-23T10:39:29Z",
+      "message": "Add LED banner magic demo styles"
+    },
+    {
+      "sha": "60d79590e14d482e00b08da43a1a5a8c8fa4ce4d",
+      "date": "2026-07-23T10:41:07Z",
+      "message": "Add canvas LED matrix animation demo"
+    },
+    {
+      "sha": "39ba81f86939c272282253ef42c4ea5bb419c925",
+      "date": "2026-07-23T10:41:57Z",
+      "message": "Publish LED banner magic example page"
+    },
+    {
+      "sha": "502376bc8347a4a589244fdf8f363ba308f764de",
+      "date": "2026-07-23T19:34:50Z",
+      "message": "Add shared randomized LED matrix ribbons"
+    },
+    {
+      "sha": "a577f49d0c42b809ed6e0b43be15c1dd5ea80421",
+      "date": "2026-07-23T19:35:31Z",
+      "message": "Use shared top bottom and breadcrumb LED matrix frames"
+    },
+    {
+      "sha": "1eb4340528a77f002f6be6b7e7465bd4008914c0",
+      "date": "2026-07-23T19:36:07Z",
+      "message": "Load shared matrix ribbons with sitewide Chuck"
+    },
+    {
+      "sha": "dc4190ac396d63e36f8207942fa344051cb49e22",
+      "date": "2026-07-23T19:37:18Z",
+      "message": "Point shared site loader to randomized matrix ribbons"
+    },
+    {
+      "sha": "794638d782336c8d1f046c0304f571094d511129",
+      "date": "2026-07-23T19:39:21Z",
+      "message": "Keep long LED messages moving across full ribbons"
+    },
+    {
+      "sha": "bdbf8972dbce878cada6c1ca4eb37b8035860ff0",
+      "date": "2026-07-23T20:22:42Z",
+      "message": "Separate shared LED matrix styles from hero and Chuck"
+    },
+    {
+      "sha": "3a80ed9cf4d46994c766079a3aa1b4cc8471eec3",
+      "date": "2026-07-23T20:23:05Z",
+      "message": "Keep shared hero layout separate from LED matrix presentation"
+    },
+    {
+      "sha": "8963c5d36deacb819252de35259fe927b75a1a1e",
+      "date": "2026-07-23T20:24:43Z",
+      "message": "Optimize shared LED matrix and pause off-screen rendering"
+    },
+    {
+      "sha": "520855a958ccf3ed82994b4360ea0fb036ddcf77",
+      "date": "2026-07-23T20:25:34Z",
+      "message": "Separate Chuck from LED matrix and show thoughts only at page bottom"
+    },
+    {
+      "sha": "bad30c13e8a6272a2f11107714fcbc23e355a6b4",
+      "date": "2026-07-23T20:26:13Z",
+      "message": "Load LED matrix independently and remove navigation flare effects"
+    },
+    {
+      "sha": "842dec435cfa6fc9b2d17bf202a656ecbf8aa2a1",
+      "date": "2026-07-23T20:27:23Z",
+      "message": "Use clean shared site loader on About Deke page"
+    },
+    {
+      "sha": "d93bb598752db5d934c03aa0cbb41e50a1a197a0",
+      "date": "2026-07-23T21:05:58Z",
+      "message": "Add shared Build dropdown and restore navigation flare styling"
+    },
+    {
+      "sha": "2426e4b03d62216e97405c6b4f655f385e10893d",
+      "date": "2026-07-23T21:06:45Z",
+      "message": "Group builders under Build dropdown and restore navigation effects"
+    },
+    {
+      "sha": "e95d57cc6396be109bb3e49fc5e2d7a358e91e1d",
+      "date": "2026-07-23T21:08:01Z",
+      "message": "Fix Build dropdown placement and prevent duplicate About link"
+    },
+    {
+      "sha": "e612599b891a48865648c3097d24f013209e079c",
+      "date": "2026-07-24T02:39:45Z",
+      "message": "Update Chuck thought timing and bottom-page message cycle"
+    },
+    {
+      "sha": "990b1b89b143fa14cdbc999a699d923345186791",
+      "date": "2026-07-24T02:45:51Z",
+      "message": "Replace all Chuck thoughts with transparent colored cloud artwork"
+    },
+    {
+      "sha": "6285a6e05c79a0bc03a73ad84d984e4fc41136f6",
+      "date": "2026-07-24T02:46:58Z",
+      "message": "Load exact sitewide Chuck thought-cloud component"
+    },
+    {
+      "sha": "23b2418f91f8c8d5cdbc9cf9c4a438cd86ab7003",
+      "date": "2026-07-24T03:10:04Z",
+      "message": "Flip Chuck cloud toward mascot and tighten thought copy"
+    },
+    {
+      "sha": "1f03fdd754e49c724db52de65ea997af8bd526d5",
+      "date": "2026-07-24T03:11:12Z",
+      "message": "Keep Chuck idle outside active scrolling and load cloud refinements"
+    },
+    {
+      "sha": "c49d9f081671d2148740f11aaef5f7d298e5a9da",
+      "date": "2026-07-24T03:11:37Z",
+      "message": "Return Chuck to idle whenever research scrolling ends"
+    },
+    {
+      "sha": "fc403e5cca75792b4801f360791962d1fc0c6664",
+      "date": "2026-07-24T03:24:59Z",
+      "message": "Add read-only work history timeline styles"
+    },
+    {
+      "sha": "79c66f66d8f10f62bc9c5b1f287256aaf6767f49",
+      "date": "2026-07-24T03:26:10Z",
+      "message": "Add read-only website work history renderer"
+    },
+    {
+      "sha": "945b4ba2fdef552958058a098ab29a8ad744a955",
+      "date": "2026-07-24T03:26:22Z",
+      "message": "Add generated work history data placeholder"
+    },
+    {
+      "sha": "db38998e38e84904f7c451df47bfbde3537925c8",
+      "date": "2026-07-24T03:26:43Z",
+      "message": "Add static work history snapshot generator"
+    },
+    {
+      "sha": "755a519089c71437a41d39c5e4cc32f0636c8102",
+      "date": "2026-07-24T03:27:01Z",
+      "message": "Add automatic read-only work history snapshot workflow"
+    },
+    {
+      "sha": "3a9b692782a742788b9d341c58e257ed04bc3e2d",
+      "date": "2026-07-24T03:28:19Z",
+      "message": "Publish read-only website work history on About Deke page"
+    },
+    {
+      "sha": "950e700645e700fd453a4595a6d07d0d18921ba8",
+      "date": "2026-07-24T03:53:10Z",
+      "message": "Make About work history compact and scrollable"
+    },
+    {
+      "sha": "d36c424fc8ab2488c9f6e34e82ed2159602b8484",
+      "date": "2026-07-24T03:53:25Z",
+      "message": "Show newest About work history entries first"
+    },
+    {
+      "sha": "f6909cb05e82a5a7f97713b9ee810e0f805f3509",
+      "date": "2026-07-24T03:54:00Z",
+      "message": "Add canonical shared Chuck stylesheet and neutralize About overrides"
+    },
+    {
+      "sha": "46bff39fc1c1f736e22cf1ee25237852cac521c1",
+      "date": "2026-07-24T03:54:58Z",
+      "message": "Add canonical shared Chuck component with bottom-only thoughts"
+    },
+    {
+      "sha": "a9aee8dee93107fbd3e014da036ed55e41595cdd",
+      "date": "2026-07-24T03:55:12Z",
+      "message": "Retire About-specific Chuck implementation in favor of shared component"
+    },
+    {
+      "sha": "6acfe550b46b63ec1946fa9ed26288437e5b9a66",
+      "date": "2026-07-24T03:56:17Z",
+      "message": "Load canonical shared Chuck component sitewide"
+    },
+    {
+      "sha": "797f78f0b1d3bfe6f5e59b97b864043c9ded36f1",
+      "date": "2026-07-24T03:57:43Z",
+      "message": "Compact work history and use shared Chuck on About Deke"
+    },
+    {
+      "sha": "a59304f8d2dbb19670d09c07d6e8532c054f79c1",
+      "date": "2026-07-24T03:59:11Z",
+      "message": "Copy current Chuck styles into shared site files"
+    },
+    {
+      "sha": "055fd80938f9821a412c7090ec2db3b170db5264",
+      "date": "2026-07-24T04:00:11Z",
+      "message": "Use only shared Chuck style files from canonical entrypoint"
+    },
+    {
+      "sha": "5a2c95de304f7d76aa0203631e6de368c575775b",
+      "date": "2026-07-24T04:03:02Z",
+      "message": "Bump shared Chuck stylesheet cache to canonical files"
+    },
+    {
+      "sha": "618dbf35ed94492ef07ad8195f64d407c7154abc",
+      "date": "2026-07-24T04:03:37Z",
+      "message": "Point legacy Chuck shim to latest shared component"
+    },
+    {
+      "sha": "aada9977ea2aeff9c8ccb3b1a123845418dff141",
+      "date": "2026-07-24T04:04:40Z",
+      "message": "Point site loader to latest canonical Chuck entrypoint"
+    },
+    {
+      "sha": "687553340fa95d639e65612bcfa857a0462d2b59",
+      "date": "2026-07-24T04:06:07Z",
+      "message": "Force About Deke to load latest shared Chuck entrypoint"
+    },
+    {
+      "sha": "329b89bdc5610ba14e1b2fcf7dd36739b9db0914",
+      "date": "2026-07-24T05:58:05Z",
+      "message": "Move About Deke page to the website root"
+    },
+    {
+      "sha": "39c2921fc5d57147750d8118eacb0c0b029e3674",
+      "date": "2026-07-24T05:59:28Z",
+      "message": "Consolidate newest-first work history renderer"
+    },
+    {
+      "sha": "280fcbe351e9e53f6c62f3676aba2aa670714d5b",
+      "date": "2026-07-24T06:02:02Z",
+      "message": "Consolidate compact work history viewport styles"
+    },
+    {
+      "sha": "e5417465e05b88be4c76d5b69a0b716e063fba4b",
+      "date": "2026-07-24T06:02:20Z",
+      "message": "Remove About-page forcing from shared Chuck styles"
+    },
+    {
+      "sha": "d207398da0cb1e06f6725635f89c162e6516473b",
+      "date": "2026-07-24T06:03:09Z",
+      "message": "Remove legacy About-only Chuck overrides"
+    },
+    {
+      "sha": "a8efd996c40241a5878fd80dad0624a76718b7de",
+      "date": "2026-07-24T06:04:20Z",
+      "message": "Link the shared site to root About Deke page"
+    },
+    {
+      "sha": "0f3b98fa951a1794b9ec690fb4aa75ddc3cc8307",
+      "date": "2026-07-24T06:05:29Z",
+      "message": "Load cleaned shared Chuck stylesheet"
+    },
+    {
+      "sha": "220fa86dc8834b3f0d5fd55f2fe1a28dca6ac231",
+      "date": "2026-07-24T06:05:56Z",
+      "message": "Remove old nested About Deke page"
+    },
+    {
+      "sha": "eca7b07e4bb01d930aa0fdda7af90b29b11b11a1",
+      "date": "2026-07-24T06:06:04Z",
+      "message": "Remove obsolete About-specific Chuck compatibility script"
+    },
+    {
+      "sha": "60ab124b306adc2cd8442fe09e8f2715c8aee1df",
+      "date": "2026-07-24T06:06:25Z",
+      "message": "Remove obsolete About-named Chuck stylesheet"
+    },
+    {
+      "sha": "56988b919e46e6c137e56007220ae6fe4c6a9378",
+      "date": "2026-07-24T06:06:44Z",
+      "message": "Remove obsolete duplicate Chuck refinements"
+    },
+    {
+      "sha": "4f9a638ce6ecfe41a084e2586beba479130d2113",
+      "date": "2026-07-24T06:06:57Z",
+      "message": "Remove merged work history viewport patch"
+    },
+    {
+      "sha": "a558e7368bfda33fb48fa70971cdac125beb2ea2",
+      "date": "2026-07-24T06:07:07Z",
+      "message": "Remove merged newest-first history patch"
+    },
+    {
+      "sha": "e447204ed3660d284ad66f359c7b25a80c64c2ba",
+      "date": "2026-07-24T06:08:35Z",
+      "message": "Point homepage directly to root About page"
+    },
+    {
+      "sha": "005e57cd04c8bd6346e6bc7e9cc355ca69206c78",
+      "date": "2026-07-24T09:52:18Z",
+      "message": "Update aboutme.html"
+    },
+    {
+      "sha": "dc9af62d0e4bf24e123c3a05fc732129d55ce531",
+      "date": "2026-07-24T10:18:35Z",
+      "message": "Keep hero carousel images still and remove sparkle effects"
+    },
+    {
+      "sha": "0dcabd2c03ae491087ed2a82448c08497c874f16",
+      "date": "2026-07-24T10:18:54Z",
+      "message": "Keep hero carousel rotation without picture animation"
+    },
+    {
+      "sha": "b4b10ce49c5394ec0d75b14a78658c6a616406f5",
+      "date": "2026-07-24T10:19:49Z",
+      "message": "Restore four original hero images and remove legacy banner markup"
+    },
+    {
+      "sha": "92f533597258f6b70d7fed5da8bb54a42c3c17a6",
+      "date": "2026-07-24T10:20:54Z",
+      "message": "Load still-image hero stylesheet across the site"
+    },
+    {
+      "sha": "056a027b758ddb1e663527f84220b2a6357907fd",
+      "date": "2026-07-24T10:22:42Z",
+      "message": "Add one-time legacy hero banner cleanup"
+    },
+    {
+      "sha": "6acbeb2e2c12dd229eeb2b8f21baae73f1db1b63",
+      "date": "2026-07-24T10:22:51Z",
+      "message": "Remove retired hero banner markup sitewide"
+    },
+    {
+      "sha": "469284d2333210fd061ccf5c4b6968bac72ff6c1",
+      "date": "2026-07-24T11:16:18Z",
+      "message": "Add one-time shared site shell normalization"
+    },
+    {
+      "sha": "464d02af0481057b8180571ffab9309b052aebdd",
+      "date": "2026-07-24T11:16:26Z",
+      "message": "Normalize shared navigation header matrix and Chuck systems"
+    },
+    {
+      "sha": "6447bb9cb32343d7ad29b9f3bb9fcd43a44585d8",
+      "date": "2026-07-24T11:19:52Z",
+      "message": "Make shared navigation order identical on every page"
+    },
+    {
+      "sha": "a4205505e09516bb8eb14003a47011b9fd3cb7c3",
+      "date": "2026-07-24T11:20:22Z",
+      "message": "Add one-time static navigation normalization"
+    },
+    {
+      "sha": "36940e2540b73cc3bd161fe8897e319fe97f0322",
+      "date": "2026-07-24T11:22:16Z",
+      "message": "Make static navigation cleanup resilient to history refreshes"
+    },
+    {
+      "sha": "be663f66c9e0b0fba50c4688e568db36adebf285",
+      "date": "2026-07-24T11:24:08Z",
+      "message": "Remove temporary navigation normalization workflow"
+    },
+    {
+      "sha": "aede289b7bc244a23c2bde18e8dd534b248be468",
+      "date": "2026-07-24T11:50:25Z",
+      "message": "Add one-time CSS consolidation workflow"
+    },
+    {
+      "sha": "9e155ca11efe80a3307130b79897ad7bdeecaf14",
+      "date": "2026-07-24T11:50:32Z",
+      "message": "Consolidate split CSS files into owning stylesheets"
+    },
+    {
+      "sha": "301d3bab9e5e49c4bea2c3490c4c8a4875970ded",
+      "date": "2026-07-24T12:08:02Z",
+      "message": "Shorten shared LED matrix banners"
+    },
+    {
+      "sha": "caa927a4e9463a9621240504c0219a479b5c86d7",
+      "date": "2026-07-24T12:08:26Z",
+      "message": "Bust cache for shorter LED matrix banners"
+    },
+    {
+      "sha": "3b46f0319aac90c2b0ec0a968f79497292043f15",
+      "date": "2026-07-24T12:23:24Z",
+      "message": "Add wave-reveal effect to shared LED matrix"
+    },
+    {
+      "sha": "d3caa0e5374c563e124bd79916fd32d8ca999741",
+      "date": "2026-07-24T12:27:10Z",
+      "message": "Stage sitewide Chuck cloud animation styles"
+    },
+    {
+      "sha": "8cc866c9a75e4671d781778d20c62ba8b2722ce1",
+      "date": "2026-07-24T12:28:14Z",
+      "message": "Complete staged Chuck cloud animation and theme"
+    },
+    {
+      "sha": "9b9105b9c09a4f96d1afae2523d64a75c75dcb87",
+      "date": "2026-07-24T12:29:22Z",
+      "message": "Stage Chuck welcome and delayed guidance messages"
+    },
+    {
+      "sha": "854390517ceae8774c551f88ed342d733b49a336",
+      "date": "2026-07-24T12:30:03Z",
+      "message": "Stage sitewide loader for animated Chuck clouds"
+    },
+    {
+      "sha": "413478225afacf0d3bcfb53ea9748049ad66169b",
+      "date": "2026-07-24T12:34:02Z",
+      "message": "Add one-time matrix wave revert workflow"
+    },
+    {
+      "sha": "2aea46e350f587117276ef3c5615645634c8f20c",
+      "date": "2026-07-24T12:35:24Z",
+      "message": "Trigger one-time matrix wave revert"
+    },
+    {
+      "sha": "6d0b70c9685bd37d4fbdc9aac7cfbd20c0f71bbf",
+      "date": "2026-07-24T12:37:07Z",
+      "message": "Revert LED matrix wave effect but keep spacing"
+    },
+    {
+      "sha": "53371aa4f729da6de68da9d7642379e9aceacc27",
+      "date": "2026-07-24T12:37:19Z",
+      "message": "Remove temporary matrix wave revert workflow"
+    },
+    {
+      "sha": "5488423d49da458c5f6b6c9ad0b23b6587d61b78",
+      "date": "2026-07-24T12:43:49Z",
+      "message": "Replace old Chuck cloud mask with approved cloud silhouette"
+    },
+    {
+      "sha": "886943ce1b74cc3f7365252ab515d6108ffba175",
+      "date": "2026-07-24T13:15:22Z",
+      "message": "Fix Chuck cloud layout and contain text"
+    },
+    {
+      "sha": "9596eb140fe844cdb69b9eefe9967109b279ad72",
+      "date": "2026-07-24T13:22:39Z",
+      "message": "Rename shared build navigation to simulator labels"
+    },
+    {
+      "sha": "8ef1624580eec6cd42d7886129dc86d0506ddc8c",
+      "date": "2026-07-24T13:23:31Z",
+      "message": "Clean About Deke page copy and sim labels"
+    },
+    {
+      "sha": "6809fc795d188fcdd675f35b2e1bc07a098d746e",
+      "date": "2026-07-24T13:52:15Z",
+      "message": "Simplify Chuck cloud layout"
+    },
+    {
+      "sha": "33893f386bbcdb1cef66d92e22db69b07a580261",
+      "date": "2026-07-24T13:55:18Z",
+      "message": "Bump Chuck cloud cache"
+    },
+    {
+      "sha": "d53346ec2c02288ddd53677cefeae90621672a59",
+      "date": "2026-07-24T14:10:34Z",
+      "message": "Revert Chuck cloud to previous working style"
+    },
+    {
+      "sha": "79d44be926dffada97fb39beeaa4102e7e426c30",
+      "date": "2026-07-24T14:11:18Z",
+      "message": "Bump Chuck cloud revert cache"
+    },
+    {
+      "sha": "1a8421bc8a2208396d4b2ba835f8132794a54786",
+      "date": "2026-07-24T20:49:59Z",
+      "message": "Shrink Chuck cloud text and button internals"
+    },
+    {
+      "sha": "2525df6ed79d39f9509e4589afa5d33b9229507f",
+      "date": "2026-07-24T20:50:32Z",
+      "message": "Bump Chuck cloud shrink cache"
+    },
+    {
+      "sha": "23f2e8dfebf24e41a864549ab441a879977419e4",
+      "date": "2026-07-24T20:53:54Z",
+      "message": "Tighten Chuck cloud mobile internals"
+    },
+    {
+      "sha": "94263aa0d45fcd62c04780e55f7721df41ce467b",
+      "date": "2026-07-24T20:54:56Z",
+      "message": "Bump Chuck mobile cloud cache"
+    },
+    {
+      "sha": "20f8fdc2b0af18898dddfdab7e04ee75e58ea2a2",
+      "date": "2026-07-24T21:01:14Z",
+      "message": "Stack Chuck cloud copy for mobile readability"
+    },
+    {
+      "sha": "353693eabcb1b311434ed7f2daa54c3adc7946d8",
+      "date": "2026-07-24T21:03:30Z",
+      "message": "Bump Chuck mobile cloud loader cache"
+    },
+    {
+      "sha": "10e025b342f378358e7feb54ced59f2717052c52",
+      "date": "2026-07-24T21:07:24Z",
+      "message": "Tighten Chuck cloud CSS overrides"
+    },
+    {
+      "sha": "109c69eae295255ec080dbfc89a039f99c0f9b7a",
+      "date": "2026-07-24T21:12:44Z",
+      "message": "Add Chuck cloud layer debug outlines"
+    },
+    {
+      "sha": "dad3b0b71efd201cd003e380cc8f9a8a6b578c94",
+      "date": "2026-07-24T21:13:11Z",
+      "message": "Bump Chuck cloud debug cache"
+    },
+    {
+      "sha": "b990b7aec6a6f36ae8cb6bf5d63570cd4647f47e",
+      "date": "2026-07-24T21:15:36Z",
+      "message": "Add Chuck cloud layer debug outlines"
+    },
+    {
+      "sha": "900d22b175311c6ecbe322cbf82c4418ce2aab4c",
+      "date": "2026-07-24T21:16:33Z",
+      "message": "Keep Chuck cloud layer debug cache active"
+    },
+    {
+      "sha": "7ccbefd72fea37792515373d8a1dac879e31371e",
+      "date": "2026-07-24T21:26:03Z",
+      "message": "Use one clean Chuck cloud layer"
+    },
+    {
+      "sha": "91210aa78bc660af856720c7db6fe991bf7d9ed6",
+      "date": "2026-07-24T21:26:46Z",
+      "message": "Load single-layer Chuck cloud"
+    },
+    {
+      "sha": "80a396e2f0e8990ddca6ba0dcf4cf6fa4678ab16",
+      "date": "2026-07-24T21:27:32Z",
+      "message": "Point Chuck to single cloud layer"
+    },
+    {
+      "sha": "2f73308d5a3b55df7f4b0947bd11bc01a23396b1",
+      "date": "2026-07-24T21:28:18Z",
+      "message": "Force homepage to load clean Chuck cloud"
+    },
+    {
+      "sha": "bab524f5b2203740c357104a89869e6ceb20b542",
+      "date": "2026-07-24T22:19:38Z",
+      "message": "Add cyan Chuck cloud animation asset"
+    },
+    {
+      "sha": "0a2ad3d43ba65f4df7ab85564a116a0ba8d348ab",
+      "date": "2026-07-24T22:20:02Z",
+      "message": "Add pink Chuck cloud animation asset"
+    },
+    {
+      "sha": "d53c2de48f2fc9bff151244eed122f2f9817c18f",
+      "date": "2026-07-24T22:20:26Z",
+      "message": "Add amber Chuck cloud animation asset"
+    },
+    {
+      "sha": "94b96de030ce6e7d1272035d616c2246dd6c125c",
+      "date": "2026-07-24T22:22:30Z",
+      "message": "Replace old Chuck cloud with neon sprite animations"
+    },
+    {
+      "sha": "773ce291da8714b45a10d4209452025b7c456835",
+      "date": "2026-07-24T22:23:32Z",
+      "message": "Randomize finished neon Chuck cloud animations"
+    },
+    {
+      "sha": "bd8285eddd9855a21c2c7aa84d16bc14e6b4fe65",
+      "date": "2026-07-24T22:24:37Z",
+      "message": "Load neon Chuck cloud sprite files"
+    },
+    {
+      "sha": "4bcbc2dce67df8cfa9c2d9c6079f7eb7c86baf9d",
+      "date": "2026-07-24T22:25:54Z",
+      "message": "Force homepage to load neon Chuck cloud sprites"
+    },
+    {
+      "sha": "7c6e2304927f0243703cee32693cc6bbfe701aa4",
+      "date": "2026-07-24T22:29:01Z",
+      "message": "Make bike and home simulator viewports responsive"
+    },
+    {
+      "sha": "96424aafe9cac065e72fccfee491b8bb83b207f5",
+      "date": "2026-07-24T22:29:42Z",
+      "message": "Improve LED matrix viewport readability sitewide"
+    },
+    {
+      "sha": "618caa10945299e3ce38009bdb0f5146fe56577b",
+      "date": "2026-07-24T22:33:41Z",
+      "message": "Refine neon Chuck cloud position and readability"
+    },
+    {
+      "sha": "9824a9a1548c0f100150ea60928ddaf393354783",
+      "date": "2026-07-24T22:34:51Z",
+      "message": "Adjust Chuck welcome timing and cloud placement cache"
+    },
+    {
+      "sha": "499de149e4537564a318a192b974519d74b7b75a",
+      "date": "2026-07-24T22:35:32Z",
+      "message": "Load refined neon Chuck cloud assets"
+    },
+    {
+      "sha": "c38d5ce17693eb0c5ff70370a493a183aed984db",
+      "date": "2026-07-24T22:36:21Z",
+      "message": "Force homepage to load refined Chuck cloud"
+    },
+    {
+      "sha": "1c672848f96df0e17db1657aef3eb2298198aa2a",
+      "date": "2026-07-24T22:40:48Z",
+      "message": "Add one-time mobile shared asset refresh"
+    },
+    {
+      "sha": "d655a40667a2026f57194b3062e03d30abba3eb6",
+      "date": "2026-07-24T22:40:55Z",
+      "message": "Refresh shared mobile asset loading"
+    },
+    {
+      "sha": "0c9f0c9fd7233a7d7d064c6af5f68eb85d1f6d59",
+      "date": "2026-07-24T23:15:14Z",
+      "message": "Shrink mobile Chuck cloud and keep sprite animation active"
+    },
+    {
+      "sha": "8f79cf841ab475067bf68a815e0e195fdefaabe0",
+      "date": "2026-07-24T23:15:59Z",
+      "message": "Keep Chuck scroll animation visible on phones"
+    },
+    {
+      "sha": "ae50def550facd7b610cc8009d1341d32e1bbdb4",
+      "date": "2026-07-24T23:16:59Z",
+      "message": "Force homepage to load smaller animated Chuck cloud"
+    },
+    {
+      "sha": "8bc82699c8750d5c30e8771777aefc714f8e74b5",
+      "date": "2026-07-25T00:58:28Z",
+      "message": "Add site-color LED contour to cyan Chuck cloud"
+    },
+    {
+      "sha": "b7546fed08f33689c59a6e23aab34fe5bb6fb532",
+      "date": "2026-07-25T00:59:11Z",
+      "message": "Add site-color LED contour to pink Chuck cloud"
+    },
+    {
+      "sha": "f6fd3afb12f752636e24ab3f00c55263326647a9",
+      "date": "2026-07-25T00:59:52Z",
+      "message": "Add site-color LED contour to amber Chuck cloud"
+    },
+    {
+      "sha": "b13d747ba76baa3087c4731dd30fd9d57336a7e0",
+      "date": "2026-07-25T01:00:41Z",
+      "message": "Load site-color LED Chuck cloud sprites"
+    },
+    {
+      "sha": "1c9ee8d65653f1073ccf112b5315b7137d25f924",
+      "date": "2026-07-25T01:02:16Z",
+      "message": "Load site-color LED Chuck cloud revision"
+    },
+    {
+      "sha": "dab6eeb2b1a8de21a2c3e2e47bdc96816a630a52",
+      "date": "2026-07-25T01:04:43Z",
+      "message": "Force homepage to load LED-contour Chuck clouds"
+    },
+    {
+      "sha": "c9da651303d2ec92b255ef17b4cd479a131a5c55",
+      "date": "2026-07-25T01:12:09Z",
+      "message": "Move Chuck cloud two cells left and down"
+    },
+    {
+      "sha": "8c124d57b06143236dd32cb49ba08087f78946d0",
+      "date": "2026-07-25T01:13:06Z",
+      "message": "Load shifted Chuck cloud position"
+    },
+    {
+      "sha": "e977eb722137ab709a0c768312d0a92f05c37e72",
+      "date": "2026-07-25T01:14:56Z",
+      "message": "Force homepage to load shifted Chuck cloud"
+    },
+    {
+      "sha": "0b2d24908557be7bfffdba4905a3c10a657d57c2",
+      "date": "2026-07-25T05:47:57Z",
+      "message": "Add shared accessible language navigation"
+    },
+    {
+      "sha": "d6af5c23951449e16b761e1b6f8bccb08ef6aab2",
+      "date": "2026-07-25T05:48:54Z",
+      "message": "Add shared skip-link and language menu styling"
+    },
+    {
+      "sha": "c15bc82483f544244433bf015dcb8dc2d1f5020b",
+      "date": "2026-07-25T05:51:33Z",
+      "message": "Run site-wide accessibility and SEO pass"
+    },
+    {
+      "sha": "4752c48f8589da8f9306833a8be294e8f4774c47",
+      "date": "2026-07-25T05:51:42Z",
+      "message": "Apply site-wide accessibility analytics and SEO"
+    },
+    {
+      "sha": "c5cd61a5648c680156783f1024bb1e25692a2a2a",
+      "date": "2026-07-25T21:41:54Z",
+      "message": "Run shared breadcrumb ribbon restoration"
+    },
+    {
+      "sha": "5cfc6ca9bfdfd16122a4bb6c024b655553dc361e",
+      "date": "2026-07-25T21:43:22Z",
+      "message": "Trigger breadcrumb ribbon restoration"
+    },
+    {
+      "sha": "6899ebbbc8641e4cc02eb793c1179fac336013f4",
+      "date": "2026-07-25T21:49:27Z",
+      "message": "Keep matrix CSS limited to hero ribbons"
+    },
+    {
+      "sha": "fbed802de8a187d1569dd1043526d1ce05cebfde",
+      "date": "2026-07-25T21:50:35Z",
+      "message": "Restore centered text breadcrumb ribbon"
+    },
+    {
+      "sha": "0e29ee9db86ab69bd2d07e921e25c394f414136e",
+      "date": "2026-07-25T21:50:50Z",
+      "message": "Remove unused breadcrumb restoration workflow"
+    },
+    {
+      "sha": "bd3b72062cda328a12c8e9057924207bcbd4f42b",
+      "date": "2026-07-25T22:08:57Z",
+      "message": "Run clean shared page subheader pass"
+    },
+    {
+      "sha": "a088ce207fe891ae84edc16fd6c044db9a8328c1",
+      "date": "2026-07-25T22:12:16Z",
+      "message": "Trigger clean shared page subheader pass"
+    },
+    {
+      "sha": "d433f4136d71a89de70f3a2710f4fdc77b0e0f30",
+      "date": "2026-07-25T22:20:00Z",
+      "message": "Prepare merge-triggered subheader cleanup"
+    },
+    {
+      "sha": "3aab5e9f005131e6c38969563150565941b4d2c0",
+      "date": "2026-07-25T22:20:52Z",
+      "message": "Trigger shared page subheader cleanup"
+    },
+    {
+      "sha": "edb00ab35216c6d4d241a539dbfcf62a5d1ca8f0",
+      "date": "2026-07-25T22:24:35Z",
+      "message": "Run trusted one-time subheader cleanup"
+    },
+    {
+      "sha": "52f9f5f420d0273f5dfc785b1d4d79c5254f2ed3",
+      "date": "2026-07-25T22:26:29Z",
+      "message": "Trigger trusted subheader cleanup run"
+    },
+    {
+      "sha": "c3e119b5433654a4ac2d2ae2bef1f657bb075b07",
+      "date": "2026-07-25T22:29:28Z",
+      "message": "Correct trusted subheader cleanup pass"
+    },
+    {
+      "sha": "be3ad2af2d956b9a1ccd4d02ebd730a736a9b63c",
+      "date": "2026-07-25T22:29:54Z",
+      "message": "Trigger corrected trusted subheader cleanup"
+    },
+    {
+      "sha": "7a7227e0110313cd383239b3068b6589e61dbf1a",
+      "date": "2026-07-25T22:31:33Z",
+      "message": "Restore trusted work history workflow"
+    },
+    {
+      "sha": "7b368b9fe2a4f37414cec4730d9d6646e2120079",
+      "date": "2026-07-25T22:35:19Z",
+      "message": "Run one-time shared subheader cleanup"
+    },
+    {
+      "sha": "c4ad3a4a45591549461c57d3aa020ce0ebe3156b",
+      "date": "2026-07-25T22:35:31Z",
+      "message": "Clean and centralize shared page subheader"
+    },
+    {
+      "sha": "e4d5a70526002ff34acd851135c65d03b8c32d77",
+      "date": "2026-07-25T22:37:58Z",
+      "message": "Remove final obsolete breadcrumb navigation rules"
+    },
+    {
+      "sha": "17a5f0cb71b40a8be00f9b04f79af198fb0b094d",
+      "date": "2026-07-25T22:43:29Z",
+      "message": "Run final shared subheader cleanup audit"
+    },
+    {
+      "sha": "162b80897dea6771a7202843b9a0659a8039779d",
+      "date": "2026-07-25T22:43:43Z",
+      "message": "Finish shared page subheader cleanup"
+    },
+    {
+      "sha": "647600b240e5abe8c8d7c9cc1141a2f2c74a5d4b",
+      "date": "2026-07-25T22:48:17Z",
+      "message": "Tighten final shared subheader CSS"
+    },
+    {
+      "sha": "97f5d4339585104b7e52385cb1cf185e9b6a14f1",
+      "date": "2026-07-25T22:48:31Z",
+      "message": "Simplify shared page subheader styling"
+    },
+    {
+      "sha": "a187f5299094ccdb4e5d019beaa59b560985156b",
+      "date": "2026-07-25T23:15:46Z",
+      "message": "Remove obsolete LED matrix ribbons"
+    },
+    {
+      "sha": "6286e49dbc77c6a18e65c6a23321b3f4c73b0650",
+      "date": "2026-07-25T23:15:57Z",
+      "message": "Remove LED matrix ribbons and reveal full hero"
+    },
+    {
+      "sha": "4a1d74e46cadf514746c2741804315f85c22052c",
+      "date": "2026-07-25T23:25:55Z",
+      "message": "Fix full-width panoramic hero banner"
+    },
+    {
+      "sha": "0fabb8416111ee504b87c0f875a20924008ef0a3",
+      "date": "2026-07-25T23:26:09Z",
+      "message": "Restore full-width panoramic hero banner"
+    },
+    {
+      "sha": "b0ea6de4e0afe6e549ddb8a76cfe6e4dd1712499",
+      "date": "2026-07-25T23:56:00Z",
+      "message": "Fix desktop hero framing and add LED edge strips"
+    },
+    {
+      "sha": "633f2e511ae0a86615bb1d2729a8930db60ac14f",
+      "date": "2026-07-25T23:56:11Z",
+      "message": "Fit desktop hero between navigation and page ribbon"
+    },
+    {
+      "sha": "c430f969e48fe603eef7e6845b29405a3585ee19",
+      "date": "2026-07-26T01:07:23Z",
+      "message": "Reset hero to Bootstrap 5.3 carousel"
+    },
+    {
+      "sha": "a02e6ddf60da4f8e3febec2e605731cdf6cffcbd",
+      "date": "2026-07-26T01:07:39Z",
+      "message": "Replace custom hero with Bootstrap carousel"
+    },
+    {
+      "sha": "2c4681f8f92ea9cdc0ce1090fc191c184a3b543b",
+      "date": "2026-07-26T03:47:11Z",
+      "message": "noop"
+    },
+    {
+      "sha": "7934702c6b1b7fe1fe7814d3bfbbea09e2c82ab6",
+      "date": "2026-07-26T03:47:25Z",
+      "message": "test"
+    },
+    {
+      "sha": "27b457001613815e9c4d2b2202d792a7a141d9a2",
+      "date": "2026-07-26T03:47:38Z",
+      "message": "test"
+    },
+    {
+      "sha": "4b92d22a35978554c4f3e1e54b5600336f337c12",
+      "date": "2026-07-26T04:16:48Z",
+      "message": "Replace hero images and remove unused LED banner page"
+    },
+    {
+      "sha": "300f0cdb7ee0679cac2d5e3a2ab5af0735eb4469",
+      "date": "2026-07-26T04:25:11Z",
+      "message": "Delete css/led-banner-magic.css"
+    },
+    {
+      "sha": "5bb6c0f4e14dd0c0b4095cfe7998e4a15069620c",
+      "date": "2026-07-26T04:36:24Z",
+      "message": "Update site-hero.css"
+    },
+    {
+      "sha": "f378042c9547fbe5c9b82822cd9941480f19db3a",
+      "date": "2026-07-26T04:37:40Z",
+      "message": "Update site-hero.css"
+    },
+    {
+      "sha": "56f39dede24d982489d203610dc6da4bcb5c6a98",
+      "date": "2026-07-26T05:32:37Z",
+      "message": "Fix index navigation links"
+    },
+    {
+      "sha": "31fc509a2c9f7fe94043f97b01d12c271ba8fdc0",
+      "date": "2026-07-26T05:45:53Z",
+      "message": "Relabel about page contact nav link"
+    },
+    {
+      "sha": "69e0c08d1727125f3ef33c432fe09e157cb13d7e",
+      "date": "2026-07-26T05:47:21Z",
+      "message": "Use Contact label in shared navigation"
+    },
+    {
+      "sha": "3b773587b5f3701c4e0e86557ae5700d533598d6",
+      "date": "2026-07-26T05:50:38Z",
+      "message": "Add shared ShyneTyme.Works brand dot"
+    },
+    {
+      "sha": "d76ea27e8bd4b4deb719e3e032565cf0f8ca0970",
+      "date": "2026-07-26T05:51:09Z",
+      "message": "Style twinkling ShyneTyme.Works brand dot"
+    },
+    {
+      "sha": "f2fff52ef635beb66281aa8ebcc315c98e3ff840",
+      "date": "2026-07-26T19:26:30Z",
+      "message": "Add brand spacing for lowered twinkle dot"
+    },
+    {
+      "sha": "f77084e78566bcd2777b249cb44bee0d15c64b47",
+      "date": "2026-07-26T19:26:50Z",
+      "message": "Add lowered brand dot override"
+    },
+    {
+      "sha": "683d2f7a1465c507e8d183392076e014ae3de821",
+      "date": "2026-07-26T19:27:15Z",
+      "message": "Load lowered brand dot stylesheet"
+    },
+    {
+      "sha": "ae0d05148e15dcb8459a0c6b3f3c42d079c71477",
+      "date": "2026-07-26T19:33:37Z",
+      "message": "Remove extra brand dot stylesheet loader"
+    },
+    {
+      "sha": "f4f711b7a7c206ada160c5b1ca25a3f80fbea421",
+      "date": "2026-07-26T19:34:10Z",
+      "message": "Move brand dot styling inline in navigation CSS"
+    },
+    {
+      "sha": "21e27fb83573e67c73d8c73563042d7f6165a2c6",
+      "date": "2026-07-26T19:34:15Z",
+      "message": "Remove extra brand dot override file"
+    },
+    {
+      "sha": "3623122ce07c20d9c7f552d2c218afc104e00eae",
+      "date": "2026-07-26T19:37:28Z",
+      "message": "Keep twinkling period inline in ShyneTyme.Works"
+    },
+    {
+      "sha": "053fb987c6dfa078fdfadc28f3cc9ab906499a8f",
+      "date": "2026-07-26T19:38:32Z",
+      "message": "Keep twinkling period inline in navigation brand"
+    },
+    {
+      "sha": "3691431f7f0d1af4b719db54c80055b2d432c416",
+      "date": "2026-07-26T19:45:31Z",
+      "message": "Revert navigation brand to plain ShyneTyme.Works"
+    },
+    {
+      "sha": "22aa01e1aff3e2f4d3ae041b774e20ab6f19e9b2",
+      "date": "2026-07-26T19:46:23Z",
+      "message": "Remove animated brand period styling"
+    },
+    {
+      "sha": "bff69a9bd18e107e82e54bee51c1983df9f0c1bd",
+      "date": "2026-07-26T20:17:59Z",
+      "message": "Add LED Expo media showcase page"
+    },
+    {
+      "sha": "2f7624e576956a134e6b58d149c1e73d64f556ce",
+      "date": "2026-07-26T20:18:39Z",
+      "message": "Add LED Expo to shared navigation"
+    },
+    {
+      "sha": "12b4ea360927faee72e3a20e00f3a112e14c7b62",
+      "date": "2026-07-26T20:20:19Z",
+      "message": "Polish LED Expo media placeholders"
+    },
+    {
+      "sha": "6bd92c4986955cda1f51d1b5f84435cf502422a2",
+      "date": "2026-07-26T20:20:43Z",
+      "message": "Add LED Expo to sitemap"
+    },
+    {
+      "sha": "90d697b0fa5d099c52a26d1163c01c9bd38b3f6e",
+      "date": "2026-07-26T20:57:19Z",
+      "message": "Use shared site banner on LED EXPO"
+    },
+    {
+      "sha": "3057a03315052c02dde1f33059c6e5e2461b6820",
+      "date": "2026-07-26T21:15:37Z",
+      "message": "Populate LED EXPO with Drive media"
+    },
+    {
+      "sha": "c7bfd2dc1acb7d8f93f95c71083859ff9c73cc38",
+      "date": "2026-07-26T21:30:59Z",
+      "message": "Remove navigation flare behavior"
+    },
+    {
+      "sha": "5d6f22ea664703c0b4e6599d244ee22fe65bcfff",
+      "date": "2026-07-26T21:31:32Z",
+      "message": "Simplify navigation highlighting"
+    },
+    {
+      "sha": "16d7a348f4786c756075c2ec0f952ef404d4d6a5",
+      "date": "2026-07-26T21:35:02Z",
+      "message": "Add selectable single LED Expo player"
+    },
+    {
+      "sha": "930be55d984cd845ff6df188ee7a6b8843a36d0e",
+      "date": "2026-07-26T22:51:18Z",
+      "message": "Highlight only active navigation item"
+    },
+    {
+      "sha": "8a3a9cc51af9fa78ba828eb79b43744cc0488819",
+      "date": "2026-07-27T05:32:58Z",
+      "message": "Publish hidden catalog preview page"
+    },
+    {
+      "sha": "74e136ffaaef92d2ebde0f01a83e22e7755c1428",
+      "date": "2026-07-27T05:33:11Z",
+      "message": "Clean public repository README"
+    },
+    {
+      "sha": "4b56e9928ed8acfcc4d99f9b01b954f87b06c9a9",
+      "date": "2026-07-27T05:46:57Z",
+      "message": "Add LEDExpo page from existing expo index"
+    },
+    {
+      "sha": "eeabb70da858ead3e3755dc148ac53e2799b57f1",
+      "date": "2026-07-27T07:16:13Z",
+      "message": "Update preview catalog products and remove excluded items"
+    },
+    {
+      "sha": "9fc185503cc2e51e5f958ef6b16fdbd2199ab6a6",
+      "date": "2026-07-27T07:16:47Z",
+      "message": "Update preview catalog interactions and modal text"
+    },
+    {
+      "sha": "42ac1c0144e94d3c752ac6300ef2985396250357",
+      "date": "2026-07-27T07:17:45Z",
+      "message": "Apply requested live catalog preview cleanup"
+    },
+    {
+      "sha": "741f1a6260ec459764eae42c862bef8380e2e676",
+      "date": "2026-07-27T08:09:10Z",
+      "message": "Add catalog products batch 1"
+    },
+    {
+      "sha": "ab2e90bee1445eca83fed428b8539ac1fca317ce",
+      "date": "2026-07-27T08:10:06Z",
+      "message": "Add catalog products batch 2"
+    },
+    {
+      "sha": "48f0e1613f8770ffd0f5e13a4c9a098130c9c373",
+      "date": "2026-07-27T08:11:04Z",
+      "message": "Add catalog products batch 3"
+    },
+    {
+      "sha": "bfb2644fed02716c07df594564c7389ba8790b4a",
+      "date": "2026-07-27T08:12:04Z",
+      "message": "Add catalog products batch 4"
+    },
+    {
+      "sha": "779cc23a6eb333a290d81cfd62c73a9c55a09de2",
+      "date": "2026-07-27T08:13:08Z",
+      "message": "Add catalog products batch 5"
+    },
+    {
+      "sha": "e5b301f1a57dff1c77f3a39c903cf7c6253d9230",
+      "date": "2026-07-27T08:15:14Z",
+      "message": "Add production catalog styling"
+    },
+    {
+      "sha": "499b7a99b6f4463d2e9bc420c23be7db626f1c6b",
+      "date": "2026-07-27T08:16:16Z",
+      "message": "Build uniform catalog cards and material controls"
+    },
+    {
+      "sha": "476247c6bddb5a1ae74861083a6e74e2af99d209",
+      "date": "2026-07-27T08:17:15Z",
+      "message": "Publish full catalog with material controls"
+    },
+    {
+      "sha": "b0db6d5a45081ea5e4077828e4a26eea7ad0a91b",
+      "date": "2026-07-27T08:18:06Z",
+      "message": "Rename site navigation catalog link"
+    },
+    {
+      "sha": "8d53b02261a8faae00133771581f08c901984a08",
+      "date": "2026-07-27T08:19:07Z",
+      "message": "Redirect old catalog preview to production catalog"
+    },
+    {
+      "sha": "5a0daca49d2636db058520363175cbf78f4252df",
+      "date": "2026-07-27T08:28:49Z",
+      "message": "Replace catalog category buttons with select filter"
+    },
+    {
+      "sha": "0eef7a99908e424d87521976e8aaed0f08061362",
+      "date": "2026-07-27T08:30:15Z",
+      "message": "Use real category dropdown filtering"
+    },
+    {
+      "sha": "ed56a29e544fa0d6ae0d97352a37560ed33f67ef",
+      "date": "2026-07-27T08:31:25Z",
+      "message": "Style catalog category select"
+    },
+    {
+      "sha": "a24df7f2e9a444b7abcc0c9c3bf837752bfb98fc",
+      "date": "2026-07-27T08:34:00Z",
+      "message": "Fix catalog card overlap and action order"
+    },
+    {
+      "sha": "c6ebf8d3308b85bc32977c2255b30a6840395e57",
+      "date": "2026-07-27T08:35:06Z",
+      "message": "Load catalog card overlap fix"
+    },
+    {
+      "sha": "abbf25147af0e90fe467692883d2e409dd411394",
+      "date": "2026-07-27T08:50:17Z",
+      "message": "Add correct 1-channel controller image and price"
+    },
+    {
+      "sha": "1a64f02d6f6af24135868d689bb90c68d8487284",
+      "date": "2026-07-27T08:53:01Z",
+      "message": "Remove broken controller image override"
+    },
+    {
+      "sha": "41f16f02c2284b490926ccd07544954247595c48",
+      "date": "2026-07-27T08:57:26Z",
+      "message": "Add correct 1-channel controller image and price"
+    },
+    {
+      "sha": "2bdab6f6a42dc355bea39cd66b53a5bbcc71577f",
+      "date": "2026-07-27T09:01:19Z",
+      "message": "Use correct 1CH and 2CH controller images"
+    },
+    {
+      "sha": "87eb8d1f7e9981a3d88d31adab4ece8e95da2895",
+      "date": "2026-07-27T09:10:26Z",
+      "message": "Add correct 2-channel controller image"
+    },
+    {
+      "sha": "12fcbeb3eb92ecf432d8b65c3cf4242eebbb6533",
+      "date": "2026-07-27T11:02:01Z",
+      "message": "Revert forced catalog card heights and separate details section"
+    },
+    {
+      "sha": "ac82914946dc08ccf014dc803da443223279fac2",
+      "date": "2026-07-27T11:02:29Z",
+      "message": "Delete css/catalog-card-layout-fix.css"
+    },
+    {
+      "sha": "aff1df04806327a729c679ef6f9fa7dfc296e342",
+      "date": "2026-07-27T11:02:58Z",
+      "message": "Place product details in its own card section"
+    },
+    {
+      "sha": "b6d47bbed446d781233047f961757537a80a627f",
+      "date": "2026-07-27T11:03:51Z",
+      "message": "Remove catalog height workaround stylesheet"
+    },
+    {
+      "sha": "05ea8eb459b37e61e007d317d1657982d348edaf",
+      "date": "2026-07-27T11:10:03Z",
+      "message": "Remove LED EXPO from shared site navigation"
+    },
+    {
+      "sha": "481cdbea592a0e81d1575b2e44f0430ae670e41c",
+      "date": "2026-07-27T11:10:58Z",
+      "message": "Remove LED EXPO link from catalog navigation"
+    },
+    {
+      "sha": "330bd570fe152a81a774ca98e460671ac5d2212c",
+      "date": "2026-07-27T11:11:19Z",
+      "message": "Remove LED EXPO from sitemap"
+    },
+    {
+      "sha": "712c0e79daccc53d2d8f76345d102ccd1656081f",
+      "date": "2026-07-27T11:11:27Z",
+      "message": "Remove obsolete LED EXPO page"
+    },
+    {
+      "sha": "52c5d7d21e377e7d8b3ef314e50f46a507c87394",
+      "date": "2026-07-27T11:30:59Z",
+      "message": "Move LED EXPO page into root index"
+    },
+    {
+      "sha": "ffc9d6cae909b44df4ffad4bf868ee6420df0272",
+      "date": "2026-07-27T11:32:49Z",
+      "message": "Revert uniform catalog image and content heights"
+    },
+    {
+      "sha": "ad4b90a32ee11d1f60d957949ff015187dcd10d7",
+      "date": "2026-07-27T11:34:56Z",
+      "message": "Bust catalog cache after natural sizing revert"
+    },
+    {
+      "sha": "f7a4a549d9eb28cca0678e52842e5e93551b4f08",
+      "date": "2026-07-27T12:47:25Z",
+      "message": "Restore original ShyneTyme.Works homepage"
+    },
+    {
+      "sha": "b91c35f26524e6d888014dad44c06818ea895b9a",
+      "date": "2026-07-27T12:48:31Z",
+      "message": "Add LED EXPO page and restore site navigation"
+    },
+    {
+      "sha": "8fbe386dc822e7f10033231e505cecd4bcd90d58",
+      "date": "2026-07-27T12:50:00Z",
+      "message": "Remove incorrectly capitalized LED EXPO duplicate"
+    },
+    {
+      "sha": "10a1bc550a8f5a645238e6aeee4998134c8ad8a7",
+      "date": "2026-07-28T02:56:59Z",
+      "message": "Expand contact form and remove map panel"
+    },
+    {
+      "sha": "e23fd35d4a3bfa810b9e5ce2af4697206bd26a5c",
+      "date": "2026-07-28T03:44:28Z",
+      "message": "Update contact project type options"
+    },
+    {
+      "sha": "7ce5627195ba6bf694aed38a9453e61f43e9e521",
+      "date": "2026-07-28T04:00:35Z",
+      "message": "Align small bike sizes with adult viewport baseline"
+    },
+    {
+      "sha": "6a57c95285cad2f948d3904a7ee89274eb3e1434",
+      "date": "2026-07-28T04:09:09Z",
+      "message": "Center small bike sizes in the adult viewport position"
+    },
+    {
+      "sha": "1cb21b8c07a7852741552588624324ea87d2ba27",
+      "date": "2026-07-28T04:39:27Z",
+      "message": "Reuse adult bike transform for small frame options"
+    },
+    {
+      "sha": "5554e06ee9d5390aaaf22d1ad9fb2258770678e0",
+      "date": "2026-07-28T04:42:58Z",
+      "message": "Add LED Sim Auto page"
+    },
+    {
+      "sha": "445396bfb4f01475b5163190c2c2afc799f6b1d7",
+      "date": "2026-07-28T04:43:24Z",
+      "message": "Add LED Sim Auto styles"
+    },
+    {
+      "sha": "1c6acdc14f6484b75c0ebf3bbb5ef82242cdb397",
+      "date": "2026-07-28T04:43:38Z",
+      "message": "Add LED Sim Auto interactions"
+    },
+    {
+      "sha": "7ade94ee2f7704faedfe97e366edf774c4f9c33f",
+      "date": "2026-07-28T04:44:48Z",
+      "message": "Add LED Sim Auto navigation"
+    },
+    {
+      "sha": "1583f26164aed3ac263054eaeac605da25d0a276",
+      "date": "2026-07-28T05:54:02Z",
+      "message": "test simulator asset path"
+    },
+    {
+      "sha": "9103544bd868800ac14083eee29168f7f709c969",
+      "date": "2026-07-28T07:12:23Z",
+      "message": "Rebuild LED Sim Auto with realistic vehicle views"
+    },
+    {
+      "sha": "04e692ca4505c315cd0e4d64f001ba9edf12bc81",
+      "date": "2026-07-28T07:26:47Z",
+      "message": "Finish realistic LED Sim Auto rebuild"
+    },
+    {
+      "sha": "527a2c1c82723404c0995c78a3fd12d1dfcd6259",
+      "date": "2026-07-28T07:53:50Z",
+      "message": "Use verified image assets for LED Sim Auto"
+    },
+    {
+      "sha": "6053fa17de866de49b8a10b0ec96d6c4c78625d0",
+      "date": "2026-07-28T10:14:06Z",
+      "message": "Integrate Adobe sedan SVG zone pack"
+    },
+    {
+      "sha": "811614464125c9014760910f0bc5f6dc32f9ebdc",
+      "date": "2026-07-28T12:24:08Z",
+      "message": "Put LED Sim Auto under construction"
+    },
+    {
+      "sha": "d5613d2becdbad03efb2ac4172e7863b60ddbadb",
+      "date": "2026-07-28T12:25:49Z",
+      "message": "Fix LED Sim Auto construction navigation"
+    },
+    {
+      "sha": "d10468f72db5e892432583da796931fec0c3e650",
+      "date": "2026-07-28T22:02:17Z",
+      "message": "Consolidate LED bike simulator into one script"
+    },
+    {
+      "sha": "e340f09707a21a6c942605b463d12f1a64c8049c",
+      "date": "2026-07-28T22:50:50Z",
+      "message": "Remove bike preview toolbar and instructions panel"
+    },
+    {
+      "sha": "a72dee8cf46ea640ea1b6aca6bd4739b968a9946",
+      "date": "2026-07-28T22:57:37Z",
+      "message": "Simplify bike preview and make Budget a dropdown"
+    },
+    {
+      "sha": "18d73843b0350fb3439891359b236c3da6f8b867",
+      "date": "2026-07-28T23:13:41Z",
+      "message": "Align simulator navigation and mobile previews"
+    },
+    {
+      "sha": "52346a393ff3172942cf568d5b2f4d4695cf47fa",
+      "date": "2026-07-28T23:18:28Z",
+      "message": "Remove Home Sim intro block"
+    },
+    {
+      "sha": "a4ef5609e2db352e6d47746b87cc2c6e0b24de0a",
+      "date": "2026-07-28T23:22:24Z",
+      "message": "Move Home Sim preview rules into first accordion"
+    },
+    {
+      "sha": "f7bf11c7280ff0c965abee3881495d26b1d056c8",
+      "date": "2026-07-28T23:29:08Z",
+      "message": "Remove Home Sim preview disclaimer"
+    },
+    {
+      "sha": "4c695506dc2fcc67e953c022f5ca968103e8970b",
+      "date": "2026-07-29T03:28:47Z",
+      "message": "Standardize catalog image and card heights"
+    },
+    {
+      "sha": "5fdf79aadfd5546f4077e308c2a1114d73072df8",
+      "date": "2026-07-29T03:49:27Z",
+      "message": "Fix responsive catalog images without overlap"
+    },
+    {
+      "sha": "d28c5524f39f66f85c9ed3a95b34980ad88e3ffc",
+      "date": "2026-07-29T03:53:17Z",
+      "message": "Correct catalog banner image class"
+    },
+    {
+      "sha": "f8d8ec25b6356e44a8fc0e9f460fb2b9f6f7a384",
+      "date": "2026-07-29T06:16:49Z",
+      "message": "Remove broken two-channel catalog image override"
+    },
+    {
+      "sha": "952b795d5f9538c1a2aa9604f398c8fd431a41dd",
+      "date": "2026-07-29T09:30:11Z",
+      "message": "Compact Home Sim preview on phones"
+    },
+    {
+      "sha": "cac0ee54b0b3248688dfc79700762bdc8c9c67de",
+      "date": "2026-07-29T09:31:22Z",
+      "message": "Refresh Home Sim mobile stylesheet"
+    },
+    {
+      "sha": "cdca61cea69b2e5dd7c4a914cdaa5e1ca879c0d1",
+      "date": "2026-07-29T09:32:36Z",
+      "message": "Preserve Home Sim page metadata"
+    },
+    {
+      "sha": "c9c1b4758c57620ac7e29b2627f170ddefaa1bfa",
+      "date": "2026-07-30T02:00:58Z",
+      "message": "Deploy SIM Auto with LED Bike Simulator effects"
+    },
+    {
+      "sha": "c16314695014b37319a16ba598534009571dd2eb",
+      "date": "2026-07-30T02:24:27Z",
+      "message": "Add GoFundMe support button to About Deke"
+    },
+    {
+      "sha": "edd9c34441320b24bddc370f6dc1c99016ae009f",
+      "date": "2026-07-30T02:33:47Z",
+      "message": "Update Cash App tag on About Deke"
+    },
+    {
+      "sha": "01018969583233101202bee9b791aedf67ce2f6a",
+      "date": "2026-07-30T02:41:19Z",
+      "message": "Fix SIM Auto alignment and RGB twinkle"
+    },
+    {
+      "sha": "b3aec20079619ea60f4cb5adae1b458bb9a73741",
+      "date": "2026-07-30T05:09:03Z",
+      "message": "chore(sim-auto): start multi-effect preflight"
+    },
+    {
+      "sha": "b3854881c502e648fc209c96614398c6b3e4b398",
+      "date": "2026-07-30T05:09:18Z",
+      "message": "chore(sim-auto): remove temporary preflight marker"
+    },
+    {
+      "sha": "7fc5ac2a7dd965187b7db32f42e9bb45cf4d57df",
+      "date": "2026-07-30T05:09:35Z",
+      "message": "chore(sim-auto): start multi-effect preflight"
+    },
+    {
+      "sha": "6361b7d1f3d48e060c67504b7d9f0ba9d7e47919",
+      "date": "2026-07-30T05:09:49Z",
+      "message": "chore(sim-auto): remove temporary preflight marker"
+    },
+    {
+      "sha": "82488592510ba9cf3ed901dfcd73aa6cbcf2203a",
+      "date": "2026-07-30T05:23:30Z",
+      "message": "Add breathing and two-color twinkle to SIM Auto"
+    },
+    {
+      "sha": "63937329eecc76272ce2663003cecbdf174b98a4",
+      "date": "2026-07-30T06:08:20Z",
+      "message": "Move SIM Auto summary below preview"
+    },
+    {
+      "sha": "949621873e6ef43e2043c0056821a1076773b66c",
+      "date": "2026-07-30T07:21:55Z",
+      "message": "x"
+    },
+    {
+      "sha": "90c00cba1747fb0d4028bee011b816861639f67e",
+      "date": "2026-07-30T07:22:17Z",
+      "message": "Remove temporary preflight marker"
+    },
+    {
+      "sha": "945b70bf57dbc9ee57110fa0235301d701510d4c",
+      "date": "2026-07-30T07:37:35Z",
+      "message": "Unify simulator headers and add Auto planning range"
+    },
+    {
+      "sha": "19f31a90141acee42b126a5f02c5fe7c6a58a743",
+      "date": "2026-07-30T20:02:41Z",
+      "message": "Compact About page support links into icons"
+    },
+    {
+      "sha": "bc9c676091289a749a573a43e4b803552468406b",
+      "date": "2026-07-30T20:34:18Z",
+      "message": "Use clean SIM Auto car and default all zones off"
+    },
+    {
+      "sha": "c10740ce84dfdbe17674e4b84927988a979fed50",
+      "date": "2026-07-31T05:21:09Z",
+      "message": "Move LED Auto simulator into root hierarchy"
+    },
+    {
+      "sha": "86bc40777115e65d95ec1ef08ef7642835f4a6b1",
+      "date": "2026-07-31T05:21:45Z",
+      "message": "Point shared Sim navigation to root Auto page"
+    },
+    {
+      "sha": "2f68c867b2f8621d5a4a1c2cd61b00009dad48ee",
+      "date": "2026-07-31T05:22:10Z",
+      "message": "Add root Auto simulator to sitemap"
+    },
+    {
+      "sha": "1cc18005cab242f948ea1453047af466a1d40fcb",
+      "date": "2026-07-31T05:22:38Z",
+      "message": "Document root Auto simulator route"
+    },
+    {
+      "sha": "cefae841b76356e1083ba75f2a1d39e3222a0e3d",
+      "date": "2026-07-31T05:22:48Z",
+      "message": "Update Auto simulator path in alignment notes"
+    },
+    {
+      "sha": "779aa649c98730aaed36ac995db165e35ae9b438",
+      "date": "2026-07-31T05:22:56Z",
+      "message": "Remove nested Auto simulator page"
+    },
+    {
+      "sha": "67b8744c223b088f55cbd9f935ab6244242aa411",
+      "date": "2026-08-05T21:16:28Z",
+      "message": "Build BTF project catalog"
+    },
+    {
+      "sha": "1614e19a2c0fd9ba95e82d85b863fdc37b2fc515",
+      "date": "2026-08-05T22:48:31Z",
+      "message": "Connect catalog selections to full project requests"
+    },
+    {
+      "sha": "b9531f889d389a45d2a9b22cd0c7a5b8ec8ae897",
+      "date": "2026-08-05T23:29:25Z",
+      "message": "Implement Chuck customer design chain"
+    },
+    {
+      "sha": "2a73f7b139a1d6a4b06898c79d1c733730418259",
+      "date": "2026-08-06T01:08:39Z",
+      "message": "Commit completed SIM foundation and approved Home geometry"
+    },
+    {
+      "sha": "a6b2dd38c659654a0a25301b3ffd3122d063cc62",
+      "date": "2026-08-06T02:47:50Z",
+      "message": "Build complete BTF catalog from every quotation row"
+    },
+    {
+      "sha": "1e190ec46d720595b1a67d0cca8e6a44daa010e2",
+      "date": "2026-08-06T04:31:01Z",
+      "message": "Deploy fixed Home SIM and unify simulator controls"
+    },
+    {
+      "sha": "d76374ebaa8def9a42e823d3cdcb5906e9bef06f",
+      "date": "2026-08-06T05:43:24Z",
+      "message": "Fix Home SIM live-view controller startup"
+    },
+    {
+      "sha": "f83b9a5ed8e2f6ba46a2637d301f50b58d218f1e",
+      "date": "2026-08-06T07:41:58Z",
+      "message": "Restore catalog theme and compact Chuck cloud"
+    },
+    {
+      "sha": "29dc87d41cc6ae85b55bebbb4fc0503a10615ec6",
+      "date": "2026-08-06T07:44:53Z",
+      "message": "Fix Pages deployment race after history refresh"
+    },
+    {
+      "sha": "d509c0c2ab6fadc35f397adf42689e9078c7d6e4",
+      "date": "2026-08-06T08:11:18Z",
+      "message": "Finalize approved Home SIM on main"
+    },
+    {
+      "sha": "5beaf1b25537d84a55c32b1dab31f1d928d31c56",
+      "date": "2026-08-06T08:45:17Z",
+      "message": "Add approved Home front image chunk 1"
+    },
+    {
+      "sha": "a12ba1bab5d82b54c2df58b00036399fbe091676",
+      "date": "2026-08-06T08:46:37Z",
+      "message": "Add approved Home front image chunk 2"
+    },
+    {
+      "sha": "dbac929d768e71d55082b4e03d89b5636fcfc200",
+      "date": "2026-08-06T08:47:13Z",
+      "message": "Add approved Home front image chunk 3"
+    },
+    {
+      "sha": "54477c6e06e55b435a3a3b4a332937fb65d031ed",
+      "date": "2026-08-06T08:48:04Z",
+      "message": "Add approved Home back image chunk 1"
+    },
+    {
+      "sha": "903e3fffc31495921cd81239cc4c32da2fbe41de",
+      "date": "2026-08-06T08:48:58Z",
+      "message": "Add approved Home back image chunk 2"
+    },
+    {
+      "sha": "cd38a3a3547ca5324f88551bb95d0f4a0bb1e476",
+      "date": "2026-08-06T08:49:46Z",
+      "message": "Add approved Home back image chunk 3"
+    },
+    {
+      "sha": "da4adc41692a34724c31326513128ab350de51c8",
+      "date": "2026-08-06T08:50:43Z",
+      "message": "Install approved Home image chunk loader"
+    },
+    {
+      "sha": "f5e9d36b71bd4ecae01ddf5f2ad8d2ab2a6eedb4",
+      "date": "2026-08-06T08:51:15Z",
+      "message": "Load approved Home image chunks before controller"
+    },
+    {
+      "sha": "8799c2b54bafdebca2549acda8922474418695c6",
+      "date": "2026-08-06T09:05:42Z",
+      "message": "Add unified Auto sequence styling"
+    },
+    {
+      "sha": "a2618f3db4b56302ebda226c1acbc849ec9f014f",
+      "date": "2026-08-06T09:06:58Z",
+      "message": "Finish the Auto ten-step sequence controller"
+    },
+    {
+      "sha": "9621f4b568eb29eb0af64c362c11d8367f2da81f",
+      "date": "2026-08-06T09:07:36Z",
+      "message": "Deploy the completed Auto sequence system"
+    },
+    {
+      "sha": "77f29bdf8d9a2e87b2f1645cee3bb1160084e957",
+      "date": "2026-08-06T09:09:59Z",
+      "message": "Ensure independent Auto effects override old global styling"
+    },
+    {
+      "sha": "e37943aea99c953403e0a1b43ed39716590f756e",
+      "date": "2026-08-06T09:14:10Z",
+      "message": "Make Auto sequence storage failure-safe"
+    },
+    {
+      "sha": "a68f9070a7211fd01c7d90b5646355bd6d10edd1",
+      "date": "2026-08-07T02:35:55Z",
+      "message": "Stage assets-folder consolidation"
+    },
+    {
+      "sha": "2a6cecbe09c4f0c32d660ad549e8a5abedc620af",
+      "date": "2026-08-07T02:37:26Z",
+      "message": "Skip non-UTF8 HTML during assets consolidation"
+    },
+    {
+      "sha": "2d5df3260ec960fcabc582cb3ea911d091da0c25",
+      "date": "2026-08-07T02:39:24Z",
+      "message": "Use applicable JavaScript syntax checks"
+    },
+    {
+      "sha": "012ff8e790c84e49274ecbef2ce3afe9a0ff656f",
+      "date": "2026-08-07T02:41:00Z",
+      "message": "Skip non-UTF8 stylesheet artifacts"
+    },
+    {
+      "sha": "1d4ee29aa2365650f0e49fd3de3490227ef058a6",
+      "date": "2026-08-07T02:42:50Z",
+      "message": "Exclude temporary workflow from path audit"
+    },
+    {
+      "sha": "b7bcba06bae97eec67f9c1903ffcfdff81e2e62c",
+      "date": "2026-08-07T02:43:04Z",
+      "message": "Consolidate support folders under assets"
+    },
+    {
+      "sha": "cc10d1ce8187d83d238914042bd5e24af6726e24",
+      "date": "2026-08-07T02:49:50Z",
+      "message": "noop"
+    },
+    {
+      "sha": "b1a8b6f3ecbd4aff2974a734fde9e54300971bf2",
+      "date": "2026-08-07T02:50:37Z",
+      "message": "x"
+    },
+    {
+      "sha": "ff6ec89fda4c688d1f9a1659466dee648e7f58e7",
+      "date": "2026-08-07T02:51:22Z",
+      "message": "x"
+    },
+    {
+      "sha": "c951f64792e994eb381ae7b2f8d2b0a18a892522",
+      "date": "2026-08-07T02:52:47Z",
+      "message": "Remove cleanup marker"
+    },
+    {
+      "sha": "8405cf0fbecaae1f9c43c5a740166c5983a3f901",
+      "date": "2026-08-07T02:53:00Z",
+      "message": "Remove temporary marker"
+    },
+    {
+      "sha": "cd4cb2eb2be0a03b72ba97241ca45f12da8ba78d",
+      "date": "2026-08-07T02:53:14Z",
+      "message": "Remove temporary marker"
+    },
+    {
+      "sha": "932aa8f863a4e100756aa903d9de31a9f13510d9",
+      "date": "2026-08-07T02:53:24Z",
+      "message": "Remove temporary marker"
+    },
+    {
+      "sha": "ec66e01f8778d0d980ebd9e75bbde897dc952ef8",
+      "date": "2026-08-07T02:53:43Z",
+      "message": "Remove temporary marker"
+    },
+    {
+      "sha": "909977c999f025cf1a46634820e8820d616da302",
+      "date": "2026-08-07T02:55:30Z",
+      "message": "Remove temporary marker"
+    },
+    {
+      "sha": "05dfdeb021a094d890aa0b7b64e931e8d3c0379a",
+      "date": "2026-08-07T03:03:47Z",
+      "message": "Rename LED simulator pages"
+    },
+    {
+      "sha": "3799ab4a46e70ce7efa6e9b21204b9636fae74aa",
+      "date": "2026-08-07T03:13:49Z",
+      "message": "Create AGENTS.md with web development guidelines"
+    },
+    {
+      "sha": "8e3be1df0ec3c808cb9aade9f8b9ec8e33e113f0",
+      "date": "2026-08-07T04:23:54Z",
+      "message": "fix: repair simulator routes and asset links"
+    },
+    {
+      "sha": "b526fa352cffb5523e3a7a5506a500f7db959498",
+      "date": "2026-08-07T04:40:17Z",
+      "message": "fix: resolve simulator navigation from site root"
+    },
+    {
+      "sha": "e799551306149ddae30fa4dadb10bf12f9767898",
+      "date": "2026-08-07T04:50:56Z",
+      "message": "fix: refresh shared navigation asset revision"
+    },
+    {
+      "sha": "fc932229ab392c54d2eba7250c264c7b9769d136",
+      "date": "2026-08-07T04:55:51Z",
+      "message": "x"
+    },
+    {
+      "sha": "08a56b6e68d81b0a954f9bb589f7fd801c7f8042",
+      "date": "2026-08-07T04:56:30Z",
+      "message": "fix: force corrected simulator navigation cache refresh"
+    },
+    {
+      "sha": "6275eb986f5de6927bc23abf7daee918ec231789",
+      "date": "2026-08-07T04:57:17Z",
+      "message": "fix: refresh Auto SIM embedded navigation asset"
+    },
+    {
+      "sha": "845445d6a0ade60cd2cb8eec922f0dfdb7f4d476",
+      "date": "2026-08-07T07:51:06Z",
+      "message": "fix: restore Auto SIM theme breadcrumb and preview frame"
+    },
+    {
+      "sha": "1fd7b1e3a99aa330c2bcdbe8fafbaceeec3d06bb",
+      "date": "2026-08-07T07:53:20Z",
+      "message": "fix: refresh Auto SIM package cache key"
+    },
+    {
+      "sha": "7cc46cd8862b0c425f40e65ad4f8a1220a59396a",
+      "date": "2026-08-08T04:50:14Z",
+      "message": "Replace Home SIM front viewport with under-construction image"
+    },
+    {
+      "sha": "964edd5887ab847d5bdb4e19fee678c086abe283",
+      "date": "2026-08-08T04:50:19Z",
+      "message": "Clear obsolete Home SIM front image chunk two"
+    },
+    {
+      "sha": "f18ee4c2d285665236a1ba7e0e10fd30fcfd8299",
+      "date": "2026-08-08T04:50:24Z",
+      "message": "Clear obsolete Home SIM front image chunk three"
+    },
+    {
+      "sha": "75cf1552aa82dd2a153da8ad0a17bc1e960579c5",
+      "date": "2026-08-08T04:51:27Z",
+      "message": "Fix Home SIM rear scene key so viewport can initialize"
+    },
+    {
+      "sha": "5b3e19e0d84a10714de721a2516d42a2fa1de9e4",
+      "date": "2026-08-08T06:47:17Z",
+      "message": "Update Home SIM construction image to 310-GET-ACME"
+    },
+    {
+      "sha": "5507eb6b8c8945b8230eb71774613ee28878944d",
+      "date": "2026-08-08T06:49:55Z",
+      "message": "Update Home SIM construction image with 310-GET-ACME sign"
+    },
+    {
+      "sha": "0ec501d16dd0a23e3b8bc659bf1cdaa6dbe66758",
+      "date": "2026-08-08T06:50:44Z",
+      "message": "Add Home SIM construction image chunk two"
+    },
+    {
+      "sha": "998302c71d743105e886ace77af18af2c426961e",
+      "date": "2026-08-08T06:51:12Z",
+      "message": "Add Home SIM construction image chunk three"
+    },
+    {
+      "sha": "18c97f86e5544264123126fbb8ed59c1c707ed55",
+      "date": "2026-08-08T06:52:42Z",
+      "message": "Replace Home SIM front viewport with approved construction image"
+    }
+  ]
+}

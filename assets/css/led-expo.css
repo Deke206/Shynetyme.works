@@ -1,0 +1,132 @@
+/* LEDexpo.html — page-specific styles only. */
+
+.ledexpo-page {
+      min-height: 100vh;
+      color: #eaf4ff;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(49, 230, 255, .11), transparent 28rem),
+        radial-gradient(circle at 88% 18%, rgba(255, 90, 185, .09), transparent 30rem),
+        #030918;
+    }
+    .ledexpo-eyebrow {
+      margin: 0 0 .7rem;
+      color: var(--cyan, #31e6ff);
+      font-family: var(--heading-font, "Oxanium", sans-serif);
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .ledexpo-section { padding: 4rem 0; }
+    .ledexpo-section + .ledexpo-section { border-top: 1px solid rgba(49, 230, 255, .16); }
+    .ledexpo-panel {
+      overflow: hidden;
+      border: 1px solid rgba(49, 230, 255, .34);
+      border-radius: 1rem;
+      background: linear-gradient(150deg, rgba(8, 27, 55, .92), rgba(13, 12, 38, .94));
+      box-shadow: 0 18px 42px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .06);
+    }
+    .ledexpo-video-player { width: 100%; margin: 0; }
+    .ledexpo-video-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-bottom: 1px solid rgba(49, 230, 255, .24);
+      background: #000;
+    }
+    .ledexpo-video-embed { display: block; width: 100%; height: 100%; border: 0; background: #000; }
+    .ledexpo-video-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(49, 230, 255, .2);
+      background: rgba(3, 9, 24, .56);
+    }
+    .ledexpo-video-choice {
+      padding: .68rem 1rem;
+      border: 1px solid rgba(49, 230, 255, .38);
+      border-radius: .7rem;
+      color: #dcecff;
+      background: rgba(6, 21, 47, .9);
+      font-family: var(--heading-font, "Oxanium", sans-serif);
+      font-weight: 750;
+      letter-spacing: .025em;
+      cursor: pointer;
+    }
+    .ledexpo-video-choice:hover,
+    .ledexpo-video-choice:focus-visible,
+    .ledexpo-video-choice[aria-pressed="true"] {
+      color: #fff;
+      border-color: var(--cyan, #31e6ff);
+      background: rgba(20, 48, 82, .96);
+    }
+    .ledexpo-video-choice[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--cyan, #31e6ff); }
+    .ledexpo-video-copy { padding: 1.35rem 1.5rem 1.55rem; }
+    .ledexpo-video-copy h3,
+    .ledexpo-image-description h3 {
+      color: var(--cyan, #31e6ff);
+      font-family: var(--heading-font, "Oxanium", sans-serif);
+      font-weight: 750;
+    }
+    .ledexpo-media-date {
+      margin: 0 0 .65rem;
+      color: #98afc8;
+      font-size: .84rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .ledexpo-gallery-list { display: grid; gap: 1.5rem; }
+    .ledexpo-gallery-item { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); }
+    .ledexpo-image-frame {
+      position: relative;
+      display: grid;
+      min-height: 330px;
+      place-items: center;
+      overflow: hidden;
+      border-right: 1px solid rgba(49, 230, 255, .24);
+      background: #050c1c;
+    }
+    .ledexpo-image-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 330px;
+      max-height: 78vh;
+      object-fit: contain;
+      background: #020711;
+    }
+    .ledexpo-image-date {
+      position: absolute;
+      right: .8rem;
+      bottom: .7rem;
+      z-index: 2;
+      padding: .35rem .55rem;
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: .45rem;
+      color: #fff;
+      background: rgba(3, 9, 24, .86);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      backdrop-filter: blur(8px);
+    }
+    .ledexpo-image-description {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .ledexpo-image-description h3 { margin-bottom: .7rem; }
+    .ledexpo-image-description p { margin-bottom: 0; color: #c7d6e7; }
+    @media (max-width: 767.98px) {
+      .ledexpo-video-selector { display: grid; grid-template-columns: 1fr; }
+      .ledexpo-video-choice { width: 100%; text-align: left; }
+      .ledexpo-gallery-item { grid-template-columns: 1fr; }
+      .ledexpo-image-frame {
+        min-height: 250px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(49, 230, 255, .24);
+      }
+      .ledexpo-image-frame img { min-height: 250px; }
+    }
