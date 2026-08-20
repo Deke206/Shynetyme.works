@@ -1,5 +1,5 @@
-/* Auto SIM viewport object only. Shared controls live in sim-controls.css. */
-.ledautosim-page .sim-viewport{
+/* Home SIM viewport object only. Shared controls live in sim-controls.css. */
+.home-sim-page .sim-viewport{
   position:absolute;
   inset:0;
   display:grid;
@@ -7,7 +7,7 @@
   overflow:hidden;
   background:#020610;
 }
-.ledautosim-page .sim-viewport img{
+.home-sim-page .sim-viewport img{
   display:block;
   width:100%;
   height:100%;
@@ -16,7 +16,7 @@
   user-select:none;
   -webkit-user-drag:none;
 }
-.ledautosim-page .auto-view-label{
+.home-sim-page .home-view-label{
   position:absolute;
   left:12px;
   bottom:calc(var(--sim-dock-h) + 10px);
