@@ -1,0 +1,43 @@
+name: Build ESP32 #2 WLED Orchestrator
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ESP32/ESP32-2-Orchestrator/**'
+      - '.github/workflows/build-esp32-2-wled.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Shynetyme repo
+        uses: actions/checkout@v4
+
+      - name: Get WLED 16.0.1 source
+        run: git clone --depth 1 --branch v16.0.1 https://github.com/wled/WLED.git WLED
+
+      - name: Add Shynetyme BLE usermod and build config
+        run: |
+          cp -r ESP32/ESP32-2-Orchestrator/usermods/ShynetymeBLE WLED/usermods/ShynetymeBLE
+          cp ESP32/ESP32-2-Orchestrator/platformio_override.ini WLED/platformio_override.ini
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r WLED/requirements.txt
+
+      - name: Build one combined firmware image
+        working-directory: WLED
+        run: pio run -e Shynetyme_ESP32
+
+      - name: Collect firmware
+        run: |
+          mkdir -p out
+          cp WLED/.pio/build/Shynetyme_ESP32/firmware.bin out/Shynetyme_ESP32_2_WLED_BLE.bin
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Shynetyme-ESP32-2-WLED-BLE
+          path: out/Shynetyme_ESP32_2_WLED_BLE.bin
