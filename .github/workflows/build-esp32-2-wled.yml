@@ -5,10 +5,12 @@ on:
   push:
     paths:
       - 'ESP32/ESP32-2-Orchestrator/**'
+      - '!ESP32/ESP32-2-Orchestrator/firmware/**'
       - '.github/workflows/build-esp32-2-wled.yml'
   pull_request:
     paths:
       - 'ESP32/ESP32-2-Orchestrator/**'
+      - '!ESP32/ESP32-2-Orchestrator/firmware/**'
       - '.github/workflows/build-esp32-2-wled.yml'
 
 permissions:
@@ -37,12 +39,15 @@ jobs:
       - name: Build one combined firmware image
         id: fwbuild
         working-directory: WLED
-        run: pio run -e Shynetyme_ESP32
+        shell: bash
+        run: |
+          mkdir -p ../ESP32/ESP32-2-Orchestrator/firmware
+          set -o pipefail
+          pio run -e Shynetyme_ESP32 2>&1 | tee ../ESP32/ESP32-2-Orchestrator/firmware/BUILD-LOG.txt
 
       - name: Collect firmware
         if: success()
         run: |
-          mkdir -p ESP32/ESP32-2-Orchestrator/firmware
           cp WLED/.pio/build/Shynetyme_ESP32/firmware.bin ESP32/ESP32-2-Orchestrator/firmware/Shynetyme_ESP32_2_WLED_BLE.bin
 
       - name: Write build status
@@ -56,7 +61,7 @@ jobs:
           fi
           date -u +"%Y-%m-%dT%H:%M:%SZ" >> ESP32/ESP32-2-Orchestrator/firmware/BUILD-STATUS.txt
 
-      - name: Commit firmware or failure marker back to repo
+      - name: Commit firmware, status, and log back to repo
         if: always() && github.event_name == 'push'
         run: |
           git config user.name "github-actions[bot]"
