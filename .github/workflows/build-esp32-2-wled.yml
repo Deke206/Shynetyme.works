@@ -6,6 +6,10 @@ on:
     paths:
       - 'ESP32/ESP32-2-Orchestrator/**'
       - '.github/workflows/build-esp32-2-wled.yml'
+  pull_request:
+    paths:
+      - 'ESP32/ESP32-2-Orchestrator/**'
+      - '.github/workflows/build-esp32-2-wled.yml'
 
 permissions:
   contents: write
@@ -53,7 +57,7 @@ jobs:
           date -u +"%Y-%m-%dT%H:%M:%SZ" >> ESP32/ESP32-2-Orchestrator/firmware/BUILD-STATUS.txt
 
       - name: Commit firmware or failure marker back to repo
-        if: always()
+        if: always() && github.event_name == 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
