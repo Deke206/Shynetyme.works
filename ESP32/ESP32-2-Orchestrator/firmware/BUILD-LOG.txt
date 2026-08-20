@@ -1,0 +1,1818 @@
+********************************************************************************
+If you like PlatformIO, please:
+- star it on GitHub > https://github.com/platformio/platformio-core
+- follow us on LinkedIn to stay up-to-date on the latest project news > https://www.linkedin.com/company/platformio/
+- try PlatformIO IDE for embedded development > https://platformio.org/platformio-ide
+********************************************************************************
+
+Processing Shynetyme_ESP32 (board: esp32dev; platform: https://github.com/tasmota/platform-espressif32/releases/download/2024.06.00/platform-espressif32.zip; framework: arduino)
+--------------------------------------------------------------------------------
+Platform Manager: Installing https://github.com/tasmota/platform-espressif32/releases/download/2024.06.00/platform-espressif32.zip
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Platform Manager: espressif32@2024.6.0 has been installed!
+Tool Manager: Installing https://github.com/tasmota/arduino-esp32/releases/download/2.0.18/framework-arduinoespressif32.zip
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: framework-arduinoespressif32@2.0.18+sha.8ba0dc0 has been installed!
+Tool Manager: Installing espressif/toolchain-xtensa-esp32 @ 8.4.0+2021r2-patch5
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: toolchain-xtensa-esp32@8.4.0+2021r2-patch5 has been installed!
+Tool Manager: Installing https://github.com/tasmota/esptool/releases/download/v4.7.4/esptool.zip
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: tool-esptoolpy@4.7.4 has been installed!
+Tool Manager: Installing tasmota/tool-mklittlefs @ ^3.2.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70%
+Unpacking 0% 10% 20%
+Tool Manager: tool-mklittlefs@3.2.0 has been installed!
+Tool Manager: Installing platformio/tool-scons @ ~4.40801.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: tool-scons@4.40801.0 has been installed!
+Library Manager: Installing esp32async/AsyncTCP @ 3.4.7
+Downloading 0% 10% 20% 30%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: AsyncTCP@3.4.7 has been installed!
+Library Manager: Installing bitbank2/AnimatedGIF @ ^1.4.7
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: AnimatedGIF@1.4.7 has been installed!
+Library Manager: Installing git+https://github.com/Aircoookie/GifDecoder.git#bc3af189b6b1e06946569f6b4287f0b79a860f8e
+git version 2.55.0
+Cloning into '/home/runner/.platformio/.cache/tmp/pkg-installing-dag41qnx'...
+HEAD is now at bc3af18 separate alloc methods
+Library Manager: GifDecoder@1.1.0+sha.bc3af18 has been installed!
+Library Manager: Installing git+https://github.com/someweisguy/esp_dmx.git#47db25d8c515e76fabcf5fc5ab0b786f98eeade0
+git version 2.55.0
+Cloning into '/home/runner/.platformio/.cache/tmp/pkg-installing-91v3rf49'...
+HEAD is now at 47db25d8 update version number
+Library Manager: esp_dmx@3.1.1+sha.47db25d8 has been installed!
+Library Manager: Installing git+https://github.com/Makuna/NeoPixelBus.git#1d7ff38f14d04a976f9c6e365c83a232bcba04fc
+git version 2.55.0
+Cloning into '/home/runner/.platformio/.cache/tmp/pkg-installing-hdpxjl1s'...
+HEAD is now at 1d7ff38 Use ClearTo(0) for transmit buffers if they exist. (#910)
+Library Manager: NeoPixelBus@2.8.4+sha.1d7ff38 has been installed!
+Library Manager: Resolving dependencies...
+Library Manager: Installing SPI
+Library Manager: Installing git+https://github.com/Aircoookie/ESPAsyncWebServer.git#v2.4.2
+git version 2.55.0
+Cloning into '/home/runner/.platformio/.cache/tmp/pkg-installing-kgp9tvtz'...
+warning: refs/tags/v2.4.2 fb607f9322798a25413e701e470542eca648de6e is not a commit!
+Note: switching to '39b830c852054444ea12a8b5d7fcb4fa004a89d7'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Library Manager: ESPAsyncWebServerWLED@2.4.2+sha.39b830c has been installed!
+Library Manager: Resolving dependencies...
+Library Manager: Installing marvinroger/AsyncMqttClient @ 0.9.0
+Downloading 0% 10% 20% 30%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: AsyncMqttClient@0.9.0 has been installed!
+Library Manager: Resolving dependencies...
+Library Manager: Installing git+https://github.com/blazoncek/QuickESPNow.git#optional-debug
+git version 2.55.0
+Cloning into '/home/runner/.platformio/.cache/tmp/pkg-installing-55uxf1kr'...
+Library Manager: QuickEspNow@0.8.1+sha.193e991 has been installed!
+Library Manager: Installing h2zero/NimBLE-Arduino @ 2.5.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: NimBLE-Arduino@2.5.0 has been installed!
+Library Manager: Installing makuna/NeoPixelBus @ ^2.8.3
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: NeoPixelBus@2.8.4 has been installed!
+Verbose mode can be enabled via `-v, --verbose` option
+Installing node packages
+npm ci
+
+added 66 packages, and audited 67 packages in 1s
+
+14 packages are looking for funding
+  run `npm fund` for details
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+npm run build
+
+> wled@16.0.1 build
+> node tools/cdata.js
+
+
+	  ##  ##      ##        ######    ######
+	##      ##    ##      ##        ##  ##  ##
+	##  ##  ##  ##        ######        ##  ##
+	##  ##  ##  ##        ##            ##  ##
+	  ##  ##      ######    ######    ######
+		 build script for web UI
+
+File wled00/html_ui.h does not exist. Rebuilding...
+Reading wled00/data/index.htm
+Reading wled00/data/pixart/pixart.htm
+Reading wled00/data/pxmagic/pxmagic.htm
+Reading wled00/data/pixelforge/pixelforge.htm
+Reading wled00/data//iro.js as JS_iro
+Reading wled00/data/pixelforge/omggif.js as JS_omggif
+Reading wled00/data/edit.htm as PAGE_edit
+Reading wled00/data/cpal/cpal.htm as PAGE_cpal
+Reading wled00/data/style.css as PAGE_settingsCss
+Reading wled00/data/usermod.htm as PAGE_usermod
+Minified and compressed iro.js from 28248 to 9960 bytes
+Minified and compressed style.css from 3224 to 951 bytes
+Writing 61389 characters into wled00/js_iro.h
+Reading wled00/data/common.js as JS_common
+Minified and compressed omggif.js from 31880 to 2560 bytes
+Writing 16082 characters into wled00/js_omggif.h
+Minified and compressed common.js from 13626 to 3202 bytes
+Reading wled00/data/settings.htm as PAGE_settings
+Minified and compressed usermod.htm from 87 to 94 bytes
+Reading wled00/data/msg.htm as PAGE_msg
+Minified msg.htm from 407 to 364 bytes
+Reading wled00/data/dmxmap.htm as PAGE_dmxmap
+Minified dmxmap.htm from 1495 to 1227 bytes
+Reading wled00/data/update.htm as PAGE_update
+Minified and compressed edit.htm from 17276 to 4143 bytes
+Writing 25766 characters into wled00/html_edit.h
+Minified and compressed settings.htm from 2138 to 730 bytes
+Reading wled00/data/settings_wifi.htm as PAGE_settings_wifi
+Minified and compressed cpal.htm from 27423 to 6447 bytes
+Writing 39883 characters into wled00/html_cpal.h
+Minified and compressed settings_wifi.htm from 12613 to 3325 bytes
+Reading wled00/data/settings_leds.htm as PAGE_settings_leds
+Minified and compressed update.htm from 7589 to 2251 bytes
+Reading wled00/data/welcome.htm as PAGE_welcome
+Minified and compressed welcome.htm from 2523 to 1540 bytes
+Reading wled00/data/liveview.htm as PAGE_liveview
+Minified and compressed liveview.htm from 2765 to 932 bytes
+Reading wled00/data/liveviewws2D.htm as PAGE_liveviewws2D
+Minified and compressed wled00/data/pxmagic/pxmagic.htm from 52402 to 8701 bytes
+Writing wled00/html_pxmagic.h
+Minified and compressed liveviewws2D.htm from 2274 to 779 bytes
+Reading wled00/data/404.htm as PAGE_404
+Minified and compressed 404.htm from 1479 to 873 bytes
+Reading wled00/data/favicon.ico as favicon
+Writing 43747 characters into wled00/html_other.h
+Minified and compressed settings_leds.htm from 52616 to 10318 bytes
+Reading wled00/data/settings_dmx.htm as PAGE_settings_dmx
+Minified and compressed settings_dmx.htm from 3518 to 1363 bytes
+Reading wled00/data/settings_ui.htm as PAGE_settings_ui
+Minified and compressed wled00/data/index.htm from 203284 to 39701 bytes
+Writing wled00/html_ui.h
+Minified and compressed settings_ui.htm from 10224 to 2939 bytes
+Reading wled00/data/settings_sync.htm as PAGE_settings_sync
+Minified and compressed settings_sync.htm from 12269 to 3459 bytes
+Reading wled00/data/settings_time.htm as PAGE_settings_time
+Minified and compressed wled00/data/pixelforge/pixelforge.htm from 44888 to 11041 bytes
+Writing wled00/html_pixelforge.h
+Minified and compressed settings_time.htm from 18473 to 4735 bytes
+Reading wled00/data/settings_sec.htm as PAGE_settings_sec
+Minified and compressed settings_sec.htm from 5342 to 2011 bytes
+Reading wled00/data/settings_um.htm as PAGE_settings_um
+Minified and compressed settings_um.htm from 14598 to 3140 bytes
+Reading wled00/data/settings_2D.htm as PAGE_settings_2D
+Minified and compressed wled00/data/pixart/pixart.htm from 41587 to 7464 bytes
+Writing wled00/html_pixart.h
+Minified and compressed settings_2D.htm from 10708 to 2696 bytes
+Reading wled00/data/settings_pin.htm as PAGE_settings_pin
+Minified and compressed settings_pin.htm from 761 to 456 bytes
+Reading wled00/data/settings_pininfo.htm as PAGE_settings_pininfo
+Minified and compressed settings_pininfo.htm from 2616 to 1093 bytes
+Writing 250089 characters into wled00/html_settings.h
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32dev.html
+PLATFORM: Espressif 32 (2024.6.0) > Espressif ESP32 Dev Module
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 2.0.18+sha.8ba0dc0 
+ - tool-esptoolpy @ 4.7.4 
+ - tool-mklittlefs @ 3.2.0 
+ - toolchain-xtensa-esp32 @ 8.4.0+2021r2-patch5
+Installing Python dependencies
+Defaulting to user installation because normal site-packages is not writeable
+Collecting zopfli>=0.2.2
+  Downloading zopfli-0.4.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.5 kB)
+Collecting tasmota-metrics>=0.4.3
+  Downloading tasmota_metrics-0.4.3-py3-none-any.whl.metadata (1.4 kB)
+Requirement already satisfied: pyyaml in /usr/lib/python3/dist-packages (from tasmota-metrics>=0.4.3) (6.0.1)
+Downloading zopfli-0.4.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (829 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 829.4/829.4 kB 13.8 MB/s  0:00:00
+Downloading tasmota_metrics-0.4.3-py3-none-any.whl (23 kB)
+Installing collected packages: zopfli, tasmota-metrics
+
+Successfully installed tasmota-metrics-0.4.3 zopfli-0.4.3
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ strict
+Library Manager: Installing IRremoteESP8266 @ 2.8.2
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: IRremoteESP8266@2.8.2 has been installed!
+Library Manager: Installing symlink:///home/runner/work/Shynetyme.works/Shynetyme.works/WLED/usermods/audioreactive
+Library Manager: audioreactive@0.0.0+20260820221030 has been installed!
+Library Manager: Resolving dependencies...
+Library Manager: Installing kosme/arduinoFFT @ 2.0.1
+Downloading 0% 10% 20% 30%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: arduinoFFT@2.0.1 has been installed!
+Library Manager: Installing symlink:///home/runner/work/Shynetyme.works/Shynetyme.works/WLED/usermods/ShynetymeBLE
+Library Manager: ShynetymeBLE@0.0.0+20260820221033 has been installed!
+Found 41 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- AsyncTCP @ 3.4.7
+|-- AnimatedGIF @ 1.4.7
+|-- GifDecoder @ 1.1.0+sha.bc3af18
+|-- esp_dmx @ 3.1.1+sha.47db25d8
+|-- IRremoteESP8266 @ 2.8.2
+|-- NeoPixelBus @ 2.8.4+sha.1d7ff38
+|-- ESPAsyncWebServerWLED @ 2.4.2+sha.39b830c
+|-- AsyncMqttClient @ 0.9.0
+|-- QuickEspNow @ 0.8.1+sha.193e991
+|-- NimBLE-Arduino @ 2.5.0
+|-- audioreactive
+|-- ShynetymeBLE
+|-- ESPmDNS @ 2.0.0
+|-- Wire @ 2.0.0
+|-- Update @ 2.0.0
+|-- ArduinoOTA @ 2.0.0
+|-- DNSServer @ 2.0.0
+|-- Ethernet @ 2.0.0
+|-- LittleFS @ 2.0.0
+|-- SPI @ 2.0.0
+|-- WiFi @ 2.0.0
+|-- NeoESP32RmtHI
+|-- ESP32 Async UDP @ 2.0.0
+|-- WebServer @ 2.0.0
+Building in release mode
+Compiling .pio/build/Shynetyme_ESP32/liba54/audioreactive/audio_reactive.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libf35/ShynetymeBLE/ShynetymeBLE.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/lib86e/NeoESP32RmtHI/NeoEsp32RmtHI.S.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib86e/NeoESP32RmtHI/NeoEsp32RmtHIMethod.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/FX.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/FX_2Dfcn.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+In file included from /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_deprecated.h:14,
+                 from usermods/audioreactive/audio_source.h:9,
+                 from usermods/audioreactive/audio_reactive.cpp:164:
+/home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_types_deprecated.h:63:31: warning: 'adc_digi_pattern_table_t' is deprecated [-Wdeprecated-declarations]
+     adc_digi_pattern_table_t *adc1_pattern;  /*!<Pointer to pattern table for digital controller. The table size defined by `adc1_pattern_len`. */
+                               ^~~~~~~~~~~~
+In file included from /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_deprecated.h:14,
+                 from usermods/audioreactive/audio_source.h:9,
+                 from usermods/audioreactive/audio_reactive.cpp:164:
+/home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_types_deprecated.h:39:3: note: declared here
+ } adc_digi_pattern_table_t __attribute__((deprecated));
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_deprecated.h:14,
+                 from usermods/audioreactive/audio_source.h:9,
+                 from usermods/audioreactive/audio_reactive.cpp:164:
+/home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_types_deprecated.h:64:31: warning: 'adc_digi_pattern_table_t' is deprecated [-Wdeprecated-declarations]
+     adc_digi_pattern_table_t *adc2_pattern;  /*!<Refer to `adc1_pattern` */
+                               ^~~~~~~~~~~~
+In file included from /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_deprecated.h:14,
+                 from usermods/audioreactive/audio_source.h:9,
+                 from usermods/audioreactive/audio_reactive.cpp:164:
+/home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_types_deprecated.h:39:3: note: declared here
+ } adc_digi_pattern_table_t __attribute__((deprecated));
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from usermods/audioreactive/audio_reactive.cpp:164:
+usermods/audioreactive/audio_source.h: In member function 'virtual void I2SAdcSource::initialize(int8_t, int8_t, int8_t, int8_t)':
+usermods/audioreactive/audio_source.h:623:57: warning: 'esp_err_t adc_gpio_init(adc_unit_t, adc_channel_t)' is deprecated [-Wdeprecated-declarations]
+         adc_gpio_init(ADC_UNIT_1, adc_channel_t(channel));
+                                                         ^
+In file included from usermods/audioreactive/audio_source.h:9,
+                 from usermods/audioreactive/audio_reactive.cpp:164:
+/home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_deprecated.h:157:11: note: declared here
+ esp_err_t adc_gpio_init(adc_unit_t adc_unit, adc_channel_t channel) __attribute__((deprecated));;
+           ^~~~~~~~~~~~~
+In file included from usermods/audioreactive/audio_reactive.cpp:164:
+usermods/audioreactive/audio_source.h:623:57: warning: 'esp_err_t adc_gpio_init(adc_unit_t, adc_channel_t)' is deprecated [-Wdeprecated-declarations]
+         adc_gpio_init(ADC_UNIT_1, adc_channel_t(channel));
+                                                         ^
+In file included from usermods/audioreactive/audio_source.h:9,
+                 from usermods/audioreactive/audio_reactive.cpp:164:
+/home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/adc_deprecated.h:157:11: note: declared here
+ esp_err_t adc_gpio_init(adc_unit_t adc_unit, adc_channel_t channel) __attribute__((deprecated));;
+           ^~~~~~~~~~~~~
+Compiling .pio/build/Shynetyme_ESP32/src/FX_fcn.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/FXparticleSystem.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/alexa.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/bus_manager.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/button.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/cfg.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/colors.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/dmx_input.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/dmx_output.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/e131.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/file.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/fontmanager.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/hue.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/image_loader.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/improv.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/ir.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+In file included from .pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder.h:114,
+                 from wled00/image_loader.cpp:5:
+.pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder_Impl.h: In static member function 'static void GifDecoder<maxGifWidth, maxGifHeight, lzwMaxBits, useMalloc>::GIFDraw(GIFDRAW*)':
+.pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder_Impl.h:181:9: warning: declaration of 'x' shadows a previous local [-Wshadow=compatible-local]
+     int x, iCount;
+         ^
+.pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder_Impl.h:157:7: note: shadowed declaration is here
+   int x, y, iWidth;
+       ^
+.pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder_Impl.h: In instantiation of 'static void GifDecoder<maxGifWidth, maxGifHeight, lzwMaxBits, useMalloc>::GIFDraw(GIFDRAW*) [with int maxGifWidth = 320; int maxGifHeight = 320; int lzwMaxBits = 12; bool useMalloc = true; GIFDRAW = gif_draw_tag]':
+.pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder_Impl.h:304:16:   required from 'int GifDecoder<maxGifWidth, maxGifHeight, lzwMaxBits, useMalloc>::startDecoding() [with int maxGifWidth = 320; int maxGifHeight = 320; int lzwMaxBits = 12; bool useMalloc = true]'
+wled00/image_loader.cpp:170:46:   required from here
+.pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder_Impl.h:181:9: warning: declaration of 'x' shadows a previous local [-Wshadow=compatible-local]
+     int x, iCount;
+         ^
+.pio/libdeps/Shynetyme_ESP32/GifDecoder/src/GifDecoder_Impl.h:157:7: note: shadowed declaration is here
+   int x, y, iWidth;
+       ^
+Compiling .pio/build/Shynetyme_ESP32/src/json.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/led.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/lx_parser.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/mqtt.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/net_debug.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/network.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/ntp.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/ota_update.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/overlay.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/palettes.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/pin_manager.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/playlist.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/presets.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/remote.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/set.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/dmx/ESPDMX.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/dmx/SparkFunDMX.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/e131/ESPAsyncE131.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/espalexa/EspalexaDevice.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/fastled_slim/fastled_slim.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/network/Network.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/time/DS1307RTC.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/time/DateStrings.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/time/Time.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/src/dependencies/timezone/Timezone.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/udp.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/um_manager.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/usermod.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/util.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/wled.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/wled_main.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/wled_math.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+wled00/util.cpp:778:68: note: #pragma message: BOARD_HAS_PSRAM not defined, not using PSRAM.
+     #pragma message("BOARD_HAS_PSRAM not defined, not using PSRAM.")
+                                                                    ^
+Compiling .pio/build/Shynetyme_ESP32/src/wled_metadata.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/wled_serial.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/wled_server.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/ws.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/src/xml.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Building .pio/build/Shynetyme_ESP32/bootloader.bin
+esptool.py v4.7.4
+Creating esp32 image...
+Merged 1 ELF section
+Successfully created esp32 image.
+Generating partitions .pio/build/Shynetyme_ESP32/partitions.bin
+Compiling .pio/build/Shynetyme_ESP32/lib802/AsyncTCP/AsyncTCP.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libd81/AnimatedGIF/AnimatedGIF.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/bus_ctl.c.o
+Archiving .pio/build/Shynetyme_ESP32/lib802/libAsyncTCP.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Indexing .pio/build/Shynetyme_ESP32/lib802/libAsyncTCP.a
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/device.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/libd81/libAnimatedGIF.a
+Indexing .pio/build/Shynetyme_ESP32/libd81/libAnimatedGIF.a
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/driver.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/hal/gpio.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/hal/nvs.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/hal/timer.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/hal/uart.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/dmx/sniffer.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/rdm/controller.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/rdm/parameters.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/rdm/responder.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2cf/esp_dmx/rdm/utils.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/IRac.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/IRrecv.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/IRsend.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib2cf/libesp_dmx.a
+Indexing .pio/build/Shynetyme_ESP32/lib2cf/libesp_dmx.a
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/IRtext.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/IRtimer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/IRutils.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Airton.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Airwell.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Aiwa.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Amcor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Argo.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Arris.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Bose.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Carrier.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Coolix.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Corona.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Daikin.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Delonghi.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Denon.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Dish.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Doshisha.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Ecoclim.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Electra.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_EliteScreens.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Epson.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Fujitsu.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_GICable.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_GlobalCache.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Goodweather.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Gree.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Haier.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Hitachi.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Inax.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_JVC.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Kelon.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Kelvinator.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_LG.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Lasertag.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Lego.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Lutron.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_MWM.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Magiquest.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Metz.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Midea.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_MilesTag2.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Mirage.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Mitsubishi.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_MitsubishiHeavy.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Multibrackets.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_NEC.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Neoclima.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Nikai.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Panasonic.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Pioneer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Pronto.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_RC5_RC6.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_RCMM.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Rhoss.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Samsung.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Sanyo.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Sharp.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Sherwood.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Sony.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Symphony.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Tcl.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Technibel.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Teco.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Teknopoint.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Toshiba.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Transcold.cpp.o
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Trotec.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Truma.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Vestel.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Voltas.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Whirlpool.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Whynter.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Xmp.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/libdaa/IRremoteESP8266/ir_Zepeal.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib30b/SPI/SPI.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/animations/NeoPixelAnimator.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/HsbColor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/libdaa/libIRremoteESP8266.a
+Indexing .pio/build/Shynetyme_ESP32/libdaa/libIRremoteESP8266.a
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/HslColor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib30b/libSPI.a
+Indexing .pio/build/Shynetyme_ESP32/lib30b/libSPI.a
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/HtmlColor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/HtmlColorNameStrings.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/HtmlColorNames.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/HtmlColorShortNames.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/NeoGammaDynamicTableMethod.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/NeoGammaTableMethod.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/Rgb48Color.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/RgbColor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/RgbColorBase.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/Rgbw64Color.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/RgbwColor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/Rgbww80Color.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/RgbwwColor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/RgbwwwColor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/colors/SegmentDigit.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/Esp32_i2s.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/FractionClk.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/NeoEsp32RmtMethod.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/NeoEsp8266I2sMethodCore.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/NeoEsp8266UartMethod.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/NeoEspBitBangMethod.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/NeoPixelAvr.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7ef/NeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe/internal/methods/Rp2040/NeoRp2040PioMonoProgram.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7aa/FS/FS.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib7aa/FS/vfs_api.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib620/LittleFS/LittleFS.cpp.o
+Archiving .pio/build/Shynetyme_ESP32/lib7ef/libNeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Indexing .pio/build/Shynetyme_ESP32/lib7ef/libNeoPixelBus@src-0e2fbc358b58ed4d4ea24eac3c8c53fe.a
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFi.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiAP.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib620/libLittleFS.a
+Indexing .pio/build/Shynetyme_ESP32/lib620/libLittleFS.a
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiClient.cpp.o
+Archiving .pio/build/Shynetyme_ESP32/lib7aa/libFS.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Indexing .pio/build/Shynetyme_ESP32/lib7aa/libFS.a
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiGeneric.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiMulti.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiSTA.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiScan.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiServer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib989/WiFi/WiFiUdp.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/AsyncEventSource.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/AsyncWebSocket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/ContentTypes.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib989/libWiFi.a
+Indexing .pio/build/Shynetyme_ESP32/lib989/libWiFi.a
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/DynamicBuffer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/SPIFFSEditor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/WebAuthentication.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/WebHandlers.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/WebRequest.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/WebResponses.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib6e3/ESPAsyncWebServerWLED/WebServer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/ConnAckPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/Connect.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib6e3/libESPAsyncWebServerWLED.a
+Indexing .pio/build/Shynetyme_ESP32/lib6e3/libESPAsyncWebServerWLED.a
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/Disconn.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/OutPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/PingReq.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/PubAck.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/Publish.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/Subscribe.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/Out/Unsubscribe.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/PingRespPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/PubAckPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/PubCompPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/PubRecPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/PubRelPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/PublishPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/SubAckPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib8cc/AsyncMqttClient/AsyncMqttClient/Packets/UnsubAckPacket.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/liba95/QuickEspNow/QuickEspNow_esp32.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/liba95/QuickEspNow/QuickEspNow_esp8266.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLE2904.cpp.o
+Archiving .pio/build/Shynetyme_ESP32/lib8cc/libAsyncMqttClient.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+Indexing .pio/build/Shynetyme_ESP32/lib8cc/libAsyncMqttClient.a
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEAddress.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEAdvertisedDevice.cpp.o
+Archiving .pio/build/Shynetyme_ESP32/liba95/libQuickEspNow.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Indexing .pio/build/Shynetyme_ESP32/liba95/libQuickEspNow.a
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEAdvertisementData.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEAdvertising.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEAttValue.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEBeacon.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLECharacteristic.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEClient.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEDescriptor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEDevice.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEEddystoneTLM.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEExtAdvertising.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEHIDDevice.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEL2CAPChannel.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEL2CAPServer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLERemoteCharacteristic.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLERemoteDescriptor.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLERemoteService.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLERemoteValueAttribute.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEScan.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEServer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEService.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEStream.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEUUID.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/NimBLEUtils.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/esp_port/esp-hci/src/esp_nimble_hci.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/esp_port/esp-hci/src/na_hci_driver.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/esp_port/esp-hci/src/na_hci_transport.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/esp_port/port/src/exp_nimble_mem.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/aes_decrypt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/aes_encrypt.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/cbc_mode.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/ccm_mode.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/cmac_mode.c.o
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/ctr_mode.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/ctr_prng.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/ecc.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/ecc_dh.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/ecc_dsa.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/ecc_platform_specific.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/hmac.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/hmac_prng.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/sha256.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/ext/tinycrypt/src/utils.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_adv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_conn.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_conn_hci.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_crypto.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_ctrl.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_dtm.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_hci.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_hci_ev.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_hci_supp_cmd.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_hci_vs.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_iso.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_iso_big.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_isoal.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_pdu.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_rand.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_resolv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_rfmgmt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_scan.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_scan_aux.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_sched.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_sync.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_trace.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_utils.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/controller/src/ble_ll_whitelist.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/drivers/nrf51/src/ble_hw.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/drivers/nrf51/src/ble_phy.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/drivers/nrf5x/src/ble_hw.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/drivers/nrf5x/src/ble_phy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/drivers/nrf5x/src/ble_phy_trace.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/drivers/nrf5x/src/nrf52/phy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/drivers/nrf5x/src/nrf53/phy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/access.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/adv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/adv_ext.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/adv_legacy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/aes-ccm.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/app_keys.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/beacon.c.o
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/cdb.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/cfg.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/cfg_cli.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/cfg_srv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/crypto.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/friend.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/glue.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/health_cli.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/health_srv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/heartbeat.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/light_model.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/lpn.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/mesh.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/model_cli.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/model_srv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/msg.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/net.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/pb_adv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/pb_gatt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/pb_gatt_srv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/prov.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/prov_device.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/provisioner.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/proxy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/proxy_msg.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/proxy_srv.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/rpl.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/settings.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/shell.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/subnet.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/testing.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/mesh/src/transport.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/services/gap/src/ble_svc_gap.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/services/gatt/src/ble_svc_gatt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_aes_ccm.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_att.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_att_clt.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_att_cmd.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_att_svr.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_dtm.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_ead.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_eatt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_eddystone.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_gap.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_gattc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_gattc_cache.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_gattc_cache_conn.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_gatts.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_gatts_lcl.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_adv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_atomic.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_cfg.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_conn.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_flow.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_hci.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_hci_cmd.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_hci_evt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_hci_util.c.o
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_id.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_log.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_mbuf.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_misc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_mqueue.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_periodic_sync.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_pvcy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_resolv.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_shutdown.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_startup.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_hs_stop.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_ibeacon.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_l2cap.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_l2cap_coc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_l2cap_sig.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_l2cap_sig_cmd.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_sm.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_sm_alg.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_sm_cmd.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_sm_lgcy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_sm_sc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_store.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_store_util.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/src/ble_uuid.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/store/config/src/ble_store_config.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/store/config/src/ble_store_config_conf.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/store/config/src/ble_store_nvs.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/store/ram/src/ble_store_ram.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/host/util/src/addr.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/transport/common/hci_h4/src/hci_h4.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/transport/common/hci_ipc/src/hci_ipc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/transport/esp_ipc/src/hci_esp_ipc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/transport/esp_ipc_legacy/src/hci_esp_ipc_legacy.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/transport/nrf5340/src/nrf5340_ble_hci.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/nimble/transport/src/transport.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/endian.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/hal_timer.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/mem.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/nimble_port.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/os_cputime.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/os_cputime_pwr2.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/os_mbuf.c.o
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/os_mempool.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/nimble/src/os_msys_init.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/npl/freertos/src/nimble_port_freertos.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib47e/NimBLE-Arduino/nimble/porting/npl/freertos/src/npl_os_freertos.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib2ff/arduinoFFT/arduinoFFT.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib4b6/ESPmDNS/ESPmDNS.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/liba33/Wire/Wire.cpp.o
+Archiving .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Indexing .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a
+Compiling .pio/build/Shynetyme_ESP32/lib4b6/Update/HttpsOTAUpdate.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib2ff/libarduinoFFT.a
+Indexing .pio/build/Shynetyme_ESP32/lib2ff/libarduinoFFT.a
+Compiling .pio/build/Shynetyme_ESP32/lib4b6/Update/Updater.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib134/ArduinoOTA/ArduinoOTA.cpp.o
+Archiving .pio/build/Shynetyme_ESP32/liba33/libWire.a
+Archiving .pio/build/Shynetyme_ESP32/lib4b6/libESPmDNS.a
+Indexing .pio/build/Shynetyme_ESP32/liba33/libWire.a
+Indexing .pio/build/Shynetyme_ESP32/lib4b6/libESPmDNS.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib147/DNSServer/DNSServer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/lib720/Ethernet/ETH.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib4b6/libUpdate.a
+Indexing .pio/build/Shynetyme_ESP32/lib4b6/libUpdate.a
+Compiling .pio/build/Shynetyme_ESP32/lib59e/AsyncUDP/AsyncUDP.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib147/libDNSServer.a
+Indexing .pio/build/Shynetyme_ESP32/lib147/libDNSServer.a
+Compiling .pio/build/Shynetyme_ESP32/lib1ce/WebServer/Parsing.cpp.o
+Archiving .pio/build/Shynetyme_ESP32/lib134/libArduinoOTA.a
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Indexing .pio/build/Shynetyme_ESP32/lib134/libArduinoOTA.a
+Compiling .pio/build/Shynetyme_ESP32/lib1ce/WebServer/WebServer.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib720/libEthernet.a
+Indexing .pio/build/Shynetyme_ESP32/lib720/libEthernet.a
+Compiling .pio/build/Shynetyme_ESP32/lib1ce/WebServer/detail/mimetable.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/Esp.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib59e/libAsyncUDP.a
+Indexing .pio/build/Shynetyme_ESP32/lib59e/libAsyncUDP.a
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/FirmwareMSC.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/FunctionalInterrupt.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/HWCDC.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/HardwareSerial.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/IPAddress.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/lib1ce/libWebServer.a
+Indexing .pio/build/Shynetyme_ESP32/lib1ce/libWebServer.a
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/IPv6Address.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/MD5Builder.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/Print.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/Stream.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/StreamString.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/Tone.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/USB.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/USBCDC.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/USBMSC.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/WMath.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/WString.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/base64.cpp.o
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/cbuf.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-adc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-bt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-cpu.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-dac.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-gpio.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-i2c-slave.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-i2c.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+/home/runner/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-i2c-slave.c: In function 'i2c_slave_check_line_state':
+/home/runner/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-i2c-slave.c:547:30: warning: declaration of 'a' shadows a previous local [-Wshadow=compatible-local]
+                 for (uint8_t a=0;a<9; a++) {
+                              ^
+/home/runner/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-i2c-slave.c:541:22: note: shadowed declaration is here
+         for (uint8_t a=0; a<9; a++) {
+                      ^
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-ledc.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-matrix.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-misc.c.o
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-psram.c.o
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-rgb-led.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-rmt.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-sigmadelta.c.o
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-spi.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-time.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-timer.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-tinyusb.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-touch.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/esp32-hal-uart.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/firmware_msc_fat.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/libb64/cdecode.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/libb64/cencode.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/main.cpp.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/stdlib_noniso.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/wiring_pulse.c.o
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/Shynetyme_ESP32/FrameworkArduino/wiring_shift.c.o
+<command-line>: warning: "WLED_RELEASE_NAME" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/Shynetyme_ESP32/libFrameworkArduino.a
+Indexing .pio/build/Shynetyme_ESP32/libFrameworkArduino.a
+Linking .pio/build/Shynetyme_ESP32/firmware.elf
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_set_rpa_timeout':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:58: multiple definition of `ble_hs_set_rpa_timeout'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:55: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_get_rpa_timeout':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:65: multiple definition of `ble_hs_get_rpa_timeout'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:62: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_reset_rpa_timeout':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:70: multiple definition of `ble_hs_reset_rpa_timeout'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:67: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_remove_entry':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:90: multiple definition of `ble_hs_pvcy_remove_entry'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:87: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_add_entry':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:171: multiple definition of `ble_hs_pvcy_add_entry'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:168: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_ensure_started':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:201: multiple definition of `ble_hs_pvcy_ensure_started'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:198: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_set_our_irk':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:235: multiple definition of `ble_hs_pvcy_set_our_irk'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:282: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_our_irk':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:301: multiple definition of `ble_hs_pvcy_our_irk'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:345: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_set_mode':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:310: multiple definition of `ble_hs_pvcy_set_mode'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:354: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_enabled':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:328: multiple definition of `ble_hs_pvcy_enabled'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:372: first defined here
+/home/runner/.platformio/packages/toolchain-xtensa-esp32/bin/../lib/gcc/xtensa-esp32-elf/8.4.0/../../../../xtensa-esp32-elf/bin/ld: /home/runner/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/lib/libbt.a(ble_hs_pvcy.c.obj): in function `ble_hs_pvcy_rpa_config':
+/home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/bt/host/nimble/nimble/nimble/host/src/ble_hs_pvcy.c:335: multiple definition of `ble_hs_pvcy_rpa_config'; .pio/build/Shynetyme_ESP32/lib47e/libNimBLE-Arduino.a(ble_hs_pvcy.c.o):/home/runner/work/Shynetyme.works/Shynetyme.works/WLED/.pio/libdeps/Shynetyme_ESP32/NimBLE-Arduino/src/nimble/nimble/host/src/ble_hs_pvcy.c:379: first defined here
+collect2: error: ld returned 1 exit status
+*** [.pio/build/Shynetyme_ESP32/firmware.elf] Error 1
+========================= [FAILED] Took 126.01 seconds =========================
+
+Environment      Status    Duration
+---------------  --------  ------------
+Shynetyme_ESP32  FAILED    00:02:06.008
+==================== 1 failed, 0 succeeded in 00:02:06.008 ====================
