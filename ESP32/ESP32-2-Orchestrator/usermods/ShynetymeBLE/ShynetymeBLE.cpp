@@ -47,6 +47,7 @@ public:
   }
 };
 
-REGISTER_USERMOD(ShynetymeBLE)
+static ShynetymeBLE shynetymeBLE;
+REGISTER_USERMOD(shynetymeBLE);
 
 #endif
