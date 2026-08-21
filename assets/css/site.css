@@ -49,22 +49,6 @@ body {
   line-height: 1.65;
 }
 
-h1, h2, h3, h4, h5, h6,
-.navbar-brand,
-.accordion-button {
-  font-family: var(--heading-font);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: #fff;
-  font-weight: 800;
-  letter-spacing: -.025em;
-  text-wrap: balance;
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, .42),
-    0 0 12px rgba(49, 230, 255, .28),
-    0 8px 22px rgba(0, 0, 0, .55);
-}
 
 p { color: var(--muted); }
 a { color: var(--cyan); }
