@@ -79,7 +79,7 @@ a:hover { color: var(--ice); }
    Description: Approved ShyneTyme.Works button treatment for ordinary contextual CTA buttons only.
    Resting buttons stay dark and readable. Hover/focus fills the button with the three-color
    neon yellow/pink/blue gradient and a tight contour glow. Simulator controls, navigation,
-   hero/banner controls, Chuck, catalog specialty controls, and other component-owned buttons
+   hero/banner controls, Chuck, Project Power specialty controls, and other component-owned buttons
    are intentionally not selected here. The navigation section below owns the same treatment,
    and the current-page state keeps the gradient persistently. */
 :root {
@@ -100,7 +100,7 @@ a:hover { color: var(--ice); }
 }
 
 /* Only the six non-SIM site surfaces approved for contextual CTA treatment. */
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn {
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -127,7 +127,7 @@ html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page
     box-shadow .18s ease !important;
 }
 
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn::before {
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -138,8 +138,8 @@ html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page
   transform: translate3d(-58%, 0, 0) skewX(-16deg);
 }
 
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:hover,
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:focus-visible {
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:hover,
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:focus-visible {
   color: var(--button-text) !important;
   border-color: transparent !important;
   background-color: var(--button-surface) !important;
@@ -154,23 +154,23 @@ html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page
   animation: none !important;
 }
 
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:hover::before,
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:focus-visible::before {
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:hover::before,
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:focus-visible::before {
   opacity: .98;
   animation: shynetyme-button-neon-wave 1.8s ease-in-out infinite alternate !important;
 }
 
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:active {
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:active {
   transform: translateY(0) !important;
 }
 
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:focus-visible {
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:focus-visible {
   outline: 2px solid #fff !important;
   outline-offset: 3px !important;
 }
 
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:disabled,
-html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn[aria-disabled="true"] {
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:disabled,
+html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn[aria-disabled="true"] {
   cursor: not-allowed !important;
   opacity: .44 !important;
   box-shadow: none !important;
@@ -187,12 +187,12 @@ html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn {
+  html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn {
     transition: none !important;
   }
 
-  html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:hover::before,
-  html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page, .recommendations-page) main .btn:focus-visible::before {
+  html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:hover::before,
+  html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .Project Power-page, .recommendations-page) main .btn:focus-visible::before {
     animation-duration: 3.6s !important;
   }
 }
@@ -312,14 +312,14 @@ html body:is(.home-page, .deke-page, .contact-page, .ledexpo-page, .catalog-page
 .ad-copy-card p:not(.section-kicker) { margin-bottom: 1.4rem; }
 .ad-copy-card .btn { align-self: flex-start; margin-top: auto; font-size: .88rem; }
 
-#catalog { background: linear-gradient(180deg, #06152f, #0a1d38); }
-.catalog-filter, .form-select {
+#Project Power { background: linear-gradient(180deg, #06152f, #0a1d38); }
+.Project Power-filter, .form-select {
   color: var(--text);
   background-color: #07172c;
   border-color: rgba(49, 230, 255, .32);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, .38);
 }
-.catalog-filter option, .form-select option { color: #fff; background: #07172c; }
+.Project Power-filter option, .form-select option { color: #fff; background: #07172c; }
 .product-meta { font-size: .9rem; color: #aebed5; }
 .badge-soft { color: #bff8ff; background: rgba(49, 230, 255, .12); border: 1px solid rgba(49, 230, 255, .26); }
 

@@ -18,7 +18,7 @@ Business priorities, in order:
 2. Website repair and refresh work.
 3. Referrals and repeat customers.
 4. LED demonstrations and installation jobs.
-5. Larger product catalog and storefront development.
+5. Larger product Project Power and storefront development.
 
 ## 2. Source-of-truth hierarchy
 

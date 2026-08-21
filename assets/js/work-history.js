@@ -113,7 +113,7 @@
     if (/fix|repair|restore|hotfix|bug|broken|missing|correct/.test(value)) return { key: "fix", label: "Fix" };
     if (/about|copy|content|wording|text|privacy|terms/.test(value)) return { key: "content", label: "Content" };
     if (/css|style|design|header|hero|carousel|navigation|navbar|layout|image/.test(value)) return { key: "design", label: "Design" };
-    if (/catalog|product|scraper/.test(value)) return { key: "catalog", label: "Catalog" };
+    if (/Project Power|product|scraper/.test(value)) return { key: "Project Power", label: "Project Power" };
     if (/workflow|history|docs|document/.test(value)) return { key: "process", label: "Process" };
     return { key: "website", label: "Website" };
   };

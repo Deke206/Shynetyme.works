@@ -42,12 +42,12 @@
     {
       "sha": "f39bf7d75c4a9a9ae57f60cedbdf2d46cbd47543",
       "date": "2026-07-11T13:48:03Z",
-      "message": "Add initial LED parts catalog"
+      "message": "Add initial LED parts Project Power"
     },
     {
       "sha": "842d99e71421ae8670cec7d2b45109319de7268e",
       "date": "2026-07-11T13:48:25Z",
-      "message": "Add catalog rendering and filters"
+      "message": "Add Project Power rendering and filters"
     },
     {
       "sha": "4aeb0421ebd3638e963e5c16ce09d92e812dcbb9",
@@ -342,27 +342,27 @@
     {
       "sha": "4cc3cc70b22e54eedfd1e45b3d92c5a87f26245a",
       "date": "2026-07-22T13:25:56Z",
-      "message": "Add one-time LED catalog page workflow"
+      "message": "Add one-time LED Project Power page workflow"
     },
     {
       "sha": "b2560cf00a9f93ac19a752a7e597589a138374f3",
       "date": "2026-07-22T17:46:36Z",
-      "message": "Trigger LED catalog page build"
+      "message": "Trigger LED Project Power page build"
     },
     {
       "sha": "51d68e746ceb833a6fe2fb699c8e54d7d5c665f3",
       "date": "2026-07-22T18:04:25Z",
-      "message": "Split LED Catalog from index navigation"
+      "message": "Split LED Project Power from index navigation"
     },
     {
       "sha": "95ecd2af30db425389d6bcf709491159edc828a7",
       "date": "2026-07-22T18:04:51Z",
-      "message": "Create LED Catalog page"
+      "message": "Create LED Project Power page"
     },
     {
       "sha": "513d4ce7f569c9ef85a4d2fba5e1c27383a17041",
       "date": "2026-07-22T18:05:13Z",
-      "message": "Remove one-time LED catalog workflow"
+      "message": "Remove one-time LED Project Power workflow"
     },
     {
       "sha": "4e2c53b6b2f9076c20facf1ab453798a08fb4d35",
@@ -377,7 +377,7 @@
     {
       "sha": "5aac4a409ca334ad9363cb5cc436989d65530b86",
       "date": "2026-07-22T18:34:19Z",
-      "message": "Write LED Catalog breadcrumb and interaction styles directly"
+      "message": "Write LED Project Power breadcrumb and interaction styles directly"
     },
     {
       "sha": "6987661d857d93e22d562dcf65ccaad0b4cb221a",
@@ -397,7 +397,7 @@
     {
       "sha": "10dc6d111f3d73f7327d33e02005616884649a51",
       "date": "2026-07-22T18:47:01Z",
-      "message": "Cache bust compact LED Catalog banner"
+      "message": "Cache bust compact LED Project Power banner"
     },
     {
       "sha": "bde6970231d9b4d09dc035f3956d85c0f20efd09",
@@ -422,7 +422,7 @@
     {
       "sha": "552931aeeab26e71f4bb1e7fc4d5c92b8c3b2d9a",
       "date": "2026-07-22T19:04:34Z",
-      "message": "Point catalog page to shared site CSS and JS"
+      "message": "Point Project Power page to shared site CSS and JS"
     },
     {
       "sha": "4d8890aed7da2fd6e80347044d60e127d4d31ff9",
@@ -1612,7 +1612,7 @@
     {
       "sha": "8a3a9cc51af9fa78ba828eb79b43744cc0488819",
       "date": "2026-07-27T05:32:58Z",
-      "message": "Publish hidden catalog preview page"
+      "message": "Publish hidden Project Power preview page"
     },
     {
       "sha": "74e136ffaaef92d2ebde0f01a83e22e7755c1428",
@@ -1627,72 +1627,72 @@
     {
       "sha": "eeabb70da858ead3e3755dc148ac53e2799b57f1",
       "date": "2026-07-27T07:16:13Z",
-      "message": "Update preview catalog products and remove excluded items"
+      "message": "Update preview Project Power products and remove excluded items"
     },
     {
       "sha": "9fc185503cc2e51e5f958ef6b16fdbd2199ab6a6",
       "date": "2026-07-27T07:16:47Z",
-      "message": "Update preview catalog interactions and modal text"
+      "message": "Update preview Project Power interactions and modal text"
     },
     {
       "sha": "42ac1c0144e94d3c752ac6300ef2985396250357",
       "date": "2026-07-27T07:17:45Z",
-      "message": "Apply requested live catalog preview cleanup"
+      "message": "Apply requested live Project Power preview cleanup"
     },
     {
       "sha": "741f1a6260ec459764eae42c862bef8380e2e676",
       "date": "2026-07-27T08:09:10Z",
-      "message": "Add catalog products batch 1"
+      "message": "Add Project Power products batch 1"
     },
     {
       "sha": "ab2e90bee1445eca83fed428b8539ac1fca317ce",
       "date": "2026-07-27T08:10:06Z",
-      "message": "Add catalog products batch 2"
+      "message": "Add Project Power products batch 2"
     },
     {
       "sha": "48f0e1613f8770ffd0f5e13a4c9a098130c9c373",
       "date": "2026-07-27T08:11:04Z",
-      "message": "Add catalog products batch 3"
+      "message": "Add Project Power products batch 3"
     },
     {
       "sha": "bfb2644fed02716c07df594564c7389ba8790b4a",
       "date": "2026-07-27T08:12:04Z",
-      "message": "Add catalog products batch 4"
+      "message": "Add Project Power products batch 4"
     },
     {
       "sha": "779cc23a6eb333a290d81cfd62c73a9c55a09de2",
       "date": "2026-07-27T08:13:08Z",
-      "message": "Add catalog products batch 5"
+      "message": "Add Project Power products batch 5"
     },
     {
       "sha": "e5b301f1a57dff1c77f3a39c903cf7c6253d9230",
       "date": "2026-07-27T08:15:14Z",
-      "message": "Add production catalog styling"
+      "message": "Add production Project Power styling"
     },
     {
       "sha": "499b7a99b6f4463d2e9bc420c23be7db626f1c6b",
       "date": "2026-07-27T08:16:16Z",
-      "message": "Build uniform catalog cards and material controls"
+      "message": "Build uniform Project Power cards and material controls"
     },
     {
       "sha": "476247c6bddb5a1ae74861083a6e74e2af99d209",
       "date": "2026-07-27T08:17:15Z",
-      "message": "Publish full catalog with material controls"
+      "message": "Publish full Project Power with material controls"
     },
     {
       "sha": "b0db6d5a45081ea5e4077828e4a26eea7ad0a91b",
       "date": "2026-07-27T08:18:06Z",
-      "message": "Rename site navigation catalog link"
+      "message": "Rename site navigation Project Power link"
     },
     {
       "sha": "8d53b02261a8faae00133771581f08c901984a08",
       "date": "2026-07-27T08:19:07Z",
-      "message": "Redirect old catalog preview to production catalog"
+      "message": "Redirect old Project Power preview to production Project Power"
     },
     {
       "sha": "5a0daca49d2636db058520363175cbf78f4252df",
       "date": "2026-07-27T08:28:49Z",
-      "message": "Replace catalog category buttons with select filter"
+      "message": "Replace Project Power category buttons with select filter"
     },
     {
       "sha": "0eef7a99908e424d87521976e8aaed0f08061362",
@@ -1702,17 +1702,17 @@
     {
       "sha": "ed56a29e544fa0d6ae0d97352a37560ed33f67ef",
       "date": "2026-07-27T08:31:25Z",
-      "message": "Style catalog category select"
+      "message": "Style Project Power category select"
     },
     {
       "sha": "a24df7f2e9a444b7abcc0c9c3bf837752bfb98fc",
       "date": "2026-07-27T08:34:00Z",
-      "message": "Fix catalog card overlap and action order"
+      "message": "Fix Project Power card overlap and action order"
     },
     {
       "sha": "c6ebf8d3308b85bc32977c2255b30a6840395e57",
       "date": "2026-07-27T08:35:06Z",
-      "message": "Load catalog card overlap fix"
+      "message": "Load Project Power card overlap fix"
     },
     {
       "sha": "abbf25147af0e90fe467692883d2e409dd411394",
@@ -1742,12 +1742,12 @@
     {
       "sha": "12fcbeb3eb92ecf432d8b65c3cf4242eebbb6533",
       "date": "2026-07-27T11:02:01Z",
-      "message": "Revert forced catalog card heights and separate details section"
+      "message": "Revert forced Project Power card heights and separate details section"
     },
     {
       "sha": "ac82914946dc08ccf014dc803da443223279fac2",
       "date": "2026-07-27T11:02:29Z",
-      "message": "Delete css/catalog-card-layout-fix.css"
+      "message": "Delete css/Project Power-card-layout-fix.css"
     },
     {
       "sha": "aff1df04806327a729c679ef6f9fa7dfc296e342",
@@ -1757,7 +1757,7 @@
     {
       "sha": "b6d47bbed446d781233047f961757537a80a627f",
       "date": "2026-07-27T11:03:51Z",
-      "message": "Remove catalog height workaround stylesheet"
+      "message": "Remove Project Power height workaround stylesheet"
     },
     {
       "sha": "05ea8eb459b37e61e007d317d1657982d348edaf",
@@ -1767,7 +1767,7 @@
     {
       "sha": "481cdbea592a0e81d1575b2e44f0430ae670e41c",
       "date": "2026-07-27T11:10:58Z",
-      "message": "Remove LED EXPO link from catalog navigation"
+      "message": "Remove LED EXPO link from Project Power navigation"
     },
     {
       "sha": "330bd570fe152a81a774ca98e460671ac5d2212c",
@@ -1787,12 +1787,12 @@
     {
       "sha": "ffc9d6cae909b44df4ffad4bf868ee6420df0272",
       "date": "2026-07-27T11:32:49Z",
-      "message": "Revert uniform catalog image and content heights"
+      "message": "Revert uniform Project Power image and content heights"
     },
     {
       "sha": "ad4b90a32ee11d1f60d957949ff015187dcd10d7",
       "date": "2026-07-27T11:34:56Z",
-      "message": "Bust catalog cache after natural sizing revert"
+      "message": "Bust Project Power cache after natural sizing revert"
     },
     {
       "sha": "f7a4a549d9eb28cca0678e52842e5e93551b4f08",
@@ -1927,22 +1927,22 @@
     {
       "sha": "4c695506dc2fcc67e953c022f5ca968103e8970b",
       "date": "2026-07-29T03:28:47Z",
-      "message": "Standardize catalog image and card heights"
+      "message": "Standardize Project Power image and card heights"
     },
     {
       "sha": "5fdf79aadfd5546f4077e308c2a1114d73072df8",
       "date": "2026-07-29T03:49:27Z",
-      "message": "Fix responsive catalog images without overlap"
+      "message": "Fix responsive Project Power images without overlap"
     },
     {
       "sha": "d28c5524f39f66f85c9ed3a95b34980ad88e3ffc",
       "date": "2026-07-29T03:53:17Z",
-      "message": "Correct catalog banner image class"
+      "message": "Correct Project Power banner image class"
     },
     {
       "sha": "f8d8ec25b6356e44a8fc0e9f460fb2b9f6f7a384",
       "date": "2026-07-29T06:16:49Z",
-      "message": "Remove broken two-channel catalog image override"
+      "message": "Remove broken two-channel Project Power image override"
     },
     {
       "sha": "952b795d5f9538c1a2aa9604f398c8fd431a41dd",
@@ -2067,12 +2067,12 @@
     {
       "sha": "67b8744c223b088f55cbd9f935ab6244242aa411",
       "date": "2026-08-05T21:16:28Z",
-      "message": "Build BTF project catalog"
+      "message": "Build BTF project Project Power"
     },
     {
       "sha": "1614e19a2c0fd9ba95e82d85b863fdc37b2fc515",
       "date": "2026-08-05T22:48:31Z",
-      "message": "Connect catalog selections to full project requests"
+      "message": "Connect Project Power selections to full project requests"
     },
     {
       "sha": "b9531f889d389a45d2a9b22cd0c7a5b8ec8ae897",
@@ -2087,7 +2087,7 @@
     {
       "sha": "a6b2dd38c659654a0a25301b3ffd3122d063cc62",
       "date": "2026-08-06T02:47:50Z",
-      "message": "Build complete BTF catalog from every quotation row"
+      "message": "Build complete BTF Project Power from every quotation row"
     },
     {
       "sha": "1e190ec46d720595b1a67d0cca8e6a44daa010e2",
@@ -2102,7 +2102,7 @@
     {
       "sha": "f83b9a5ed8e2f6ba46a2637d301f50b58d218f1e",
       "date": "2026-08-06T07:41:58Z",
-      "message": "Restore catalog theme and compact Chuck cloud"
+      "message": "Restore Project Power theme and compact Chuck cloud"
     },
     {
       "sha": "29dc87d41cc6ae85b55bebbb4fc0503a10615ec6",

@@ -12,4 +12,4 @@ Decorative lighting must not replace required safety lighting or be used in a ma
 
 Third-party products are subject to the manufacturer's specifications, warranties, availability, application terms, and limitations. Product references do not imply sponsorship or endorsement unless expressly stated.
 
-Original website text, photographs, videos, graphics, catalog organization, and project documentation are protected as described in `COPYRIGHT.md`.
+Original website text, photographs, videos, graphics, Project Power organization, and project documentation are protected as described in `COPYRIGHT.md`.

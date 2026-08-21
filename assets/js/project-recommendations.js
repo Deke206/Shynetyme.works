@@ -2,7 +2,7 @@
  * Project materials page script
  *
  * CONTENTS
- * 1. Saved-build and catalog state
+ * 1. Saved-build and Project Power state
  * 2. Filters and recommendation cards
  * 3. Selection persistence
  * 4. Consultation handoff
@@ -49,13 +49,13 @@
     }
   };
 
-  const [catalog, sets] = await Promise.all([
+  const [Project Power, sets] = await Promise.all([
     window.SHYNETYME_BTF_READY.catch(() => null),
     Promise.resolve(window.SHYNETYME_BTF_RECOMMENDATION_SETS || {})
   ]);
-  const allProducts = Array.isArray(catalog?.products) ? catalog.products : [];
+  const allProducts = Array.isArray(Project Power?.products) ? Project Power.products : [];
   const productMap = new Map();
-  const legacyCatalogIds = {
+  const legacyProject PowerIds = {
     "strip-ws2811-smd5050-rgb": "ws2811-smd5050-rgb-ordinary",
     "fcob-solid-white-warm-white": "fcob-solid-warm-white-ip65",
     "fcob-solid-white-natural-white": "fcob-solid-natural-white-ip65",
@@ -69,7 +69,7 @@
     productMap.set(`strip-${product.id}`, product);
     (product.legacyIds || []).forEach((legacyId) => productMap.set(legacyId, product));
   });
-  Object.entries(legacyCatalogIds).forEach(([legacyId, currentId]) => {
+  Object.entries(legacyProject PowerIds).forEach(([legacyId, currentId]) => {
     const product = productMap.get(currentId);
     if (product) productMap.set(legacyId, product);
   });
@@ -232,7 +232,7 @@
   function renderFamilyGrid() {
     const products = visibleProducts();
     if (!products.length) {
-      elements.familyGrid.innerHTML = '<div class="recommendations-empty">No matched catalog rows fit this filter. Clear the search or choose another category.</div>';
+      elements.familyGrid.innerHTML = '<div class="recommendations-empty">No matched Project Power rows fit this filter. Clear the search or choose another category.</div>';
       updateCounts();
       return;
     }
@@ -289,7 +289,7 @@
       : "- Exact simulator options to be confirmed during consultation.";
     const productLines = selectedProducts.length
       ? selectedProducts.map((product) => `- ${product.name} (${product.voltages}; ${product.waterproof}; ${product.sourceItems})`).join("\n")
-      : "- Exact catalog rows to be finalized during consultation.";
+      : "- Exact Project Power rows to be finalized during consultation.";
     const supportLines = draft.supportItems.filter((item) => selectedSupport.has(item.id)).map((item) => `- ${item.name}`).join("\n");
     return [
       draft.projectLabel,
@@ -297,7 +297,7 @@
       "",
       "Simulator selections:", buildLines,
       "",
-      "Selected exact catalog items:", productLines,
+      "Selected exact Project Power items:", productLines,
       "",
       "Selected project services:", supportLines,
       draft.flags?.garagePanelStories ? "\nComing soon interest: Garage-door LED panel story animations." : ""
