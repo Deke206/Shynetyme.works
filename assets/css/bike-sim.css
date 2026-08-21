@@ -1,0 +1,16 @@
+/* Bike SIM viewport only. No controls belong in this file. */
+.bike-sim-page .viewport{position:absolute;z-index:1;left:0;right:0;top:var(--topbar-h);bottom:0;overflow:hidden;background:#020711 url("../images/bike-planner-street.jpg") center center/cover no-repeat}
+.bike-sim-page .viewport::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 62%,rgba(0,0,0,.12) 100%)}
+.bike-sim-page .bike-canvas{position:absolute;z-index:2;inset:0;display:grid;place-items:center;overflow:hidden}
+.bike-sim-page #bikePreview{display:block;width:100%;height:100%;max-width:100%;max-height:100%;overflow:visible}
+.bike-sim-page .bike-scene-bg{display:none!important}
+.bike-sim-page .bike-ground{stroke:rgba(219,239,251,.28);stroke-width:4}
+.bike-sim-page .bike-fixture{fill:none;stroke:#dce8f3;stroke-width:8;opacity:.92}
+.bike-sim-page .bike-metal{fill:none;stroke:#dce8f3;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+.bike-sim-page .bike-zone{cursor:pointer;transition:opacity .16s ease,filter .16s ease}
+.bike-sim-page .bike-zone--stroke{stroke:url(#streamingRainbow)}
+.bike-sim-page .bike-zone--fill{fill:url(#streamingRainbow);stroke:url(#streamingRainbow)}
+.bike-sim-page .bike-zone.is-off{opacity:.12;filter:none}
+.bike-sim-page .bike-zone.is-on{opacity:1;filter:drop-shadow(0 0 10px #18e9ff) drop-shadow(0 0 15px rgba(255,44,168,.45))}
+.bike-sim-page .bike-zone-label{fill:#fff;font:800 17px Oxanium,sans-serif;paint-order:stroke;stroke:#020610;stroke-width:5px;stroke-linejoin:round}
+@media (max-height:430px){.bike-sim-page .bike-canvas{inset:1% 1.5% 0}.bike-sim-page #bikePreview{width:98%;height:98%}}
