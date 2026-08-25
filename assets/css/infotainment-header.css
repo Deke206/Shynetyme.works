@@ -1,0 +1,312 @@
+/* Standalone ShyneTyme.Works spotlight header object.
+   Loaded after site.css so this object owns its responsive height and layout. */
+.shynetyme-infotainment.spotlight-object,
+.shynetyme-infotainment.spotlight-object * { box-sizing: border-box; }
+
+.shynetyme-infotainment.spotlight-object {
+  --spotlight-cyan: var(--cyan, #31e6ff);
+  --spotlight-pink: var(--pink, #ff5ab9);
+  --spotlight-yellow: var(--amber, #ffc562);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 14rem;
+  overflow: hidden;
+  color: #f5fbff;
+  background: #020817;
+  border-bottom: 1px solid rgba(49,230,255,.24);
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-stage {
+  position: relative;
+  height: clamp(14rem, 18vw, 16rem);
+  min-height: 14rem;
+  overflow: hidden;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-slide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .35s ease, visibility 0s linear .35s;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-bg,
+.shynetyme-infotainment.spotlight-object .spotlight-wash {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-bg {
+  z-index: 0;
+  object-fit: cover;
+  object-position: center 44%;
+  filter: saturate(.82) contrast(1.05) brightness(.48);
+  transform: scale(1.015);
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-wash {
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(1,7,18,.88) 0%, rgba(2,9,24,.68) 48%, rgba(1,7,18,.50) 100%),
+    radial-gradient(circle at 82% 18%, rgba(49,230,255,.14), transparent 25rem);
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-shell {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-card {
+  width: min(42rem, 78vw);
+  padding: .9rem 1rem;
+  border: 1px solid rgba(255,255,255,.17);
+  border-radius: .9rem;
+  background: rgba(3,12,29,.74);
+  box-shadow: 0 12px 30px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-heading-row {
+  display: flex;
+  gap: .7rem;
+  align-items: center;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-logo {
+  width: 2.65rem;
+  height: 2.65rem;
+  flex: 0 0 2.65rem;
+  padding: .2rem;
+  border-radius: .55rem;
+  object-fit: contain;
+  background: rgba(255,255,255,.96);
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-kicker {
+  margin: 0 0 .12rem;
+  color: var(--spotlight-cyan);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: .64rem;
+  font-weight: 900;
+  letter-spacing: .11em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.shynetyme-infotainment.spotlight-object h2 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: clamp(1.12rem, 2vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-summary {
+  max-width: 64ch;
+  margin: .5rem 0 0;
+  color: #e0ebf5;
+  font-size: .88rem;
+  line-height: 1.38;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-live {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr);
+  gap: .45rem;
+  align-items: baseline;
+  margin: .5rem 0 0;
+  font-size: .75rem;
+  line-height: 1.3;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-live > span {
+  color: var(--spotlight-yellow);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: .62rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-live a {
+  min-width: 0;
+  overflow: hidden;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-live[data-state="live"] > span {
+  color: #55e6b5;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-live a:hover,
+.shynetyme-infotainment.spotlight-object .spotlight-live a:focus-visible {
+  color: var(--spotlight-cyan);
+  text-decoration: underline;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: .62rem;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: .32rem .64rem;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: .45rem;
+  color: #fff;
+  background: rgba(2,12,29,.65);
+  font-size: .73rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-action:hover,
+.shynetyme-infotainment.spotlight-object .spotlight-action:focus-visible {
+  color: #07111f;
+  border-color: transparent;
+  background: var(--spotlight-cyan);
+  outline: none;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-action--support:hover,
+.shynetyme-infotainment.spotlight-object .spotlight-action--support:focus-visible {
+  background: var(--spotlight-yellow);
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-progress {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(255,255,255,.08);
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--spotlight-cyan), var(--spotlight-pink), var(--spotlight-yellow));
+  transform-origin: left center;
+}
+
+.shynetyme-infotainment.spotlight-object .spotlight-count {
+  position: absolute;
+  z-index: 4;
+  right: .75rem;
+  bottom: .48rem;
+  padding: .2rem .38rem;
+  border-radius: .35rem;
+  color: rgba(255,255,255,.82);
+  background: rgba(2,9,24,.6);
+  font: 800 .62rem/1 var(--heading-font, "Oxanium", sans-serif);
+}
+
+.shynetyme-infotainment.spotlight-object.is-paused .spotlight-progress span {
+  animation-play-state: paused !important;
+}
+
+@keyframes spotlight-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Bootstrap-like responsive heights: compact instead of growing to 21–24rem. */
+@media (max-width: 991.98px) {
+  .shynetyme-infotainment.spotlight-object { min-height: 14.5rem; }
+  .shynetyme-infotainment.spotlight-object .spotlight-stage {
+    height: 14.5rem;
+    min-height: 14.5rem;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-card { width: min(38rem, 86vw); }
+}
+
+@media (max-width: 767.98px) {
+  .shynetyme-infotainment.spotlight-object { min-height: 15.5rem; }
+  .shynetyme-infotainment.spotlight-object .spotlight-stage {
+    height: 15.5rem;
+    min-height: 15.5rem;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-shell {
+    align-items: center;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-card {
+    width: 100%;
+    padding: .72rem .78rem;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-summary {
+    font-size: .82rem;
+    line-height: 1.32;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-live a { white-space: normal; }
+}
+
+@media (max-width: 575.98px) {
+  .shynetyme-infotainment.spotlight-object { min-height: 16rem; }
+  .shynetyme-infotainment.spotlight-object .spotlight-stage {
+    height: 16rem;
+    min-height: 16rem;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-logo {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-basis: 2.25rem;
+  }
+  .shynetyme-infotainment.spotlight-object h2 { font-size: 1.08rem; }
+  .shynetyme-infotainment.spotlight-object .spotlight-summary {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-actions { margin-top: .5rem; }
+  .shynetyme-infotainment.spotlight-object .spotlight-action { min-height: 1.9rem; padding: .28rem .55rem; }
+}
+
+@media (max-width: 420px) {
+  .shynetyme-infotainment.spotlight-object,
+  .shynetyme-infotainment.spotlight-object .spotlight-stage {
+    min-height: 16.5rem;
+    height: 16.5rem;
+  }
+  .shynetyme-infotainment.spotlight-object .spotlight-live { font-size: .7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shynetyme-infotainment.spotlight-object .spotlight-slide { transition: none; }
+  .shynetyme-infotainment.spotlight-object .spotlight-progress span { animation: none !important; }
+}
