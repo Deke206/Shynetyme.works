@@ -1,12 +1,7 @@
 /**
- * About page work-history script
- *
- * CONTENTS
- * 1. Timeline data loading
- * 2. Filters and detail rendering
- * 3. Interaction and accessibility events
+ * About Deke read-only work-history timeline.
+ * Combines the verified August 8 archive with the current ShyneTyme.Works repo.
  */
-
 (() => {
   "use strict";
 
@@ -19,7 +14,7 @@
     : new URL("assets/js/work-history.js", window.location.href);
   const siteRoot = new URL("../../", scriptUrl);
 
-  const repository = root.dataset.repository || "Deke206/thethinkingtank";
+  const repository = root.dataset.repository || "Deke206/Shynetyme.works";
   const branch = root.dataset.branch || "main";
   const timeline = root.querySelector("[data-work-history-timeline]");
   const status = root.querySelector("[data-work-history-status]");
@@ -31,27 +26,9 @@
   if (!timeline || !status || !totalValue || !activeDaysValue || !firstValue || !latestValue) return;
 
   const TIME_ZONE = "America/Los_Angeles";
-  const CACHE_KEY = `shynetyme-work-history:${repository}:${branch}:v3`;
-  const CACHE_TTL = 15 * 60 * 1000;
-  const MAX_PAGES = 20;
-
-  const verifiedFallback = [
-    { sha: "e16a0c7ec9ac3f0a228289f856fd3eed15935ed0", date: "2026-07-22T17:11:37-07:00", message: "Finish animated Chuck helper on About Deke page" },
-    { sha: "8ce7e4bb3038720a56b61d65a6cac037680134b7", date: "2026-07-22T17:26:24-07:00", message: "Add Chrome DeX animation compatibility layer" },
-    { sha: "515d9af8aab2986775bb873a7093c637cc247ecd", date: "2026-07-22T17:26:53-07:00", message: "Animate shared Chuck and link About Deke sitewide" },
-    { sha: "724791a34864f4f40325aa8011300e97eb9368fe", date: "2026-07-22T17:27:21-07:00", message: "Load DeX motion compatibility on About Deke page" },
-    { sha: "e80499f44fc5ab8b3883dec9388c26eefbd6d325", date: "2026-07-23T09:43:49Z", message: "Add comprehensive Home Builder page" },
-    { sha: "cc7541ca19319e6c622485f1b3a84518cb602533", date: "2026-07-23T10:39:29Z", message: "Add LED banner magic demo styles" },
-    { sha: "60d79590e14d482e00b08da43a1a5a8c8fa4ce4d", date: "2026-07-23T10:41:07Z", message: "Add canvas LED matrix animation demo" },
-    { sha: "39ba81f86939c272282253ef42c4ea5bb419c925", date: "2026-07-23T10:41:57Z", message: "Publish LED banner magic example page" },
-    { sha: "502376bc8347a4a589244fdf8f363ba308f764de", date: "2026-07-23T19:34:50Z", message: "Add shared randomized LED matrix ribbons" },
-    { sha: "a577f49d0c42b809ed6e0b43be15c1dd5ea80421", date: "2026-07-23T19:35:31Z", message: "Use shared top bottom and breadcrumb LED matrix frames" },
-    { sha: "bdbf8972dbce878cada6c1ca4eb37b8035860ff0", date: "2026-07-23T20:22:42Z", message: "Separate shared LED matrix styles from hero and Chuck" },
-    { sha: "8963c5d36deacb819252de35259fe927b75a1a1e", date: "2026-07-23T20:24:43Z", message: "Optimize shared LED matrix and pause off-screen rendering" },
-    { sha: "520855a958ccf3ed82994b4360ea0fb036ddcf77", date: "2026-07-23T20:25:34Z", message: "Separate Chuck from LED matrix and show thoughts only at page bottom" },
-    { sha: "d93bb598752db5d934c03aa0cbb41e50a1a197a0", date: "2026-07-23T21:05:58Z", message: "Add shared Build dropdown and restore navigation flare styling" },
-    { sha: "e95d57cc6396be109bb3e49fc5e2d7a358e91e1d", date: "2026-07-23T21:08:01Z", message: "Fix Build dropdown placement and prevent duplicate About link" }
-  ];
+  const CACHE_KEY = `shynetyme-work-history:${repository}:${branch}:v4`;
+  const CACHE_TTL = 10 * 60 * 1000;
+  const MAX_PAGES = 10;
 
   const dayFormatter = new Intl.DateTimeFormat("en-US", {
     timeZone: TIME_ZONE,
@@ -79,16 +56,21 @@
     status.dataset.state = state;
   };
 
-  const firstLine = (message) => String(message || "Website update")
-    .split(/\r?\n/, 1)[0]
-    .replace(/\s+/g, " ")
+  const cleanMessage = (value = "") => String(value)
+    .replace(/\r\n/g, "\n")
     .trim();
 
-  const normalizeCommit = (item) => ({
-    sha: String(item.sha || "").trim(),
-    date: item.date || item.commit?.author?.date || item.commit?.committer?.date || "",
-    message: firstLine(item.message || item.commit?.message)
-  });
+  const normalizeCommit = (item, defaultSource = "current") => {
+    const fullMessage = cleanMessage(item.fullMessage || item.message || item.commit?.message || "Website update");
+    const [titleLine = "Website update", ...detailLines] = fullMessage.split("\n");
+    return {
+      sha: String(item.sha || "").trim(),
+      date: item.date || item.commit?.author?.date || item.commit?.committer?.date || "",
+      message: titleLine.replace(/\s+/g, " ").trim() || "Website update",
+      details: detailLines.join("\n").trim(),
+      source: item.source || defaultSource
+    };
+  };
 
   const shouldDisplay = (commit) => commit.sha
     && commit.date
@@ -108,12 +90,12 @@
   const classify = (message) => {
     const value = message.toLowerCase();
     if (/chuck|sprite|helper|thought/.test(value)) return { key: "chuck", label: "Chuck" };
-    if (/home builder|bike builder|builder|configurator|build my/.test(value)) return { key: "builder", label: "Builder" };
+    if (/home sim|bike sim|auto sim|builder|configurator|build my/.test(value)) return { key: "builder", label: "Builder" };
     if (/led|matrix|banner|wled|lighting|light strip/.test(value)) return { key: "led", label: "LED" };
     if (/fix|repair|restore|hotfix|bug|broken|missing|correct/.test(value)) return { key: "fix", label: "Fix" };
     if (/about|copy|content|wording|text|privacy|terms/.test(value)) return { key: "content", label: "Content" };
     if (/css|style|design|header|hero|carousel|navigation|navbar|layout|image/.test(value)) return { key: "design", label: "Design" };
-    if (/Project Power|product|scraper/.test(value)) return { key: "Project Power", label: "Project Power" };
+    if (/project power|product|scraper/.test(value)) return { key: "project-power", label: "Project Power" };
     if (/workflow|history|docs|document/.test(value)) return { key: "process", label: "Process" };
     return { key: "website", label: "Website" };
   };
@@ -132,23 +114,25 @@
     try {
       sessionStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), commits }));
     } catch {
-      // The timeline still works when browser storage is unavailable.
+      // Timeline remains usable when storage is blocked.
     }
   };
 
-  const fetchStaticHistory = async () => {
+  const fetchArchive = async () => {
     const url = new URL("assets/data/work-history.json", siteRoot);
-    url.searchParams.set("v", "20260724-root-cleanup");
+    url.searchParams.set("v", "20260808-archive");
     const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) throw new Error("Static history is not generated yet.");
+    if (!response.ok) throw new Error("August 8 archive is unavailable.");
     const data = await response.json();
-    if (!Array.isArray(data.commits) || !data.commits.length) throw new Error("Static history is empty.");
-    return data.commits.map(normalizeCommit).filter(shouldDisplay);
+    if (!Array.isArray(data.commits) || !data.commits.length) throw new Error("August 8 archive is empty.");
+    return data.commits
+      .map((item) => normalizeCommit({ ...item, source: "archive" }, "archive"))
+      .filter(shouldDisplay);
   };
 
-  const fetchLiveHistory = async () => {
+  const fetchCurrentHistory = async () => {
     const [owner, repo] = repository.split("/");
-    if (!owner || !repo) throw new Error("The public repository name is invalid.");
+    if (!owner || !repo) throw new Error("Current repository name is invalid.");
 
     const commits = [];
     for (let page = 1; page <= MAX_PAGES; page += 1) {
@@ -161,29 +145,40 @@
       const timer = window.setTimeout(() => controller.abort(), 12000);
       try {
         const response = await fetch(url, {
+          cache: "no-store",
           headers: { Accept: "application/vnd.github+json" },
           signal: controller.signal
         });
         if (!response.ok) {
           const remaining = response.headers.get("x-ratelimit-remaining");
-          if (response.status === 403 && remaining === "0") throw new Error("GitHub's public viewing limit is temporarily reached.");
-          throw new Error(`GitHub history request failed (${response.status}).`);
+          if (response.status === 403 && remaining === "0") {
+            throw new Error("GitHub public viewing limit temporarily reached.");
+          }
+          throw new Error(`Current history request failed (${response.status}).`);
         }
 
         const items = await response.json();
         if (!Array.isArray(items) || !items.length) break;
-        commits.push(...items.map(normalizeCommit).filter(shouldDisplay));
+        commits.push(...items.map((item) => normalizeCommit({
+          sha: item.sha,
+          date: item.commit?.author?.date || item.commit?.committer?.date,
+          fullMessage: item.commit?.message,
+          source: "current"
+        }, "current")).filter(shouldDisplay));
         if (items.length < 100) break;
       } finally {
         window.clearTimeout(timer);
       }
     }
+    return commits;
+  };
 
+  const mergeHistory = (currentCommits, archiveCommits) => {
     const unique = new Map();
-    commits.forEach((commit) => {
+    [...currentCommits, ...archiveCommits].forEach((commit) => {
       if (!unique.has(commit.sha)) unique.set(commit.sha, commit);
     });
-    return [...unique.values()];
+    return [...unique.values()].sort((a, b) => new Date(b.date) - new Date(a.date));
   };
 
   const buildEntry = (commit) => {
@@ -196,6 +191,14 @@
     const message = document.createElement("span");
     message.className = "work-history__message";
     message.textContent = commit.message;
+    copy.appendChild(message);
+
+    if (commit.details) {
+      const details = document.createElement("p");
+      details.className = "work-history__details";
+      details.textContent = commit.details;
+      copy.appendChild(details);
+    }
 
     const meta = document.createElement("div");
     meta.className = "work-history__meta";
@@ -209,10 +212,15 @@
     hash.textContent = commit.sha.slice(0, 8);
     hash.title = "Read-only commit identifier";
 
-    meta.append(time, hash);
-    copy.append(message, meta);
+    const source = document.createElement("span");
+    source.className = "work-history__source";
+    source.dataset.source = commit.source;
+    source.textContent = commit.source === "archive" ? "Aug 8 archive" : "Current repo";
 
-    const category = classify(commit.message);
+    meta.append(time, hash, source);
+    copy.appendChild(meta);
+
+    const category = classify(`${commit.message} ${commit.details}`);
     const tag = document.createElement("span");
     tag.className = "work-history__tag";
     tag.dataset.kind = category.key;
@@ -224,7 +232,7 @@
 
   const render = (rawCommits, sourceLabel) => {
     const commits = rawCommits
-      .map(normalizeCommit)
+      .map((item) => normalizeCommit(item, item.source || "current"))
       .filter(shouldDisplay)
       .sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -238,6 +246,7 @@
       activeDaysValue.textContent = "—";
       firstValue.textContent = "—";
       latestValue.textContent = "—";
+      setStatus("Work-history record unavailable.", "error");
       return;
     }
 
@@ -261,7 +270,7 @@
 
       const count = document.createElement("span");
       count.className = "work-history__day-count";
-      count.textContent = `${dayCommits.length} ${dayCommits.length === 1 ? "edit" : "edits"}`;
+      count.textContent = `${dayCommits.length} ${dayCommits.length === 1 ? "change" : "changes"}`;
       heading.append(dateText, count);
 
       const entries = document.createElement("ol");
@@ -280,37 +289,53 @@
     activeDaysValue.textContent = groups.size.toLocaleString("en-US");
     firstValue.textContent = shortDateFormatter.format(new Date(oldest.date));
     latestValue.textContent = shortDateFormatter.format(new Date(newest.date));
-    setStatus(`${sourceLabel} · displayed newest to oldest · ${commits.length.toLocaleString("en-US")} read-only edits`);
+    setStatus(`${sourceLabel} · newest to oldest · ${commits.length.toLocaleString("en-US")} read-only changes`);
   };
 
   const load = async () => {
     const cached = readCache();
     if (cached?.length) {
-      render(cached, "Cached public history");
+      render(cached, "Cached ShyneTyme.Works + August 8 archive");
+    } else {
+      setStatus("Loading current ShyneTyme.Works history and August 8 archive…", "loading");
+    }
+
+    const [currentResult, archiveResult] = await Promise.allSettled([
+      fetchCurrentHistory(),
+      fetchArchive()
+    ]);
+
+    const current = currentResult.status === "fulfilled" ? currentResult.value : [];
+    const archive = archiveResult.status === "fulfilled" ? archiveResult.value : [];
+    const merged = mergeHistory(current, archive);
+
+    if (merged.length) {
+      writeCache(merged);
+      if (current.length && archive.length) {
+        render(merged, "Live ShyneTyme.Works + August 8 archive");
+      } else if (current.length) {
+        render(merged, "Live ShyneTyme.Works · August 8 archive temporarily unavailable");
+      } else {
+        render(merged, "August 8 archive · live ShyneTyme.Works temporarily unavailable");
+      }
       return;
     }
 
-    setStatus("Loading the newest public website edits…");
-
-    try {
-      const staticCommits = await fetchStaticHistory();
-      writeCache(staticCommits);
-      render(staticCommits, "Generated public history");
+    if (cached?.length) {
+      setStatus("Showing cached work history; live sources are temporarily unavailable.", "error");
       return;
-    } catch {
-      // Use the public read-only API until the generated snapshot is available.
     }
 
-    try {
-      const liveCommits = await fetchLiveHistory();
-      if (!liveCommits.length) throw new Error("No commits were returned.");
-      writeCache(liveCommits);
-      render(liveCommits, "Live public history");
-    } catch (error) {
-      render(verifiedFallback, "Verified milestone fallback");
-      setStatus(`${error.message || "Live history is temporarily unavailable."} Showing verified milestones instead.`, "error");
-    }
+    render([], "Unavailable");
   };
 
-  load();
+  load().catch(() => {
+    const cached = readCache();
+    if (cached?.length) {
+      render(cached, "Cached ShyneTyme.Works + August 8 archive");
+      setStatus("Showing cached work history; live refresh failed.", "error");
+    } else {
+      render([], "Unavailable");
+    }
+  });
 })();
