@@ -1,0 +1,49 @@
+/* Compact About Deke work-history viewport and source/output details. */
+.work-history__timeline {
+  max-height: min(22rem, 48vh);
+}
+
+.work-history__source {
+  display: inline-flex;
+  align-items: center;
+  margin-left: .1rem;
+  padding: .12rem .38rem;
+  border: 1px solid rgba(85, 230, 181, .24);
+  border-radius: 999px;
+  color: #d9fff2;
+  background: rgba(85, 230, 181, .07);
+  font-family: var(--heading-font, "Oxanium", "Trebuchet MS", sans-serif);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.work-history__source[data-source="archive"] {
+  border-color: rgba(255, 197, 98, .28);
+  color: #fff1c9;
+  background: rgba(255, 197, 98, .07);
+}
+
+.work-history__details {
+  margin: .32rem 0 0;
+  color: #b9c9df;
+  font-size: .78rem;
+  font-weight: 500;
+  line-height: 1.38;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767.98px) {
+  .work-history__timeline {
+    max-height: 19rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .work-history__timeline {
+    max-height: 17rem;
+  }
+}
