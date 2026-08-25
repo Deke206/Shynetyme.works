@@ -20,20 +20,27 @@
   ensureStylesheet("assets/css/infotainment-header.css?v=20260825-rss-v1", "spotlight-header");
   ensureStylesheet("assets/css/work-history-compact.css?v=20260825-history-v1", "work-history-compact");
 
+  const loadStandaloneHeader = () => {
+    if (document.querySelector("script[data-shynetyme-standalone-header]")) return;
+    if (window.ShynetymeInfotainmentLoaded?.version === "standalone-pending") {
+      delete window.ShynetymeInfotainmentLoaded;
+    }
+    const script = document.createElement("script");
+    script.src = "assets/js/infotainment-header.js?v=20260825-rss-v1";
+    script.dataset.shynetymeStandaloneHeader = "true";
+    document.head.appendChild(script);
+  };
+
   if (!window.ShynetymeInfotainmentLoaded?.initialized) {
-    const pendingHeaderGuard = { initialized: true, version: "standalone-pending", init() {} };
+    const pendingHeaderGuard = {
+      initialized: true,
+      version: "standalone-pending",
+      init: loadStandaloneHeader
+    };
     window.ShynetymeInfotainmentLoaded = pendingHeaderGuard;
-    window.setTimeout(() => {
-      if (window.ShynetymeInfotainmentLoaded === pendingHeaderGuard) {
-        delete window.ShynetymeInfotainmentLoaded;
-      }
-      if (!document.querySelector("script[data-shynetyme-standalone-header]")) {
-        const script = document.createElement("script");
-        script.src = "assets/js/infotainment-header.js?v=20260825-rss-v1";
-        script.dataset.shynetymeStandaloneHeader = "true";
-        document.head.appendChild(script);
-      }
-    }, 0);
+    window.addEventListener("load", () => {
+      if (window.ShynetymeInfotainmentLoaded === pendingHeaderGuard) loadStandaloneHeader();
+    }, { once: true });
   }
 
   const root = document.querySelector("[data-work-history]");
