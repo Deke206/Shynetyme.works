@@ -5,6 +5,37 @@
 (() => {
   "use strict";
 
+  /* About Deke already loads this file before shared site.js. Use that existing
+     load point to hand the banner off to its standalone object without rewriting
+     the page or leaving the old embedded infotainment module in control. */
+  const ensureStylesheet = (href, key) => {
+    if (document.querySelector(`link[data-shynetyme-object="${key}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    link.dataset.shynetymeObject = key;
+    document.head.appendChild(link);
+  };
+
+  ensureStylesheet("assets/css/infotainment-header.css?v=20260825-rss-v1", "spotlight-header");
+  ensureStylesheet("assets/css/work-history-compact.css?v=20260825-history-v1", "work-history-compact");
+
+  if (!window.ShynetymeInfotainmentLoaded?.initialized) {
+    const pendingHeaderGuard = { initialized: true, version: "standalone-pending", init() {} };
+    window.ShynetymeInfotainmentLoaded = pendingHeaderGuard;
+    window.setTimeout(() => {
+      if (window.ShynetymeInfotainmentLoaded === pendingHeaderGuard) {
+        delete window.ShynetymeInfotainmentLoaded;
+      }
+      if (!document.querySelector("script[data-shynetyme-standalone-header]")) {
+        const script = document.createElement("script");
+        script.src = "assets/js/infotainment-header.js?v=20260825-rss-v1";
+        script.dataset.shynetymeStandaloneHeader = "true";
+        document.head.appendChild(script);
+      }
+    }, 0);
+  }
+
   const root = document.querySelector("[data-work-history]");
   if (!root) return;
 
@@ -14,7 +45,12 @@
     : new URL("assets/js/work-history.js", window.location.href);
   const siteRoot = new URL("../../", scriptUrl);
 
-  const repository = root.dataset.repository || "Deke206/Shynetyme.works";
+  const configuredRepository = root.dataset.repository || "";
+  const repository = !configuredRepository || configuredRepository === "Deke206/thethinkingtank"
+    ? "Deke206/Shynetyme.works"
+    : configuredRepository;
+  root.dataset.repository = repository;
+
   const branch = root.dataset.branch || "main";
   const timeline = root.querySelector("[data-work-history-timeline]");
   const status = root.querySelector("[data-work-history-status]");
