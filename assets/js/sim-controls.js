@@ -41,7 +41,7 @@ let sidebarState='closed',lowerState='hidden',lastTab='effects',popTimer=0;
 
 function setSidebar(state='closed'){
   sidebarState=state;app.classList.toggle('sidebar-peek',state==='peek');app.classList.toggle('sidebar-open',state==='full');railToggle.dataset.state=state;
-  const label=state==='closed'?'Show one column of controls':state==='peek'?'Show three columns of controls':'Hide side controls';railToggle.setAttribute('aria-label',label);railToggle.title=label;
+  const label=state==='closed'?'Show one column of controls':state==='peek'?'Show two columns of controls':'Hide side controls';railToggle.setAttribute('aria-label',label);railToggle.title=label;
 }
 function dockButton(id=lastTab){return qa('.dock-tab').find(btn=>btn.dataset.tab===id)||q('.dock-tab')}
 function setLowerState(state='hidden',id=lastTab,button=null){
