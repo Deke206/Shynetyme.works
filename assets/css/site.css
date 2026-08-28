@@ -348,6 +348,21 @@ footer.site-footer--compact .container {
 }
 
 @media (max-width: 991.98px) {
+  /* Keep the expanded mobile navigation above page content instead of reflowing it. */
+  .navbar > .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 1040;
+    padding: .7rem .75rem 1rem;
+    border-top: 1px solid rgba(49, 230, 255, .18);
+    border-bottom: 1px solid rgba(49, 230, 255, .22);
+    background: rgba(3, 9, 24, .98);
+    box-shadow:
+      0 16px 28px rgba(0, 0, 0, .38),
+      0 0 24px rgba(49, 230, 255, .08);
+  }
 }
 
 @media (max-width: 767.98px) {
