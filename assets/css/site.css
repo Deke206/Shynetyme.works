@@ -349,7 +349,7 @@ footer.site-footer--compact .container {
 
 @media (max-width: 991.98px) {
   /* Keep the expanded mobile navigation above page content instead of reflowing it. */
-  .navbar > .navbar-collapse {
+  .navbar .navbar-collapse {
     position: absolute;
     top: 100%;
     right: 0;
