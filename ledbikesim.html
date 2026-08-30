@@ -1,45 +1,1110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>LED Bike SIM | ShyneTyme.Works</title>
-<meta name="description" content="Interactive bicycle LED simulator with shared ShyneTyme.Works controls.">
-<meta name="theme-color" content="#020610">
-<link rel="icon" sizes="32x32" type="image/png" href="assets/brand/favicon-32.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="assets/css/site.css?v=20260821-sim-rebuild" rel="stylesheet">
-<link href="assets/css/sim-controls.css?v=20260821-sim-rebuild" rel="stylesheet">
-<link href="assets/css/bike-sim.css?v=20260821-sim-rebuild" rel="stylesheet">
-</head>
-<body class="v56-page bike-sim-page" data-simulator="bike">
-<nav aria-label="Primary navigation" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top"><div class="container"><a class="navbar-brand fw-bold brand-lockup" href="index.html"><img alt="" height="34" src="assets/brand/favicon-32.png" width="34"><span>ShyneTyme.<em>Works</em></span></a><button aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navMenu" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navMenu"><div class="navbar-nav ms-auto"><a class="nav-link" href="aboutme.html">ABOUT</a><a class="nav-link" href="LEDexpo.html">LED EXPO</a><div class="nav-item dropdown shynetyme-build-menu" data-shynetyme-build-menu="true"><button aria-expanded="false" aria-label="Open LED simulator menu" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" type="button">LED SIMS</button><ul aria-label="LED simulator pages" class="dropdown-menu dropdown-menu-dark"><li><a aria-current="page" class="dropdown-item active" href="ledbikesim.html">BIKE SIM</a></li><li><a class="dropdown-item" href="LEDAutoSim.html">AUTO SIM</a></li><li><a class="dropdown-item" href="ledhomesim.html">HOME SIM</a></li></ul></div><a class="nav-link" href="led-Project Power.html">Project Power</a><a class="nav-link" href="contact.html">CONTACT</a></div></div></div></nav>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>LED Bike SIM | ShyneTyme.Works</title>
+    <meta
+      name="description"
+      content="Interactive bicycle LED simulator with shared ShyneTyme.Works controls."
+    />
+    <meta name="theme-color" content="#020610" />
+    <link
+      rel="icon"
+      sizes="32x32"
+      type="image/png"
+      href="assets/brand/favicon-32.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="assets/css/site.css?v=20260821-sim-rebuild" rel="stylesheet" />
+    <link
+      href="assets/css/sim-controls-v2.css?v=20260830-simulator-v2-preview"
+      rel="stylesheet"
+    />
+    <link
+      href="assets/css/bike-sim-v2.css?v=20260830-simulator-v2-preview"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="v56-page bike-sim-page" data-simulator="bike">
+    <nav
+      aria-label="Primary navigation"
+      class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top"
+    >
+      <div class="container">
+        <a class="navbar-brand fw-bold brand-lockup" href="index.html"
+          ><img
+            alt=""
+            height="34"
+            src="assets/brand/favicon-32.png"
+            width="34"
+          /><span>ShyneTyme.<em>Works</em></span></a
+        ><button
+          aria-controls="navMenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          class="navbar-toggler"
+          data-bs-target="#navMenu"
+          data-bs-toggle="collapse"
+          type="button"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+          <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="aboutme.html">ABOUT</a
+            ><a class="nav-link" href="LEDexpo.html">LED EXPO</a>
+            <div
+              class="nav-item dropdown shynetyme-build-menu"
+              data-shynetyme-build-menu="true"
+            >
+              <button
+                aria-expanded="false"
+                aria-label="Open LED simulator menu"
+                class="nav-link dropdown-toggle active"
+                data-bs-toggle="dropdown"
+                type="button"
+              >
+                LED SIMS
+              </button>
+              <ul
+                aria-label="LED simulator pages"
+                class="dropdown-menu dropdown-menu-dark"
+              >
+                <li>
+                  <a
+                    aria-current="page"
+                    class="dropdown-item active"
+                    href="ledbikesim.html"
+                    >BIKE SIM</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="LEDAutoSim.html">AUTO SIM</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="ledhomesim.html">HOME SIM</a>
+                </li>
+              </ul>
+            </div>
+            <a class="nav-link" href="led-Project Power.html">Project Power</a
+            ><a class="nav-link" href="contact.html">CONTACT</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <button
+      aria-controls="navMenu"
+      aria-expanded="false"
+      aria-label="Reveal site navigation"
+      class="sim-nav-reveal-zone"
+      id="simNavReveal"
+      type="button"
+    ></button>
 
-<main class="sim-stage" id="main-content"><div class="app-grid" id="appGrid">
-<aside class="side-rail" id="sideRail"><button aria-label="Show one column of controls" class="sidebar-toggle" data-state="closed" id="sidebarToggle" title="Show one column of controls" type="button"><span aria-hidden="true" class="rail-state-indicator"><span class="rail-step">›</span><span class="rail-step">›</span><span class="rail-step">›</span></span></button><div class="rail-switch"><button class="active" data-rail="devices"><span>PARTS</span></button><button data-rail="groups"><span>GROUPS</span></button></div><div class="device-stack" id="devicePane">
-<button aria-label="Frame. Tap to select and toggle." aria-pressed="true" class="device-tile active" data-click-toggle="true" data-name="Frame" data-on="true" data-zone="frame" style="--device:#18e9ff" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">FRAME</span></button>
-<button aria-label="Front Forks. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Front Forks" data-on="false" data-zone="front-forks" style="--device:#ff2ca8" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">FRONT<wbr> FORKS</span></button>
-<button aria-label="Front Wheel. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Front Wheel" data-on="false" data-zone="front-wheel" style="--device:#ffd928" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">FRONT<wbr> WHEEL</span></button>
-<button aria-label="Rear Wheel. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Rear Wheel" data-on="false" data-zone="rear-wheel" style="--device:#18e9ff" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">REAR<wbr> WHEEL</span></button>
-<button aria-label="Handlebars. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Handlebars" data-on="false" data-zone="handlebars" style="--device:#ff2ca8" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">HANDLEBARS</span></button>
-<button aria-label="Front Basket. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Front Basket" data-on="false" data-zone="front-basket" style="--device:#ffd928" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">FRONT<wbr> BASKET</span></button>
-<button aria-label="Rear Basket. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Rear Basket" data-on="false" data-zone="rear-basket" style="--device:#18e9ff" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">REAR<wbr> BASKET</span></button>
-<button aria-label="Handlebar Pouch. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Handlebar Pouch" data-on="false" data-zone="handlebar-pouch" style="--device:#ff2ca8" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">HANDLEBAR<wbr> POUCH</span></button>
-<button aria-label="Rear Pouch. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Rear Pouch" data-on="false" data-zone="rear-pouch" style="--device:#ffd928" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">REAR<wbr> POUCH</span></button>
-<button aria-label="Flag Pole. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Flag Pole" data-on="false" data-zone="flag-pole" style="--device:#18e9ff" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">FLAG<wbr> POLE</span></button>
-<button aria-label="Tail Light. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Tail Light" data-on="false" data-zone="tail-light" style="--device:#ff2ca8" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">TAIL<wbr> LIGHT</span></button>
-<button aria-label="Turn Signals. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Turn Signals" data-on="false" data-zone="turn-signals" style="--device:#ffd928" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">TURN<wbr> SIGNALS</span></button>
-<button aria-label="Helmet Lights. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Helmet Lights" data-on="false" data-zone="helmet-lights" style="--device:#18e9ff" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">HELMET<wbr> LIGHTS</span></button>
+    <main class="sim-stage" id="main-content">
+      <div class="app-grid" id="appGrid">
+        <aside class="side-rail" id="sideRail">
+          <button
+            aria-label="Show one column of controls"
+            class="sidebar-toggle"
+            data-state="closed"
+            id="sidebarToggle"
+            title="Show one column of controls"
+            type="button"
+          >
+            <span aria-hidden="true" class="rail-state-indicator"
+              ><span class="rail-step">›</span><span class="rail-step">›</span
+              ><span class="rail-step">›</span></span
+            >
+          </button>
+          <div class="rail-switch">
+            <button class="active" data-rail="devices" type="button">
+              <span>PARTS</span></button
+            ><button data-rail="groups" type="button"><span>GROUPS</span></button>
+          </div>
+          <div class="device-stack" id="devicePane">
+            <button
+              aria-label="Frame preview selection"
+              aria-pressed="true"
+              class="device-tile active"
+              data-click-toggle="true"
+              data-name="Frame"
+              data-on="true"
+              data-zone="frame"
+              style="--device: #18e9ff"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">FRAME</span>
+            </button>
+            <button
+              aria-label="Front Forks preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Front Forks"
+              data-on="false"
+              data-zone="front-forks"
+              style="--device: #ff2ca8"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">FRONT<wbr /> FORKS</span>
+            </button>
+            <button
+              aria-label="Front Wheel preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Front Wheel"
+              data-on="false"
+              data-zone="front-wheel"
+              style="--device: #ffd928"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">FRONT<wbr /> WHEEL</span>
+            </button>
+            <button
+              aria-label="Rear Wheel preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Rear Wheel"
+              data-on="false"
+              data-zone="rear-wheel"
+              style="--device: #18e9ff"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">REAR<wbr /> WHEEL</span>
+            </button>
+            <button
+              aria-label="Handlebars preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Handlebars"
+              data-on="false"
+              data-zone="handlebars"
+              style="--device: #ff2ca8"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">HANDLEBARS</span>
+            </button>
+            <button
+              aria-label="Front Basket preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Front Basket"
+              data-on="false"
+              data-zone="front-basket"
+              style="--device: #ffd928"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">FRONT<wbr /> BASKET</span>
+            </button>
+            <button
+              aria-label="Rear Basket preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Rear Basket"
+              data-on="false"
+              data-zone="rear-basket"
+              style="--device: #18e9ff"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">REAR<wbr /> BASKET</span>
+            </button>
+            <button
+              aria-label="Handlebar Pouch preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Handlebar Pouch"
+              data-on="false"
+              data-zone="handlebar-pouch"
+              style="--device: #ff2ca8"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">HANDLEBAR<wbr /> POUCH</span>
+            </button>
+            <button
+              aria-label="Rear Pouch preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Rear Pouch"
+              data-on="false"
+              data-zone="rear-pouch"
+              style="--device: #ffd928"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">REAR<wbr /> POUCH</span>
+            </button>
+            <button
+              aria-label="Flag Pole preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Flag Pole"
+              data-on="false"
+              data-zone="flag-pole"
+              style="--device: #18e9ff"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">FLAG<wbr /> POLE</span>
+            </button>
+            <button
+              aria-label="Tail Light preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Tail Light"
+              data-on="false"
+              data-zone="tail-light"
+              style="--device: #ff2ca8"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">TAIL<wbr /> LIGHT</span>
+            </button>
+            <button
+              aria-label="Turn Signals preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Turn Signals"
+              data-on="false"
+              data-zone="turn-signals"
+              style="--device: #ffd928"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">TURN<wbr /> SIGNALS</span>
+            </button>
+            <button
+              aria-label="Helmet Lights preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Helmet Lights"
+              data-on="false"
+              data-zone="helmet-lights"
+              style="--device: #18e9ff"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">HELMET<wbr /> LIGHTS</span>
+            </button>
+            <button
+              aria-label="Cargo Trailer preview selection"
+              aria-pressed="false"
+              class="device-tile off"
+              data-click-toggle="true"
+              data-name="Cargo Trailer"
+              data-on="false"
+              data-zone="trailer"
+              style="--device: #ffd928"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">CARGO<wbr /> TRAILER</span>
+            </button>
+          </div>
+          <div class="device-stack" hidden id="groupPane">
+            <button
+              aria-pressed="true"
+              class="device-tile group-tile active"
+              data-count="14"
+              data-name="All Bike Parts"
+              data-on="true"
+              style="--device: #18e9ff"
+              type="button"
+            >
+              <span aria-hidden="true" class="power-symbol">⏻</span
+              ><span class="device-label">ALL BIKE PARTS</span>
+            </button>
+          </div>
+          <div class="device-pop" id="devicePop">Frame</div>
+        </aside>
 
-<button aria-label="Cargo Trailer. Tap to select and toggle." aria-pressed="false" class="device-tile off" data-click-toggle="true" data-name="Cargo Trailer" data-on="false" data-zone="trailer" style="--device:#ffd928" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">CARGO<wbr> TRAILER</span></button>
-</div><div class="device-stack" hidden id="groupPane"><button aria-pressed="true" class="device-tile group-tile active" data-count="14" data-name="All Bike Parts" data-on="true" style="--device:#18e9ff" type="button"><span aria-hidden="true" class="power-symbol">⏻</span><span class="device-label">ALL BIKE PARTS</span></button></div><div class="device-pop" id="devicePop">Frame</div></aside>
-<section class="workspace"><header class="topbar"><div aria-label="Bike SIM views" class="view-strip"><button class="view-chip active" data-view="SIDE" data-viewbox="0 0 1020 756" style="--chip:#ffd928" type="button">SIDE</button><button class="view-chip" data-view="FRAME" data-viewbox="250 120 720 540" style="--chip:#18e9ff" type="button">FRAME</button><button class="view-chip" data-view="TRAILER" data-viewbox="0 330 390 350" style="--chip:#ff2ca8" type="button">TRAILER</button></div><div class="status-right"><span class="connected">● <span class="status-label">CONNECTED</span></span><span aria-label="Wi-Fi" class="wifi"><i></i></span><span class="battery"><span class="battery-box"><i></i></span><span class="status-label">100%</span></span><span aria-label="Menu" class="menu-icon"><i></i><i></i><i></i></span></div></header>
-<div class="viewport" id="viewport"><div class="bike-canvas"><svg id="bikePreview" viewBox="0 0 1020 756" role="img" aria-labelledby="bikeTitle bikeDesc" preserveAspectRatio="xMidYMid meet"><title id="bikeTitle">Interactive ShyneTyme.Works LED bicycle</title><desc id="bikeDesc">Select a bicycle part to switch its LED lighting on or off.</desc><defs><linearGradient id="streamingRainbow" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff2ca8"><animate attributeName="stop-color" values="#ff2ca8;#ffd928;#18e9ff;#ff2ca8" dur="2.8s" repeatCount="indefinite"/></stop><stop offset="50%" stop-color="#ffd928"><animate attributeName="stop-color" values="#ffd928;#18e9ff;#ff2ca8;#ffd928" dur="2.8s" repeatCount="indefinite"/></stop><stop offset="100%" stop-color="#18e9ff"><animate attributeName="stop-color" values="#18e9ff;#ff2ca8;#ffd928;#18e9ff" dur="2.8s" repeatCount="indefinite"/></stop></linearGradient></defs><path class="bike-ground" d="M20 630H995"/><g aria-hidden="true"><circle class="bike-fixture" cx="430" cy="510" r="118"/><circle class="bike-fixture" cx="850" cy="510" r="118"/><path class="bike-metal" d="M430 510L630 510L560 350L430 510M560 350C610 420 660 395 730 310M630 510L730 310M560 350L535 260M500 250H570M730 310L720 235"/><path class="bike-metal" d="M730 310L850 510M750 310L870 505"/><path class="bike-metal" d="M720 235L790 205M708 236C742 216 772 214 806 228"/><path class="bike-metal" d="M250 520L340 505L430 510"/><circle class="bike-fixture" cx="95" cy="602" r="38"/><circle class="bike-fixture" cx="205" cy="602" r="38"/></g><g class="bike-zone bike-zone--stroke is-on" data-bike-zone="frame" role="button" tabindex="0" aria-label="Frame lighting" aria-pressed="true" fill="none" stroke-width="18"><path d="M430 510L630 510L560 350L430 510"/><path d="M560 350C610 420 660 395 730 310"/><path d="M630 510L730 310"/></g><g class="bike-zone bike-zone--stroke is-off" data-bike-zone="front-forks" role="button" tabindex="0" aria-label="Front forks lighting" aria-pressed="false" fill="none" stroke-width="15"><path d="M730 310L850 510"/><path d="M750 310L870 505"/></g><circle class="bike-zone bike-zone--stroke is-off" data-bike-zone="front-wheel" role="button" tabindex="0" aria-label="Front wheel lighting" aria-pressed="false" cx="850" cy="510" r="108" fill="none" stroke-width="16"/><circle class="bike-zone bike-zone--stroke is-off" data-bike-zone="rear-wheel" role="button" tabindex="0" aria-label="Rear wheel lighting" aria-pressed="false" cx="430" cy="510" r="108" fill="none" stroke-width="16"/><g class="bike-zone bike-zone--stroke is-off" data-bike-zone="handlebars" role="button" tabindex="0" aria-label="Handlebar lighting" aria-pressed="false" fill="none" stroke-width="15"><path d="M720 235L790 205"/><path d="M708 236C742 216 772 214 806 228"/></g><rect class="bike-zone bike-zone--fill is-off" data-bike-zone="front-basket" role="button" tabindex="0" aria-label="Front basket lighting" aria-pressed="false" x="775" y="265" width="175" height="112" rx="12" stroke-width="8"/><rect class="bike-zone bike-zone--fill is-off" data-bike-zone="rear-basket" role="button" tabindex="0" aria-label="Rear basket lighting" aria-pressed="false" x="300" y="300" width="135" height="98" rx="12" stroke-width="8"/><rect class="bike-zone bike-zone--fill is-off" data-bike-zone="handlebar-pouch" role="button" tabindex="0" aria-label="Handlebar pouch lighting" aria-pressed="false" x="675" y="252" width="92" height="60" rx="12" stroke-width="8"/><path class="bike-zone bike-zone--fill is-off" data-bike-zone="rear-pouch" role="button" tabindex="0" aria-label="Rear pouch lighting" aria-pressed="false" d="M505 273H580L567 326H518Z" stroke-width="8"/><g class="bike-zone bike-zone--stroke is-off" data-bike-zone="flag-pole" role="button" tabindex="0" aria-label="Flag pole lighting" aria-pressed="false" fill="none" stroke-width="13"><path d="M300 330V125"/><path d="M300 130L390 165L300 200"/></g><rect class="bike-zone bike-zone--fill is-off" data-bike-zone="tail-light" role="button" tabindex="0" aria-label="Tail light" aria-pressed="false" x="350" y="425" width="34" height="25" rx="7" stroke-width="6"/><g class="bike-zone bike-zone--fill is-off" data-bike-zone="turn-signals" role="button" tabindex="0" aria-label="Turn signals" aria-pressed="false" stroke-width="6"><circle cx="330" cy="457" r="15"/><circle cx="478" cy="457" r="15"/></g><path class="bike-zone bike-zone--fill is-off" data-bike-zone="helmet-lights" role="button" tabindex="0" aria-label="Helmet lights" aria-pressed="false" d="M505 200C505 145 575 125 622 164L610 210Z" stroke-width="8"/><rect class="bike-zone bike-zone--fill is-off" data-bike-zone="trailer" role="button" tabindex="0" aria-label="Cargo trailer box lighting" aria-pressed="false" x="35" y="430" width="220" height="138" rx="18" stroke-width="9"/><text class="bike-zone-label" x="145" y="505">TRAILER</text></svg></div></div><button aria-label="Fullscreen" class="fullscreen-trigger" id="fullscreenTrigger" title="Fullscreen" type="button">⛶</button></section>
-</div></main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/sim-controls.js?v=20260821-sim-rebuild"></script>
-</body>
+        <section class="workspace">
+          <header class="topbar">
+            <div aria-label="Bike SIM views" class="view-strip" role="group">
+              <button
+                aria-pressed="true"
+                class="view-chip active"
+                data-view="SIDE"
+                data-viewbox="0 0 1020 756"
+                style="--chip: #ffd928"
+                type="button"
+              >
+                SIDE</button
+              ><button
+                aria-pressed="false"
+                class="view-chip"
+                data-view="FRAME"
+                data-viewbox="250 120 720 540"
+                style="--chip: #18e9ff"
+                type="button"
+              >
+                FRAME</button
+              ><button
+                aria-pressed="false"
+                class="view-chip"
+                data-view="TRAILER"
+                data-viewbox="0 330 390 350"
+                style="--chip: #ff2ca8"
+                type="button"
+              >
+                TRAILER
+              </button>
+            </div>
+            <div class="status-right">
+              <span class="connected"
+                >● <span class="status-label">CONNECTED</span></span
+              ><span aria-label="Wi-Fi" class="wifi" role="img"><i></i></span
+              ><span class="battery"
+                ><span class="battery-box"><i></i></span
+                ><span class="status-label">100%</span></span
+              ><span aria-label="Menu" class="menu-icon" role="img"
+                ><i></i><i></i><i></i
+              ></span>
+            </div>
+          </header>
+
+          <div class="viewport" id="viewport">
+            <img
+              alt="Night street backdrop for the bicycle LED planner"
+              class="bike-scene-bg"
+              src="assets/images/bike-planner-street.jpg"
+            />
+            <div class="bike-canvas">
+              <svg
+                aria-labelledby="bikeTitle bikeDesc"
+                id="bikePreview"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                viewBox="0 0 1020 756"
+              >
+                <title id="bikeTitle">
+                  ShyneTyme.Works rainbow LED bicycle
+                </title>
+                <desc id="bikeDesc">
+                  Bicycle, baskets, flagpole, and cargo trailer with always-on
+                  round rainbow LED dots chasing continuously along every route.
+                  The controls are not connected to these lights yet.
+                </desc>
+                <defs>
+                  <path
+                    d="M430 510L630 510L560 350L430 510M560 350C610 420 660 395 730 310M630 510L730 310M730 310L850 510M750 310L870 505"
+                    id="ledRouteFrame"
+                    pathLength="1000"
+                  />
+                  <circle
+                    cx="850"
+                    cy="510"
+                    id="ledRouteFrontWheel"
+                    pathLength="1000"
+                    r="108"
+                  />
+                  <circle
+                    cx="430"
+                    cy="510"
+                    id="ledRouteRearWheel"
+                    pathLength="1000"
+                    r="108"
+                  />
+                  <path
+                    d="M720 235L790 205M708 236C742 216 772 214 806 228"
+                    id="ledRouteHandlebars"
+                    pathLength="1000"
+                  />
+                  <rect
+                    height="112"
+                    id="ledRouteFrontBasket"
+                    pathLength="1000"
+                    rx="12"
+                    width="175"
+                    x="775"
+                    y="265"
+                  />
+                  <rect
+                    height="98"
+                    id="ledRouteRearBasket"
+                    pathLength="1000"
+                    rx="12"
+                    width="135"
+                    x="300"
+                    y="300"
+                  />
+                  <path
+                    d="M300 330V125"
+                    id="ledRouteFlagpole"
+                    pathLength="1000"
+                  />
+                  <path
+                    d="M35 430H255V568H35Z"
+                    id="ledRouteTrailer"
+                    pathLength="1000"
+                  />
+                </defs>
+
+                <path class="bike-ground" d="M20 630H995" />
+                <g aria-hidden="true">
+                  <circle class="bike-fixture" cx="430" cy="510" r="118" />
+                  <circle class="bike-fixture" cx="850" cy="510" r="118" />
+                  <path
+                    class="bike-metal"
+                    d="M430 510L630 510L560 350L430 510M560 350C610 420 660 395 730 310M630 510L730 310M560 350L535 260M500 250H570M730 310L720 235"
+                  />
+                  <path
+                    class="bike-metal"
+                    d="M730 310L850 510M750 310L870 505"
+                  />
+                  <path
+                    class="bike-metal"
+                    d="M720 235L790 205M708 236C742 216 772 214 806 228"
+                  />
+                  <path class="bike-metal" d="M250 520L340 505L430 510" />
+                  <rect
+                    class="bike-accessory"
+                    height="112"
+                    rx="12"
+                    width="175"
+                    x="775"
+                    y="265"
+                  />
+                  <rect
+                    class="bike-accessory"
+                    height="98"
+                    rx="12"
+                    width="135"
+                    x="300"
+                    y="300"
+                  />
+                  <rect
+                    class="bike-accessory"
+                    height="60"
+                    rx="12"
+                    width="92"
+                    x="675"
+                    y="252"
+                  />
+                  <path class="bike-accessory" d="M505 273H580L567 326H518Z" />
+                  <path class="bike-metal" d="M300 330V125" />
+                  <path class="bike-accessory" d="M300 130L390 165L300 200Z" />
+                  <rect
+                    class="bike-accessory"
+                    height="138"
+                    rx="18"
+                    width="220"
+                    x="35"
+                    y="430"
+                  />
+                  <circle class="bike-fixture" cx="95" cy="602" r="38" />
+                  <circle class="bike-fixture" cx="205" cy="602" r="38" />
+                </g>
+
+                <g aria-label="Bicycle and frame LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteFrame"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFrame"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteFrame"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteFrame"
+                  />
+                </g>
+                <g aria-label="Front wheel LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteFrontWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFrontWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteFrontWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteFrontWheel"
+                  />
+                </g>
+                <g aria-label="Rear wheel LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteRearWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteRearWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteRearWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteRearWheel"
+                  />
+                </g>
+                <g aria-label="Handlebar LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteHandlebars"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteHandlebars"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteHandlebars"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteHandlebars"
+                  />
+                </g>
+                <g aria-label="Front basket LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteFrontBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFrontBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteFrontBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteFrontBasket"
+                  />
+                </g>
+                <g aria-label="Rear basket LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteRearBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteRearBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteRearBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteRearBasket"
+                  />
+                </g>
+                <g aria-label="Flagpole LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteFlagpole"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFlagpole"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteFlagpole"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteFlagpole"
+                  />
+                </g>
+                <g aria-label="Rear cargo trailer LEDs">
+                  <use
+                    class="bike-led-dot bike-led-pink"
+                    href="#ledRouteTrailer"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteTrailer"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-cyan"
+                    href="#ledRouteTrailer"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-purple"
+                    href="#ledRouteTrailer"
+                  />
+                </g>
+                <text class="bike-label" text-anchor="middle" x="145" y="505">
+                  TRAILER
+                </text>
+              </svg>
+            </div>
+          </div>
+
+          <button
+            aria-label="Fullscreen"
+            class="fullscreen-trigger"
+            id="fullscreenTrigger"
+            title="Fullscreen"
+            type="button"
+          >
+            ⛶
+          </button>
+          <section class="sim-control-drawer" id="simControlDrawer">
+            <button
+              aria-controls="simDrawerSurface"
+              aria-expanded="false"
+              aria-label="Open simulator controls"
+              class="sim-drawer-handle btn"
+              id="simDrawerHandle"
+              type="button"
+            >
+              <span>CONTROLS</span
+              ><span aria-hidden="true" class="sim-drawer-handle__arrow"
+                >⌃</span
+              >
+            </button>
+            <div
+              class="sim-control-drawer__surface"
+              id="simDrawerSurface"
+              inert
+            >
+              <div class="sim-drawer-meta">
+                <span class="sim-drawer-meta__label">ACTIVE TARGET</span
+                ><strong class="sim-drawer-meta__target" id="activeTarget"
+                  >FRAME</strong
+                ><button
+                  aria-label="Close simulator controls"
+                  class="btn-close btn-close-white ms-auto"
+                  id="simDrawerClose"
+                  type="button"
+                ></button>
+              </div>
+              <nav
+                aria-label="Simulator control categories"
+                class="nav nav-tabs nav-fill sim-drawer-tabs"
+                role="tablist"
+              >
+                <button
+                  aria-controls="effectsPane"
+                  aria-selected="true"
+                  class="nav-link active"
+                  data-bs-target="#effectsPane"
+                  data-bs-toggle="tab"
+                  id="effectsTab"
+                  role="tab"
+                  style="--tab-color: #18e9ff"
+                  type="button"
+                >
+                  LED EFFECTS</button
+                ><button
+                  aria-controls="musicPane"
+                  aria-selected="false"
+                  class="nav-link"
+                  data-bs-target="#musicPane"
+                  data-bs-toggle="tab"
+                  id="musicTab"
+                  role="tab"
+                  style="--tab-color: #36bfff"
+                  type="button"
+                >
+                  MUSIC SYNC</button
+                ><button
+                  aria-controls="presetsPane"
+                  aria-selected="false"
+                  class="nav-link"
+                  data-bs-target="#presetsPane"
+                  data-bs-toggle="tab"
+                  id="presetsTab"
+                  role="tab"
+                  style="--tab-color: #ffd928"
+                  type="button"
+                >
+                  PRESETS</button
+                ><button
+                  aria-controls="customPane"
+                  aria-selected="false"
+                  class="nav-link"
+                  data-bs-target="#customPane"
+                  data-bs-toggle="tab"
+                  id="customTab"
+                  role="tab"
+                  style="--tab-color: #ff2ca8"
+                  type="button"
+                >
+                  CUSTOM
+                </button>
+              </nav>
+              <div class="tab-content sim-drawer-content">
+                <div
+                  aria-labelledby="effectsTab"
+                  class="tab-pane fade show active"
+                  id="effectsPane"
+                  role="tabpanel"
+                  tabindex="0"
+                >
+                  <div class="container-fluid px-2 px-sm-3 py-3">
+                    <div class="row g-3">
+                      <div class="col-12 col-lg-7">
+                        <section
+                          aria-label="LED effects"
+                          class="sim-control-card"
+                        >
+                          <h2 class="sim-control-title">
+                            LED EFFECTS — VISUAL CONTROLS NOT CONNECTED TO BIKE
+                            LEDS YET
+                          </h2>
+                          <div class="row g-3">
+                            <div class="col-12 col-md-4">
+                              <label class="form-label" for="effectSelect"
+                                >EFFECT</label
+                              ><select class="form-select" id="effectSelect">
+                                <option>Streaming Rainbow</option>
+                                <option>Chase</option>
+                                <option>Solid</option>
+                                <option>Breathe</option>
+                              </select>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                              <label class="form-label" for="speedRange"
+                                >SPEED</label
+                              >
+                              <div class="d-flex align-items-center gap-2">
+                                <input
+                                  class="form-range"
+                                  data-output="speedOutput"
+                                  id="speedRange"
+                                  max="100"
+                                  min="0"
+                                  type="range"
+                                  value="68"
+                                /><output
+                                  class="sim-range-value"
+                                  id="speedOutput"
+                                  >68%</output
+                                >
+                              </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                              <label class="form-label" for="brightnessRange"
+                                >BRIGHTNESS</label
+                              >
+                              <div class="d-flex align-items-center gap-2">
+                                <input
+                                  class="form-range"
+                                  data-output="brightnessOutput"
+                                  id="brightnessRange"
+                                  max="100"
+                                  min="0"
+                                  type="range"
+                                  value="82"
+                                /><output
+                                  class="sim-range-value"
+                                  id="brightnessOutput"
+                                  >82%</output
+                                >
+                              </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                              <label class="form-label" for="intensityRange"
+                                >INTENSITY</label
+                              >
+                              <div class="d-flex align-items-center gap-2">
+                                <input
+                                  class="form-range"
+                                  data-output="intensityOutput"
+                                  id="intensityRange"
+                                  max="100"
+                                  min="0"
+                                  type="range"
+                                  value="76"
+                                /><output
+                                  class="sim-range-value"
+                                  id="intensityOutput"
+                                  >76%</output
+                                >
+                              </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                              <span class="form-label d-block">DIRECTION</span>
+                              <div
+                                class="d-flex gap-2"
+                                data-exclusive-group
+                                role="group"
+                              >
+                                <button
+                                  aria-pressed="false"
+                                  class="btn sim-direction-button flex-fill"
+                                  type="button"
+                                >
+                                  ←</button
+                                ><button
+                                  aria-pressed="true"
+                                  class="btn sim-direction-button active flex-fill"
+                                  type="button"
+                                >
+                                  →
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </section>
+                      </div>
+                      <div class="col-12 col-lg-5">
+                        <section
+                          aria-label="Saved colors"
+                          class="sim-control-card"
+                        >
+                          <h2 class="sim-control-title">SAVED COLORS</h2>
+                          <div class="sim-palette mb-3">
+                            <button
+                              aria-label="Hot pink"
+                              class="sim-swatch active"
+                              style="--sw: #ff2ca8"
+                              type="button"
+                            ></button
+                            ><button
+                              aria-label="Cyan"
+                              class="sim-swatch"
+                              style="--sw: #18e9ff"
+                              type="button"
+                            ></button
+                            ><button
+                              aria-label="Yellow"
+                              class="sim-swatch"
+                              style="--sw: #ffd928"
+                              type="button"
+                            ></button
+                            ><button
+                              aria-label="Purple"
+                              class="sim-swatch"
+                              style="--sw: #8b51ff"
+                              type="button"
+                            ></button>
+                          </div>
+                          <div class="row g-3">
+                            <div class="col-12 col-sm-5">
+                              <span class="form-label d-block">SEGMENTS</span>
+                              <div class="sim-stepper">
+                                <button
+                                  aria-label="Decrease segments"
+                                  data-segment-step="-1"
+                                  type="button"
+                                >
+                                  −</button
+                                ><output id="segmentCount">6</output
+                                ><button
+                                  aria-label="Increase segments"
+                                  data-segment-step="1"
+                                  type="button"
+                                >
+                                  ＋
+                                </button>
+                              </div>
+                            </div>
+                            <div class="col-12 col-sm-7">
+                              <label class="form-label" for="transitionSelect"
+                                >TRANSITION</label
+                              ><select
+                                class="form-select"
+                                id="transitionSelect"
+                              >
+                                <option>Smooth</option>
+                                <option>Fade</option>
+                                <option>Snap</option>
+                              </select>
+                            </div>
+                          </div>
+                        </section>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  aria-labelledby="musicTab"
+                  class="tab-pane fade"
+                  id="musicPane"
+                  role="tabpanel"
+                  tabindex="0"
+                >
+                  <div class="container-fluid px-2 px-sm-3 py-3">
+                    <div class="row g-3">
+                      <div class="col-12 col-md-6">
+                        <section class="sim-control-card">
+                          <h2 class="sim-control-title">MUSIC SOURCE</h2>
+                          <label class="form-label" for="musicSource"
+                            >SOURCE</label
+                          ><select class="form-select" id="musicSource">
+                            <option>Phone microphone</option>
+                            <option>Device microphone</option>
+                            <option>Local audio</option>
+                          </select>
+                        </section>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <section class="sim-control-card">
+                          <h2 class="sim-control-title">RESPONSE MODE</h2>
+                          <div
+                            class="d-flex flex-wrap gap-2"
+                            data-exclusive-group
+                          >
+                            <button
+                              aria-pressed="true"
+                              class="btn sim-mode-button active flex-fill"
+                              type="button"
+                            >
+                              SPECTRUM</button
+                            ><button
+                              aria-pressed="false"
+                              class="btn sim-mode-button flex-fill"
+                              type="button"
+                            >
+                              PULSE</button
+                            ><button
+                              aria-pressed="false"
+                              class="btn sim-mode-button flex-fill"
+                              type="button"
+                            >
+                              STROBE
+                            </button>
+                          </div>
+                        </section>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  aria-labelledby="presetsTab"
+                  class="tab-pane fade"
+                  id="presetsPane"
+                  role="tabpanel"
+                  tabindex="0"
+                >
+                  <div class="container-fluid px-2 px-sm-3 py-3">
+                    <div class="row g-2">
+                      <div class="col-6 col-md-3">
+                        <button
+                          class="btn sim-preset-button"
+                          style="--preset-color: #18e9ff"
+                          type="button"
+                        >
+                          SOLID
+                        </button>
+                      </div>
+                      <div class="col-6 col-md-3">
+                        <button
+                          class="btn sim-preset-button"
+                          style="--preset-color: #ff2ca8"
+                          type="button"
+                        >
+                          CHASE
+                        </button>
+                      </div>
+                      <div class="col-6 col-md-3">
+                        <button
+                          class="btn sim-preset-button"
+                          style="--preset-color: #ffd928"
+                          type="button"
+                        >
+                          RAINBOW
+                        </button>
+                      </div>
+                      <div class="col-6 col-md-3">
+                        <button
+                          class="btn sim-preset-button"
+                          style="--preset-color: #8b51ff"
+                          type="button"
+                        >
+                          WAVE
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  aria-labelledby="customTab"
+                  class="tab-pane fade"
+                  id="customPane"
+                  role="tabpanel"
+                  tabindex="0"
+                >
+                  <div class="container-fluid px-2 px-sm-3 py-3">
+                    <div class="row g-2">
+                      <div class="col-12 col-sm-6 col-lg-4">
+                        <button
+                          class="btn sim-custom-button"
+                          style="--preset-color: #ff2ca8"
+                          type="button"
+                        >
+                          LA NIGHTS
+                        </button>
+                      </div>
+                      <div class="col-12 col-sm-6 col-lg-4">
+                        <button
+                          class="btn sim-custom-button"
+                          style="--preset-color: #18e9ff"
+                          type="button"
+                        >
+                          CYBER FLOW
+                        </button>
+                      </div>
+                      <div class="col-12 col-lg-4">
+                        <button
+                          class="btn sim-custom-button"
+                          style="--preset-color: #ffd928"
+                          type="button"
+                        >
+                          ＋ CREATE EFFECT
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sim-controls-v2.js?v=20260830-simulator-v2-preview"></script>
+  </body>
 </html>

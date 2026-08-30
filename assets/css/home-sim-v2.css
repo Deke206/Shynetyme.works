@@ -1,0 +1,38 @@
+/* Home SIM V2 viewport only. Every home image URL lives in HTML. */
+
+.home-sim-page .viewport {
+  background: radial-gradient(ellipse at center, #101822 0%, #05090f 60%, #000 100%);
+}
+
+.home-sim-page .sim-scene-stack {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.home-sim-page .sim-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center center;
+  opacity: 0;
+  transform: scale(0.99);
+  transition: opacity 180ms ease, transform 220ms ease;
+  pointer-events: none;
+}
+
+.home-sim-page .sim-scene.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-sim-page .sim-scene {
+    transform: none;
+  }
+}
