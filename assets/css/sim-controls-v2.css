@@ -451,6 +451,10 @@ button {
     0 0 11px rgba(24, 233, 255, 0.4);
 }
 
+.rail-switch button + button {
+  border-left: 1px solid rgba(223, 250, 255, 0.24);
+}
+
 .device-stack {
   flex: 1 1 auto;
   min-height: 0;
@@ -552,11 +556,11 @@ button {
   overflow-wrap: anywhere;
 }
 
-#devicePane .device-label {
+#devicePane .device-tile .device-label {
   font-size: 0;
 }
 
-#devicePane .device-label::after {
+#devicePane .device-tile .device-label::after {
   content: counter(sim-device-number);
   color: var(--device, var(--sim-cyan));
   font:
