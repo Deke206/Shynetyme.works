@@ -9,7 +9,8 @@
   "use strict";
 
   const query = (selector, root = document) => root.querySelector(selector);
-  const queryAll = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+  const queryAll = (selector, root = document) =>
+    Array.from(root.querySelectorAll(selector));
 
   const app = query("#appGrid");
   const viewport = query("#viewport");
@@ -39,7 +40,7 @@
     const labels = {
       closed: "Show one column of controls",
       one: "Show two columns of controls",
-      two: "Close side controls"
+      two: "Close side controls",
     };
 
     railToggle.setAttribute("aria-label", labels[nextState]);
@@ -48,14 +49,18 @@
 
   railToggle.addEventListener("click", (event) => {
     event.stopPropagation();
-    const currentIndex = sidebarStates.indexOf(app.dataset.sidebarState || "closed");
+    const currentIndex = sidebarStates.indexOf(
+      app.dataset.sidebarState || "closed",
+    );
     setSidebarState(sidebarStates[(currentIndex + 1) % sidebarStates.length]);
   });
 
   queryAll("[data-rail]").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.stopPropagation();
-      queryAll("[data-rail]").forEach((item) => item.classList.toggle("active", item === button));
+      queryAll("[data-rail]").forEach((item) =>
+        item.classList.toggle("active", item === button),
+      );
 
       const devices = query("#devicePane");
       const groups = query("#groupPane");
@@ -73,10 +78,14 @@
   }
 
   function selectDevice(button) {
-    queryAll(".device-tile").forEach((item) => item.classList.toggle("active", item === button));
+    queryAll(".device-tile").forEach((item) =>
+      item.classList.toggle("active", item === button),
+    );
     const name = button.dataset.name || "Selected";
     if (activeTarget) activeTarget.textContent = name.toUpperCase();
-    showDevicePop(button.dataset.count ? `${name} · ${button.dataset.count} DEVICES` : name);
+    showDevicePop(
+      button.dataset.count ? `${name} · ${button.dataset.count} DEVICES` : name,
+    );
   }
 
   function toggleDeviceButton(button) {
@@ -85,7 +94,9 @@
     button.dataset.on = String(isOn);
     button.classList.toggle("off", !isOn);
     button.setAttribute("aria-pressed", String(isOn));
-    showDevicePop(`${button.dataset.name || "Device"} · ${isOn ? "ON" : "OFF"}`);
+    showDevicePop(
+      `${button.dataset.name || "Device"} · ${isOn ? "ON" : "OFF"}`,
+    );
   }
 
   queryAll(".device-tile").forEach((button) => {
@@ -110,7 +121,10 @@
   function setDrawer(open) {
     drawer.classList.toggle("is-open", open);
     drawerHandle.setAttribute("aria-expanded", String(open));
-    drawerHandle.setAttribute("aria-label", open ? "Close simulator controls" : "Open simulator controls");
+    drawerHandle.setAttribute(
+      "aria-label",
+      open ? "Close simulator controls" : "Open simulator controls",
+    );
     query("#simDrawerSurface")?.toggleAttribute("inert", !open);
   }
 
@@ -145,7 +159,9 @@
 
   queryAll(".sim-swatch").forEach((button) => {
     button.addEventListener("click", () => {
-      queryAll(".sim-swatch").forEach((item) => item.classList.toggle("active", item === button));
+      queryAll(".sim-swatch").forEach((item) =>
+        item.classList.toggle("active", item === button),
+      );
     });
   });
 
@@ -153,11 +169,223 @@
     button.addEventListener("click", () => {
       const output = query("#segmentCount");
       if (!output) return;
-      const next = Math.min(12, Math.max(1, Number(output.value || output.textContent) + Number(button.dataset.segmentStep)));
+      const next = Math.min(
+        12,
+        Math.max(
+          1,
+          Number(output.value || output.textContent) +
+            Number(button.dataset.segmentStep),
+        ),
+      );
       output.value = String(next);
       output.textContent = String(next);
     });
   });
+
+  /* === RESTORED SHYNETYME MUSIC INTERACTIONS: START === */
+
+  const audio = query("#musicAudio");
+  const trackPicker = query("#trackPicker");
+  const addTracks = query("#addTracks");
+  const playTrack = query("#playTrack");
+  const previousTrack = query("#prevTrack");
+  const nextTrack = query("#nextTrack");
+  const trackSeek = query("#trackSeek");
+  const currentTrack = query("#currentTrack");
+  const trackTime = query("#trackTime");
+  const trackSlots = queryAll("[data-track-slot]");
+  const micSource = query("#micSource");
+  const equalizer = query("#eq");
+  const sensitivity = query("#musicSensitivity");
+  const MAX_LOCAL_AUDIO_BYTES = 150 * 1024 * 1024;
+  let tracks = [];
+  let trackIndex = 0;
+  let localUrls = [];
+  let audioContext = null;
+  let analyser = null;
+  let microphoneStream = null;
+  let spectrumFrame = 0;
+
+  const formatTime = (seconds) => {
+    if (!Number.isFinite(seconds)) return "0:00";
+    return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+  };
+
+  function renderPlaylist() {
+    const placeholders = [
+      ["ADD LOCAL AUDIO", "TAP + AUDIO"],
+      ["PLAYLIST READY", "LOCAL / DEVICE"],
+      ["150 MB MAX", "LOCAL / DEVICE"],
+    ];
+
+    trackSlots.forEach((slot, index) => {
+      const track = tracks[index];
+      const title = query("strong", slot);
+      const detail = query("small", slot);
+      if (title) title.textContent = track?.name || placeholders[index][0];
+      if (detail)
+        detail.textContent = track ? "LOCAL AUDIO" : placeholders[index][1];
+      slot.classList.toggle("active", Boolean(track) && index === trackIndex);
+      slot.disabled = Boolean(tracks.length) && !track;
+    });
+  }
+
+  function loadTrack(index, autoplay = false) {
+    if (!audio || !tracks.length) return;
+    trackIndex = (index + tracks.length) % tracks.length;
+    const track = tracks[trackIndex];
+    audio.src = track.url;
+    if (currentTrack) currentTrack.textContent = track.name;
+    if (trackSeek) trackSeek.value = "0";
+    if (trackTime) trackTime.textContent = "0:00";
+    renderPlaylist();
+    if (autoplay) audio.play().catch(() => {});
+  }
+
+  addTracks?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    trackPicker?.click();
+  });
+
+  trackPicker?.addEventListener("change", () => {
+    const files = Array.from(trackPicker.files || []).filter((file) =>
+      file.type?.startsWith("audio/"),
+    );
+    const totalBytes = files.reduce((total, file) => total + file.size, 0);
+    if (totalBytes > MAX_LOCAL_AUDIO_BYTES) {
+      if (currentTrack) currentTrack.textContent = "150 MB LOCAL AUDIO LIMIT";
+      trackPicker.value = "";
+      return;
+    }
+
+    localUrls.forEach((url) => URL.revokeObjectURL(url));
+    localUrls = [];
+    tracks = files.map((file) => {
+      const url = URL.createObjectURL(file);
+      localUrls.push(url);
+      return { name: file.name, url };
+    });
+    trackIndex = 0;
+    renderPlaylist();
+    if (tracks.length) loadTrack(0);
+  });
+
+  playTrack?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (!audio) return;
+    if (!audio.src && tracks.length) loadTrack(trackIndex);
+    if (!audio.src) {
+      addTracks?.click();
+      return;
+    }
+    if (audio.paused) audio.play().catch(() => {});
+    else audio.pause();
+  });
+
+  previousTrack?.addEventListener(
+    "click",
+    () => tracks.length && loadTrack(trackIndex - 1, true),
+  );
+  nextTrack?.addEventListener(
+    "click",
+    () => tracks.length && loadTrack(trackIndex + 1, true),
+  );
+  trackSlots.forEach((slot) => {
+    slot.addEventListener("click", () => {
+      const index = Number(slot.dataset.trackSlot);
+      if (tracks[index]) loadTrack(index, true);
+      else if (!tracks.length) addTracks?.click();
+    });
+  });
+
+  audio?.addEventListener("play", () => {
+    const glyph = query(".play-glyph", playTrack);
+    if (glyph) glyph.textContent = "❚❚";
+  });
+  audio?.addEventListener("pause", () => {
+    const glyph = query(".play-glyph", playTrack);
+    if (glyph) glyph.textContent = "▶";
+  });
+  audio?.addEventListener("timeupdate", () => {
+    if (!audio.duration || !Number.isFinite(audio.duration)) return;
+    if (trackSeek)
+      trackSeek.value = String((audio.currentTime / audio.duration) * 100);
+    if (trackTime)
+      trackTime.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+  });
+  audio?.addEventListener(
+    "ended",
+    () => tracks.length && loadTrack(trackIndex + 1, true),
+  );
+  trackSeek?.addEventListener("input", () => {
+    if (audio?.duration)
+      audio.currentTime = (Number(trackSeek.value) / 100) * audio.duration;
+  });
+
+  function stopMicrophoneSpectrum() {
+    window.cancelAnimationFrame(spectrumFrame);
+    spectrumFrame = 0;
+    microphoneStream?.getTracks().forEach((track) => track.stop());
+    microphoneStream = null;
+    analyser = null;
+    audioContext?.close().catch(() => {});
+    audioContext = null;
+    queryAll("i", equalizer).forEach((bar, index) => {
+      bar.style.height = `${12 + ((index * 13) % 54)}%`;
+    });
+  }
+
+  function drawSpectrum() {
+    if (!analyser || !equalizer) return;
+    const bars = queryAll("i", equalizer);
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    const loop = () => {
+      analyser.getByteFrequencyData(data);
+      const gain = Number(sensitivity?.value || 75) / 75;
+      bars.forEach((bar, index) => {
+        const bin = Math.floor((index * data.length) / bars.length);
+        bar.style.height = `${Math.max(12, Math.min(100, Math.round((data[bin] / 255) * 100 * gain)))}%`;
+      });
+      spectrumFrame = window.requestAnimationFrame(loop);
+    };
+    loop();
+  }
+
+  async function startMicrophoneSpectrum() {
+    stopMicrophoneSpectrum();
+    if (!navigator.mediaDevices?.getUserMedia) return;
+    try {
+      microphoneStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 64;
+      audioContext.createMediaStreamSource(microphoneStream).connect(analyser);
+      drawSpectrum();
+    } catch (_) {
+      if (currentTrack) currentTrack.textContent = "MIC ACCESS NOT AVAILABLE";
+      if (micSource) micSource.value = "off";
+    }
+  }
+
+  micSource?.addEventListener("change", () => {
+    if (micSource.value === "off") stopMicrophoneSpectrum();
+    else startMicrophoneSpectrum();
+  });
+
+  document.addEventListener("hide.bs.tab", (event) => {
+    if (event.target?.id === "musicTab") stopMicrophoneSpectrum();
+  });
+
+  window.addEventListener("beforeunload", () => {
+    stopMicrophoneSpectrum();
+    localUrls.forEach((url) => URL.revokeObjectURL(url));
+  });
+
+  renderPlaylist();
+
+  /* === RESTORED SHYNETYME MUSIC INTERACTIONS: END === */
 
   /* Existing scene elements and Bike viewBox */
 
@@ -172,7 +400,10 @@
 
       if (button.dataset.sceneId) {
         queryAll(".sim-scene").forEach((scene) => {
-          scene.classList.toggle("is-active", scene.id === button.dataset.sceneId);
+          scene.classList.toggle(
+            "is-active",
+            scene.id === button.dataset.sceneId,
+          );
         });
       }
 
@@ -204,7 +435,10 @@
   function setMobileNavVisible(visible) {
     document.body.classList.toggle("sim-nav-visible", visible);
     navReveal?.setAttribute("aria-expanded", String(visible));
-    navReveal?.setAttribute("aria-label", visible ? "Hide site navigation" : "Reveal site navigation");
+    navReveal?.setAttribute(
+      "aria-label",
+      visible ? "Hide site navigation" : "Reveal site navigation",
+    );
   }
 
   navReveal?.addEventListener("click", (event) => {
@@ -215,11 +449,18 @@
   nav?.addEventListener("click", (event) => event.stopPropagation());
 
   document.addEventListener("pointerdown", (event) => {
-    if (!rail.contains(event.target) && !event.target.closest(".sidebar-toggle")) {
+    if (
+      !rail.contains(event.target) &&
+      !event.target.closest(".sidebar-toggle")
+    ) {
       setSidebarState("closed");
     }
 
-    if (window.matchMedia("(max-width: 991.98px)").matches && !nav?.contains(event.target) && event.target !== navReveal) {
+    if (
+      window.matchMedia("(max-width: 991.98px)").matches &&
+      !nav?.contains(event.target) &&
+      event.target !== navReveal
+    ) {
       setMobileNavVisible(false);
     }
   });
@@ -232,7 +473,8 @@
   });
 
   window.addEventListener("resize", () => {
-    if (!window.matchMedia("(max-width: 991.98px)").matches) setMobileNavVisible(false);
+    if (!window.matchMedia("(max-width: 991.98px)").matches)
+      setMobileNavVisible(false);
   });
 
   const initialDevice = query(".device-tile.active");

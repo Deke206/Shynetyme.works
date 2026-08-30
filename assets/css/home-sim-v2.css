@@ -1,7 +1,12 @@
 /* Home SIM V2 viewport only. Every home image URL lives in HTML. */
 
 .home-sim-page .viewport {
-  background: radial-gradient(ellipse at center, #101822 0%, #05090f 60%, #000 100%);
+  background: radial-gradient(
+    ellipse at center,
+    #101822 0%,
+    #05090f 60%,
+    #000 100%
+  );
 }
 
 .home-sim-page .sim-scene-stack {
@@ -18,11 +23,13 @@
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center center;
   opacity: 0;
   transform: scale(0.99);
-  transition: opacity 180ms ease, transform 220ms ease;
+  transition:
+    opacity 180ms ease,
+    transform 220ms ease;
   pointer-events: none;
 }
 

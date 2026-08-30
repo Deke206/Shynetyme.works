@@ -133,7 +133,9 @@
           <div class="rail-switch">
             <button class="active" data-rail="devices" type="button">
               <span>PARTS</span></button
-            ><button data-rail="groups" type="button"><span>GROUPS</span></button>
+            ><button data-rail="groups" type="button">
+              <span>GROUPS</span>
+            </button>
           </div>
           <div class="device-stack" id="devicePane">
             <button
@@ -872,13 +874,13 @@
                               >
                                 <button
                                   aria-pressed="false"
-                                  class="btn sim-direction-button flex-fill"
+                                  class="btn sim-direction-button"
                                   type="button"
                                 >
                                   ←</button
                                 ><button
                                   aria-pressed="true"
-                                  class="btn sim-direction-button active flex-fill"
+                                  class="btn sim-direction-button active"
                                   type="button"
                                 >
                                   →
@@ -966,41 +968,133 @@
                   tabindex="0"
                 >
                   <div class="container-fluid px-2 px-sm-3 py-3">
-                    <div class="row g-3">
-                      <div class="col-12 col-md-6">
-                        <section class="sim-control-card">
-                          <h2 class="sim-control-title">MUSIC SOURCE</h2>
-                          <label class="form-label" for="musicSource"
-                            >SOURCE</label
-                          ><select class="form-select" id="musicSource">
-                            <option>Phone microphone</option>
-                            <option>Device microphone</option>
-                            <option>Local audio</option>
-                          </select>
+                    <!-- RESTORED SHYNETYME MUSIC CONTROLS: START -->
+                    <div class="row g-3 align-items-stretch">
+                      <div class="col-12 col-lg-5">
+                        <section
+                          class="sim-control-card music-player-card"
+                          aria-label="Music player"
+                        >
+                          <h2 class="sim-control-title">MUSIC PLAYER</h2>
+                          <div class="track-now" id="currentTrack">
+                            NO TRACK LOADED
+                          </div>
+                          <div class="transport" aria-label="Playback controls">
+                            <button
+                              class="transport-round"
+                              id="prevTrack"
+                              type="button"
+                              aria-label="Previous track"
+                            >
+                              ◀
+                            </button>
+                            <button
+                              class="transport-round play-track"
+                              id="playTrack"
+                              type="button"
+                              aria-label="Play or pause"
+                            >
+                              <span class="play-glyph">▶</span>
+                            </button>
+                            <button
+                              class="transport-round"
+                              id="nextTrack"
+                              type="button"
+                              aria-label="Next track"
+                            >
+                              ▶
+                            </button>
+                          </div>
+                          <input
+                            class="track-seek"
+                            id="trackSeek"
+                            type="range"
+                            min="0"
+                            max="100"
+                            value="0"
+                            aria-label="Track position"
+                          />
+                          <div class="player-foot">
+                            <span id="trackTime">0:00</span
+                            ><button
+                              class="track-add"
+                              id="addTracks"
+                              type="button"
+                            >
+                              ＋ AUDIO
+                            </button>
+                          </div>
+                          <input
+                            accept="audio/*"
+                            hidden
+                            id="trackPicker"
+                            multiple
+                            type="file"
+                          />
+                          <audio id="musicAudio" preload="metadata"></audio>
                         </section>
                       </div>
-                      <div class="col-12 col-md-6">
-                        <section class="sim-control-card">
-                          <h2 class="sim-control-title">RESPONSE MODE</h2>
+                      <div class="col-12 col-md-7 col-lg-4">
+                        <section
+                          class="sim-control-card"
+                          aria-label="Music scene effects"
+                        >
+                          <h2 class="sim-control-title">MUSIC SCENE</h2>
+                          <div class="row g-2">
+                            <div class="col-12 col-sm-6">
+                              <label class="form-label" for="micSource"
+                                >MIC SOURCE</label
+                              ><select class="form-select" id="micSource">
+                                <option value="off">Select source</option>
+                                <option value="phone">Phone mic</option>
+                                <option value="device">Device mic</option>
+                              </select>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                              <label class="form-label" for="musicSensitivity"
+                                >SENSITIVITY</label
+                              >
+                              <div class="d-flex align-items-center gap-2">
+                                <input
+                                  class="form-range"
+                                  id="musicSensitivity"
+                                  type="range"
+                                  min="0"
+                                  max="100"
+                                  value="75"
+                                  data-output="musicSensitivityValue"
+                                /><output
+                                  class="sim-range-value"
+                                  id="musicSensitivityValue"
+                                  >75%</output
+                                >
+                              </div>
+                            </div>
+                          </div>
+                          <div class="eq" id="eq" aria-hidden="true">
+                            <i></i><i></i><i></i><i></i><i></i><i></i><i></i
+                            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+                            ><i></i><i></i>
+                          </div>
                           <div
-                            class="d-flex flex-wrap gap-2"
+                            class="d-flex flex-wrap justify-content-center gap-2"
                             data-exclusive-group
                           >
                             <button
                               aria-pressed="true"
-                              class="btn sim-mode-button active flex-fill"
+                              class="btn sim-mode-button active"
                               type="button"
                             >
                               SPECTRUM</button
                             ><button
                               aria-pressed="false"
-                              class="btn sim-mode-button flex-fill"
+                              class="btn sim-mode-button"
                               type="button"
                             >
                               PULSE</button
                             ><button
                               aria-pressed="false"
-                              class="btn sim-mode-button flex-fill"
+                              class="btn sim-mode-button"
                               type="button"
                             >
                               STROBE
@@ -1008,7 +1102,49 @@
                           </div>
                         </section>
                       </div>
+                      <div class="col-12 col-md-5 col-lg-3">
+                        <section
+                          class="sim-control-card"
+                          aria-label="Music playlist"
+                        >
+                          <h2 class="sim-control-title">PLAYLIST</h2>
+                          <div class="playlist" id="playlist">
+                            <button
+                              class="playlist-row"
+                              data-track-slot="0"
+                              type="button"
+                            >
+                              <span>01</span
+                              ><span
+                                ><strong>ADD LOCAL AUDIO</strong
+                                ><small>TAP + AUDIO</small></span
+                              ></button
+                            ><button
+                              class="playlist-row"
+                              data-track-slot="1"
+                              type="button"
+                            >
+                              <span>02</span
+                              ><span
+                                ><strong>PLAYLIST READY</strong
+                                ><small>LOCAL / DEVICE</small></span
+                              ></button
+                            ><button
+                              class="playlist-row"
+                              data-track-slot="2"
+                              type="button"
+                            >
+                              <span>03</span
+                              ><span
+                                ><strong>150 MB MAX</strong
+                                ><small>LOCAL / DEVICE</small></span
+                              >
+                            </button>
+                          </div>
+                        </section>
+                      </div>
                     </div>
+                    <!-- RESTORED SHYNETYME MUSIC CONTROLS: END -->
                   </div>
                 </div>
                 <div

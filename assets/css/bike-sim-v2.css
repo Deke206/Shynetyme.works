@@ -4,7 +4,17 @@
  */
 
 .bike-sim-page .viewport {
-  background: #020711;
+  background: radial-gradient(
+      circle at 50% 43%,
+      rgba(24, 233, 255, 0.12),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 18% 82%,
+      rgba(255, 44, 168, 0.17),
+      transparent 30%
+    ),
+    linear-gradient(145deg, #061321, #020711 58%, #090318);
 }
 
 .bike-sim-page .bike-scene-bg {
@@ -16,7 +26,8 @@
   display: block;
   object-fit: cover;
   object-position: center center;
-  opacity: 0.88;
+  opacity: 0.42;
+  filter: saturate(0.7) contrast(1.08);
 }
 
 .bike-sim-page .viewport::after {
@@ -25,7 +36,18 @@
   z-index: 1;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(1, 5, 12, 0.02) 0%, rgba(1, 5, 12, 0.1) 62%, rgba(0, 0, 0, 0.42) 100%);
+  background: linear-gradient(rgba(24, 233, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 233, 255, 0.045) 1px, transparent 1px),
+    radial-gradient(
+      ellipse at center,
+      rgba(1, 5, 12, 0.02) 0%,
+      rgba(1, 5, 12, 0.1) 62%,
+      rgba(0, 0, 0, 0.28) 100%
+    );
+  background-size:
+    42px 42px,
+    42px 42px,
+    auto;
 }
 
 .bike-sim-page .bike-canvas {
@@ -79,7 +101,9 @@
 
 .bike-sim-page .bike-label {
   fill: #fff;
-  font: 800 16px Oxanium, sans-serif;
+  font:
+    800 16px Oxanium,
+    sans-serif;
   paint-order: stroke;
   stroke: #020610;
   stroke-width: 5px;
@@ -132,19 +156,27 @@
 }
 
 @keyframes bike-led-pink-run {
-  to { stroke-dashoffset: -12; }
+  to {
+    stroke-dashoffset: -12;
+  }
 }
 
 @keyframes bike-led-yellow-run {
-  to { stroke-dashoffset: -15; }
+  to {
+    stroke-dashoffset: -15;
+  }
 }
 
 @keyframes bike-led-cyan-run {
-  to { stroke-dashoffset: -18; }
+  to {
+    stroke-dashoffset: -18;
+  }
 }
 
 @keyframes bike-led-purple-run {
-  to { stroke-dashoffset: -21; }
+  to {
+    stroke-dashoffset: -21;
+  }
 }
 
 @media (max-width: 767.98px) {
