@@ -16,14 +16,33 @@ async function connect(i){try{if(!navigator.bluetooth)throw Error('Web Bluetooth
 function tg(){return $('sync')&&$('sync').checked?ds.filter(x=>x.on):(ds[ai].on?[ds[ai]]:[])}
 function chunks(t){const a=t.split(';').map(x=>x.trim()).filter(Boolean),o=[];let c='';for(const p of a){const n=c?c+';'+p:p;if(n.length<=18)c=n;else{if(c)o.push(c);c=p}}if(c)o.push(c);return o}
 async function write(i,t){const s=ds[i];if(!s.on||!s.cmd)throw Error('not connected');const data=E.encode(t);if(s.cmd.properties.writeWithoutResponse&&typeof s.cmd.writeValueWithoutResponse==='function'){try{await s.cmd.writeValueWithoutResponse(data);return}catch(e){log('WriteWithoutResponse fallback: '+e.message)}}if(typeof s.cmd.writeValue==='function'){await s.cmd.writeValue(data);return}if(typeof s.cmd.writeValueWithResponse==='function'){await s.cmd.writeValueWithResponse(data);return}throw Error('No supported BLE write method')}
-async function send(t,q=false){const z=tg();if(!z.length){if(!q)log('No target connected');return}for(const s of z){for(const c of chunks(t)){try{await write(s.i,c)}catch(e){log('Write #'+(s.i+1)+': '+e.message);break}}}if(!q)log('TX '+t)}
+async function send(t,q=false){const z=tg();if(!z.length){if(!q)log('No target connected');return false}let ok=true;for(const s of z){for(const c of chunks(t)){try{await write(s.i,c)}catch(e){ok=false;log('Write #'+(s.i+1)+': '+e.message);break}}}if(!q)log((ok?'TX ':'TX FAILED ')+t);return ok}
 async function read(i){try{const s=ds[i];if(s.on&&s.st)rx(i,D.decode(await s.st.readValue()))}catch(e){log('Status read: '+e.message)}}
 async function refresh(){await send('STATUS',true);setTimeout(()=>tg().forEach(s=>read(s.i)),180)}
 function rx(i,t){const o={};for(const p of t.split(';')){const n=p.indexOf('=');if(n>0)o[p.slice(0,n)]=p.slice(n+1)}ds[i].state={...ds[i].state,...o};if(i===ai)status()}
-function status(){const s=ds[ai].state;if(!Object.keys(s).length){if($('status'))$('status').textContent='No status yet.';return}const leds=s.LEDS||s.ACTIVE_LEDS||s.CFG_LEDS||'—',pin=s.PIN||s.ACTIVE_PIN||s.CFG_PIN||'—',up=s.UP||s.UPTIME||'—';if($('status'))$('status').innerHTML='<div class="g3"><div class="metric"><small>FX</small><b style="font-size:13px">'+(s.FX||'—')+'</b></div><div class="metric"><small>LEDS</small><b>'+leds+'</b></div><div class="metric"><small>GPIO</small><b>'+pin+'</b></div><div class="metric"><small>BRI</small><b>'+(s.BRI||'—')+'</b></div><div class="metric"><small>HEAP</small><b style="font-size:13px">'+(s.HEAP||'—')+'</b></div><div class="metric"><small>UP</small><b style="font-size:13px">'+up+'s</b></div></div>'}
+function status(){const s=ds[ai].state;if(!Object.keys(s).length){if($('status'))$('status').textContent='No status yet.';return}const leds=s.LEDS||s.ACTIVE_LEDS||s.CFGLEDS||s.CFG_LEDS||'—',pin=s.PIN||s.ACTIVE_PIN||s.CFGPIN||s.CFG_PIN||'—',up=s.UP||s.UPTIME||'—';if($('status'))$('status').innerHTML='<div class="g3"><div class="metric"><small>FX</small><b style="font-size:13px">'+(s.FX||'—')+'</b></div><div class="metric"><small>LEDS</small><b>'+leds+'</b></div><div class="metric"><small>GPIO</small><b>'+pin+'</b></div><div class="metric"><small>BRI</small><b>'+(s.BRI||'—')+'</b></div><div class="metric"><small>HEAP</small><b style="font-size:13px">'+(s.HEAP||'—')+'</b></div><div class="metric"><small>UP</small><b style="font-size:13px">'+up+'s</b></div></div>'}
 function use(i){ai=i;if($('d0'))$('d0').classList.toggle('on',i===0);if($('d1'))$('d1').classList.toggle('on',i===1);if($('target'))$('target').textContent=$('sync')&&$('sync').checked?'TARGET BOTH':'TARGET #'+(i+1);status()}
 function ui(){const n=ds.filter(x=>x.on).length;if($('badge')){$('badge').textContent=n?n+' CONNECTED':'BLE READY';$('badge').classList.toggle('ok',!!n)}}
 function bindRange(id,out,key,fmt=v=>v){const x=$(id);if(!x)return;x.oninput=()=>{if($(out))$(out).textContent=fmt(x.value)};if(key)x.onchange=()=>{stopPlaylist();send(key+'='+x.value)}}
+function flashButton(id,text,ms=1400){const b=$(id);if(!b)return;const old=b.dataset.base||b.textContent;b.dataset.base=old;b.textContent=text;setTimeout(()=>{if(b)b.textContent=old},ms)}
+const VALID_PINS=new Set([2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33]);
+async function saveConfig(reboot=false){
+  const leds=Number.parseInt($('leds')?.value,10),pin=Number.parseInt($('gpio')?.value,10),id=reboot?'reboot':'save';
+  if(!Number.isInteger(leds)||leds<1||leds>600){flashButton(id,'BAD LED COUNT');log('Config rejected: LED count must be 1-600');return}
+  if(!VALID_PINS.has(pin)){flashButton(id,'BAD GPIO');log('Config rejected: supported GPIOs are '+[...VALID_PINS].join(','));return}
+  if(!tg().length){flashButton(id,'CONNECT FIRST');log('Config not sent: no BLE target connected');return}
+  flashButton(id,'SENDING...',4000);
+  const a=await send('LEDS='+leds,true);
+  const b=a&&await send('PIN='+pin,true);
+  const c=b&&await send('SAVE',true);
+  if(!c){flashButton(id,'SEND FAILED',2200);log('Config save failed');return}
+  log('CONFIG SAVED: LEDS='+leds+' PIN='+pin);
+  if(!reboot){flashButton(id,'SAVED ✓',1800);setTimeout(refresh,250);return}
+  flashButton(id,'REBOOTING...',2200);
+  const r=await send('REBOOT',true);
+  if(!r){flashButton(id,'REBOOT FAILED',2200);return}
+  log('REBOOT command sent; BLE disconnect is expected');
+}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.page').forEach(x=>x.classList.remove('on'));b.classList.add('on');const p=$(b.dataset.p);if(p)p.classList.add('on')});
 if($('con0'))$('con0').onclick=()=>connect(0);if($('con1'))$('con1').onclick=()=>connect(1);if($('connect'))$('connect').onclick=()=>connect(ai);
 document.querySelectorAll('.use').forEach(b=>b.onclick=()=>use(+b.dataset.i));
@@ -33,10 +52,36 @@ if($('fg'))$('fg').onchange=e=>{stopPlaylist();send('FG='+e.target.value.slice(1
 if($('bg'))$('bg').onchange=e=>{stopPlaylist();send('BG='+e.target.value.slice(1).toUpperCase())};
 if($('main'))$('main').onchange=e=>{stopPlaylist();send('MAIN='+e.target.value.slice(1).toUpperCase())};
 bindRange('bri','briV','BRI');bindRange('spd','spdV','SPD');bindRange('int','intV','INT');bindRange('gain','gainV','',v=>(+v/100).toFixed(1)+'x');bindRange('sm','smV','',v=>v+'%');bindRange('floor','floorV','');bindRange('beat','beatV','');
-if($('stat'))$('stat').onclick=refresh;if($('off'))$('off').onclick=()=>{stopPlaylist();send('FX=OFF')};if($('save'))$('save').onclick=()=>send('LEDS='+$('leds').value+';PIN='+$('gpio').value+';SAVE');if($('reboot'))$('reboot').onclick=()=>send('LEDS='+$('leds').value+';PIN='+$('gpio').value+';SAVE;REBOOT');if($('rawgo'))$('rawgo').onclick=()=>{stopPlaylist();const v=$('raw').value.trim();if(v)send(v)};if($('afx'))$('afx').onchange=e=>send('FX='+e.target.value);
+if($('stat'))$('stat').onclick=refresh;if($('off'))$('off').onclick=()=>{stopPlaylist();send('FX=OFF')};if($('save'))$('save').onclick=()=>saveConfig(false);if($('reboot'))$('reboot').onclick=()=>saveConfig(true);if($('rawgo'))$('rawgo').onclick=()=>{stopPlaylist();const v=$('raw').value.trim();if(v)send(v)};if($('afx'))$('afx').onchange=e=>send('FX='+e.target.value);
 function band(f,a,b){const h=ctx.sampleRate/an.fftSize,x=Math.floor(a/h),y=Math.min(f.length-1,Math.ceil(b/h));let s=0,n=0;for(let i=x;i<=y;i++){s+=f[i];n++}return n?s/n:0}
-async function mic(){if(micOn){stopMic();return}try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});ctx=new(window.AudioContext||window.webkitAudioContext)();an=ctx.createAnalyser();an.fftSize=1024;ctx.createMediaStreamSource(stream).connect(an);micOn=true;if($('mic'))$('mic').textContent='STOP MICROPHONE';if($('micState')){$('micState').textContent='LIVE';$('micState').classList.add('ok')}await send('FX='+$('afx').value);audioLoop()}catch(e){log('Mic: '+e.message)}}
-function stopMic(){micOn=false;if(raf)cancelAnimationFrame(raf);if(stream)stream.getTracks().forEach(t=>t.stop());if(ctx)ctx.close();if($('mic'))$('mic').textContent='START MICROPHONE';if($('micState')){$('micState').textContent='OFF';$('micState').classList.remove('ok')}}
-function audioLoop(t=performance.now()){if(!micOn)return;an.smoothingTimeConstant=+$('sm').value/100;const td=new Uint8Array(an.fftSize),fd=new Uint8Array(an.frequencyBinCount);an.getByteTimeDomainData(td);an.getByteFrequencyData(fd);let ss=0;for(const v of td){const x=(v-128)/128;ss+=x*x}const rms=Math.sqrt(ss/td.length),db=rms?20*Math.log10(rms):-100,g=+$('gain').value/100,fl=+$('floor').value,sc=v=>Math.max(0,Math.min(255,Math.round((v-fl)*g))),smv=+$('sm').value/100,l=sc(rms*255),b=sc(band(fd,35,250)),m=sc(band(fd,250,2000)),h=sc(band(fd,2000,8000));sl=sl*smv+l*(1-smv);sb=sb*smv+b*(1-smv);smid=smid*smv+m*(1-smv);sh=sh*smv+h*(1-smv);const bt=sb>+$('beat').value&&t-lastBeat>180;if(bt)lastBeat=t;if($('ml'))$('ml').textContent=Math.round(sl);if($('mb'))$('mb').textContent=Math.round(sb);if($('mm'))$('mm').textContent=Math.round(smid);if($('mh'))$('mh').textContent=Math.round(sh);if($('mdb'))$('mdb').textContent=db.toFixed(1);if($('mbeat'))$('mbeat').textContent=bt?'●':'—';if(t-lastTx>110){lastTx=t;send('LEVEL='+Math.round(sl)+';BASS='+Math.round(sb)+';MID='+Math.round(smid)+';HIGH='+Math.round(sh)+';BEAT='+(bt?1:0),true)}raf=requestAnimationFrame(audioLoop)}
+function micState(text,ok=false){const s=$('micState');if(s){s.textContent=text;s.classList.toggle('ok',ok)}}
+async function mic(){
+  if(micOn){stopMic();return}
+  try{
+    micState('REQUESTING...');
+    if(!window.isSecureContext)throw Error('Microphone requires HTTPS');
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw Error('Microphone API unavailable in this browser');
+    stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)throw Error('Web Audio unavailable in this browser');
+    ctx=new AC();
+    if(ctx.state==='suspended')await ctx.resume();
+    an=ctx.createAnalyser();an.fftSize=1024;an.smoothingTimeConstant=+$('sm').value/100;
+    ctx.createMediaStreamSource(stream).connect(an);
+    micOn=true;if($('mic'))$('mic').textContent='STOP MICROPHONE';micState('LIVE',true);
+    log('Microphone connected: '+(stream.getAudioTracks()[0]?.label||'audio input'));
+    await send('FX='+$('afx').value,true);
+    audioLoop();
+  }catch(e){
+    if(stream)stream.getTracks().forEach(t=>t.stop());
+    stream=null;micOn=false;micState('MIC ERROR');
+    if($('mic'))$('mic').textContent='START MICROPHONE';
+    const msg=(e.name?e.name+': ':'')+e.message;
+    log('MIC ERROR: '+msg);
+    alert('MICROPHONE FAILED: '+msg);
+  }
+}
+function stopMic(){micOn=false;if(raf)cancelAnimationFrame(raf);raf=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;if(ctx){ctx.close().catch(()=>{});ctx=null}an=null;if($('mic'))$('mic').textContent='START MICROPHONE';micState('OFF');log('Microphone stopped')}
+function audioLoop(t=performance.now()){if(!micOn||!an||!ctx)return;an.smoothingTimeConstant=+$('sm').value/100;const td=new Uint8Array(an.fftSize),fd=new Uint8Array(an.frequencyBinCount);an.getByteTimeDomainData(td);an.getByteFrequencyData(fd);let ss=0;for(const v of td){const x=(v-128)/128;ss+=x*x}const rms=Math.sqrt(ss/td.length),db=rms?20*Math.log10(rms):-100,g=+$('gain').value/100,fl=+$('floor').value,sc=v=>Math.max(0,Math.min(255,Math.round((v-fl)*g))),smv=+$('sm').value/100,l=sc(rms*255),b=sc(band(fd,35,250)),m=sc(band(fd,250,2000)),h=sc(band(fd,2000,8000));sl=sl*smv+l*(1-smv);sb=sb*smv+b*(1-smv);smid=smid*smv+m*(1-smv);sh=sh*smv+h*(1-smv);const bt=sb>+$('beat').value&&t-lastBeat>180;if(bt)lastBeat=t;if($('ml'))$('ml').textContent=Math.round(sl);if($('mb'))$('mb').textContent=Math.round(sb);if($('mm'))$('mm').textContent=Math.round(smid);if($('mh'))$('mh').textContent=Math.round(sh);if($('mdb'))$('mdb').textContent=db.toFixed(1);if($('mbeat'))$('mbeat').textContent=bt?'●':'—';if(t-lastTx>110){lastTx=t;send('LEVEL='+Math.round(sl)+';BASS='+Math.round(sb)+';MID='+Math.round(smid)+';HIGH='+Math.round(sh)+';BEAT='+(bt?1:0),true)}raf=requestAnimationFrame(audioLoop)}
 if($('mic'))$('mic').onclick=mic;
-use(0);ui();if(navigator.bluetooth){badge('BLE CORE READY');if(navigator.bluetooth.getAvailability)navigator.bluetooth.getAvailability().then(a=>log('Bluetooth availability: '+a)).catch(()=>{})}else badge('NO WEB BLUETOOTH');
+use(0);ui();if(navigator.bluetooth){badge('BLE CORE I READY');if(navigator.bluetooth.getAvailability)navigator.bluetooth.getAvailability().then(a=>log('Bluetooth availability: '+a)).catch(()=>{})}else badge('NO WEB BLUETOOTH');
