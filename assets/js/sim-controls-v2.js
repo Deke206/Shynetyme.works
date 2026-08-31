@@ -82,7 +82,12 @@
       item.classList.toggle("active", item === button),
     );
     const name = button.dataset.name || "Selected";
+    const color = getComputedStyle(button).getPropertyValue("--device").trim();
     if (activeTarget) activeTarget.textContent = name.toUpperCase();
+    query(".sim-drawer-meta")?.style.setProperty(
+      "--target-color",
+      color || "var(--sim-cyan)",
+    );
     showDevicePop(
       button.dataset.count ? `${name} · ${button.dataset.count} DEVICES` : name,
     );
@@ -163,6 +168,26 @@
         item.classList.toggle("active", item === button),
       );
     });
+  });
+
+  const savedColorPicker = query("#savedColorPicker");
+  const addSavedColor = query("#addSavedColor");
+
+  addSavedColor?.addEventListener("click", () => savedColorPicker?.click());
+  savedColorPicker?.addEventListener("input", () => {
+    let swatch = query('.sim-swatch[data-dynamic="true"]');
+    if (!swatch) {
+      swatch = document.createElement("button");
+      swatch.type = "button";
+      swatch.className = "sim-swatch";
+      swatch.dataset.dynamic = "true";
+      swatch.setAttribute("aria-label", "Saved custom color");
+      addSavedColor?.before(swatch);
+    }
+    swatch.style.setProperty("--sw", savedColorPicker.value);
+    queryAll(".sim-swatch").forEach((item) =>
+      item.classList.toggle("active", item === swatch),
+    );
   });
 
   queryAll("[data-segment-step]").forEach((button) => {

@@ -30,11 +30,11 @@
     />
     <link href="assets/css/site.css?v=20260821-sim-rebuild" rel="stylesheet" />
     <link
-      href="assets/css/sim-controls-v2.css?v=20260830-neon-controls"
+      href="assets/css/sim-controls-v2.css?v=20260831.1"
       rel="stylesheet"
     />
     <link
-      href="assets/css/bike-sim-v2.css?v=20260830-neon-controls"
+      href="assets/css/bike-sim-v2.css?v=20260831.1"
       rel="stylesheet"
     />
   </head>
@@ -398,11 +398,6 @@
           </header>
 
           <div class="viewport" id="viewport">
-            <img
-              alt="Night street backdrop for the bicycle LED planner"
-              class="bike-scene-bg"
-              src="assets/images/bike-planner-street.jpg"
-            />
             <div class="bike-canvas">
               <svg
                 aria-labelledby="bikeTitle bikeDesc"
@@ -920,7 +915,9 @@
                               class="sim-swatch"
                               style="--sw: #8b51ff"
                               type="button"
-                            ></button>
+                            ></button
+                            ><button aria-label="Add saved color" class="sim-add-swatch" id="addSavedColor" type="button">＋</button
+                            ><input hidden id="savedColorPicker" type="color" value="#ffffff" />
                           </div>
                           <div class="row g-3">
                             <div class="col-12 col-sm-5">
@@ -1091,7 +1088,7 @@
                               class="btn sim-mode-button"
                               type="button"
                             >
-                              PULSE</button
+                              PIANO</button
                             ><button
                               aria-pressed="false"
                               class="btn sim-mode-button"
@@ -1155,7 +1152,9 @@
                   tabindex="0"
                 >
                   <div class="container-fluid px-2 px-sm-3 py-3">
-                    <div class="row g-2">
+                    <section class="sim-control-card sim-preset-card" aria-label="Presets">
+                      <h2 class="sim-control-title">PRESETS</h2>
+                      <div class="sim-preset-grid">
                       <div class="col-6 col-md-3">
                         <button
                           class="btn sim-preset-button"
@@ -1163,6 +1162,15 @@
                           type="button"
                         >
                           SOLID
+                        </button>
+                      </div>
+                      <div class="col-6 col-md-3">
+                        <button
+                          class="btn sim-preset-button"
+                          style="--preset-color: #18e9ff"
+                          type="button"
+                        >
+                          BREATHE
                         </button>
                       </div>
                       <div class="col-6 col-md-3">
@@ -1177,22 +1185,26 @@
                       <div class="col-6 col-md-3">
                         <button
                           class="btn sim-preset-button"
-                          style="--preset-color: #ffd928"
+                          style="--preset-color: #ff2ca8"
                           type="button"
                         >
-                          RAINBOW
+                          TWINKLE
                         </button>
                       </div>
-                      <div class="col-6 col-md-3">
-                        <button
-                          class="btn sim-preset-button"
-                          style="--preset-color: #8b51ff"
-                          type="button"
-                        >
-                          WAVE
-                        </button>
+                      <div>
+                        <button class="btn sim-preset-button" style="--preset-color: #ffd928" type="button">RAINBOW</button>
+                      </div>
+                      <div>
+                        <button class="btn sim-preset-button" style="--preset-color: #18e9ff" type="button">SCANNER</button>
+                      </div>
+                      <div>
+                        <button class="btn sim-preset-button" style="--preset-color: #ffd928" type="button">STARRY</button>
+                      </div>
+                      <div>
+                        <button class="btn sim-preset-button" style="--preset-color: #ff2ca8" type="button">WAVE</button>
                       </div>
                     </div>
+                    </section>
                   </div>
                 </div>
                 <div
@@ -1203,7 +1215,9 @@
                   tabindex="0"
                 >
                   <div class="container-fluid px-2 px-sm-3 py-3">
-                    <div class="row g-2">
+                    <section class="sim-control-card sim-custom-card" aria-label="Custom effects">
+                      <h2 class="sim-control-title">CUSTOM EFFECTS</h2>
+                      <div class="sim-custom-grid">
                       <div class="col-12 col-sm-6 col-lg-4">
                         <button
                           class="btn sim-custom-button"
@@ -1228,10 +1242,12 @@
                           style="--preset-color: #ffd928"
                           type="button"
                         >
-                          ＋ CREATE EFFECT
+                          BEAST MODE
                         </button>
                       </div>
                     </div>
+                    <button class="btn sim-custom-button is-create" type="button">＋ CREATE NEW EFFECT</button>
+                    </section>
                   </div>
                 </div>
               </div>
@@ -1241,6 +1257,6 @@
       </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/sim-controls-v2.js?v=20260830-neon-controls"></script>
+    <script src="assets/js/sim-controls-v2.js?v=20260831.1"></script>
   </body>
 </html>
