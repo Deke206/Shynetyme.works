@@ -18,7 +18,7 @@ function syncUI(s){if(s.FX){selectedFx=s.FX;markFx()}for(const [k,id] of [['BG',
 function use(i){ai=i;$('d0')?.classList.toggle('on',i===0);$('d1')?.classList.toggle('on',i===1);if($('target'))$('target').textContent=$('sync')?.checked?'TARGET BOTH':'TARGET #'+(i+1)}
 function markFx(){document.querySelectorAll('[data-fx]').forEach(x=>x.classList.toggle('on',x.dataset.fx===selectedFx))}
 function debounce(fn,ms){let t;return v=>{clearTimeout(t);t=setTimeout(()=>fn(v),ms)}}
-function range(id,key,fmt=v=>v){const x=$(id);if(!x)return;const tx=debounce(v=>send(key+'='+v,true),65);x.oninput=()=>{if($(id+'V'))$(id+'V').textContent=fmt(x.value);tx(x.value)};x.onchange=()=>send(key+'='+x.value,true)}
+function range(id,key,fmt=v=>v){const x=$(id);if(!x)return;const tx=key?debounce(v=>send(key+'='+v,true),65):null;x.oninput=()=>{if($(id+'V'))$(id+'V').textContent=fmt(x.value);if(tx)tx(x.value)};x.onchange=()=>{if(key)send(key+'='+x.value,true)}}
 function color(id,key){const x=$(id);if(!x)return;const tx=debounce(v=>send(key+'='+v,true),80);x.oninput=()=>tx(x.value.slice(1).toUpperCase());x.onchange=()=>send(key+'='+x.value.slice(1).toUpperCase(),true)}
 function band(fd,lo,hi){const hz=ctx.sampleRate/an.fftSize,a=Math.max(0,Math.floor(lo/hz)),b=Math.min(fd.length-1,Math.ceil(hi/hz));let s=0,n=0;for(let i=a;i<=b;i++){s+=fd[i];n++}return n?s/n:0}
 function norm(raw,k,floor,sens){peaks[k]=Math.max(raw,peaks[k]*.992);return Math.max(0,Math.min(255,(raw-floor)/Math.max(18,peaks[k]-floor)*255*sens))}
