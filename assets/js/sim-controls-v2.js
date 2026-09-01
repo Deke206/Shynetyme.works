@@ -18,7 +18,6 @@
   const railToggle = query("#sidebarToggle");
   const drawer = query("#simControlDrawer");
   const drawerHandle = query("#simDrawerHandle");
-  const drawerClose = query("#simDrawerClose");
   const activeTarget = query("#activeTarget");
   const devicePop = query("#devicePop");
   const simulatorType = document.body.dataset.simulator || "auto";
@@ -77,7 +76,7 @@
     popTimer = window.setTimeout(() => devicePop.classList.remove("show"), 950);
   }
 
-  function selectDevice(button) {
+  function selectDevice(button, announce = true) {
     queryAll(".device-tile").forEach((item) =>
       item.classList.toggle("active", item === button),
     );
@@ -88,9 +87,13 @@
       "--target-color",
       color || "var(--sim-cyan)",
     );
-    showDevicePop(
-      button.dataset.count ? `${name} · ${button.dataset.count} DEVICES` : name,
-    );
+    if (announce) {
+      showDevicePop(
+        button.dataset.count
+          ? `${name} · ${button.dataset.count} DEVICES`
+          : name,
+      );
+    }
   }
 
   function toggleDeviceButton(button) {
@@ -136,11 +139,6 @@
   drawerHandle.addEventListener("click", (event) => {
     event.stopPropagation();
     setDrawer(!drawer.classList.contains("is-open"));
-  });
-
-  drawerClose?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    setDrawer(false);
   });
 
   queryAll("[data-output]").forEach((range) => {
@@ -503,7 +501,7 @@
   });
 
   const initialDevice = query(".device-tile.active");
-  if (initialDevice) selectDevice(initialDevice);
+  if (initialDevice) selectDevice(initialDevice, false);
   setSidebarState("closed");
   setDrawer(false);
 })();

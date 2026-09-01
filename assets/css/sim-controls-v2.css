@@ -24,7 +24,9 @@
   --sim-topbar-h: var(--topbar);
   --sim-sidebar-one: 92px;
   --sim-sidebar-two: 190px;
-  --sim-drawer-h: min(276px, 52dvh);
+  --sim-dock-h: 36px;
+  --sim-drawer-panel-h: min(276px, 52dvh);
+  --sim-drawer-h: calc(var(--sim-drawer-panel-h) + var(--sim-dock-h));
   --sim-ease: 220ms cubic-bezier(0.2, 0.78, 0.25, 1);
 }
 
@@ -599,7 +601,10 @@ button {
   animation: fullscreen-pulse 1.5s ease-in-out infinite;
 }
 
-/* Lower drawer: its body is entirely below the viewport while closed. */
+/*
+ * Original lower drawer geometry: the panel rises above a compact bottom
+ * tab dock. Closed state leaves only the shaped pull tab and chrome divider.
+ */
 
 .sim-control-drawer {
   position: absolute;
@@ -608,40 +613,25 @@ button {
   bottom: 0;
   left: 0;
   height: var(--sim-drawer-h);
-  transform: translateY(calc(100% - 4px));
-  transition: transform var(--sim-ease);
-}
-
-.sim-control-drawer.is-open {
-  transform: translateY(0);
+  overflow: visible;
+  pointer-events: none;
 }
 
 .sim-control-drawer__surface {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-top: 0;
-  background: radial-gradient(
-      circle at 8% 18%,
-      rgba(49, 230, 255, 0.08),
-      transparent 22rem
-    ),
-    radial-gradient(
-      circle at 92% 42%,
-      rgba(255, 90, 185, 0.06),
-      transparent 24rem
-    ),
-    rgba(3, 9, 24, 0.93);
-  box-shadow: 0 -9px 30px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(13px);
-  -webkit-backdrop-filter: blur(13px);
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
 }
 
 .sim-control-drawer__surface::before {
   content: "";
-  flex: 0 0 4px;
-  width: 100%;
+  position: absolute;
+  z-index: 8;
+  right: 0;
+  bottom: var(--sim-dock-h);
+  left: 0;
+  height: 4px;
   background: linear-gradient(
     90deg,
     #fff 0%,
@@ -665,8 +655,8 @@ button {
 
 .sim-drawer-handle {
   position: absolute;
-  z-index: 5;
-  top: 0;
+  z-index: 12;
+  bottom: calc(var(--sim-dock-h) - 1px);
   left: 50%;
   width: 96px;
   height: 27px;
@@ -677,9 +667,10 @@ button {
   justify-content: center;
   gap: 0;
   padding: 0;
-  transform: translate(-50%, -100%);
-  border: 2px solid rgba(223, 250, 255, 0.78);
-  border-bottom: 0;
+  transform: translateX(-50%);
+  border: 0;
+  border-right: 2px solid rgba(223, 250, 255, 0.78);
+  border-left: 2px solid rgba(223, 250, 255, 0.78);
   border-radius: 0;
   color: #fff;
   background: linear-gradient(
@@ -690,6 +681,8 @@ button {
   box-shadow: 0 -5px 16px rgba(24, 233, 255, 0.18);
   font: 900 13pt/1 Oxanium, sans-serif;
   clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+  pointer-events: auto;
+  transition: bottom var(--sim-ease), filter 160ms ease;
 }
 
 .sim-drawer-handle > span:first-child {
@@ -708,9 +701,17 @@ button {
   transform: rotate(180deg) translateY(-1px) scaleX(1.55);
 }
 
+.sim-control-drawer.is-open .sim-drawer-handle {
+  bottom: calc(var(--sim-dock-h) + var(--sim-drawer-panel-h) - 1px);
+}
+
 .sim-drawer-meta {
   --target-color: var(--sim-cyan);
-  flex: 0 0 auto;
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  right: 0;
+  left: 0;
   height: 26px;
   min-height: 26px;
   display: flex;
@@ -719,7 +720,21 @@ button {
   justify-content: center;
   padding: 0 8px;
   border-bottom: 2px solid rgba(223, 250, 255, 0.26);
+  background: radial-gradient(circle at 8% 18%, rgba(49, 230, 255, 0.07), transparent 18rem),
+    radial-gradient(circle at 92% 42%, rgba(255, 90, 185, 0.055), transparent 18rem),
+    rgba(3, 9, 24, 0.9);
   font-family: Oxanium, sans-serif;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--sim-drawer-panel-h));
+  transition: transform var(--sim-ease), opacity 180ms ease, visibility 0s linear 220ms;
+}
+
+.sim-control-drawer.is-open .sim-drawer-meta {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition-delay: 0s;
 }
 
 .sim-drawer-meta__label {
@@ -739,12 +754,23 @@ button {
 }
 
 .sim-drawer-tabs {
-  flex: 0 0 auto;
+  position: absolute;
+  z-index: 7;
+  right: 0;
+  bottom: 0;
+  left: 0;
   margin: 0;
-  height: 36px;
+  height: var(--sim-dock-h);
   padding: 0 8px;
-  border-bottom: 2px solid rgba(223, 250, 255, 0.42);
-  background: rgba(2, 7, 14, 0.58);
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  transition: background 180ms ease;
+}
+
+.sim-control-drawer.is-open .sim-drawer-tabs {
+  background: rgba(1, 5, 12, 0.94);
+  pointer-events: auto;
 }
 
 .sim-drawer-tabs .nav-link {
@@ -755,20 +781,25 @@ button {
   justify-content: center;
   padding: 0 8px;
   border: 0;
-  margin: 3px 1px 0;
-  border: 1px solid rgba(223, 250, 255, 0.18);
+  margin: 0 1px;
   border-bottom: 3px solid transparent;
   border-radius: 0;
   color: #8ea3b5;
-  background: linear-gradient(
-    180deg,
-    rgba(8, 18, 30, 0.9),
-    rgba(2, 7, 14, 0.78)
-  );
+  background: transparent;
   font-family: Oxanium, sans-serif;
   font-size: 8.8pt;
   font-weight: 800;
-  clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 100%, 0 100%);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 160ms ease, transform var(--sim-ease), visibility 0s linear 220ms;
+}
+
+.sim-control-drawer.is-open .sim-drawer-tabs .nav-link {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition-delay: 0s;
 }
 
 .sim-drawer-tabs .nav-link.active {
@@ -788,7 +819,12 @@ button {
 }
 
 .sim-drawer-content {
-  flex: 1 1 auto;
+  position: absolute;
+  z-index: 3;
+  top: 26px;
+  right: 0;
+  bottom: var(--sim-dock-h);
+  left: 0;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -796,6 +832,25 @@ button {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: var(--sim-cyan) rgba(2, 7, 13, 0.65);
+  background: radial-gradient(circle at 8% 18%, rgba(49, 230, 255, 0.055), transparent 22rem),
+    radial-gradient(circle at 92% 42%, rgba(255, 90, 185, 0.045), transparent 24rem),
+    rgba(3, 9, 24, 0.93);
+  box-shadow: 0 -16px 38px rgba(0, 0, 0, 0.44);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--sim-drawer-panel-h));
+  transition: transform var(--sim-ease), opacity 180ms ease, visibility 0s linear 220ms;
+  pointer-events: none;
+}
+
+.sim-control-drawer.is-open .sim-drawer-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition-delay: 0s;
+  pointer-events: auto;
 }
 
 .sim-drawer-content > .tab-pane > .container-fluid {
@@ -870,6 +925,43 @@ button {
     linear-gradient(72deg, transparent 0 48%, rgba(54,130,255,.06) 54%, rgba(255,255,255,.10) 57%, transparent 63% 100%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.26), inset 0 -1px 0 rgba(255,255,255,.08);
   mix-blend-mode: screen;
+}
+
+/* Original ShyneTyme moving type beneath each liquid-glass control object. */
+.sim-control-card > .story-led-matrix {
+  inset: 3px;
+  z-index: 0;
+  border-radius: 7px;
+  opacity: 0.58;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+}
+
+.sim-control-card > .story-led-matrix span {
+  font-size: 10pt;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 9px currentColor, 0 0 15px currentColor;
+  opacity: 0.94;
+}
+
+.sim-control-card > .story-led-matrix span:nth-child(1) {
+  color: rgba(126, 235, 255, 0.46);
+  animation-duration: 38s;
+}
+
+.sim-control-card > .story-led-matrix span:nth-child(2) {
+  color: rgba(255, 90, 185, 0.39);
+  animation-duration: 46s;
+}
+
+.sim-control-card > .story-led-matrix span:nth-child(3) {
+  color: rgba(255, 197, 98, 0.35);
+  animation-duration: 42s;
+}
+
+.sim-control-card > :not(.story-led-matrix) {
+  position: relative;
+  z-index: 2;
 }
 
 .sim-control-title {
@@ -1388,7 +1480,7 @@ button {
 
 @media (max-width: 991.98px) {
   :root {
-    --sim-drawer-h: min(72dvh, 540px);
+    --sim-drawer-panel-h: min(calc(72dvh - var(--sim-dock-h)), 504px);
   }
 
   body.v56-page {
@@ -1467,7 +1559,7 @@ button {
 
 @media (max-width: 767.98px) {
   :root {
-    --sim-drawer-h: min(76dvh, 560px);
+    --sim-drawer-panel-h: min(calc(76dvh - var(--sim-dock-h)), 524px);
   }
 
   .topbar {
@@ -1510,7 +1602,7 @@ button {
   :root {
     --sim-sidebar-one: 86px;
     --sim-sidebar-two: min(176px, 54vw);
-    --sim-drawer-h: min(78dvh, 560px);
+    --sim-drawer-panel-h: min(calc(78dvh - var(--sim-dock-h)), 524px);
   }
 
   .topbar {
@@ -1574,7 +1666,7 @@ button {
 
 @media (max-width: 991.98px) and (orientation: landscape) and (max-height: 500px) {
   :root {
-    --sim-drawer-h: min(82dvh, 420px);
+    --sim-drawer-panel-h: min(calc(82dvh - var(--sim-dock-h)), 384px);
   }
 
   .sim-drawer-meta {

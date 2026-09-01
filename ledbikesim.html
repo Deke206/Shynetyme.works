@@ -30,11 +30,11 @@
     />
     <link href="assets/css/site.css?v=20260821-sim-rebuild" rel="stylesheet" />
     <link
-      href="assets/css/sim-controls-v2.css?v=20260831.1"
+      href="assets/css/sim-controls-v2.css?v=20260901.1"
       rel="stylesheet"
     />
     <link
-      href="assets/css/bike-sim-v2.css?v=20260831.1"
+      href="assets/css/bike-sim-v2.css?v=20260901.1"
       rel="stylesheet"
     />
   </head>
@@ -531,7 +531,15 @@
                     href="#ledRouteFrame"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteFrame"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFrame"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteFrame"
                   />
                   <use
@@ -549,7 +557,15 @@
                     href="#ledRouteFrontWheel"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteFrontWheel"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFrontWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteFrontWheel"
                   />
                   <use
@@ -567,7 +583,15 @@
                     href="#ledRouteRearWheel"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteRearWheel"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteRearWheel"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteRearWheel"
                   />
                   <use
@@ -585,7 +609,15 @@
                     href="#ledRouteHandlebars"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteHandlebars"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteHandlebars"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteHandlebars"
                   />
                   <use
@@ -603,7 +635,15 @@
                     href="#ledRouteFrontBasket"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteFrontBasket"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFrontBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteFrontBasket"
                   />
                   <use
@@ -621,7 +661,15 @@
                     href="#ledRouteRearBasket"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteRearBasket"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteRearBasket"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteRearBasket"
                   />
                   <use
@@ -639,7 +687,15 @@
                     href="#ledRouteFlagpole"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteFlagpole"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteFlagpole"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteFlagpole"
                   />
                   <use
@@ -657,7 +713,15 @@
                     href="#ledRouteTrailer"
                   />
                   <use
+                    class="bike-led-dot bike-led-orange"
+                    href="#ledRouteTrailer"
+                  />
+                  <use
                     class="bike-led-dot bike-led-yellow"
+                    href="#ledRouteTrailer"
+                  />
+                  <use
+                    class="bike-led-dot bike-led-green"
                     href="#ledRouteTrailer"
                   />
                   <use
@@ -708,12 +772,7 @@
                 <span class="sim-drawer-meta__label">ACTIVE TARGET</span
                 ><strong class="sim-drawer-meta__target" id="activeTarget"
                   >FRAME</strong
-                ><button
-                  aria-label="Close simulator controls"
-                  class="btn-close btn-close-white ms-auto"
-                  id="simDrawerClose"
-                  type="button"
-                ></button>
+                >
               </div>
               <nav
                 aria-label="Simulator control categories"
@@ -767,7 +826,7 @@
                   style="--tab-color: #ff2ca8"
                   type="button"
                 >
-                  CUSTOM
+                  CUSTOM EFFECTS
                 </button>
               </nav>
               <div class="tab-content sim-drawer-content">
@@ -785,10 +844,8 @@
                           aria-label="LED effects"
                           class="sim-control-card"
                         >
-                          <h2 class="sim-control-title">
-                            LED EFFECTS — VISUAL CONTROLS NOT CONNECTED TO BIKE
-                            LEDS YET
-                          </h2>
+                          <div aria-hidden="true" class="story-led-matrix"><span>LED EFFECTS · COLOR · LIGHT · MOTION · LED EFFECTS · COLOR · LIGHT · MOTION ·</span><span>SHYNETYME ✦ EFFECTS ✦ MUSIC ✦ PRESETS ✦ CUSTOM ✦ SHYNETYME ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div>
+                          <h2 class="sim-control-title">LED EFFECTS</h2>
                           <div class="row g-3">
                             <div class="col-12 col-md-4">
                               <label class="form-label" for="effectSelect"
@@ -890,6 +947,7 @@
                           aria-label="Saved colors"
                           class="sim-control-card"
                         >
+                          <div aria-hidden="true" class="story-led-matrix"><span>SAVED COLORS · COLOR · LIGHT · MOTION · SAVED COLORS · COLOR · LIGHT · MOTION ·</span><span>SHYNETYME ✦ EFFECTS ✦ MUSIC ✦ PRESETS ✦ CUSTOM ✦ SHYNETYME ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div>
                           <h2 class="sim-control-title">SAVED COLORS</h2>
                           <div class="sim-palette mb-3">
                             <button
@@ -972,6 +1030,7 @@
                           class="sim-control-card music-player-card"
                           aria-label="Music player"
                         >
+                          <div aria-hidden="true" class="story-led-matrix"><span>MUSIC PLAYER · COLOR · LIGHT · MOTION · MUSIC PLAYER · COLOR · LIGHT · MOTION ·</span><span>SHYNETYME ✦ EFFECTS ✦ MUSIC ✦ PRESETS ✦ CUSTOM ✦ SHYNETYME ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div>
                           <h2 class="sim-control-title">MUSIC PLAYER</h2>
                           <div class="track-now" id="currentTrack">
                             NO TRACK LOADED
@@ -1036,6 +1095,7 @@
                           class="sim-control-card"
                           aria-label="Music scene effects"
                         >
+                          <div aria-hidden="true" class="story-led-matrix"><span>MUSIC SCENE · COLOR · LIGHT · MOTION · MUSIC SCENE · COLOR · LIGHT · MOTION ·</span><span>SHYNETYME ✦ EFFECTS ✦ MUSIC ✦ PRESETS ✦ CUSTOM ✦ SHYNETYME ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div>
                           <h2 class="sim-control-title">MUSIC SCENE</h2>
                           <div class="row g-2">
                             <div class="col-12 col-sm-6">
@@ -1104,6 +1164,7 @@
                           class="sim-control-card"
                           aria-label="Music playlist"
                         >
+                          <div aria-hidden="true" class="story-led-matrix"><span>PLAYLIST · COLOR · LIGHT · MOTION · PLAYLIST · COLOR · LIGHT · MOTION ·</span><span>SHYNETYME ✦ EFFECTS ✦ MUSIC ✦ PRESETS ✦ CUSTOM ✦ SHYNETYME ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div>
                           <h2 class="sim-control-title">PLAYLIST</h2>
                           <div class="playlist" id="playlist">
                             <button
@@ -1153,6 +1214,7 @@
                 >
                   <div class="container-fluid px-2 px-sm-3 py-3">
                     <section class="sim-control-card sim-preset-card" aria-label="Presets">
+                      <div aria-hidden="true" class="story-led-matrix"><span>PRESETS · COLOR · LIGHT · MOTION · PRESETS · COLOR · LIGHT · MOTION ·</span><span>SHYNETYME ✦ EFFECTS ✦ MUSIC ✦ PRESETS ✦ CUSTOM ✦ SHYNETYME ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div>
                       <h2 class="sim-control-title">PRESETS</h2>
                       <div class="sim-preset-grid">
                       <div class="col-6 col-md-3">
@@ -1216,6 +1278,7 @@
                 >
                   <div class="container-fluid px-2 px-sm-3 py-3">
                     <section class="sim-control-card sim-custom-card" aria-label="Custom effects">
+                      <div aria-hidden="true" class="story-led-matrix"><span>CUSTOM EFFECTS · COLOR · LIGHT · MOTION · CUSTOM EFFECTS · COLOR · LIGHT · MOTION ·</span><span>SHYNETYME ✦ EFFECTS ✦ MUSIC ✦ PRESETS ✦ CUSTOM ✦ SHYNETYME ✦</span><span>COLOR THE NYTE · DIRECT YO LYTE · MAKE THE WORKS TWINKLE · COLOR THE NYTE ·</span></div>
                       <h2 class="sim-control-title">CUSTOM EFFECTS</h2>
                       <div class="sim-custom-grid">
                       <div class="col-12 col-sm-6 col-lg-4">
@@ -1257,6 +1320,6 @@
       </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/sim-controls-v2.js?v=20260831.1"></script>
+    <script src="assets/js/sim-controls-v2.js?v=20260901.1"></script>
   </body>
 </html>
