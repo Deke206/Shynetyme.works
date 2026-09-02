@@ -1,523 +1,272 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#01040a">
-<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="#01040a" name="theme-color"/>
+<meta content="noindex,nofollow" name="robots"/>
 <title>ShyneTyme.Works — ESP32 LED Control</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#01040a;--panel:#050a12;--panel2:#08111d;--cyan:#18e9ff;--pink:#ff2ca8;--yellow:#ffd928;--green:#3cff70;--white:#f7fbff;--muted:#91a3b8;--line:rgba(223,250,255,.20)}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#000;color:var(--white);font:12px/1.35 Inter,system-ui,sans-serif}
-button,input,select{font:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-.app{position:relative;min-height:100vh;overflow:hidden;background:
-  radial-gradient(circle at 18% 6%,rgba(24,233,255,.055),transparent 25%),
-  radial-gradient(circle at 82% 12%,rgba(255,44,168,.045),transparent 23%),
-  linear-gradient(180deg,#01040a 0%,#020711 46%,#010309 100%)}
-.app::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;background-image:radial-gradient(circle,rgba(223,250,255,.14) 0 1px,transparent 1.3px);background-size:46px 46px;-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent 48%);mask-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent 48%)}
-.top{position:relative;z-index:30;height:42px;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 12px;border-bottom:1px solid rgba(223,250,255,.16);background:rgba(1,4,10,.82);backdrop-filter:blur(16px) saturate(1.1);box-shadow:0 9px 24px rgba(0,0,0,.18)}
-.top::after{content:"";position:absolute;left:50%;bottom:-1px;width:min(260px,42vw);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,var(--cyan),#fff,var(--pink),transparent);box-shadow:0 0 10px rgba(24,233,255,.35);opacity:.72}
-.brand{position:absolute;left:50%;transform:translateX(-50%);font:800 14px Oxanium;letter-spacing:.045em;white-space:nowrap;text-shadow:0 0 12px rgba(255,255,255,.08)}
-.brand .s{color:var(--yellow);text-shadow:0 0 8px rgba(255,217,40,.35)}
-.brand .w{color:var(--pink);font-size:9px;text-shadow:0 0 8px rgba(255,44,168,.32)}
-.status-mini{color:var(--cyan);font:800 7.1pt Oxanium;letter-spacing:.055em;text-shadow:0 0 9px rgba(24,233,255,.36)}
-.tabs{position:relative;z-index:25;height:39px;display:flex;align-items:end;justify-content:center;gap:20px;padding:0 10px;border-bottom:1px solid rgba(223,250,255,.10);background:rgba(3,8,18,.80);backdrop-filter:blur(14px);overflow-x:auto}
-.tabs::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 100%,rgba(24,233,255,.045),transparent 52%)}
-.tab{position:relative;z-index:1;flex:0 0 auto;height:37px;padding:0 3px;border:0;color:#74899d;background:transparent;font:800 7.8pt Oxanium;letter-spacing:.07em;transition:color .16s ease,text-shadow .16s ease,transform .16s ease}
-.tab::after{content:"";position:absolute;left:50%;right:50%;bottom:0;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--pink),#fff,var(--cyan));box-shadow:0 0 8px rgba(24,233,255,.35);transition:left .18s ease,right .18s ease,opacity .18s ease;opacity:0}
-.tab:hover{color:#cfe1ee}
-.tab.on{color:#fff;text-shadow:0 0 8px rgba(24,233,255,.42),0 0 14px rgba(255,44,168,.18)}
-.tab.on::after{left:0;right:0;opacity:1}
-.shell{position:relative;z-index:2;padding:12px 14px 18px}
-.workspace{max-width:1120px;margin:0 auto}
-.workspace-page{display:none}
-.workspace-page.on{display:block;animation:page-in .22s cubic-bezier(.2,.8,.25,1)}
-.page{position:relative;min-height:calc(100vh - 108px);padding-top:7px}
-.page::before{content:"";position:absolute;z-index:0;top:-48px;right:-60px;width:360px;height:250px;border-radius:50%;pointer-events:none;filter:blur(10px);opacity:.26;background:radial-gradient(circle,rgba(24,233,255,.16),rgba(139,81,255,.06) 38%,transparent 70%)}
-#music .page::before{background:radial-gradient(circle,rgba(139,81,255,.20),rgba(24,233,255,.07) 42%,transparent 70%)}
-#presets .page::before{background:radial-gradient(circle,rgba(255,217,40,.13),rgba(255,44,168,.06) 42%,transparent 70%)}
-#custom .page::before{background:radial-gradient(circle,rgba(60,255,112,.12),rgba(24,233,255,.05) 42%,transparent 70%)}
-.page> *{position:relative;z-index:1}
-@keyframes page-in{from{opacity:.25;transform:translateY(5px)}to{opacity:1;transform:none}}
-.section-head{display:flex;align-items:center;gap:8px;margin:1px 0 14px}
-.section-head h1{margin:0;color:#f9fdff;font:900 10.5pt Oxanium;letter-spacing:.095em;text-transform:uppercase;text-shadow:0 0 12px rgba(255,255,255,.07)}
-.section-head h1:after{content:"";display:block;width:48px;height:2px;margin-top:5px;border-radius:9px;background:linear-gradient(90deg,var(--pink),#fff 52%,var(--cyan));box-shadow:0 0 10px rgba(24,233,255,.24),0 0 7px rgba(255,44,168,.22)}
-.subhead{margin:10px 0 5px;color:var(--cyan);font:800 7.2pt Oxanium;letter-spacing:.08em;text-transform:uppercase}
-.muted{color:var(--muted)}
-.glass-panel{position:relative;border:1px solid rgba(223,250,255,.18);border-radius:9px;background:linear-gradient(145deg,rgba(14,27,42,.43),rgba(3,8,16,.72) 56%,rgba(8,19,29,.46));box-shadow:inset 0 1px 0 rgba(255,255,255,.065),inset 0 -1px 0 rgba(24,233,255,.035),0 9px 28px rgba(0,0,0,.26);backdrop-filter:blur(14px) saturate(1.08)}
-.glass-panel::after{content:"";position:absolute;pointer-events:none;inset:0;border-radius:inherit;background:linear-gradient(120deg,rgba(255,255,255,.055),transparent 24%,transparent 72%,rgba(24,233,255,.025));mix-blend-mode:screen}
-.glass-btn,.mini-btn,.tiny-btn,.filter-chip,.role{border:1px solid rgba(223,250,255,.24);color:#dfeaf4;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018));box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -1px 0 rgba(24,233,255,.035),0 0 9px rgba(24,233,255,.035);backdrop-filter:blur(9px);transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease,color .14s ease}
-.glass-btn{height:28px;padding:0 9px;border-radius:6px;font:800 7pt Oxanium;letter-spacing:.035em}
-.glass-btn:hover,.tiny-btn:hover,.role:hover,.filter-chip:hover{transform:translateY(-1px);border-color:rgba(223,250,255,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 11px rgba(24,233,255,.10)}
-.glass-btn:active,.tiny-btn:active,.role:active,.filter-chip:active{transform:translateY(0) scale(.98)}
-.glass-btn.primary{border-color:rgba(24,233,255,.72);color:#dfffff;background:linear-gradient(145deg,rgba(24,233,255,.12),rgba(255,255,255,.03));box-shadow:inset 0 0 9px rgba(24,233,255,.07),0 0 11px rgba(24,233,255,.14);text-shadow:0 0 8px rgba(24,233,255,.35)}
-.glass-btn.danger,.tiny-btn.danger{border-color:rgba(255,44,168,.55);color:#ff7fc4}
-.actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.status{max-width:560px;margin-top:8px;padding:6px 8px;border:1px solid rgba(223,250,255,.1);border-radius:6px;background:#02050a;color:#83f0d7;font:6.8pt ui-monospace,monospace}
-.device-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
-.device-card{position:relative;width:218px;padding:8px 8px 9px;border:1px solid rgba(223,250,255,.18);border-radius:8px;background:linear-gradient(145deg,rgba(9,19,31,.66),rgba(3,8,16,.82));box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 7px 20px rgba(0,0,0,.22)}
-.device-card::before{content:"";position:absolute;left:10px;right:60%;top:-1px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);box-shadow:0 0 7px rgba(24,233,255,.28)}
-.device-card.on{border-color:rgba(24,233,255,.62);box-shadow:0 0 14px rgba(24,233,255,.10),inset 0 1px 0 rgba(255,255,255,.07)}
-.device-title{display:flex;align-items:center;gap:7px}
-.dot{width:8px;height:8px;border-radius:50%;background:#59677a}
-.dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
-.device-title b{font:800 8.3pt Oxanium}
-.device-title small{display:block;color:var(--muted);font-size:6.8pt}
-.device-card .actions{margin-top:7px}
-.use{height:25px;padding:0 8px;border-radius:5px;font:800 7pt Oxanium}
-.sync-box{width:218px;padding:8px 9px}
-.sync-line{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.sync-line span{font:800 8pt Oxanium}
-.sync-line input{width:17px;height:17px;accent-color:var(--cyan)}
-.debug-row{margin-top:8px}
-.fx-shell{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:8px;align-items:start}
-.fx-main{min-width:0}
-.preview{height:158px;position:relative;overflow:hidden;padding:10px;border:1px solid rgba(223,250,255,.22);border-radius:10px;background:radial-gradient(circle at 18% 88%,rgba(255,44,168,.08),transparent 32%),radial-gradient(circle at 78% 12%,rgba(24,233,255,.08),transparent 34%),#02050a;box-shadow:inset 0 0 28px rgba(0,0,0,.58),0 8px 26px rgba(0,0,0,.28)}
-.preview::before{content:"";position:absolute;z-index:0;left:-15%;right:-15%;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--pink),#fff,var(--cyan),transparent);background-size:180% 100%;animation:chrome-sweep 8s ease-in-out infinite alternate;box-shadow:0 0 11px rgba(24,233,255,.28)}
-.preview::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(112deg,transparent 0 31%,rgba(255,255,255,.018) 42%,transparent 52%);transform:translateX(-45%);animation:glass-glint 10s ease-in-out infinite}
-@keyframes chrome-sweep{from{background-position:0 0}to{background-position:100% 0}}
-@keyframes glass-glint{0%,62%{transform:translateX(-55%)}78%,100%{transform:translateX(65%)}}
-.preview-name{position:absolute;z-index:2;left:11px;top:9px;color:#fff;font:900 8.1pt Oxanium;letter-spacing:.09em;text-shadow:0 0 9px rgba(24,233,255,.24)}
-.led-stage{position:relative;z-index:2;height:100%;display:grid;place-items:center;padding-top:18px}
-.strip{width:min(96%,760px);display:grid;grid-template-columns:repeat(42,1fr);gap:3px;padding:10px;border:1px solid rgba(223,250,255,.12);border-radius:999px;background:linear-gradient(180deg,rgba(19,31,43,.68),rgba(2,5,10,.86));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -5px 12px rgba(0,0,0,.45),0 0 20px rgba(24,233,255,.035)}
-.strip i{aspect-ratio:1;border-radius:50%;background:#111;box-shadow:0 0 7px currentColor}
-.control-deck{display:grid;grid-template-columns:minmax(270px,390px) minmax(270px,390px);gap:8px;margin-top:8px;align-items:start}
-.compact-panel{padding:9px 10px 10px}
-.compact-panel h2{margin:0 0 8px;color:#f7fcff;font:900 8pt Oxanium;letter-spacing:.07em;text-transform:uppercase}
-.slider-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px}
-.slider-row{display:grid;grid-template-columns:68px minmax(96px,170px) 34px;gap:6px;align-items:center}
-.slider-row label{font:800 6.9pt Oxanium;color:#dce8f2}
-.slider-row output{text-align:right;color:var(--cyan);font:800 6.8pt Oxanium}
-.railglass{position:relative;height:15px;border:1px solid rgba(223,250,255,.28);border-radius:5px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 8px rgba(0,0,0,.5)}
-.railglass .fill{position:absolute;left:2px;top:2px;bottom:2px;width:50%;border-radius:3px;background:rgba(24,233,255,.32);box-shadow:0 0 7px rgba(24,233,255,.2)}
-.railglass .thumb{position:absolute;top:50%;left:50%;width:14px;height:14px;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.9);border-radius:4px;background:rgba(255,255,255,.09);box-shadow:0 0 8px rgba(24,233,255,.5),inset 0 0 5px rgba(255,255,255,.18);pointer-events:none;backdrop-filter:blur(4px)}
-.railglass input{position:absolute;inset:-7px 0;width:100%;opacity:0;cursor:pointer}
-.more-controls{margin-top:8px}
-.more-controls summary{color:var(--muted);font:800 7pt Oxanium;cursor:pointer}
-.more-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
-.compact-select{height:27px;max-width:145px;padding:0 6px;border:1px solid var(--line);border-radius:5px;color:#fff;background:#050a14;font-size:7pt}
-.toggle{height:27px;padding:0 8px;border:1px solid var(--line);border-radius:5px;color:#9db0c2;background:rgba(255,255,255,.025);font:800 7pt Oxanium}
-.toggle.on{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 8px rgba(24,233,255,.16)}
-.rolebar{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
-.role{height:27px;padding:0 8px;border-radius:6px;font:800 6.9pt Oxanium;color:#93a6b8}
-.role.on{color:#fff;border-color:rgba(24,233,255,.72);background:linear-gradient(145deg,rgba(24,233,255,.09),rgba(255,44,168,.045));box-shadow:inset 0 -2px 0 var(--cyan),0 0 9px rgba(24,233,255,.13);text-shadow:0 0 7px rgba(24,233,255,.28)}
-.swatch{display:inline-block;width:11px;height:11px;margin-right:5px;border-radius:3px;border:1px solid rgba(255,255,255,.65);vertical-align:-1px}
-.hue-selector{--hx:50%;position:relative;height:31px;max-width:320px;border:1px solid rgba(223,250,255,.34);border-radius:7px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008));box-shadow:inset 0 0 10px rgba(0,0,0,.60),inset 0 1px 0 rgba(255,255,255,.08),0 0 9px rgba(24,233,255,.035);overflow:hidden;touch-action:none}
-.hue-spectrum{position:absolute;inset:3px;border-radius:5px;background:linear-gradient(90deg,#ff0000 0%,#ffff00 16.67%,#00ff00 33.33%,#00ffff 50%,#0000ff 66.67%,#ff00ff 83.33%,#ff0000 100%);opacity:0;transition:opacity .07s ease;-webkit-mask-image:radial-gradient(ellipse 52px 24px at var(--hx) 50%,#000 0 58%,rgba(0,0,0,.80) 72%,transparent 100%);mask-image:radial-gradient(ellipse 52px 24px at var(--hx) 50%,#000 0 58%,rgba(0,0,0,.80) 72%,transparent 100%);pointer-events:none;filter:saturate(1.08) brightness(1.04)}
-.hue-selector.is-active .hue-spectrum{opacity:1}
-.hue-thumb{position:absolute;left:var(--hx);top:50%;width:20px;height:23px;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.88);border-radius:5px;background:rgba(255,255,255,.055);box-shadow:0 0 0 1px rgba(24,233,255,.16),0 0 9px rgba(24,233,255,.2),inset 0 0 7px rgba(255,255,255,.12);backdrop-filter:blur(4px);pointer-events:none}
-.hue-selector input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
-.hue-meta{display:flex;justify-content:space-between;max-width:320px;margin-top:4px;color:var(--muted);font:700 6.3pt Oxanium}
-.hue-meta b{color:var(--cyan)}
-.saved-wrap{margin-top:8px}
-.saved{display:flex;flex-wrap:wrap;gap:5px;min-height:25px}
-.saved button{width:23px;height:23px;padding:0;border:1px solid rgba(255,255,255,.48);border-radius:6px;background:var(--c);box-shadow:0 0 7px color-mix(in srgb,var(--c) 24%,transparent);transition:transform .14s ease,box-shadow .14s ease}.saved button:hover{transform:translateY(-1px) scale(1.04);box-shadow:0 0 10px color-mix(in srgb,var(--c) 34%,transparent)}
-.saved-help{margin-top:3px;color:#6f8295;font-size:6.2pt}
-.fx-actions{margin-top:8px}
-.library{height:calc(100vh - 118px);min-height:440px;max-height:680px;display:grid;grid-template-rows:auto auto auto minmax(0,1fr);border:1px solid rgba(223,250,255,.17);border-radius:9px;background:linear-gradient(180deg,rgba(8,18,29,.72),rgba(3,8,15,.82));box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 9px 26px rgba(0,0,0,.22);overflow:hidden}
-.library-head{display:flex;align-items:center;justify-content:space-between;padding:8px 8px 3px;color:var(--cyan);font:900 7.8pt Oxanium}
-.search{height:28px;margin:4px 7px;padding:0 7px;border:1px solid var(--line);border-radius:5px;color:#fff;background:#040911}
-.filters{display:flex;gap:4px;padding:2px 7px 6px}
-.filter-chip{height:23px;padding:0 7px;border-radius:999px;color:#8296aa;font:800 6.7pt Oxanium}
-.filter-chip.on{color:var(--cyan);border-color:var(--cyan)}
-.fxlist{overflow:auto;padding:0 6px 7px;scrollbar-width:thin;scrollbar-color:var(--cyan) #050a14}
-.fx{width:100%;min-height:34px;display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:6px;align-items:center;margin-bottom:4px;padding:4px 7px;border:1px solid rgba(223,250,255,.12);border-radius:6px;color:#cfdce7;background:rgba(255,255,255,.012);text-align:left;transition:border-color .14s ease,background .14s ease,transform .14s ease,box-shadow .14s ease}
-.fx b{font:800 7.2pt Oxanium}
-.fx:hover{transform:translateX(1px);border-color:rgba(223,250,255,.27);background:rgba(255,255,255,.025)}.fx.on{color:#fff;border-color:rgba(255,44,168,.58);background:linear-gradient(90deg,rgba(255,44,168,.065),rgba(24,233,255,.018));box-shadow:inset 2px 0 0 var(--pink),0 0 8px rgba(255,44,168,.09)}
-.fx.hide{display:none}
-.fx-palette{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
-.fx-palette i{height:14px;border-radius:3px;border:1px solid rgba(255,255,255,.3)}
-.music-grid{display:grid;grid-template-columns:minmax(260px,340px) minmax(320px,520px);gap:8px;align-items:start}
-.music-panel{padding:9px}
-.music-panel h2{margin:0 0 7px;font:900 8.5pt Oxanium}
-.spectrum{position:relative;height:150px;display:flex;align-items:end;gap:3px;padding:10px 8px 8px;border:1px solid rgba(223,250,255,.16);border-radius:8px;background:radial-gradient(circle at 50% 110%,rgba(139,81,255,.10),transparent 54%),#02050a;box-shadow:inset 0 -12px 28px rgba(0,0,0,.5)}
-.spectrum::after{content:"";position:absolute;left:7px;right:7px;bottom:7px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),#fff,var(--pink),transparent);box-shadow:0 0 7px rgba(24,233,255,.28);opacity:.7}
-.spectrum i{flex:1;height:5%;background:var(--cyan);box-shadow:0 0 5px rgba(24,233,255,.2)}
-.spectrum-colors{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.spectrum-color{display:flex;align-items:center;gap:5px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;color:#b8c7d4;font:800 6.6pt Oxanium;background:rgba(255,255,255,.025)}
-.spectrum-color input{width:24px;height:22px;padding:0;border:0;background:transparent}
-.preset-tools,.playlist-tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-.preset-grid{display:flex;flex-wrap:wrap;gap:7px;align-items:flex-start}
-.preset-card{position:relative;width:196px;padding:8px;border:1px solid rgba(223,250,255,.16);border-radius:8px;background:linear-gradient(145deg,rgba(10,21,33,.58),rgba(3,8,15,.8));box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 7px 18px rgba(0,0,0,.18)}
-.preset-card::before{content:"";position:absolute;left:8px;top:-1px;width:34px;height:1px;background:linear-gradient(90deg,var(--yellow),var(--pink),transparent);box-shadow:0 0 6px rgba(255,217,40,.18)}
-.preset-card.selected{border-color:var(--cyan);box-shadow:0 0 9px rgba(24,233,255,.12)}
-.preset-card b{font:800 7.8pt Oxanium}
-.preset-card small{display:block;margin-top:3px;color:var(--muted);font-size:6.4pt}
-.preset-card .actions{margin-top:6px}
-.tiny-btn{height:23px;padding:0 6px;border-radius:5px;font:800 6.3pt Oxanium}
-.playlist{position:relative;max-width:690px;display:grid;gap:6px;padding-left:15px}.playlist::before{content:"";position:absolute;left:5px;top:10px;bottom:10px;width:1px;background:linear-gradient(180deg,var(--cyan),rgba(139,81,255,.45),var(--pink));box-shadow:0 0 7px rgba(24,233,255,.22)}
-.playlist-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:7px;align-items:center;padding:6px 7px;border:1px solid rgba(223,250,255,.15);border-radius:7px;background:linear-gradient(145deg,rgba(9,19,31,.58),rgba(3,8,15,.80));box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
-.playlist-num{width:24px;height:24px;display:grid;place-items:center;border:1px solid rgba(24,233,255,.42);border-radius:50%;color:var(--cyan);background:#06101a;font:800 6.6pt Oxanium;box-shadow:0 0 8px rgba(24,233,255,.12)}
-.playlist-row b{font:800 7.3pt Oxanium}
-.playlist-row small{display:block;color:var(--muted);font-size:6.2pt}
-.empty{max-width:420px;padding:10px;border:1px dashed rgba(223,250,255,.18);border-radius:7px;color:var(--muted);font-size:7pt}
-.hidden-core{display:none!important}
-@media(min-width:901px){#device .page{padding-top:18px}#presets .page,#custom .page{padding-top:20px}.preset-grid{padding-top:3px}}
-@media(max-width:900px){
-  .fx-shell{grid-template-columns:1fr}
-  .library{height:390px;min-height:0;max-height:none}
-  .control-deck{grid-template-columns:1fr}
-  .music-grid{grid-template-columns:1fr}
-}
-@media(max-width:620px){
-  .top{height:40px}
-  .tabs{justify-content:flex-start;gap:15px}
-  .shell{padding:7px}
-  .workspace{max-width:none}
-  .page{min-height:calc(100vh - 92px)}
-  .device-card,.sync-box{width:min(100%,236px)}
-  .preview{height:142px}
-  .strip{grid-template-columns:repeat(24,1fr);gap:3px;padding:9px}
-  .slider-grid{grid-template-columns:1fr}
-  .slider-row{grid-template-columns:66px minmax(100px,1fr) 32px}
-  .preset-card{width:min(100%,230px)}
-}
-</style>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="st-ble-ui.css?v=20260902-edit1" rel="stylesheet"/>
 </head>
 <body>
 <div class="app">
 <header class="top">
-  <div class="brand"><span class="s">SHYNE</span>TYME<span class="w">.WORKS</span></div>
-  <div id="badge" class="status-mini">BLE READY</div>
+<div class="brand"><span class="s">SHYNE</span>TYME<span class="w">.WORKS</span></div>
+<div class="status-mini" id="badge">BLE READY</div>
 </header>
-
-<nav class="tabs" aria-label="ESP32 LED control sections">
-  <button class="tab on" data-p="device">DEVICE</button>
-  <button class="tab" data-p="fxcolor">FX + COLORS</button>
-  <button class="tab" data-p="music">MUSIC</button>
-  <button class="tab" data-p="presets">PRESETS</button>
-  <button class="tab" data-p="custom">CUSTOM</button>
+<nav aria-label="ESP32 LED control sections" class="tabs">
+<button class="tab on" data-p="device">DEVICE</button>
+<button class="tab" data-p="fxcolor">FX + COLORS</button>
+<button class="tab" data-p="music">MUSIC</button>
+<button class="tab" data-p="presets">PRESETS</button>
+<button class="tab" data-p="custom">CUSTOM</button>
 </nav>
-
+<div class="live-state-wrap">
+<div aria-label="Current controller and LED effect" class="live-state">
+<div class="live-state-label">DEVICE <b id="stateDevice">ESP32 #1</b></div>
+<div aria-label="Current LED effect" class="live-strip" id="stateStrip"></div>
+<div class="live-state-label">EFFECT <b id="stateFx">AURORA</b></div>
+</div>
+</div>
 <div class="shell">
 <main class="workspace">
-
-<section id="device" class="workspace-page on">
-  <div class="page">
-    <div class="section-head"><h1>Devices</h1></div>
-    <div class="device-grid">
-      <article id="d0" class="device-card on">
-        <div class="device-title"><span id="dot0" class="dot"></span><span><b>ESP32 #1</b><small id="name0">Not connected</small></span></div>
-        <div class="actions"><button id="con0" class="glass-btn primary">CONNECT</button><button class="use glass-btn" data-i="0">SELECT</button></div>
-      </article>
-      <article id="d1" class="device-card">
-        <div class="device-title"><span id="dot1" class="dot"></span><span><b>ESP32 #2</b><small id="name1">Not connected</small></span></div>
-        <div class="actions"><button id="con1" class="glass-btn primary">CONNECT</button><button class="use glass-btn" data-i="1">SELECT</button></div>
-      </article>
-      <article class="sync-box glass-panel">
-        <div class="sync-line"><span>SYNC BOTH</span><input id="sync" type="checkbox" aria-label="Sync both controllers"></div>
-        <div class="muted" style="margin-top:5px;font-size:6.6pt">Off = selected device only. On = both controllers receive the same control state.</div>
-      </article>
-    </div>
-    <div class="debug-row actions">
-      <button id="stat" class="glass-btn">READ STATUS</button>
-    </div>
-    <div id="status" class="status">Ready. Choose the controller you want to connect.</div>
-  </div>
-</section>
-
-<section id="fxcolor" class="workspace-page">
-  <div class="page">
-    <div class="section-head"><h1>FX + Colors</h1></div>
-    <span id="target" class="hidden-core">TARGET #1</span>
-    <div class="fx-shell">
-      <div class="fx-main">
-        <section class="preview glass-panel">
-          <div id="activeFxName" class="preview-name">AURORA</div>
-          <div class="led-stage"><div id="ledPreview" class="strip" aria-label="Live LED effect preview"></div></div>
-        </section>
-
-        <div class="control-deck">
-          <section class="compact-panel glass-panel">
-            <h2>Effect</h2>
-            <div class="slider-grid">
-              <div class="slider-row"><label>BRIGHT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="70"></div><output id="briV">27%</output></div>
-              <div class="slider-row"><label>SPEED</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="spd" type="range" min="1" max="255" value="220"></div><output id="spdV">86%</output></div>
-              <div class="slider-row"><label>INTENSE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="int" type="range" min="1" max="255" value="190"></div><output id="intV">74%</output></div>
-              <div class="slider-row"><label>SIZE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="size" type="range" min="1" max="255" value="72"></div><output id="sizeV">28%</output></div>
-            </div>
-            <details class="more-controls">
-              <summary>MORE EFFECT CONTROLS</summary>
-              <div class="slider-grid" style="margin-top:7px">
-                <div class="slider-row"><label>DENSITY</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="dens" type="range" min="1" max="255" value="110"></div><output id="densV">43%</output></div>
-                <div class="slider-row"><label>TRAIL</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="trail" type="range" min="1" max="255" value="145"></div><output id="trailV">57%</output></div>
-              </div>
-              <div class="more-row">
-                <select id="dir" class="compact-select" aria-label="Direction"><option value="FWD">Forward →</option><option value="REV">← Reverse</option></select>
-                <button id="mirrorBtn" class="toggle" type="button">MIRROR</button>
-                <input id="mirror" type="checkbox" hidden>
-              </div>
-            </details>
-          </section>
-
-          <section class="compact-panel glass-panel">
-            <h2>Colors</h2>
-            <input id="main" type="color" value="#FFFFFF" hidden>
-            <input id="bg" type="color" value="#000000" hidden>
-            <input id="fg" type="color" value="#8000FF" hidden>
-            <div class="rolebar">
-              <button class="role on" data-role="main"><span id="mainSwatch" class="swatch" style="background:#fff"></span>MAIN</button>
-              <button class="role" data-role="bg"><span id="bgSwatch" class="swatch" style="background:#000"></span>BACKGROUND</button>
-              <button class="role" data-role="fg"><span id="fgSwatch" class="swatch" style="background:#8000ff"></span>FOREGROUND</button>
-            </div>
-            <div id="hueSelector" class="hue-selector" aria-label="Hue selector">
-              <span class="hue-spectrum"></span><span class="hue-thumb"></span>
-              <input id="hueRange" type="range" min="0" max="359" value="0" aria-label="Hue">
-            </div>
-            <div class="hue-meta"><span>SLIDE FOR COLOR</span><b id="hueValue">CLEAR</b></div>
-
-            <div class="saved-wrap">
-              <div class="subhead">Saved colors</div>
-              <div class="saved" aria-label="Saved colors"></div>
-              <div class="actions" style="margin-top:6px"><button class="savecolor glass-btn" type="button">+ SAVE COLOR</button></div>
-              <div class="saved-help">Press and hold a saved color to delete it.</div>
-            </div>
-            <input id="livePicker" type="color" value="#ffffff" hidden>
-
-            <div class="fx-actions actions">
-              <button id="saveFxPreset" class="glass-btn primary" type="button">SAVE PRESET</button>
-              <button id="addFxPlaylist" class="glass-btn" type="button">ADD TO PLAYLIST</button>
-            </div>
-          </section>
-        </div>
-      </div>
-
-      <aside class="library">
-        <div class="library-head"><span>EFFECTS</span><span id="fxCount" class="muted">0</span></div>
-        <input id="fxSearch" class="search" placeholder="Search effects…" aria-label="Search effects">
-        <div class="filters">
-          <button class="filter-chip" data-filter="motion">MOTION</button>
-          <button class="filter-chip" data-filter="season">SEASONAL</button>
-          <button class="filter-chip" data-filter="audio">MUSIC</button>
-        </div>
-        <div class="fxlist">
-          <button class="fx on" data-fx="AURORA" data-cat="motion" data-preview="flow"><b>AURORA</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="CHASE" data-cat="motion" data-preview="chase"><b>CHASE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="TRICOLOR_CHASE" data-cat="motion" data-preview="chase"><b>TRI CHASE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="COMET" data-cat="motion audio" data-preview="comet"><b>COMET</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="METEOR" data-cat="motion" data-preview="comet"><b>METEOR</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="SCANNER" data-cat="motion" data-preview="scanner"><b>SCANNER</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="SINELON" data-cat="motion" data-preview="scanner"><b>SINELON</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="FLOW" data-cat="motion" data-preview="flow"><b>FLOW</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="SONIC_STREAM" data-cat="motion audio" data-preview="flow"><b>SONIC STREAM</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="RIPPLE" data-cat="motion audio" data-preview="ripple"><b>RIPPLE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="SONIC_BOOM" data-cat="motion audio" data-preview="ripple"><b>SONIC BOOM</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="STARBURST" data-cat="motion" data-preview="ripple"><b>STARBURST</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="BOUNCING_BALLS" data-cat="motion" data-preview="balls"><b>BOUNCING BALLS</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="JUGGLE" data-cat="motion" data-preview="balls"><b>JUGGLE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="TWINKLE" data-cat="" data-preview="twinkle"><b>TWINKLE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="TWINKLEFOX" data-cat="" data-preview="twinkle"><b>TWINKLEFOX</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="TWINKLECAT" data-cat="" data-preview="twinkle"><b>TWINKLECAT</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="SPARKLE" data-cat="season" data-preview="twinkle"><b>SPARKLE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="FIREWORKS" data-cat="season" data-preview="fireworks"><b>FIREWORKS</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="POPCORN" data-cat="" data-preview="twinkle"><b>POPCORN</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="DRIPDROP" data-cat="" data-preview="rain"><b>DRIPDROP</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="RAIN" data-cat="" data-preview="rain"><b>RAIN</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="FIRE" data-cat="" data-preview="fire"><b>FIRE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="MAGMA" data-cat="" data-preview="fire"><b>MAGMA</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="LAVA_LAMP" data-cat="" data-preview="fire"><b>LAVA LAMP</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="LIGHTNING" data-cat="audio" data-preview="lightning"><b>LIGHTNING</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="HEARTBEAT" data-cat="audio" data-preview="pulse"><b>HEARTBEAT</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="BREATHE" data-cat="" data-preview="pulse"><b>BREATHE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="AUDIO_PULSE" data-cat="audio" data-preview="pulse"><b>AUDIO PULSE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="SPECTRUM" data-cat="audio" data-preview="spectrum"><b>SPECTRUM</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="VU" data-cat="audio" data-preview="spectrum"><b>VU</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="POLICE" data-cat="" data-preview="strobe"><b>POLICE</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="SOLID" data-cat="" data-preview="solid"><b>SOLID</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="RAINBOW" data-cat="motion" data-preview="rainbow"><b>RAINBOW</b><span class="fx-palette"></span></button>
-          <button class="fx" data-fx="OFF" data-cat="" data-preview="off"><b>OFF</b><span class="fx-palette"></span></button>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<section id="music" class="workspace-page">
-  <div class="page">
-    <div class="section-head"><h1>Music</h1></div>
-    <div class="music-grid">
-      <section class="music-panel glass-panel">
-        <h2>Microphone</h2>
-        <div class="actions">
-          <button id="mic" class="glass-btn primary">START MICROPHONE</button>
-          <span id="micState" class="muted" style="font:800 7pt Oxanium">OFF</span>
-        </div>
-        <div class="subhead">Response</div>
-        <select id="audmode" class="compact-select"><option value="LEVEL">Level / motion</option><option value="BEAT">Beat</option><option value="SPECTRUM">Spectrum</option><option value="FULL" selected>Full reactive</option><option value="OFF">Off</option></select>
-        <div class="slider-row" style="margin-top:8px"><label>AMOUNT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="audamt" type="range" min="0" max="255" value="180"></div><output id="audamtV">180</output></div>
-        <div class="subhead">Music effects</div>
-        <div class="actions">
-          <button class="glass-btn" data-fx="SPECTRUM">SPECTRUM</button>
-          <button class="glass-btn" data-fx="VU">VU</button>
-          <button class="glass-btn" data-fx="SONIC_STREAM">SONIC STREAM</button>
-          <button class="glass-btn" data-fx="LIGHTNING">LIGHTNING</button>
-        </div>
-      </section>
-      <section class="music-panel glass-panel">
-        <h2>Live spectrum</h2>
-        <div id="spectrumBars" class="spectrum"></div>
-        <div id="spectrumColorControls" class="spectrum-colors">
-          <label class="spectrum-color"><input id="spectrumLow" type="color" value="#000000">LOW</label>
-          <label class="spectrum-color"><input id="spectrumMid" type="color" value="#FFFFFF">MID</label>
-          <label class="spectrum-color"><input id="spectrumHigh" type="color" value="#8000FF">HIGH</label>
-        </div>
-      </section>
-    </div>
-  </div>
-</section>
-
-<section id="presets" class="workspace-page">
-  <div class="page">
-    <div class="section-head"><h1>Presets</h1><span id="presetCount" class="muted"></span></div>
-    <div class="preset-tools">
-      <button id="saveLook" class="glass-btn primary">SAVE CURRENT PRESET</button>
-    </div>
-    <div id="presetGrid" class="preset-grid"><div class="empty">No saved presets yet.</div></div>
-  </div>
-</section>
-
-<section id="custom" class="workspace-page">
-  <div class="page">
-    <div class="section-head"><h1>Custom Playlist</h1><span id="customCount" class="muted"></span></div>
-    <div class="playlist-tools">
-      <button id="addScene" class="glass-btn">ADD CURRENT FX</button>
-      <button id="playCustom" class="glass-btn primary">PLAY</button>
-      <button id="stopCustom" class="glass-btn">STOP</button>
-      <button id="clearCustom" class="glass-btn danger">CLEAR PLAYLIST</button>
-    </div>
-    <div id="customScenes" class="playlist"><div class="empty">Add an effect or preset to build a playlist.</div></div>
-  </div>
-</section>
-
-<!-- Core compatibility / debug-only values. Kept out of the consumer UI. -->
-<div class="hidden-core">
-  <input id="leds" type="number" value="300">
-  <input id="gpio" type="number" value="13">
-  <select id="order"><option selected>GRB</option><option>RGB</option><option>BRG</option></select>
-  <input id="gain" value="135"><input id="sm" value="55"><input id="floor" value="10"><input id="beat" value="185">
-  <input id="raw"><button id="rawgo"></button><button id="connect"></button><button id="off"></button><button id="save"></button><button id="reboot"></button>
-  <span id="ml"></span><span id="mb"></span><span id="mm"></span><span id="mh"></span><span id="mdb"></span><span id="mbeat"></span>
-  <span id="shortcutGrid"></span>
+<section class="workspace-page on" id="device">
+<div class="page">
+<h1 class="sr-only">Devices</h1>
+<div class="device-grid">
+<article aria-label="Focus ESP32 number 1" class="device-card on" id="d0" role="button" tabindex="0">
+<div class="device-title"><span class="dot" id="dot0"></span><span><b>ESP32 #1</b><small id="name0">Not connected</small></span></div>
+<div class="device-meta" id="deviceMeta0">300 LEDs · GPIO 13 · 0–299</div>
+<div class="actions"><button class="glass-btn primary" id="con0">CONNECT</button></div>
+</article>
+<article aria-label="Focus ESP32 number 2" class="device-card" id="d1" role="button" tabindex="0">
+<div class="device-title"><span class="dot" id="dot1"></span><span><b>ESP32 #2</b><small id="name1">Not connected</small></span></div>
+<div class="device-meta" id="deviceMeta1">300 LEDs · GPIO 13 · 0–299</div>
+<div class="actions"><button class="glass-btn primary" id="con1">CONNECT</button></div>
+</article>
+<article class="sync-box glass-panel">
+<div class="sync-line"><span>SYNC BOTH</span><input aria-label="Sync both controllers" id="sync" type="checkbox"/></div>
+<div class="muted" style="margin-top:5px;font-size:6.6pt">Off controls the focused device. On mirrors control state to both.</div>
+</article>
 </div>
-
+<section aria-label="Focused device settings" class="device-options glass-panel">
+<div class="device-options-head"><b>DEVICE SETTINGS</b><span id="deviceSettingsTarget">ESP32 #1</span></div>
+<div class="device-fields">
+<label class="device-field"><span>LED COUNT</span><input id="leds" max="600" min="1" type="number" value="300"/></label>
+<label class="device-field"><span>GPIO PIN</span><input id="gpio" max="39" min="0" type="number" value="13"/></label>
+<label class="device-field"><span>PIXEL ORDER</span><select id="order"><option>RGB</option><option selected="">GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></label>
+</div>
+<div class="subhead">Effect range</div>
+<div class="device-range">
+<label class="device-field"><span>FROM LED</span><input id="segFrom" min="0" type="number" value="0"/></label>
+<label class="device-field"><span>TO LED</span><input id="segTo" min="0" type="number" value="299"/></label>
+</div>
+<div class="subhead">Startup</div>
+<label class="device-field" style="max-width:250px"><span>STARTUP EFFECT</span><select id="startupFx"></select></label>
+<div class="device-save-row">
+<button class="glass-btn primary" id="save">SAVE SETTINGS</button>
+<button class="glass-btn" id="reboot">SAVE + REBOOT</button>
+<button class="glass-btn" id="saveStartup">SAVE STARTUP</button>
+</div>
+<div class="device-note" id="deviceSaveNote">Switching devices discards unsaved edits and restores that device's last saved settings.</div>
+</section>
+<details class="debug-panel glass-panel">
+<summary>DEBUG / RAW COMMANDS</summary>
+<div class="actions" style="margin-bottom:6px"><button class="glass-btn" id="stat">READ STATUS</button><button class="glass-btn danger" id="off">BLACKOUT</button></div>
+<div class="raw-line"><input id="raw" placeholder="FX=LIGHTNING;MAIN=FFFFFF"/><button class="glass-btn primary" id="rawgo">SEND</button></div>
+<div class="status" id="status">Ready. Choose the controller you want to connect.</div>
+<div class="debug-console" id="log">ShyneTyme controller ready.</div>
+</details>
+</div>
+</section>
+<section class="workspace-page" id="fxcolor">
+<div class="page">
+<h1 class="sr-only">FX + Colors</h1>
+<span class="hidden-core" id="target">TARGET #1</span>
+<div class="fx-shell">
+<div class="fx-main">
+<section class="preview glass-panel">
+<div class="preview-name" id="activeFxName">AURORA</div>
+<div class="led-stage"><div aria-label="Live LED effect preview" class="strip" id="ledPreview"></div></div>
+</section>
+<div class="control-deck">
+<section class="compact-panel glass-panel">
+<h2>Effect</h2>
+<div class="slider-grid">
+<div class="slider-row"><label>BRIGHT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="bri" max="255" min="0" type="range" value="70"/></div><output id="briV">27%</output></div>
+<div class="slider-row"><label>SPEED</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="spd" max="255" min="1" type="range" value="220"/></div><output id="spdV">86%</output></div>
+<div class="slider-row"><label>INTENSE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="int" max="255" min="1" type="range" value="190"/></div><output id="intV">74%</output></div>
+<div class="slider-row"><label>SIZE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="size" max="255" min="1" type="range" value="72"/></div><output id="sizeV">28%</output></div>
+</div>
+<details class="more-controls">
+<summary>MORE EFFECT CONTROLS</summary>
+<div class="slider-grid" style="margin-top:7px">
+<div class="slider-row"><label>DENSITY</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="dens" max="255" min="1" type="range" value="110"/></div><output id="densV">43%</output></div>
+<div class="slider-row"><label>TRAIL</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="trail" max="255" min="1" type="range" value="145"/></div><output id="trailV">57%</output></div>
+</div>
+<div class="more-row">
+<select aria-label="Direction" class="compact-select" id="dir"><option value="FWD">Forward →</option><option value="REV">← Reverse</option></select>
+<button class="toggle" id="mirrorBtn" type="button">MIRROR</button>
+<input hidden="" id="mirror" type="checkbox"/>
+</div>
+</details>
+</section>
+<section class="compact-panel glass-panel">
+<h2>Colors</h2>
+<input hidden="" id="main" type="color" value="#FFFFFF"/>
+<input hidden="" id="bg" type="color" value="#000000"/>
+<input hidden="" id="fg" type="color" value="#8000FF"/>
+<div class="rolebar">
+<button class="role on" data-role="main"><span class="swatch" id="mainSwatch" style="background:#fff"></span>MAIN</button>
+<button class="role" data-role="bg"><span class="swatch" id="bgSwatch" style="background:#000"></span>BACKGROUND</button>
+<button class="role" data-role="fg"><span class="swatch" id="fgSwatch" style="background:#8000ff"></span>FOREGROUND</button>
+</div>
+<div aria-label="Hue selector" class="hue-selector" id="hueSelector">
+<span class="hue-spectrum"></span><span class="hue-thumb"></span>
+<input aria-label="Hue" id="hueRange" max="359" min="0" type="range" value="0"/>
+</div>
+<div class="hue-meta"><span>SLIDE FOR COLOR</span><b id="hueValue">CLEAR</b></div>
+<div class="saved-wrap">
+<div class="subhead">Saved colors</div>
+<div aria-label="Saved colors" class="saved"></div>
+<div class="actions" style="margin-top:6px"><button class="savecolor glass-btn" type="button">+ SAVE COLOR</button></div>
+<div class="saved-help">Press and hold a saved color to delete it.</div>
+</div>
+<input hidden="" id="livePicker" type="color" value="#ffffff"/>
+<div class="fx-actions actions">
+<button class="glass-btn primary" id="saveFxPreset" type="button">SAVE PRESET</button>
+<button class="glass-btn" id="addFxPlaylist" type="button">ADD TO PLAYLIST</button>
+</div>
+</section>
+</div>
+</div>
+<aside class="library">
+<div class="library-head"><span>EFFECTS</span><span class="muted" id="fxCount">0</span></div>
+<input aria-label="Search effects" class="search" id="fxSearch" placeholder="Search effects…"/>
+<div class="filters">
+<button class="filter-chip" data-filter="motion">MOTION</button>
+<button class="filter-chip" data-filter="season">SEASONAL</button>
+<button class="filter-chip" data-filter="audio">MUSIC</button>
+</div>
+<div class="fxlist">
+<button class="fx on" data-cat="motion" data-fx="AURORA" data-preview="flow"><b>AURORA</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="CHASE" data-preview="chase"><b>CHASE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="TRICOLOR_CHASE" data-preview="chase"><b>TRI CHASE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion audio" data-fx="COMET" data-preview="comet"><b>COMET</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="METEOR" data-preview="comet"><b>METEOR</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="SCANNER" data-preview="scanner"><b>SCANNER</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="SINELON" data-preview="scanner"><b>SINELON</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="FLOW" data-preview="flow"><b>FLOW</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion audio" data-fx="SONIC_STREAM" data-preview="flow"><b>SONIC STREAM</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion audio" data-fx="RIPPLE" data-preview="ripple"><b>RIPPLE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion audio" data-fx="SONIC_BOOM" data-preview="ripple"><b>SONIC BOOM</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="STARBURST" data-preview="ripple"><b>STARBURST</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="BOUNCING_BALLS" data-preview="balls"><b>BOUNCING BALLS</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="JUGGLE" data-preview="balls"><b>JUGGLE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="TWINKLE" data-preview="twinkle"><b>TWINKLE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="TWINKLEFOX" data-preview="twinkle"><b>TWINKLEFOX</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="TWINKLECAT" data-preview="twinkle"><b>TWINKLECAT</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="season" data-fx="SPARKLE" data-preview="twinkle"><b>SPARKLE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="season" data-fx="FIREWORKS" data-preview="fireworks"><b>FIREWORKS</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="POPCORN" data-preview="twinkle"><b>POPCORN</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="DRIPDROP" data-preview="rain"><b>DRIPDROP</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="RAIN" data-preview="rain"><b>RAIN</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="FIRE" data-preview="fire"><b>FIRE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="MAGMA" data-preview="fire"><b>MAGMA</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="LAVA_LAMP" data-preview="fire"><b>LAVA LAMP</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="audio" data-fx="LIGHTNING" data-preview="lightning"><b>LIGHTNING</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="audio" data-fx="HEARTBEAT" data-preview="pulse"><b>HEARTBEAT</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="BREATHE" data-preview="pulse"><b>BREATHE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="audio" data-fx="AUDIO_PULSE" data-preview="pulse"><b>AUDIO PULSE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="audio" data-fx="SPECTRUM" data-preview="spectrum"><b>SPECTRUM</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="audio" data-fx="VU" data-preview="spectrum"><b>VU</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="POLICE" data-preview="strobe"><b>POLICE</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="SOLID" data-preview="solid"><b>SOLID</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="motion" data-fx="RAINBOW" data-preview="rainbow"><b>RAINBOW</b><span class="fx-palette"></span></button>
+<button class="fx" data-cat="" data-fx="OFF" data-preview="off"><b>OFF</b><span class="fx-palette"></span></button>
+</div>
+</aside>
+</div>
+</div>
+</section>
+<section class="workspace-page" id="music">
+<div class="page">
+<h1 class="sr-only">Music</h1>
+<div class="music-grid">
+<section class="music-panel glass-panel">
+<h2>Microphone</h2>
+<div class="actions">
+<button class="glass-btn primary" id="mic">START MICROPHONE</button>
+<span class="muted" id="micState" style="font:800 7pt Oxanium">OFF</span>
+</div>
+<div class="subhead">Response</div>
+<select class="compact-select" id="audmode"><option value="LEVEL">Level / motion</option><option value="BEAT">Beat</option><option value="SPECTRUM">Spectrum</option><option selected="" value="FULL">Full reactive</option><option value="OFF">Off</option></select>
+<div class="slider-row" style="margin-top:8px"><label>AMOUNT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="audamt" max="255" min="0" type="range" value="180"/></div><output id="audamtV">180</output></div>
+<div class="subhead">Music effects</div>
+<div class="actions">
+<button class="glass-btn" data-fx="SPECTRUM">SPECTRUM</button>
+<button class="glass-btn" data-fx="VU">VU</button>
+<button class="glass-btn" data-fx="SONIC_STREAM">SONIC STREAM</button>
+<button class="glass-btn" data-fx="LIGHTNING">LIGHTNING</button>
+</div>
+</section>
+<section class="music-panel glass-panel">
+<h2>Live spectrum</h2>
+<div class="spectrum" id="spectrumBars"></div>
+<div class="spectrum-colors" id="spectrumColorControls">
+<label class="spectrum-color"><input id="spectrumLow" type="color" value="#000000"/>LOW</label>
+<label class="spectrum-color"><input id="spectrumMid" type="color" value="#FFFFFF"/>MID</label>
+<label class="spectrum-color"><input id="spectrumHigh" type="color" value="#8000FF"/>HIGH</label>
+</div>
+</section>
+</div>
+</div>
+</section>
+<section class="workspace-page" id="presets">
+<div class="page">
+<h1 class="sr-only">Presets</h1>
+<div class="preset-tools">
+<button class="glass-btn primary" id="saveLook">SAVE CURRENT PRESET</button>
+<span class="muted" id="presetCount" style="font:800 6.7pt Oxanium"></span>
+</div>
+<div class="preset-grid" id="presetGrid"><div class="empty">No saved presets yet.</div></div>
+</div>
+</section>
+<section class="workspace-page" id="custom">
+<div class="page">
+<h1 class="sr-only">Custom Playlist</h1>
+<div class="playlist-name"><label for="playlistName">PLAYLIST</label><input aria-label="Playlist name" id="playlistName" maxlength="40" value="My Light Sequence"/></div>
+<div class="playlist-tools">
+<button class="glass-btn" id="addScene">ADD CURRENT FX</button>
+<button class="glass-btn primary" id="playCustom">PLAY</button>
+<button class="glass-btn" id="stopCustom">STOP</button>
+<span class="muted" id="customCount" style="font:800 6.7pt Oxanium"></span>
+</div>
+<div class="playlist" id="customScenes"><div class="empty">Add an effect or preset to build a playlist.</div></div>
+</div>
+</section>
+<!-- Core compatibility values that are not consumer-facing controls. -->
+<div class="hidden-core">
+<input id="gain" value="135"/><input id="sm" value="55"/><input id="floor" value="10"/><input id="beat" value="185"/>
+<button id="connect"></button>
+<span id="ml"></span><span id="mb"></span><span id="mm"></span><span id="mh"></span><span id="mdb"></span><span id="mbeat"></span>
+<span id="shortcutGrid"></span>
+</div>
 </main>
 </div>
 </div>
-
-<script src="st-ble-core.js?v=20260901-consumer-pass1"></script>
-<script>
-'use strict';
-(()=>{
-const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
-const PALETTE_KEY='stw-esp32-effect-palettes-v1',PRESET_KEY='stw-esp32-presets-v3',PLAYLIST_KEY='stw-esp32-custom-v3';
-let uiFx='AURORA',activeRole='main',activeFilter='',previewRaf=0,playlistTimers=[],suppressSavedClickUntil=0;
-
-function loadJSON(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v??fallback}catch(_){return fallback}}
-function saveJSON(key,v){try{localStorage.setItem(key,JSON.stringify(v))}catch(_){}}
-function currentPalette(){return {main:q('#main')?.value||'#FFFFFF',bg:q('#bg')?.value||'#000000',fg:q('#fg')?.value||'#8000FF'}}
-function readPalettes(){const v=loadJSON(PALETTE_KEY,{});return v&&typeof v==='object'?v:{}}
-function effectPalette(fx){const p=readPalettes()[fx];return p&&p.main&&p.bg&&p.fg?p:currentPalette()}
-function storePalette(fx=uiFx){const all=readPalettes();all[fx]=currentPalette();saveJSON(PALETTE_KEY,all);renderEffectSwatches()}
-function setPalette(p,{transmit=false}={}){for(const k of ['main','bg','fg']){const x=q('#'+k);if(x&&p[k])x.value=p[k].toUpperCase()}syncColorUI();if(transmit&&typeof send==='function'){const c=currentPalette();send(`MAIN=${c.main.slice(1)};BG=${c.bg.slice(1)};FG=${c.fg.slice(1)}`,true)}}
-
-function hexHue(hex){const s=String(hex||'#fff').replace('#','').padEnd(6,'f').slice(0,6),r=parseInt(s.slice(0,2),16)/255,g=parseInt(s.slice(2,4),16)/255,b=parseInt(s.slice(4,6),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;if(!d)return null;let h=max===r?((g-b)/d)%6:max===g?(b-r)/d+2:(r-g)/d+4;h=Math.round(h*60);return h<0?h+360:h}
-function hueHex(h){const c=1,x=1-Math.abs((h/60)%2-1);let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}const z=v=>Math.round(v*255).toString(16).padStart(2,'0').toUpperCase();return '#'+z(r)+z(g)+z(b)}
-function syncHue(){const h=hexHue(currentPalette()[activeRole]),range=q('#hueRange'),rail=q('#hueSelector');if(h!=null&&range&&rail){range.value=h;rail.style.setProperty('--hx',(h/359*100)+'%')}}
-function syncColorUI(){const p=currentPalette();for(const k of ['main','bg','fg']){const s=q('#'+k+'Swatch');if(s)s.style.background=p[k]}const lp=q('#livePicker');if(lp)lp.value=p[activeRole];syncHue();syncSpectrumPickersLocal();renderEffectSwatches()}
-function applyRoleColor(role,hex){const x=q('#'+role);if(!x)return;x.value=hex.toUpperCase();x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}));syncColorUI()}
-
-qa('.role').forEach(b=>b.addEventListener('click',()=>{qa('.role').forEach(x=>x.classList.remove('on'));b.classList.add('on');activeRole=b.dataset.role;syncColorUI()}));
-for(const k of ['main','bg','fg'])q('#'+k)?.addEventListener('input',()=>{storePalette();syncColorUI()});
-
-const hue=q('#hueRange'),hueRail=q('#hueSelector'),hueValue=q('#hueValue');
-function applyHue(){if(!hue||!hueRail)return;const h=+hue.value,hex=hueHex(h);hueRail.style.setProperty('--hx',(h/359*100)+'%');if(hueValue){hueValue.textContent=hex;hueValue.style.color=hex}applyRoleColor(activeRole,hex)}
-function endHue(){hueRail?.classList.remove('is-active');if(hueValue){hueValue.textContent='CLEAR';hueValue.style.color=''}}
-if(hue&&hueRail){hue.addEventListener('pointerdown',()=>hueRail.classList.add('is-active'));hue.addEventListener('input',applyHue);hue.addEventListener('pointerup',endHue);hue.addEventListener('pointercancel',endHue);hue.addEventListener('change',()=>setTimeout(endHue,70));hue.addEventListener('blur',endHue)}
-
-function updateGlass(x){const rail=x.closest('.railglass');if(!rail)return;const min=+x.min||0,max=+x.max||100,v=+x.value,p=Math.max(0,Math.min(100,(v-min)/(max-min)*100));rail.querySelector('.fill').style.width=p+'%';rail.querySelector('.thumb').style.left=p+'%';const o=q('#'+x.id+'V');if(o)o.textContent=x.id==='audamt'?x.value:Math.round(p)+'%'}
-qa('.railglass input[type=range]').forEach(x=>{updateGlass(x);x.addEventListener('input',()=>updateGlass(x))});
-q('#mirrorBtn')?.addEventListener('click',()=>{const m=q('#mirror');m.checked=!m.checked;m.dispatchEvent(new Event('change',{bubbles:true}));q('#mirrorBtn').classList.toggle('on',m.checked)});
-
-function renderEffectSwatches(){qa('.fx[data-fx]').forEach(b=>{const p=effectPalette(b.dataset.fx),host=b.querySelector('.fx-palette');if(!host)return;host.innerHTML='';for(const c of [p.main,p.bg,p.fg]){const i=document.createElement('i');i.style.background=c;host.append(i)}})}
-function selectEffect(btn,{transmitColors=true}={}){if(!btn?.dataset.fx)return;uiFx=btn.dataset.fx;const p=effectPalette(uiFx);setPalette(p,{transmit:transmitColors});q('#activeFxName').textContent=btn.querySelector('b')?.textContent||uiFx;qa('.fx[data-fx]').forEach(x=>x.classList.toggle('on',x===btn));storePalette(uiFx)}
-qa('.fx[data-fx]').forEach(b=>b.addEventListener('click',()=>selectEffect(b),true));
-qa('#music [data-fx]').forEach(b=>b.addEventListener('click',()=>{const match=q(`.fx[data-fx="${b.dataset.fx}"]`);if(match)selectEffect(match)}));
-
-function filterFx(){const term=(q('#fxSearch')?.value||'').trim().toLowerCase();let n=0;qa('.fxlist .fx').forEach(x=>{const cat=x.dataset.cat||'',hit=(!term||x.textContent.toLowerCase().includes(term))&&(!activeFilter||cat.includes(activeFilter));x.classList.toggle('hide',!hit);if(hit)n++});q('#fxCount').textContent=n}
-q('#fxSearch')?.addEventListener('input',filterFx);
-qa('.filter-chip').forEach(b=>b.addEventListener('click',()=>{const same=activeFilter===b.dataset.filter;activeFilter=same?'':b.dataset.filter;qa('.filter-chip').forEach(x=>x.classList.toggle('on',x.dataset.filter===activeFilter));filterFx()}));
-
-function ensurePreview(){const host=q('#ledPreview');if(!host)return;while(host.children.length<42)host.append(document.createElement('i'))}
-function previewColor(i,p){return [p.main,p.bg,p.fg][Math.abs(i)%3]}
-function renderPreview(t=0){const leds=qa('#ledPreview i');if(!leds.length){previewRaf=requestAnimationFrame(renderPreview);return}const p=currentPalette(),btn=q(`.fx[data-fx="${uiFx}"]`),mode=btn?.dataset.preview||'flow',speed=Math.max(.2,(+q('#spd')?.value||128)/90),phase=t/140*speed,n=leds.length;
-for(let i=0;i<n;i++){let c=p.bg,op=.14,on=false;const pos=(phase+i)%n;
-  if(mode==='off'){c='#000000';op=.08}
-  else if(mode==='solid'){c=p.main;op=1}
-  else if(mode==='chase'){const k=Math.floor((i+phase)%9);on=k<3;c=on?previewColor(k,p):p.bg;op=on?1:.16}
-  else if(mode==='flow'){const k=Math.floor((i+phase)%12);on=k<5;c=previewColor(Math.floor(k/2),p);op=on?1:.12}
-  else if(mode==='scanner'){const x=Math.abs(((phase%(2*n-2)))-(n-1)),d=Math.abs(i-x);c=d<1?p.main:d<3?p.fg:p.bg;op=d<1?1:d<3?.45:.09}
-  else if(mode==='comet'){const head=Math.floor(phase%n),d=(head-i+n)%n;c=d===0?p.main:d<5?p.fg:p.bg;op=d===0?1:d<5?Math.max(.18,1-d*.18):.08}
-  else if(mode==='ripple'){const d=Math.abs(i-(n-1)/2),r=(phase%(n/2));const qd=Math.abs(d-r);c=qd<1?p.main:qd<2.7?p.fg:p.bg;op=qd<1?1:qd<2.7?.4:.08}
-  else if(mode==='twinkle'||mode==='fireworks'){const seed=Math.sin(i*91.7+Math.floor(phase)*13.3)*43758.5453,rand=seed-Math.floor(seed);on=rand>.76;c=previewColor(i+Math.floor(phase),p);op=on?1:.08}
-  else if(mode==='rain'){const k=(i+Math.floor(phase*1.6))%8;on=k<2;c=previewColor(i,p);op=on?1:.08}
-  else if(mode==='fire'){const flick=(Math.sin(i*2.7+phase*1.9)+1)/2;c=flick>.66?p.main:flick>.33?p.fg:p.bg;op=.35+flick*.65}
-  else if(mode==='lightning'){const strike=Math.floor(phase)%17===0;on=strike&&(i%3!==0);c=on?p.main:p.bg;op=on?1:.08}
-  else if(mode==='pulse'){const pulse=(Math.sin(phase*.7)+1)/2;c=previewColor(i,p);op=.12+pulse*.88}
-  else if(mode==='balls'){const a=Math.floor((Math.sin(phase*.4)+1)/2*(n-1)),b=Math.floor((Math.sin(phase*.55+2)+1)/2*(n-1));const d=Math.min(Math.abs(i-a),Math.abs(i-b));c=d<1?p.main:d<2?p.fg:p.bg;op=d<1?1:d<2?.5:.08}
-  else if(mode==='spectrum'){const band=i%9,h=(Math.sin(phase*.55+band*.7)+1)/2;c=previewColor(Math.floor(i/5),p);op=.12+h*.88}
-  else if(mode==='strobe'){const onFrame=Math.floor(phase)%4<2;c=onFrame?previewColor(Math.floor(i/(n/3)),p):p.bg;op=onFrame?1:.08}
-  else if(mode==='rainbow'){const h=((i*360/n)+(phase*5))%360;c=hueHex(h);op=1}
-  else{c=previewColor(i+Math.floor(phase),p);op=.9}
-  const el=leds[i];el.style.background=c;el.style.color=c;el.style.opacity=op.toFixed(2)
-}
-previewRaf=requestAnimationFrame(renderPreview)}
-ensurePreview();previewRaf=requestAnimationFrame(renderPreview);
-
-function captureState(name='Preset'){const p=currentPalette();return {name,fx:uiFx,...p,bri:q('#bri').value,spd:q('#spd').value,int:q('#int').value,size:q('#size').value,dens:q('#dens').value,trail:q('#trail').value,dir:q('#dir').value,mirror:q('#mirror').checked}}
-function applyState(s){if(!s)return;uiFx=s.fx||uiFx;setPalette({main:s.main||'#FFFFFF',bg:s.bg||'#000000',fg:s.fg||'#8000FF'},{transmit:true});for(const k of ['bri','spd','int','size','dens','trail'])if(s[k]!=null&&q('#'+k)){q('#'+k).value=s[k];q('#'+k).dispatchEvent(new Event('input',{bubbles:true}));q('#'+k).dispatchEvent(new Event('change',{bubbles:true}))}if(s.dir&&q('#dir')){q('#dir').value=s.dir;q('#dir').dispatchEvent(new Event('change',{bubbles:true}))}if(q('#mirror')){q('#mirror').checked=!!s.mirror;q('#mirror').dispatchEvent(new Event('change',{bubbles:true}));q('#mirrorBtn')?.classList.toggle('on',!!s.mirror)}const b=q(`.fx[data-fx="${uiFx}"]`);if(b)b.click()}
-function presets(){const x=loadJSON(PRESET_KEY,[]);return Array.isArray(x)?x:[]}
-function savePresets(x){saveJSON(PRESET_KEY,x.slice(0,40))}
-function playlist(){const x=loadJSON(PLAYLIST_KEY,[]);return Array.isArray(x)?x:[]}
-function savePlaylist(x){saveJSON(PLAYLIST_KEY,x.slice(0,80))}
-
-function saveCurrentPreset(){const list=presets(),name='Preset '+(list.length+1);list.unshift(captureState(name));savePresets(list);renderPresets()}
-function addToPlaylist(state){const list=playlist();list.push({...state,name:state.name||state.fx||'Effect'});savePlaylist(list);renderPlaylist()}
-q('#saveLook')?.addEventListener('click',saveCurrentPreset);
-q('#saveFxPreset')?.addEventListener('click',saveCurrentPreset);
-q('#addFxPlaylist')?.addEventListener('click',()=>addToPlaylist(captureState(uiFx)));
-q('#addScene')?.addEventListener('click',()=>addToPlaylist(captureState(uiFx)));
-
-function renderPresets(){const list=presets(),grid=q('#presetGrid');q('#presetCount').textContent=list.length?`${list.length} SAVED`:'';grid.innerHTML='';if(!list.length){grid.innerHTML='<div class="empty">No saved presets yet.</div>';return}list.forEach((p,i)=>{const card=document.createElement('article');card.className='preset-card';const title=document.createElement('b');title.textContent=p.name||`Preset ${i+1}`;const info=document.createElement('small');info.textContent=`${p.fx} · ${p.main} · ${p.bg} · ${p.fg}`;const actions=document.createElement('div');actions.className='actions';const load=document.createElement('button');load.className='tiny-btn';load.textContent='LOAD';load.onclick=()=>applyState(p);const add=document.createElement('button');add.className='tiny-btn';add.textContent='+ PLAYLIST';add.onclick=()=>addToPlaylist(p);const del=document.createElement('button');del.className='tiny-btn danger';del.textContent='DELETE';del.onclick=()=>{const x=presets();x.splice(i,1);savePresets(x);renderPresets()};actions.append(load,add,del);card.append(title,info,actions);grid.append(card)})}
-
-function clearPlaylistTimers(){playlistTimers.forEach(clearTimeout);playlistTimers=[]}
-function renderPlaylist(){const list=playlist(),host=q('#customScenes');q('#customCount').textContent=list.length?`${list.length} ITEMS`:'';host.innerHTML='';if(!list.length){host.innerHTML='<div class="empty">Add an effect or preset to build a playlist.</div>';return}list.forEach((s,i)=>{const row=document.createElement('div');row.className='playlist-row';const num=document.createElement('span');num.className='playlist-num';num.textContent=i+1;const text=document.createElement('span');const b=document.createElement('b');b.textContent=s.name||s.fx||`Item ${i+1}`;const sm=document.createElement('small');sm.textContent=`${s.fx} · ${s.main} · ${s.bg} · ${s.fg}`;text.append(b,sm);const actions=document.createElement('div');actions.className='actions';const load=document.createElement('button');load.className='tiny-btn';load.textContent='LOAD';load.onclick=()=>applyState(s);const del=document.createElement('button');del.className='tiny-btn danger';del.textContent='DELETE';del.onclick=()=>{const x=playlist();x.splice(i,1);savePlaylist(x);renderPlaylist()};actions.append(load,del);row.append(num,text,actions);host.append(row)})}
-q('#playCustom')?.addEventListener('click',()=>{clearPlaylistTimers();const list=playlist();list.forEach((s,i)=>playlistTimers.push(setTimeout(()=>applyState(s),i*1200)))});
-q('#stopCustom')?.addEventListener('click',clearPlaylistTimers);
-q('#clearCustom')?.addEventListener('click',()=>{clearPlaylistTimers();savePlaylist([]);renderPlaylist()});
-
-function syncSpectrumPickersLocal(){const map=[['spectrumLow','bg'],['spectrumMid','main'],['spectrumHigh','fg']];for(const [sid,rid] of map)if(q('#'+sid)&&q('#'+rid))q('#'+sid).value=q('#'+rid).value}
-for(const [sid,rid] of [['spectrumLow','bg'],['spectrumMid','main'],['spectrumHigh','fg']])q('#'+sid)?.addEventListener('input',e=>applyRoleColor(rid,e.target.value));
-if(typeof updateSpectrumPalette==='function')updateSpectrumPalette=function(){const bars=qa('#spectrumBars i'),p=currentPalette();bars.forEach((bar,i)=>{const c=i<bars.length/3?p.bg:i<bars.length*2/3?p.main:p.fg;bar.style.background=c;bar.style.boxShadow=`0 0 6px ${c}`})};
-
-function deleteSavedColor(color,button){const key='stw-esp32-saved-colors-v1',list=loadJSON(key,[]).filter(x=>String(x).toUpperCase()!==String(color).toUpperCase());saveJSON(key,list);button?.remove();suppressSavedClickUntil=Date.now()+500}
-const savedHost=q('.saved');
-let holdTimer=null,holdBtn=null;
-savedHost?.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-user-color]');if(!b)return;holdBtn=b;holdTimer=setTimeout(()=>{deleteSavedColor(b.dataset.userColor,b);holdTimer=null},650)});
-for(const ev of ['pointerup','pointercancel','pointerleave'])savedHost?.addEventListener(ev,()=>{if(holdTimer)clearTimeout(holdTimer);holdTimer=null;holdBtn=null});
-savedHost?.addEventListener('click',e=>{if(Date.now()<suppressSavedClickUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
-
-function useSelectedState(i){if(typeof ds!=='undefined'&&ds[i]?.state&&Object.keys(ds[i].state).length&&typeof syncUI==='function')syncUI(ds[i].state)}
-if(typeof use==='function'){const coreUse=use;use=function(i){coreUse(i);useSelectedState(i)}}
-
-renderEffectSwatches();syncColorUI();filterFx();renderPresets();renderPlaylist();
-if(typeof activateTab==='function')activateTab('device');
-})();
-</script>
+<div class="app-dialog" hidden="" id="appDialog">
+<div aria-labelledby="dialogTitle" aria-modal="true" class="dialog-card glass-panel" role="dialog">
+<div class="dialog-title" id="dialogTitle">Confirm</div>
+<div class="dialog-message" id="dialogMessage"></div>
+<input class="dialog-input" hidden="" id="dialogInput"/>
+<div class="dialog-actions"><button class="glass-btn" id="dialogCancel">CANCEL</button><button class="glass-btn primary" id="dialogOk">OK</button></div>
+</div>
+</div>
+<script src="st-ble-core.js?v=20260902-edit1"></script>
+<script src="st-ble-ui.js?v=20260902-edit1"></script>
 </body>
 </html>
