@@ -3,75 +3,160 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#030918">
+<meta name="theme-color" content="#01040a">
 <meta name="robots" content="noindex,nofollow">
 <title>ShyneTyme.Works — ESP32 LED Control</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#01040a;--panel:#040a13;--panel2:#07101b;--cyan:#18e9ff;--blue:#36bfff;--pink:#ff2ca8;--purple:#8b51ff;--yellow:#ffd928;--green:#3cff70;--white:#f7fbff;--muted:#91a3b8;--line:rgba(223,250,255,.20)}
+:root{--bg:#01040a;--panel:#050a12;--panel2:#08111d;--cyan:#18e9ff;--pink:#ff2ca8;--yellow:#ffd928;--green:#3cff70;--white:#f7fbff;--muted:#91a3b8;--line:rgba(223,250,255,.20)}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:#000;color:var(--white);font:12px/1.35 Inter,system-ui,sans-serif}
-button,input,select{font:inherit}button{cursor:pointer}
-.app{min-height:100vh;background:radial-gradient(circle at 50% -15%,rgba(24,233,255,.08),transparent 32%),#01040a}
-.top{height:44px;display:grid;grid-template-columns:minmax(150px,1fr) auto minmax(150px,1fr);align-items:center;padding:0 12px;border-bottom:1px solid rgba(223,250,255,.18);background:rgba(1,5,12,.94);backdrop-filter:blur(10px)}
-.device-head{display:flex;align-items:center;gap:7px;min-width:0}.dot{width:8px;height:8px;border-radius:50%;background:#59677a}.dot.ok{background:var(--green);box-shadow:0 0 9px var(--green)}
-.device-head small{display:block;color:var(--muted);font:700 7px Oxanium;letter-spacing:.1em}.device-head b{display:block;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:800 9px Oxanium}
-.brand{font:800 15px Oxanium;letter-spacing:.02em;white-space:nowrap}.brand .s{color:var(--yellow);text-shadow:0 0 8px rgba(255,217,40,.32)}.brand .w{color:var(--pink);font-size:10px;text-shadow:0 0 8px rgba(255,44,168,.3)}
-.status-mini{justify-self:end;color:var(--cyan);font:800 8px Oxanium}
-.tabs{height:40px;display:grid;grid-template-columns:repeat(6,minmax(90px,1fr));gap:5px;align-items:center;padding:5px 10px;border-bottom:1px solid rgba(223,250,255,.14);background:#030918;overflow-x:auto}
-.tab{height:30px;padding:0 8px;border:1px solid rgba(223,250,255,.18);border-radius:5px;color:#8fa4b7;background:rgba(7,16,27,.72);font:800 8.5pt/1 Oxanium;white-space:nowrap}
-.tab.on{color:#fff;border-color:#fff;background:linear-gradient(145deg,rgba(24,233,255,.18),rgba(255,44,168,.12));box-shadow:0 0 0 1px var(--cyan),0 0 10px rgba(24,233,255,.18),inset 0 -2px 0 var(--pink)}
-.shell{display:block;padding:8px;height:calc(100vh - 84px);min-height:580px}
-.rail,.workspace{min-width:0;min-height:0}
-.rail{border:1px solid rgba(223,250,255,.18);border-radius:8px;background:linear-gradient(180deg,rgba(4,10,19,.94),rgba(1,5,11,.97));overflow:hidden}
-.panel-title{height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 9px;border-bottom:1px solid rgba(223,250,255,.14);color:var(--cyan);font:900 8.5pt Oxanium;letter-spacing:.04em}
-.rail-body{height:calc(100% - 32px);overflow:auto;padding:7px}.device-only{margin-bottom:8px}.device-only .rail-body{height:auto;overflow:visible;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.device-only .device-card{margin-bottom:0}.device-only .switchline,.device-only .rail-note{grid-column:1/-1}
-.device-card{width:100%;display:grid;grid-template-columns:8px 1fr auto;gap:7px;align-items:center;margin-bottom:6px;padding:8px;border:1px solid rgba(223,250,255,.18);border-radius:6px;color:#dce8f2;background:rgba(7,16,27,.72);text-align:left}
-.device-card.on{border-color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(24,233,255,.25)}
-.device-card b{font:800 8.5pt Oxanium}.device-card small{display:block;color:var(--muted);font-size:7.2pt}.use{height:24px;padding:0 6px;border:1px solid rgba(223,250,255,.22);border-radius:4px;color:var(--cyan);background:#07101b;font:800 7pt Oxanium}
-.switchline{display:flex;align-items:center;justify-content:space-between;margin-top:8px;color:#dce8f2;font:700 8pt Oxanium}
-.rail-note{margin-top:10px;padding:7px;border:1px solid rgba(24,233,255,.12);border-radius:6px;color:var(--muted);font-size:7pt;background:#02050a}
-.workspace{overflow:hidden}
-.workspace-page{display:none;height:100%;min-height:0}.workspace-page.on{display:block}
-.page{height:100%;overflow:auto;border:1px solid rgba(223,250,255,.18);border-radius:8px;background:linear-gradient(145deg,rgba(7,16,27,.91),rgba(3,9,18,.95));padding:10px}
-.page-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.page-head h1{margin:0;font:900 11pt Oxanium}.page-head p{margin:2px 0 0;color:var(--muted);font-size:7.5pt}
-.target{padding:4px 7px;border:1px solid rgba(24,233,255,.35);border-radius:999px;color:var(--cyan);background:rgba(24,233,255,.06);font:800 7.5pt Oxanium;white-space:nowrap}
-.box{min-width:0;border:1px solid rgba(223,250,255,.17);border-radius:7px;background:linear-gradient(145deg,rgba(7,16,27,.90),rgba(3,9,18,.94));padding:9px}
-.box h2{margin:0 0 8px;color:#fff;font:900 9pt Oxanium}.subhead{margin:9px 0 5px;color:#65e6f5;font:800 7.5pt Oxanium;letter-spacing:.06em}.muted{color:var(--muted)}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.mini-btn{height:28px;padding:0 7px;border:1px solid rgba(223,250,255,.22);border-radius:5px;color:#dce8f2;background:#07101b;font:800 7.2pt Oxanium}.mini-btn.primary{color:#031014;border-color:var(--cyan);background:linear-gradient(180deg,#dffcff,#18e9ff)}
-.field{display:grid;gap:4px}.field span{color:var(--muted);font:700 7.3pt Oxanium}.field input,.field select{height:29px;min-width:0;padding:0 7px;border:1px solid rgba(223,250,255,.18);border-radius:4px;color:#fff;background:#050a14}
-.status{padding:8px;border-radius:5px;background:#02050a;color:#7ef5d8;font:7pt monospace;min-height:38px}
-.device-layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(360px,1.2fr);gap:8px}.controller-connect{display:grid;grid-template-columns:1fr 1fr;gap:6px}.hardware-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.segment-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.device-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
-.raw{display:grid;grid-template-columns:1fr 55px;gap:5px}.raw input{height:28px;padding:0 7px;border:1px solid rgba(223,250,255,.18);border-radius:4px;color:#fff;background:#02050a}.log{height:80px;overflow:auto;margin-top:5px;padding:5px;border-radius:4px;background:#02050a;color:#7ef5d8;font:6.8pt monospace;white-space:pre-wrap}
-.fx-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:8px;height:calc(100% - 46px);min-height:0}.fx-main{display:grid;grid-template-rows:minmax(170px,38%) minmax(0,1fr);gap:8px;min-height:0}
-.preview{position:relative;overflow:hidden;border:1px solid rgba(223,250,255,.18);border-radius:8px;background:radial-gradient(circle at 50% 100%,rgba(255,44,168,.10),transparent 46%),#02050a}
-.preview-head{position:absolute;z-index:3;left:8px;right:8px;top:7px;display:flex;align-items:center;justify-content:space-between}.preview-head h2{margin:0;font:900 10pt Oxanium}.preview-head small{display:block;color:var(--muted);font:700 7pt Oxanium}
-.led-stage{position:absolute;inset:39px 10px 10px;display:grid;place-items:center}.strip{width:min(94%,840px);display:grid;grid-template-columns:repeat(48,1fr);gap:3px;padding:13px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:linear-gradient(180deg,#07101b,#010306);box-shadow:0 12px 34px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}.strip i{aspect-ratio:1;border-radius:50%;background:#111;box-shadow:0 0 8px currentColor}
-.fx-controls{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(270px,.85fr);gap:8px;min-height:0}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 10px}
-.glass-control{display:grid;grid-template-columns:78px minmax(0,1fr) 36px;gap:7px;align-items:center}.glass-control label{font:800 7.3pt Oxanium;color:#dce8f2}.glass-control output{text-align:right;color:var(--cyan);font:800 7.3pt Oxanium}
-.railglass{position:relative;height:16px;border:1px solid rgba(223,250,255,.28);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.015));box-shadow:inset 0 0 8px rgba(0,0,0,.5)}
-.railglass input{position:absolute;inset:-7px 0;width:100%;opacity:0;cursor:pointer}.fill{position:absolute;left:2px;top:2px;bottom:2px;width:50%;border-radius:3px;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));box-shadow:0 0 8px rgba(24,233,255,.25)}.thumb{position:absolute;top:50%;left:50%;width:14px;height:14px;transform:translate(-50%,-50%);border:1px solid #fff;border-radius:4px;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(80,200,255,.38));box-shadow:0 0 8px rgba(24,233,255,.55),inset 0 0 4px rgba(255,255,255,.8);pointer-events:none}
-.compact-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.compact-row select{height:28px;width:100%;padding:0 6px;border:1px solid rgba(223,250,255,.18);border-radius:4px;color:#fff;background:#050a14}.toggle{height:28px;border:1px solid rgba(223,250,255,.18);border-radius:4px;color:#9db0c2;background:#050a14}.toggle.on{color:#041318;border-color:var(--cyan);background:var(--cyan)}
-.triple-colors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:8px}.color-slot{display:grid;grid-template-columns:1fr 34px;align-items:center;gap:5px;padding:7px;border:1px solid rgba(223,250,255,.18);border-radius:6px;background:#050a14}.color-slot b{font:800 7.2pt Oxanium}.color-slot small{display:block;color:var(--muted);font-size:6.5pt}.color-slot input[type=color]{width:34px;height:30px;padding:2px;border:1px solid rgba(255,255,255,.4);border-radius:4px;background:#02050a}
-.rolebar{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px}.role{height:28px;display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid rgba(223,250,255,.18);border-radius:5px;color:#9db0c2;background:#050a14;font:800 7pt Oxanium}.role.on{color:#fff;border-color:var(--cyan);box-shadow:inset 0 -2px 0 var(--cyan)}.swatch{width:11px;height:11px;border-radius:3px;border:1px solid rgba(255,255,255,.65)}
-.saved{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}.saved button{aspect-ratio:1;border:1px solid rgba(255,255,255,.5);border-radius:5px;background:var(--c);box-shadow:0 0 6px color-mix(in srgb,var(--c) 38%,transparent)}
-.pickerline{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:5px;margin-top:7px}.savecolor{height:30px;border:1px solid var(--pink);border-radius:5px;color:var(--pink);background:rgba(255,44,168,.08);font:900 11pt Oxanium}
-.hue-selector{--hx:50%;position:relative;height:30px;border:1px solid rgba(223,250,255,.30);border-radius:7px;background:rgba(255,255,255,.018);box-shadow:inset 0 0 10px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.07);overflow:hidden;touch-action:none}.hue-spectrum{position:absolute;inset:3px;border-radius:5px;background:linear-gradient(90deg,#ff0000 0%,#ffff00 16.67%,#00ff00 33.33%,#00ffff 50%,#0000ff 66.67%,#ff00ff 83.33%,#ff0000 100%);opacity:0;transition:opacity .09s ease;-webkit-mask-image:radial-gradient(circle 25px at var(--hx) 50%,#000 0 56%,rgba(0,0,0,.72) 68%,transparent 100%);mask-image:radial-gradient(circle 25px at var(--hx) 50%,#000 0 56%,rgba(0,0,0,.72) 68%,transparent 100%);pointer-events:none}.hue-selector.is-active .hue-spectrum{opacity:1}.hue-thumb{position:absolute;left:var(--hx);top:50%;width:18px;height:22px;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.82);border-radius:5px;background:rgba(255,255,255,.07);box-shadow:0 0 0 1px rgba(24,233,255,.18),0 0 9px rgba(24,233,255,.18),inset 0 0 7px rgba(255,255,255,.14);backdrop-filter:blur(4px);pointer-events:none}.hue-selector input[type=range]{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}.hue-label{display:flex;justify-content:space-between;gap:8px;margin-top:4px;color:var(--muted);font:700 6.5pt Oxanium}.hue-label b{color:var(--cyan);font-weight:800}
-.library{display:grid;grid-template-rows:32px auto auto minmax(0,1fr);min-height:0;border:1px solid rgba(223,250,255,.18);border-radius:8px;background:linear-gradient(180deg,rgba(4,10,19,.94),rgba(1,5,11,.97));overflow:hidden}.search{margin:7px;padding:0 7px;height:28px;border:1px solid rgba(223,250,255,.18);border-radius:5px;color:#fff;background:#050a14}.filters{display:flex;gap:4px;padding:0 7px 7px;overflow:auto}.chip{height:24px;flex:0 0 auto;padding:0 7px;border:1px solid rgba(223,250,255,.16);border-radius:999px;color:#8fa4b7;background:#07101b;font:800 7pt Oxanium}.chip.on{color:var(--cyan);border-color:var(--cyan)}
-.fxlist{overflow:auto;padding:0 7px 7px;scrollbar-width:thin;scrollbar-color:var(--cyan) #050a14}.fx{width:100%;min-height:48px;display:grid;grid-template-columns:30px minmax(0,1fr) 46px;gap:7px;align-items:center;margin-bottom:5px;padding:5px 7px;border:1px solid rgba(223,250,255,.16);border-radius:5px;color:#dce8f2;background:#050a14;text-align:left}.fx .ico{font-size:14px;color:var(--cyan)}.fx b{font:800 7.8pt Oxanium}.fx small{display:block;color:var(--muted);font-size:6.4pt}.fx.on{border-color:var(--pink);background:linear-gradient(90deg,rgba(255,44,168,.14),rgba(24,233,255,.05));box-shadow:inset 3px 0 0 var(--pink)}.fx.hide{display:none}.fx-palette{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}.fx-palette i{height:18px;border-radius:3px;border:1px solid rgba(255,255,255,.35)}
-.music-layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(360px,1.2fr);gap:8px}.spectrum{height:180px;display:flex;align-items:end;gap:3px;padding:8px;border:1px solid rgba(223,250,255,.12);border-radius:6px;background:#02050a}.spectrum i{flex:1;height:5%;background:linear-gradient(180deg,var(--pink),var(--purple),var(--cyan));box-shadow:0 0 5px rgba(24,233,255,.2)}.music-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:7px}
-.preset-grid,.custom-grid,.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:7px}.tile{min-height:82px;padding:8px;border:1px solid rgba(223,250,255,.18);border-radius:6px;background:#050a14}.tile b{font:800 8.5pt Oxanium}.tile small{display:block;margin-top:4px;color:var(--muted);font-size:7pt}.tile button{margin-top:7px;height:25px;padding:0 7px;border:1px solid rgba(24,233,255,.28);border-radius:4px;color:var(--cyan);background:rgba(24,233,255,.06);font:800 7pt Oxanium}.empty{padding:14px;border:1px dashed rgba(223,250,255,.2);border-radius:6px;color:var(--muted);text-align:center}
-@media(max-width:980px){.shell{grid-template-columns:155px minmax(0,1fr)}.fx-layout{grid-template-columns:minmax(0,1fr) 250px}.fx-controls,.device-layout,.music-layout{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.hardware-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:720px){.device-only .rail-body{grid-template-columns:1fr}.top{grid-template-columns:1fr auto}.status-mini{display:none}.brand{justify-self:end}.tabs{grid-template-columns:repeat(6,110px)}.shell{height:auto;min-height:calc(100vh - 84px);grid-template-columns:1fr;padding:6px}.rail{max-height:180px}.workspace{min-height:660px}.fx-layout{height:auto;grid-template-columns:1fr}.fx-main{grid-template-rows:190px auto}.library{max-height:390px}.fx-controls{grid-template-columns:1fr}.triple-colors{grid-template-columns:1fr}.grid2,.grid3,.grid4,.hardware-grid,.device-actions{grid-template-columns:1fr}.strip{grid-template-columns:repeat(24,1fr)}}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.app{min-height:100vh;background:var(--bg)}
+.top{height:42px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px;border-bottom:1px solid var(--line);background:rgba(1,4,10,.96);backdrop-filter:blur(12px)}
+.brand{font:800 14px Oxanium;letter-spacing:.02em;white-space:nowrap}
+.brand .s{color:var(--yellow);text-shadow:0 0 8px rgba(255,217,40,.35)}
+.brand .w{color:var(--pink);font-size:9px;text-shadow:0 0 8px rgba(255,44,168,.32)}
+.status-mini{color:var(--cyan);font:800 7.5pt Oxanium}
+.tabs{height:38px;display:flex;align-items:end;justify-content:center;gap:18px;padding:0 10px;border-bottom:1px solid rgba(223,250,255,.12);background:#030812;overflow-x:auto}
+.tab{flex:0 0 auto;height:37px;padding:0 2px;border:0;border-bottom:2px solid transparent;color:#8296aa;background:transparent;font:800 8pt Oxanium;letter-spacing:.04em}
+.tab.on{color:#fff;border-bottom-color:var(--cyan);text-shadow:0 0 8px rgba(24,233,255,.45)}
+.shell{padding:10px}
+.workspace{max-width:1120px;margin:0 auto}
+.workspace-page{display:none}
+.workspace-page.on{display:block}
+.page{min-height:calc(100vh - 100px)}
+.section-head{display:flex;align-items:center;gap:8px;margin:1px 0 10px}
+.section-head h1{margin:0;font:900 11pt Oxanium;letter-spacing:.04em}
+.section-head h1:after{content:"";display:block;width:34px;height:2px;margin-top:4px;background:var(--pink);box-shadow:0 0 8px rgba(255,44,168,.45)}
+.subhead{margin:10px 0 5px;color:var(--cyan);font:800 7.2pt Oxanium;letter-spacing:.08em;text-transform:uppercase}
+.muted{color:var(--muted)}
+.glass-panel{border:1px solid var(--line);border-radius:9px;background:rgba(6,12,22,.82);box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(10px)}
+.glass-btn,.mini-btn,.tiny-btn,.filter-chip,.role{border:1px solid rgba(223,250,255,.22);color:#dfeaf4;background:rgba(255,255,255,.035);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 9px rgba(24,233,255,.04);backdrop-filter:blur(8px)}
+.glass-btn{height:29px;padding:0 10px;border-radius:6px;font:800 7.3pt Oxanium}
+.glass-btn.primary{border-color:rgba(24,233,255,.7);color:var(--cyan);box-shadow:inset 0 0 8px rgba(24,233,255,.06),0 0 10px rgba(24,233,255,.12)}
+.glass-btn.danger,.tiny-btn.danger{border-color:rgba(255,44,168,.55);color:#ff7fc4}
+.actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.status{max-width:560px;margin-top:8px;padding:6px 8px;border:1px solid rgba(223,250,255,.1);border-radius:6px;background:#02050a;color:#83f0d7;font:6.8pt ui-monospace,monospace}
+.device-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.device-card{width:230px;padding:8px;border:1px solid var(--line);border-radius:8px;background:rgba(6,12,22,.82);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.device-card.on{border-color:var(--cyan);box-shadow:0 0 12px rgba(24,233,255,.12),inset 0 1px 0 rgba(255,255,255,.06)}
+.device-title{display:flex;align-items:center;gap:7px}
+.dot{width:8px;height:8px;border-radius:50%;background:#59677a}
+.dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
+.device-title b{font:800 8.3pt Oxanium}
+.device-title small{display:block;color:var(--muted);font-size:6.8pt}
+.device-card .actions{margin-top:7px}
+.use{height:25px;padding:0 8px;border-radius:5px;font:800 7pt Oxanium}
+.sync-box{width:230px;padding:8px}
+.sync-line{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sync-line span{font:800 8pt Oxanium}
+.sync-line input{width:17px;height:17px;accent-color:var(--cyan)}
+.debug-row{margin-top:8px}
+.fx-shell{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:8px;align-items:start}
+.fx-main{min-width:0}
+.preview{height:150px;position:relative;overflow:hidden;padding:10px;border:1px solid var(--line);border-radius:9px;background:#02050a}
+.preview-name{position:absolute;left:10px;top:8px;color:#fff;font:900 8.5pt Oxanium;letter-spacing:.05em}
+.led-stage{height:100%;display:grid;place-items:center;padding-top:18px}
+.strip{width:min(100%,760px);display:grid;grid-template-columns:repeat(42,1fr);gap:3px;padding:10px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:#070c13}
+.strip i{aspect-ratio:1;border-radius:50%;background:#111;box-shadow:0 0 7px currentColor}
+.control-deck{display:grid;grid-template-columns:minmax(270px,390px) minmax(270px,390px);gap:8px;margin-top:8px;align-items:start}
+.compact-panel{padding:9px}
+.compact-panel h2{margin:0 0 7px;font:900 8.5pt Oxanium}
+.slider-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px}
+.slider-row{display:grid;grid-template-columns:68px minmax(96px,170px) 34px;gap:6px;align-items:center}
+.slider-row label{font:800 6.9pt Oxanium;color:#dce8f2}
+.slider-row output{text-align:right;color:var(--cyan);font:800 6.8pt Oxanium}
+.railglass{position:relative;height:15px;border:1px solid rgba(223,250,255,.28);border-radius:5px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 8px rgba(0,0,0,.5)}
+.railglass .fill{position:absolute;left:2px;top:2px;bottom:2px;width:50%;border-radius:3px;background:rgba(24,233,255,.32);box-shadow:0 0 7px rgba(24,233,255,.2)}
+.railglass .thumb{position:absolute;top:50%;left:50%;width:14px;height:14px;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.9);border-radius:4px;background:rgba(255,255,255,.09);box-shadow:0 0 8px rgba(24,233,255,.5),inset 0 0 5px rgba(255,255,255,.18);pointer-events:none;backdrop-filter:blur(4px)}
+.railglass input{position:absolute;inset:-7px 0;width:100%;opacity:0;cursor:pointer}
+.more-controls{margin-top:8px}
+.more-controls summary{color:var(--muted);font:800 7pt Oxanium;cursor:pointer}
+.more-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.compact-select{height:27px;max-width:145px;padding:0 6px;border:1px solid var(--line);border-radius:5px;color:#fff;background:#050a14;font-size:7pt}
+.toggle{height:27px;padding:0 8px;border:1px solid var(--line);border-radius:5px;color:#9db0c2;background:rgba(255,255,255,.025);font:800 7pt Oxanium}
+.toggle.on{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 8px rgba(24,233,255,.16)}
+.rolebar{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
+.role{height:27px;padding:0 8px;border-radius:6px;font:800 6.9pt Oxanium;color:#93a6b8}
+.role.on{color:#fff;border-color:var(--cyan);box-shadow:inset 0 -2px 0 var(--cyan),0 0 8px rgba(24,233,255,.12)}
+.swatch{display:inline-block;width:11px;height:11px;margin-right:5px;border-radius:3px;border:1px solid rgba(255,255,255,.65);vertical-align:-1px}
+.hue-selector{--hx:50%;position:relative;height:31px;max-width:320px;border:1px solid rgba(223,250,255,.34);border-radius:7px;background:rgba(255,255,255,.018);box-shadow:inset 0 0 10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden;touch-action:none}
+.hue-spectrum{position:absolute;inset:3px;border-radius:5px;background:linear-gradient(90deg,#ff0000 0%,#ffff00 16.67%,#00ff00 33.33%,#00ffff 50%,#0000ff 66.67%,#ff00ff 83.33%,#ff0000 100%);opacity:0;transition:opacity .07s ease;-webkit-mask-image:radial-gradient(circle 38px at var(--hx) 50%,#000 0 58%,rgba(0,0,0,.78) 72%,transparent 100%);mask-image:radial-gradient(circle 38px at var(--hx) 50%,#000 0 58%,rgba(0,0,0,.78) 72%,transparent 100%);pointer-events:none}
+.hue-selector.is-active .hue-spectrum{opacity:1}
+.hue-thumb{position:absolute;left:var(--hx);top:50%;width:20px;height:23px;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.88);border-radius:5px;background:rgba(255,255,255,.055);box-shadow:0 0 0 1px rgba(24,233,255,.16),0 0 9px rgba(24,233,255,.2),inset 0 0 7px rgba(255,255,255,.12);backdrop-filter:blur(4px);pointer-events:none}
+.hue-selector input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.hue-meta{display:flex;justify-content:space-between;max-width:320px;margin-top:4px;color:var(--muted);font:700 6.3pt Oxanium}
+.hue-meta b{color:var(--cyan)}
+.saved-wrap{margin-top:8px}
+.saved{display:flex;flex-wrap:wrap;gap:5px;min-height:25px}
+.saved button{width:24px;height:24px;padding:0;border:1px solid rgba(255,255,255,.48);border-radius:6px;background:var(--c);box-shadow:0 0 6px rgba(255,255,255,.08)}
+.saved-help{margin-top:3px;color:#6f8295;font-size:6.2pt}
+.fx-actions{margin-top:8px}
+.library{height:calc(100vh - 118px);min-height:440px;max-height:680px;display:grid;grid-template-rows:auto auto auto minmax(0,1fr);border:1px solid var(--line);border-radius:9px;background:rgba(6,12,22,.82);overflow:hidden}
+.library-head{display:flex;align-items:center;justify-content:space-between;padding:8px 8px 3px;color:var(--cyan);font:900 7.8pt Oxanium}
+.search{height:28px;margin:4px 7px;padding:0 7px;border:1px solid var(--line);border-radius:5px;color:#fff;background:#040911}
+.filters{display:flex;gap:4px;padding:2px 7px 6px}
+.filter-chip{height:23px;padding:0 7px;border-radius:999px;color:#8296aa;font:800 6.7pt Oxanium}
+.filter-chip.on{color:var(--cyan);border-color:var(--cyan)}
+.fxlist{overflow:auto;padding:0 6px 7px;scrollbar-width:thin;scrollbar-color:var(--cyan) #050a14}
+.fx{width:100%;min-height:36px;display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:6px;align-items:center;margin-bottom:4px;padding:4px 7px;border:1px solid rgba(223,250,255,.14);border-radius:6px;color:#dce8f2;background:rgba(255,255,255,.018);text-align:left}
+.fx b{font:800 7.2pt Oxanium}
+.fx.on{border-color:var(--pink);box-shadow:inset 2px 0 0 var(--pink),0 0 8px rgba(255,44,168,.08)}
+.fx.hide{display:none}
+.fx-palette{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.fx-palette i{height:14px;border-radius:3px;border:1px solid rgba(255,255,255,.3)}
+.music-grid{display:grid;grid-template-columns:minmax(260px,340px) minmax(320px,520px);gap:8px;align-items:start}
+.music-panel{padding:9px}
+.music-panel h2{margin:0 0 7px;font:900 8.5pt Oxanium}
+.spectrum{height:145px;display:flex;align-items:end;gap:3px;padding:8px;border:1px solid rgba(223,250,255,.12);border-radius:7px;background:#02050a}
+.spectrum i{flex:1;height:5%;background:var(--cyan);box-shadow:0 0 5px rgba(24,233,255,.2)}
+.spectrum-colors{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.spectrum-color{display:flex;align-items:center;gap:5px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;color:#b8c7d4;font:800 6.6pt Oxanium;background:rgba(255,255,255,.025)}
+.spectrum-color input{width:24px;height:22px;padding:0;border:0;background:transparent}
+.preset-tools,.playlist-tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.preset-grid{display:flex;flex-wrap:wrap;gap:7px;align-items:flex-start}
+.preset-card{width:210px;padding:8px;border:1px solid var(--line);border-radius:8px;background:rgba(6,12,22,.82)}
+.preset-card.selected{border-color:var(--cyan);box-shadow:0 0 9px rgba(24,233,255,.12)}
+.preset-card b{font:800 7.8pt Oxanium}
+.preset-card small{display:block;margin-top:3px;color:var(--muted);font-size:6.4pt}
+.preset-card .actions{margin-top:6px}
+.tiny-btn{height:23px;padding:0 6px;border-radius:5px;font:800 6.3pt Oxanium}
+.playlist{max-width:720px;display:grid;gap:5px}
+.playlist-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:7px;align-items:center;padding:6px 7px;border:1px solid var(--line);border-radius:7px;background:rgba(6,12,22,.82)}
+.playlist-num{width:24px;height:24px;display:grid;place-items:center;border:1px solid rgba(24,233,255,.24);border-radius:50%;color:var(--cyan);font:800 6.6pt Oxanium}
+.playlist-row b{font:800 7.3pt Oxanium}
+.playlist-row small{display:block;color:var(--muted);font-size:6.2pt}
+.empty{max-width:420px;padding:10px;border:1px dashed rgba(223,250,255,.18);border-radius:7px;color:var(--muted);font-size:7pt}
+.hidden-core{display:none!important}
+@media(max-width:900px){
+  .fx-shell{grid-template-columns:1fr}
+  .library{height:390px;min-height:0;max-height:none}
+  .control-deck{grid-template-columns:1fr}
+  .music-grid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .top{height:40px}
+  .tabs{justify-content:flex-start;gap:15px}
+  .shell{padding:7px}
+  .workspace{max-width:none}
+  .page{min-height:calc(100vh - 92px)}
+  .device-card,.sync-box{width:min(100%,260px)}
+  .preview{height:135px}
+  .strip{grid-template-columns:repeat(24,1fr);gap:3px;padding:9px}
+  .slider-grid{grid-template-columns:1fr}
+  .slider-row{grid-template-columns:66px minmax(100px,1fr) 32px}
+  .preset-card{width:min(100%,230px)}
+}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="top">
-  <div class="device-head"><span id="headerDot" class="dot"></span><span><small>ACTIVE CONTROLLER</small><b id="deviceHeaderName">SHYNETYME —</b></span></div>
   <div class="brand"><span class="s">SHYNE</span>TYME<span class="w">.WORKS</span></div>
   <div id="badge" class="status-mini">BLE READY</div>
 </header>
@@ -81,317 +166,330 @@ button,input,select{font:inherit}button{cursor:pointer}
   <button class="tab" data-p="fxcolor">FX + COLORS</button>
   <button class="tab" data-p="music">MUSIC</button>
   <button class="tab" data-p="presets">PRESETS</button>
-  <button class="tab" data-p="groups">GROUPS</button>
   <button class="tab" data-p="custom">CUSTOM</button>
 </nav>
 
 <div class="shell">
+<main class="workspace">
 
-
-  <main class="workspace">
-    <section id="device" class="workspace-page on">
-      <div class="page">
-        <div class="page-head"><div><h1>Device</h1><p>Connection, identity, output target and controller-specific settings.</p></div><span class="target">CONTROLLER SETUP</span></div>
-  <aside class="rail device-only">
-    <div class="panel-title"><span>CONTROLLERS</span><span class="muted">BLE</span></div>
-    <div class="rail-body">
-      <div id="d0" class="device-card on"><span id="dot0" class="dot"></span><span><b>ESP32 #1</b><small id="name0">Not connected</small></span><button class="use" data-i="0">USE</button></div>
-      <div id="d1" class="device-card"><span id="dot1" class="dot"></span><span><b>ESP32 #2</b><small id="name1">Not connected</small></span><button class="use" data-i="1">USE</button></div>
-      <label class="switchline"><span>SYNC BOTH</span><input id="sync" type="checkbox"></label>
-      <div class="rail-note">Device selection and Sync Both live here only. With Sync off, hardware settings belong to the selected ESP32. With Sync on, saving hardware settings applies them to both.</div>
+<section id="device" class="workspace-page on">
+  <div class="page">
+    <div class="section-head"><h1>Devices</h1></div>
+    <div class="device-grid">
+      <article id="d0" class="device-card on">
+        <div class="device-title"><span id="dot0" class="dot"></span><span><b>ESP32 #1</b><small id="name0">Not connected</small></span></div>
+        <div class="actions"><button id="con0" class="glass-btn primary">CONNECT</button><button class="use glass-btn" data-i="0">SELECT</button></div>
+      </article>
+      <article id="d1" class="device-card">
+        <div class="device-title"><span id="dot1" class="dot"></span><span><b>ESP32 #2</b><small id="name1">Not connected</small></span></div>
+        <div class="actions"><button id="con1" class="glass-btn primary">CONNECT</button><button class="use glass-btn" data-i="1">SELECT</button></div>
+      </article>
+      <article class="sync-box glass-panel">
+        <div class="sync-line"><span>SYNC BOTH</span><input id="sync" type="checkbox" aria-label="Sync both controllers"></div>
+        <div class="muted" style="margin-top:5px;font-size:6.6pt">Off = selected device only. On = both controllers receive the same control state.</div>
+      </article>
     </div>
-  </aside>
-        <div class="device-layout">
-          <article class="box">
-            <h2>Bluetooth controllers</h2>
-            <div class="controller-connect">
-              <button id="con0" class="mini-btn primary">CONNECT #1</button>
-              <button id="con1" class="mini-btn primary">CONNECT #2</button>
-              <button id="connect" class="mini-btn">CONNECT ACTIVE</button>
-              <button id="stat" class="mini-btn">READ STATUS</button>
-            </div>
-            <div class="subhead">CURRENT STATUS</div>
-            <div id="status" class="status">Ready. Choose the controller you want to connect.</div>
-            <div class="device-actions">
-              <button id="save" class="mini-btn">SAVE</button>
-              <button id="reboot" class="mini-btn">SAVE + REBOOT</button>
-              <button id="off" class="mini-btn">BLACKOUT</button>
-            </div>
-          </article>
+    <div class="debug-row actions">
+      <button id="stat" class="glass-btn">READ STATUS</button>
+    </div>
+    <div id="status" class="status">Ready. Choose the controller you want to connect.</div>
+  </div>
+</section>
 
-          <article class="box">
-            <h2>Controller settings <span id="deviceSettingsTarget" class="muted">— ESP32 #1</span></h2>
-            <div class="hardware-grid">
-              <label class="field"><span>LED COUNT</span><input id="leds" type="number" min="1" max="600" value="300"></label>
-              <label class="field"><span>GPIO</span><input id="gpio" type="number" min="0" max="39" value="13"></label>
-              <label class="field"><span>PIXEL ORDER</span><select id="order"><option>RGB</option><option selected>GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></label>
-            </div>
-            <div class="subhead">OUTPUT TARGET / SEGMENT</div>
-            <div class="segment-grid">
-              <label class="field"><span>FROM</span><input id="segFrom" type="number" min="0" value="0"></label>
-              <label class="field"><span>TO</span><input id="segTo" type="number" min="0" value="299"></label>
-            </div>
-            <div class="subhead">DIRECT COMMAND</div>
-            <div class="raw"><input id="raw" placeholder="FX=COMET;MAIN=FF2CA8"><button id="rawgo" class="mini-btn">SEND</button></div>
-            <div id="log" class="log">ShyneTyme controller ready.</div>
-          </article>
-        </div>
-      </div>
-    </section>
+<section id="fxcolor" class="workspace-page">
+  <div class="page">
+    <div class="section-head"><h1>FX + Colors</h1></div>
+    <span id="target" class="hidden-core">TARGET #1</span>
+    <div class="fx-shell">
+      <div class="fx-main">
+        <section class="preview glass-panel">
+          <div id="activeFxName" class="preview-name">AURORA</div>
+          <div class="led-stage"><div id="ledPreview" class="strip" aria-label="Live LED effect preview"></div></div>
+        </section>
 
-    <section id="fxcolor" class="workspace-page">
-      <div class="page">
-        <div class="page-head"><div><h1>FX + Colors</h1><p>Every effect uses exactly three user-controlled colors: Main, Background and Foreground.</p></div><span id="target" class="target">TARGET #1</span></div>
-        <div class="fx-layout">
-          <div class="fx-main">
-            <section class="preview">
-              <div class="preview-head"><div><small>LIVE EFFECT</small><h2 id="activeFxName">AURORA</h2></div><span class="target">3-COLOR FX</span></div>
-              <div class="led-stage"><div id="ledPreview" class="strip" aria-label="LED strip preview"></div></div>
-            </section>
-
-            <div class="fx-controls">
-              <article class="box">
-                <h2>Effect shaping</h2>
-                <div class="controls">
-                  <div class="glass-control"><label>BRIGHTNESS</label><div class="railglass"><div class="fill"></div><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="70"></div><output id="briV">27%</output></div>
-                  <div class="glass-control"><label>SPEED</label><div class="railglass"><div class="fill"></div><span class="thumb"></span><input id="spd" type="range" min="1" max="255" value="220"></div><output id="spdV">86%</output></div>
-                  <div class="glass-control"><label>INTENSITY</label><div class="railglass"><div class="fill"></div><span class="thumb"></span><input id="int" type="range" min="1" max="255" value="190"></div><output id="intV">74%</output></div>
-                  <div class="glass-control"><label>SIZE</label><div class="railglass"><div class="fill"></div><span class="thumb"></span><input id="size" type="range" min="1" max="255" value="72"></div><output id="sizeV">28%</output></div>
-                  <div class="glass-control"><label>DENSITY</label><div class="railglass"><div class="fill"></div><span class="thumb"></span><input id="dens" type="range" min="1" max="255" value="110"></div><output id="densV">43%</output></div>
-                  <div class="glass-control"><label>TRAIL</label><div class="railglass"><div class="fill"></div><span class="thumb"></span><input id="trail" type="range" min="1" max="255" value="145"></div><output id="trailV">57%</output></div>
-                </div>
-                <div class="compact-row"><select id="dir" aria-label="Direction"><option value="FWD">Forward →</option><option value="REV">← Reverse</option></select><button id="mirrorBtn" class="toggle" type="button">MIRROR</button></div>
+        <div class="control-deck">
+          <section class="compact-panel glass-panel">
+            <h2>Effect</h2>
+            <div class="slider-grid">
+              <div class="slider-row"><label>BRIGHT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="70"></div><output id="briV">27%</output></div>
+              <div class="slider-row"><label>SPEED</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="spd" type="range" min="1" max="255" value="220"></div><output id="spdV">86%</output></div>
+              <div class="slider-row"><label>INTENSE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="int" type="range" min="1" max="255" value="190"></div><output id="intV">74%</output></div>
+              <div class="slider-row"><label>SIZE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="size" type="range" min="1" max="255" value="72"></div><output id="sizeV">28%</output></div>
+            </div>
+            <details class="more-controls">
+              <summary>MORE EFFECT CONTROLS</summary>
+              <div class="slider-grid" style="margin-top:7px">
+                <div class="slider-row"><label>DENSITY</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="dens" type="range" min="1" max="255" value="110"></div><output id="densV">43%</output></div>
+                <div class="slider-row"><label>TRAIL</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="trail" type="range" min="1" max="255" value="145"></div><output id="trailV">57%</output></div>
+              </div>
+              <div class="more-row">
+                <select id="dir" class="compact-select" aria-label="Direction"><option value="FWD">Forward →</option><option value="REV">← Reverse</option></select>
+                <button id="mirrorBtn" class="toggle" type="button">MIRROR</button>
                 <input id="mirror" type="checkbox" hidden>
-              </article>
+              </div>
+            </details>
+          </section>
 
-              <article class="box">
-                <h2>Three colors — every effect</h2>
-                <div class="triple-colors">
-                  <label class="color-slot"><span><b>MAIN</b><small>primary light</small></span><input id="main" type="color" value="#FFFFFF"></label>
-                  <label class="color-slot"><span><b>BACKGROUND</b><small>base / low layer</small></span><input id="bg" type="color" value="#000000"></label>
-                  <label class="color-slot"><span><b>FOREGROUND</b><small>highlight / high layer</small></span><input id="fg" type="color" value="#8000FF"></label>
-                </div>
-                <div class="rolebar">
-                  <button class="role on" data-role="main"><span id="mainSwatch" class="swatch" style="background:#fff"></span>MAIN</button>
-                  <button class="role" data-role="bg"><span id="bgSwatch" class="swatch" style="background:#000"></span>BACKGROUND</button>
-                  <button class="role" data-role="fg"><span id="fgSwatch" class="swatch" style="background:#8000ff"></span>FOREGROUND</button>
-                </div>
-                <div class="saved">
-                  <button data-quick="#FF2CA8" style="--c:#FF2CA8"></button><button data-quick="#FFD928" style="--c:#FFD928"></button><button data-quick="#3CFF70" style="--c:#3CFF70"></button><button data-quick="#18E9FF" style="--c:#18E9FF"></button><button data-quick="#368FFF" style="--c:#368FFF"></button><button data-quick="#8B51FF" style="--c:#8B51FF"></button><button data-quick="#FF5A31" style="--c:#FF5A31"></button><button data-quick="#FFFFFF" style="--c:#FFFFFF"></button>
-                </div>
-                <div class="pickerline"><div><div id="hueSelector" class="hue-selector" aria-label="Hue selector"><span class="hue-spectrum"></span><span class="hue-thumb"></span><input id="hueRange" type="range" min="0" max="359" value="0" aria-label="Hue"></div><div class="hue-label"><span>SLIDE FOR COLOR</span><b id="hueValue">CLEAR</b></div></div><button class="savecolor" type="button">＋</button></div>
-                <input id="livePicker" type="color" value="#ffffff" hidden>
-              </article>
+          <section class="compact-panel glass-panel">
+            <h2>Colors</h2>
+            <input id="main" type="color" value="#FFFFFF" hidden>
+            <input id="bg" type="color" value="#000000" hidden>
+            <input id="fg" type="color" value="#8000FF" hidden>
+            <div class="rolebar">
+              <button class="role on" data-role="main"><span id="mainSwatch" class="swatch" style="background:#fff"></span>MAIN</button>
+              <button class="role" data-role="bg"><span id="bgSwatch" class="swatch" style="background:#000"></span>BACKGROUND</button>
+              <button class="role" data-role="fg"><span id="fgSwatch" class="swatch" style="background:#8000ff"></span>FOREGROUND</button>
             </div>
-          </div>
+            <div id="hueSelector" class="hue-selector" aria-label="Hue selector">
+              <span class="hue-spectrum"></span><span class="hue-thumb"></span>
+              <input id="hueRange" type="range" min="0" max="359" value="0" aria-label="Hue">
+            </div>
+            <div class="hue-meta"><span>SLIDE FOR COLOR</span><b id="hueValue">CLEAR</b></div>
 
-          <aside class="library">
-            <div class="panel-title"><span>EFFECT LIBRARY</span><span id="fxCount" class="muted">25</span></div>
-            <input id="fxSearch" class="search" placeholder="Search effects…">
-            <div class="filters"><button class="chip on" data-filter="all">ALL</button><button class="chip" data-filter="motion">MOTION</button><button class="chip" data-filter="texture">TEXTURE</button><button class="chip" data-filter="show">SHOW</button><button class="chip" data-filter="season">SEASONAL</button><button class="chip" data-filter="audio">MUSIC</button></div>
-            <div class="fxlist">
-              <button class="fx on" data-fx="AURORA" data-cat="show"><span class="ico">⌁</span><span><b>AURORA</b><small>layered flowing light</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="TWINKLE" data-cat="texture audio"><span class="ico">✦</span><span><b>TWINKLE</b><small>random star points</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="RAINBOW" data-cat="motion show"><span class="ico">◒</span><span><b>RAINBOW</b><small>three-color spectrum travel</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="SONIC_STREAM" data-cat="motion audio"><span class="ico">≋</span><span><b>STREAMING</b><small>directional stream</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="SONIC_BOOM" data-cat="show audio"><span class="ico">◎</span><span><b>SONIC BOOM</b><small>center-out music burst</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="THUNDER" data-cat="show audio"><span class="ico">ϟ</span><span><b>THUNDER</b><small>rolling flash bursts</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="LIGHTNING" data-cat="show audio"><span class="ico">ϟ</span><span><b>LIGHTNING</b><small>sharp random strikes</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="RAIN" data-cat="motion texture"><span class="ico">⋮</span><span><b>RAIN</b><small>falling droplets</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="COMET" data-cat="motion audio"><span class="ico">☄</span><span><b>COMET</b><small>bright head + trail</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="STROBE" data-cat="show"><span class="ico">▥</span><span><b>STROBE</b><small>three-color high-speed flash</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="POLICE_STROBE" data-cat="show"><span class="ico">◫</span><span><b>POLICE STROBE</b><small>user-selected three-color strobe</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="FIRE_STROBE" data-cat="show texture"><span class="ico">♨</span><span><b>FIRE STROBE</b><small>three-color flicker flashes</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="CASCADING" data-cat="motion"><span class="ico">≣</span><span><b>CASCADING</b><small>layered directional drop</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="COLOR_WAVES" data-cat="motion show audio"><span class="ico">∿</span><span><b>WAVES</b><small>traveling three-color waves</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="FIRE" data-cat="texture"><span class="ico">♨</span><span><b>FIRE</b><small>three-color flame texture</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="RIPPLE" data-cat="motion show"><span class="ico">◎</span><span><b>RIPPLE</b><small>center-out expansion</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="SCANNER" data-cat="motion"><span class="ico">↔</span><span><b>SCANNER</b><small>back-and-forth beam</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="TRICOLOR_CHASE" data-cat="motion show"><span class="ico">≡</span><span><b>TRI CHASE</b><small>three-color chase</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="SUNRISE" data-cat="season show"><span class="ico">◐</span><span><b>SUNRISE</b><small>three-color rise sequence</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="SUNSET" data-cat="season show"><span class="ico">◑</span><span><b>SUNSET</b><small>three-color fade sequence</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="HALLOWEEN" data-cat="season"><span class="ico">✧</span><span><b>HALLOWEEN</b><small>three user-selected colors</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="CHRISTMAS" data-cat="season"><span class="ico">✣</span><span><b>HOLIDAY</b><small>three user-selected colors</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="JULY4" data-cat="season show"><span class="ico">★</span><span><b>4TH OF JULY</b><small>three user-selected colors</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="NEWYEAR" data-cat="season show"><span class="ico">✹</span><span><b>NEW YEAR</b><small>three user-selected colors</small></span><span class="fx-palette"></span></button>
-              <button class="fx" data-fx="SPECTRUM" data-cat="audio"><span class="ico">▥</span><span><b>SPECTRUM</b><small>three-color frequency bands</small></span><span class="fx-palette"></span></button>
+            <div class="saved-wrap">
+              <div class="subhead">Saved colors</div>
+              <div class="saved" aria-label="Saved colors"></div>
+              <div class="actions" style="margin-top:6px"><button class="savecolor glass-btn" type="button">+ SAVE COLOR</button></div>
+              <div class="saved-help">Press and hold a saved color to delete it.</div>
             </div>
-          </aside>
+            <input id="livePicker" type="color" value="#ffffff" hidden>
+
+            <div class="fx-actions actions">
+              <button id="saveFxPreset" class="glass-btn primary" type="button">SAVE PRESET</button>
+              <button id="addFxPlaylist" class="glass-btn" type="button">ADD TO PLAYLIST</button>
+            </div>
+          </section>
         </div>
       </div>
-    </section>
 
-    <section id="music" class="workspace-page">
-      <div class="page">
-        <div class="page-head"><div><h1>Music</h1><p>Microphone analysis, spectrum response and music-reactive effects.</p></div><span id="micState" class="target">OFF</span></div>
-        <div class="music-layout">
-          <article class="box">
-            <h2>Music controls</h2>
-            <button id="mic" class="mini-btn primary" style="width:100%;margin-bottom:8px">START MICROPHONE</button>
-            <label class="field"><span>RESPONSE MODE</span><select id="audmode"><option value="OFF">Off</option><option value="LEVEL">Level / motion</option><option value="BEAT">Beat accents</option><option value="SPECTRUM">Spectrum</option><option value="FULL" selected>Full reactive</option></select></label>
-            <div class="subhead">AUDIO AMOUNT</div>
-            <div class="glass-control"><label>AMOUNT</label><div class="railglass"><div class="fill"></div><span class="thumb"></span><input id="audamt" type="range" min="0" max="255" value="180"></div><output id="audamtV">180</output></div>
-            <div class="subhead">MUSIC EFFECTS</div>
-            <div class="music-buttons">
-              <button class="mini-btn musicFx" data-fx="SPECTRUM">SPECTRUM</button>
-              <button class="mini-btn musicFx" data-fx="VU">VU</button>
-              <button class="mini-btn musicFx" data-fx="SONIC_STREAM">SONIC STREAM</button>
-              <button class="mini-btn musicFx" data-fx="LIGHTNING">LIGHTNING</button>
-            </div>
-            <div style="display:none">
-              <input id="gain" value="135"><input id="sm" value="55"><input id="floor" value="10"><input id="beat" value="185">
-              <span id="ml"></span><span id="mb"></span><span id="mm"></span><span id="mh"></span><span id="mdb"></span><span id="mbeat"></span>
-            </div>
-          </article>
-          <article class="box">
-            <h2>Live spectrum</h2>
-            <div class="spectrum" id="spectrumBars"></div>
-            <p class="muted">Spectrum uses the same three effect colors: Background = low, Main = mid, Foreground = high.</p>
-          </article>
+      <aside class="library">
+        <div class="library-head"><span>EFFECTS</span><span id="fxCount" class="muted">0</span></div>
+        <input id="fxSearch" class="search" placeholder="Search effects…" aria-label="Search effects">
+        <div class="filters">
+          <button class="filter-chip" data-filter="motion">MOTION</button>
+          <button class="filter-chip" data-filter="season">SEASONAL</button>
+          <button class="filter-chip" data-filter="audio">MUSIC</button>
         </div>
-      </div>
-    </section>
-
-    <section id="presets" class="workspace-page">
-      <div class="page">
-        <div class="page-head"><div><h1>Presets</h1><p>Save the complete effect, its three colors and its shaping values.</p></div><span id="presetCount" class="target">0</span></div>
-        <article class="box">
-          <button id="saveLook" class="mini-btn primary">SAVE CURRENT PRESET</button>
-          <div id="presetGrid" class="preset-grid" style="margin-top:8px"><div class="empty">No saved presets yet.</div></div>
-          <div id="shortcutGrid" hidden></div>
-        </article>
-      </div>
-    </section>
-
-    <section id="groups" class="workspace-page">
-      <div class="page">
-        <div class="page-head"><div><h1>Groups</h1><p>Groups are actual controllers. Sync both mirrors the same effect, three colors and settings to each connected ESP32.</p></div><span class="target">DEVICE GROUPS</span></div>
-        <div class="group-grid">
-          <div class="tile"><b>ESP32 #1</b><small>Control controller #1 independently.</small><button type="button" data-group-use="0">SELECT</button></div>
-          <div class="tile"><b>ESP32 #2</b><small>Control controller #2 independently.</small><button type="button" data-group-use="1">SELECT</button></div>
-          <div class="tile"><b>SYNC BOTH</b><small>Send the same state to both connected controllers.</small><button type="button" id="groupBoth">ENABLE</button></div>
+        <div class="fxlist">
+          <button class="fx on" data-fx="AURORA" data-cat="motion" data-preview="flow"><b>AURORA</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="CHASE" data-cat="motion" data-preview="chase"><b>CHASE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="TRICOLOR_CHASE" data-cat="motion" data-preview="chase"><b>TRI CHASE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="COMET" data-cat="motion audio" data-preview="comet"><b>COMET</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="METEOR" data-cat="motion" data-preview="comet"><b>METEOR</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="SCANNER" data-cat="motion" data-preview="scanner"><b>SCANNER</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="SINELON" data-cat="motion" data-preview="scanner"><b>SINELON</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="FLOW" data-cat="motion" data-preview="flow"><b>FLOW</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="SONIC_STREAM" data-cat="motion audio" data-preview="flow"><b>SONIC STREAM</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="RIPPLE" data-cat="motion audio" data-preview="ripple"><b>RIPPLE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="SONIC_BOOM" data-cat="motion audio" data-preview="ripple"><b>SONIC BOOM</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="STARBURST" data-cat="motion" data-preview="ripple"><b>STARBURST</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="BOUNCING_BALLS" data-cat="motion" data-preview="balls"><b>BOUNCING BALLS</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="JUGGLE" data-cat="motion" data-preview="balls"><b>JUGGLE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="TWINKLE" data-cat="" data-preview="twinkle"><b>TWINKLE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="TWINKLEFOX" data-cat="" data-preview="twinkle"><b>TWINKLEFOX</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="TWINKLECAT" data-cat="" data-preview="twinkle"><b>TWINKLECAT</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="SPARKLE" data-cat="season" data-preview="twinkle"><b>SPARKLE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="FIREWORKS" data-cat="season" data-preview="fireworks"><b>FIREWORKS</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="POPCORN" data-cat="" data-preview="twinkle"><b>POPCORN</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="DRIPDROP" data-cat="" data-preview="rain"><b>DRIPDROP</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="RAIN" data-cat="" data-preview="rain"><b>RAIN</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="FIRE" data-cat="" data-preview="fire"><b>FIRE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="MAGMA" data-cat="" data-preview="fire"><b>MAGMA</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="LAVA_LAMP" data-cat="" data-preview="fire"><b>LAVA LAMP</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="LIGHTNING" data-cat="audio" data-preview="lightning"><b>LIGHTNING</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="HEARTBEAT" data-cat="audio" data-preview="pulse"><b>HEARTBEAT</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="BREATHE" data-cat="" data-preview="pulse"><b>BREATHE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="AUDIO_PULSE" data-cat="audio" data-preview="pulse"><b>AUDIO PULSE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="SPECTRUM" data-cat="audio" data-preview="spectrum"><b>SPECTRUM</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="VU" data-cat="audio" data-preview="spectrum"><b>VU</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="POLICE" data-cat="" data-preview="strobe"><b>POLICE</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="SOLID" data-cat="" data-preview="solid"><b>SOLID</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="RAINBOW" data-cat="motion" data-preview="rainbow"><b>RAINBOW</b><span class="fx-palette"></span></button>
+          <button class="fx" data-fx="OFF" data-cat="" data-preview="off"><b>OFF</b><span class="fx-palette"></span></button>
         </div>
-      </div>
-    </section>
+      </aside>
+    </div>
+  </div>
+</section>
 
-    <section id="custom" class="workspace-page">
-      <div class="page">
-        <div class="page-head"><div><h1>Custom</h1><p>Build sequences from saved effect states. Every scene carries all three colors.</p></div><span id="customCount" class="target">0 SCENES</span></div>
-        <div class="custom-grid">
-          <div class="tile"><b>Add current scene</b><small>Store the current FX, Main, Background and Foreground colors plus shaping.</small><button id="addScene" type="button">ADD CURRENT</button></div>
-          <div class="tile"><b>Play sequence</b><small>Run saved scenes in order on the active target or synced group.</small><button id="playCustom" type="button">PLAY</button></div>
-          <div class="tile"><b>Clear sequence</b><small>Remove the locally saved custom sequence.</small><button id="clearCustom" type="button">CLEAR</button></div>
+<section id="music" class="workspace-page">
+  <div class="page">
+    <div class="section-head"><h1>Music</h1></div>
+    <div class="music-grid">
+      <section class="music-panel glass-panel">
+        <h2>Microphone</h2>
+        <div class="actions">
+          <button id="mic" class="glass-btn primary">START MICROPHONE</button>
+          <span id="micState" class="muted" style="font:800 7pt Oxanium">OFF</span>
         </div>
-        <div id="customScenes" class="preset-grid" style="margin-top:8px"></div>
-      </div>
-    </section>
-  </main>
+        <div class="subhead">Response</div>
+        <select id="audmode" class="compact-select"><option value="LEVEL">Level / motion</option><option value="BEAT">Beat</option><option value="SPECTRUM">Spectrum</option><option value="FULL" selected>Full reactive</option><option value="OFF">Off</option></select>
+        <div class="slider-row" style="margin-top:8px"><label>AMOUNT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="audamt" type="range" min="0" max="255" value="180"></div><output id="audamtV">180</output></div>
+        <div class="subhead">Music effects</div>
+        <div class="actions">
+          <button class="glass-btn" data-fx="SPECTRUM">SPECTRUM</button>
+          <button class="glass-btn" data-fx="VU">VU</button>
+          <button class="glass-btn" data-fx="SONIC_STREAM">SONIC STREAM</button>
+          <button class="glass-btn" data-fx="LIGHTNING">LIGHTNING</button>
+        </div>
+      </section>
+      <section class="music-panel glass-panel">
+        <h2>Live spectrum</h2>
+        <div id="spectrumBars" class="spectrum"></div>
+        <div id="spectrumColorControls" class="spectrum-colors">
+          <label class="spectrum-color"><input id="spectrumLow" type="color" value="#000000">LOW</label>
+          <label class="spectrum-color"><input id="spectrumMid" type="color" value="#FFFFFF">MID</label>
+          <label class="spectrum-color"><input id="spectrumHigh" type="color" value="#8000FF">HIGH</label>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section id="presets" class="workspace-page">
+  <div class="page">
+    <div class="section-head"><h1>Presets</h1><span id="presetCount" class="muted"></span></div>
+    <div class="preset-tools">
+      <button id="saveLook" class="glass-btn primary">SAVE CURRENT PRESET</button>
+    </div>
+    <div id="presetGrid" class="preset-grid"><div class="empty">No saved presets yet.</div></div>
+  </div>
+</section>
+
+<section id="custom" class="workspace-page">
+  <div class="page">
+    <div class="section-head"><h1>Custom Playlist</h1><span id="customCount" class="muted"></span></div>
+    <div class="playlist-tools">
+      <button id="addScene" class="glass-btn">ADD CURRENT FX</button>
+      <button id="playCustom" class="glass-btn primary">PLAY</button>
+      <button id="stopCustom" class="glass-btn">STOP</button>
+      <button id="clearCustom" class="glass-btn danger">CLEAR PLAYLIST</button>
+    </div>
+    <div id="customScenes" class="playlist"><div class="empty">Add an effect or preset to build a playlist.</div></div>
+  </div>
+</section>
+
+<div class="hidden-core">
+  <input id="leds" type="number" value="300">
+  <input id="gpio" type="number" value="13">
+  <select id="order"><option selected>GRB</option><option>RGB</option><option>BRG</option></select>
+  <input id="gain" value="135"><input id="sm" value="55"><input id="floor" value="10"><input id="beat" value="185">
+  <input id="raw"><button id="rawgo"></button><button id="connect"></button><button id="off"></button><button id="save"></button><button id="reboot"></button>
+  <span id="ml"></span><span id="mb"></span><span id="mm"></span><span id="mh"></span><span id="mdb"></span><span id="mbeat"></span>
+  <span id="shortcutGrid"></span>
+</div>
+
+</main>
 </div>
 </div>
 
-<script src="st-ble-core.js?v=20260901-device-state1"></script>
+<script src="st-ble-core.js?v=20260901-consumer-pass1"></script>
 <script>
 'use strict';
 (()=>{
-const q=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)];
-const PALETTE_KEY='stw-esp32-effect-palettes-v1', PRESET_KEY='stw-esp32-presets-v3', CUSTOM_KEY='stw-esp32-custom-v3';
-let uiFx='AURORA', activeRole='main';
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const PALETTE_KEY='stw-esp32-effect-palettes-v1',PRESET_KEY='stw-esp32-presets-v3',PLAYLIST_KEY='stw-esp32-custom-v3';
+let uiFx='AURORA',activeRole='main',activeFilter='',previewRaf=0,playlistTimers=[],suppressSavedClickUntil=0;
 
-function readPalettes(){try{return JSON.parse(localStorage.getItem(PALETTE_KEY)||'{}')||{}}catch(_){return {}}}
-function writePalettes(v){try{localStorage.setItem(PALETTE_KEY,JSON.stringify(v))}catch(_){}}
+function loadJSON(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v??fallback}catch(_){return fallback}}
+function saveJSON(key,v){try{localStorage.setItem(key,JSON.stringify(v))}catch(_){}}
 function currentPalette(){return {main:q('#main')?.value||'#FFFFFF',bg:q('#bg')?.value||'#000000',fg:q('#fg')?.value||'#8000FF'}}
-function effectPalette(fx){const all=readPalettes(),p=all[fx];return p&&p.main&&p.bg&&p.fg?p:currentPalette()}
-function storePalette(fx=uiFx){const all=readPalettes();all[fx]=currentPalette();writePalettes(all);updateEffectSwatches()}
-function setPalette(p,{transmit=false}={}){['main','bg','fg'].forEach(k=>{const x=q('#'+k);if(x&&p[k])x.value=p[k].toUpperCase()});syncColorUI();paintPreview();if(transmit&&typeof send==='function'){const c=currentPalette();send(`MAIN=${c.main.slice(1)};BG=${c.bg.slice(1)};FG=${c.fg.slice(1)}`,true)}}
-function hexHue(hex){const s=String(hex||'#ffffff').replace('#','');const r=parseInt(s.slice(0,2),16)/255,g=parseInt(s.slice(2,4),16)/255,b=parseInt(s.slice(4,6),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;if(!d)return null;let h;if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h=Math.round(h*60);return h<0?h+360:h}
-function hueHex(h){const c=1,x=1-Math.abs((h/60)%2-1),m=0;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}const hh=v=>Math.round((v+m)*255).toString(16).padStart(2,'0').toUpperCase();return '#'+hh(r)+hh(g)+hh(b)}
-function syncHueFromRole(){const slider=q('#hueRange'),rail=q('#hueSelector'),label=q('#hueValue');if(!slider||!rail)return;const h=hexHue(currentPalette()[activeRole]);if(h!=null){slider.value=h;rail.style.setProperty('--hx',(h/359*100)+'%')}if(label)label.textContent='CLEAR'}
-function syncColorUI(){const p=currentPalette();['main','bg','fg'].forEach(k=>{const s=q('#'+k+'Swatch');if(s)s.style.background=p[k]});const picker=q('#livePicker');if(picker)picker.value=p[activeRole];syncHueFromRole()}
-function updateEffectSwatches(){qa('.fx[data-fx]').forEach(b=>{const p=effectPalette(b.dataset.fx),host=b.querySelector('.fx-palette');if(!host)return;host.innerHTML='';[p.main,p.bg,p.fg].forEach(c=>{const i=document.createElement('i');i.style.background=c;i.style.boxShadow=`0 0 5px ${c}`;host.append(i)})})}
+function readPalettes(){const v=loadJSON(PALETTE_KEY,{});return v&&typeof v==='object'?v:{}}
+function effectPalette(fx){const p=readPalettes()[fx];return p&&p.main&&p.bg&&p.fg?p:currentPalette()}
+function storePalette(fx=uiFx){const all=readPalettes();all[fx]=currentPalette();saveJSON(PALETTE_KEY,all);renderEffectSwatches()}
+function setPalette(p,{transmit=false}={}){for(const k of ['main','bg','fg']){const x=q('#'+k);if(x&&p[k])x.value=p[k].toUpperCase()}syncColorUI();if(transmit&&typeof send==='function'){const c=currentPalette();send(`MAIN=${c.main.slice(1)};BG=${c.bg.slice(1)};FG=${c.fg.slice(1)}`,true)}}
 
-function ensurePreview(){const box=q('#ledPreview');if(!box)return;while(box.children.length<48)box.append(document.createElement('i'))}
-function paintPreview(){ensurePreview();const p=currentPalette(),leds=qa('#ledPreview i');leds.forEach((el,i)=>{let c;switch(uiFx){case 'RIPPLE':case 'SONIC_BOOM':{const center=(leds.length-1)/2,d=Math.abs(i-center),m=Math.floor(d)%3;c=[p.main,p.bg,p.fg][m];break}case 'SCANNER':c=[p.bg,p.main,p.fg][Math.floor(i/5)%3];break;case 'TWINKLE':c=[p.main,p.bg,p.fg][i%3];el.style.opacity=i%4===0?'1':'.34';break;default:c=[p.main,p.bg,p.fg][i%3];el.style.opacity='1'}el.style.background=c;el.style.color=c})}
-function chooseEffect(b){if(!b?.dataset.fx)return;uiFx=b.dataset.fx;const p=effectPalette(uiFx);setPalette(p,{transmit:true});q('#activeFxName').textContent=b.querySelector('b')?.textContent||uiFx;qa('.fx[data-fx]').forEach(x=>x.classList.toggle('on',x===b));storePalette(uiFx);paintPreview()}
-qa('[data-fx]').forEach(b=>b.addEventListener('click',()=>chooseEffect(q(`.fx[data-fx="${b.dataset.fx}"]`)||b),true));
+function hexHue(hex){const s=String(hex||'#fff').replace('#','').padEnd(6,'f').slice(0,6),r=parseInt(s.slice(0,2),16)/255,g=parseInt(s.slice(2,4),16)/255,b=parseInt(s.slice(4,6),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;if(!d)return null;let h=max===r?((g-b)/d)%6:max===g?(b-r)/d+2:(r-g)/d+4;h=Math.round(h*60);return h<0?h+360:h}
+function hueHex(h){const c=1,x=1-Math.abs((h/60)%2-1);let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}const z=v=>Math.round(v*255).toString(16).padStart(2,'0').toUpperCase();return '#'+z(r)+z(g)+z(b)}
+function syncHue(){const h=hexHue(currentPalette()[activeRole]),range=q('#hueRange'),rail=q('#hueSelector');if(h!=null&&range&&rail){range.value=h;rail.style.setProperty('--hx',(h/359*100)+'%')}}
+function syncColorUI(){const p=currentPalette();for(const k of ['main','bg','fg']){const s=q('#'+k+'Swatch');if(s)s.style.background=p[k]}const lp=q('#livePicker');if(lp)lp.value=p[activeRole];syncHue();syncSpectrumPickersLocal();renderEffectSwatches()}
+function applyRoleColor(role,hex){const x=q('#'+role);if(!x)return;x.value=hex.toUpperCase();x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}));syncColorUI()}
 
-['main','bg','fg'].forEach(k=>q('#'+k)?.addEventListener('input',()=>{storePalette();syncColorUI();paintPreview()}));
 qa('.role').forEach(b=>b.addEventListener('click',()=>{qa('.role').forEach(x=>x.classList.remove('on'));b.classList.add('on');activeRole=b.dataset.role;syncColorUI()}));
-q('#livePicker')?.addEventListener('input',e=>{const x=q('#'+activeRole);if(!x)return;x.value=e.target.value;x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))});
-qa('[data-quick]').forEach(b=>b.addEventListener('click',()=>{const x=q('#'+activeRole);if(!x)return;x.value=b.dataset.quick;x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))}));
-const hue=q('#hueRange'),hueRail=q('#hueSelector'),hueLabel=q('#hueValue');
-function applyHue(){if(!hue||!hueRail)return;const h=+hue.value,hex=hueHex(h),x=q('#'+activeRole);hueRail.style.setProperty('--hx',(h/359*100)+'%');if(hueLabel){hueLabel.textContent=hex;hueLabel.style.color=hex}if(x){x.value=hex;x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))}}
-if(hue&&hueRail){hue.addEventListener('pointerdown',()=>hueRail.classList.add('is-active'));hue.addEventListener('touchstart',()=>hueRail.classList.add('is-active'),{passive:true});hue.addEventListener('input',applyHue);const endHue=()=>{hueRail.classList.remove('is-active');if(hueLabel){hueLabel.textContent='CLEAR';hueLabel.style.color=''}};hue.addEventListener('pointerup',endHue);hue.addEventListener('pointercancel',endHue);hue.addEventListener('change',()=>setTimeout(endHue,80));hue.addEventListener('blur',endHue)}
+for(const k of ['main','bg','fg'])q('#'+k)?.addEventListener('input',()=>{storePalette();syncColorUI()});
 
-function updateGlass(input){const rail=input.closest('.railglass');if(!rail)return;const min=+input.min||0,max=+input.max||100,v=+input.value,p=Math.max(0,Math.min(100,(v-min)/(max-min)*100));rail.querySelector('.fill').style.width=p+'%';rail.querySelector('.thumb').style.left=p+'%'}
-qa('input[type=range]').forEach(x=>{if(x.id==='hueRange')return;updateGlass(x);x.addEventListener('input',()=>{updateGlass(x);const o=q('#'+x.id+'V');if(o&&x.id!=='audamt')o.textContent=Math.round((+x.value-(+x.min||0))/((+x.max||100)-(+x.min||0))*100)+'%';if(o&&x.id==='audamt')o.textContent=x.value})});
-q('#mirrorBtn')?.addEventListener('click',()=>{const c=q('#mirror');c.checked=!c.checked;c.dispatchEvent(new Event('change',{bubbles:true}));q('#mirrorBtn').classList.toggle('on',c.checked)});
+const hue=q('#hueRange'),hueRail=q('#hueSelector'),hueValue=q('#hueValue');
+function applyHue(){if(!hue||!hueRail)return;const h=+hue.value,hex=hueHex(h);hueRail.style.setProperty('--hx',(h/359*100)+'%');if(hueValue){hueValue.textContent=hex;hueValue.style.color=hex}applyRoleColor(activeRole,hex)}
+function endHue(){hueRail?.classList.remove('is-active');if(hueValue){hueValue.textContent='CLEAR';hueValue.style.color=''}}
+if(hue&&hueRail){hue.addEventListener('pointerdown',()=>hueRail.classList.add('is-active'));hue.addEventListener('input',applyHue);hue.addEventListener('pointerup',endHue);hue.addEventListener('pointercancel',endHue);hue.addEventListener('change',()=>setTimeout(endHue,70));hue.addEventListener('blur',endHue)}
 
-function filterFx(){const term=q('#fxSearch').value.trim().toLowerCase(),cat=q('.chip.on')?.dataset.filter||'all';let n=0;qa('.fxlist .fx').forEach(x=>{const hit=(!term||x.textContent.toLowerCase().includes(term))&&(cat==='all'||(x.dataset.cat||'').includes(cat));x.classList.toggle('hide',!hit);if(hit)n++});q('#fxCount').textContent=n}
-q('#fxSearch')?.addEventListener('input',filterFx);qa('.chip').forEach(b=>b.addEventListener('click',()=>{qa('.chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');filterFx()}));
+function updateGlass(x){const rail=x.closest('.railglass');if(!rail)return;const min=+x.min||0,max=+x.max||100,v=+x.value,p=Math.max(0,Math.min(100,(v-min)/(max-min)*100));rail.querySelector('.fill').style.width=p+'%';rail.querySelector('.thumb').style.left=p+'%';const o=q('#'+x.id+'V');if(o)o.textContent=x.id==='audamt'?x.value:Math.round(p)+'%'}
+qa('.railglass input[type=range]').forEach(x=>{updateGlass(x);x.addEventListener('input',()=>updateGlass(x))});
+q('#mirrorBtn')?.addEventListener('click',()=>{const m=q('#mirror');m.checked=!m.checked;m.dispatchEvent(new Event('change',{bubbles:true}));q('#mirrorBtn').classList.toggle('on',m.checked)});
+
+function renderEffectSwatches(){qa('.fx[data-fx]').forEach(b=>{const p=effectPalette(b.dataset.fx),host=b.querySelector('.fx-palette');if(!host)return;host.innerHTML='';for(const c of [p.main,p.bg,p.fg]){const i=document.createElement('i');i.style.background=c;host.append(i)}})}
+function selectEffect(btn,{transmitColors=true}={}){if(!btn?.dataset.fx)return;uiFx=btn.dataset.fx;const p=effectPalette(uiFx);setPalette(p,{transmit:transmitColors});q('#activeFxName').textContent=btn.querySelector('b')?.textContent||uiFx;qa('.fx[data-fx]').forEach(x=>x.classList.toggle('on',x===btn));storePalette(uiFx)}
+qa('.fx[data-fx]').forEach(b=>b.addEventListener('click',()=>selectEffect(b),true));
+qa('#music [data-fx]').forEach(b=>b.addEventListener('click',()=>{const match=q(`.fx[data-fx="${b.dataset.fx}"]`);if(match)selectEffect(match)}));
+
+function filterFx(){const term=(q('#fxSearch')?.value||'').trim().toLowerCase();let n=0;qa('.fxlist .fx').forEach(x=>{const cat=x.dataset.cat||'',hit=(!term||x.textContent.toLowerCase().includes(term))&&(!activeFilter||cat.includes(activeFilter));x.classList.toggle('hide',!hit);if(hit)n++});q('#fxCount').textContent=n}
+q('#fxSearch')?.addEventListener('input',filterFx);
+qa('.filter-chip').forEach(b=>b.addEventListener('click',()=>{const same=activeFilter===b.dataset.filter;activeFilter=same?'':b.dataset.filter;qa('.filter-chip').forEach(x=>x.classList.toggle('on',x.dataset.filter===activeFilter));filterFx()}));
+
+function ensurePreview(){const host=q('#ledPreview');if(!host)return;while(host.children.length<42)host.append(document.createElement('i'))}
+function previewColor(i,p){return [p.main,p.bg,p.fg][Math.abs(i)%3]}
+function renderPreview(t=0){const leds=qa('#ledPreview i');if(!leds.length){previewRaf=requestAnimationFrame(renderPreview);return}const p=currentPalette(),btn=q(`.fx[data-fx="${uiFx}"]`),mode=btn?.dataset.preview||'flow',speed=Math.max(.2,(+q('#spd')?.value||128)/90),phase=t/140*speed,n=leds.length;
+for(let i=0;i<n;i++){let c=p.bg,op=.14,on=false;const pos=(phase+i)%n;
+  if(mode==='off'){c='#000000';op=.08}
+  else if(mode==='solid'){c=p.main;op=1}
+  else if(mode==='chase'){const k=Math.floor((i+phase)%9);on=k<3;c=on?previewColor(k,p):p.bg;op=on?1:.16}
+  else if(mode==='flow'){const k=Math.floor((i+phase)%12);on=k<5;c=previewColor(Math.floor(k/2),p);op=on?1:.12}
+  else if(mode==='scanner'){const x=Math.abs(((phase%(2*n-2)))-(n-1)),d=Math.abs(i-x);c=d<1?p.main:d<3?p.fg:p.bg;op=d<1?1:d<3?.45:.09}
+  else if(mode==='comet'){const head=Math.floor(phase%n),d=(head-i+n)%n;c=d===0?p.main:d<5?p.fg:p.bg;op=d===0?1:d<5?Math.max(.18,1-d*.18):.08}
+  else if(mode==='ripple'){const d=Math.abs(i-(n-1)/2),r=(phase%(n/2));const qd=Math.abs(d-r);c=qd<1?p.main:qd<2.7?p.fg:p.bg;op=qd<1?1:qd<2.7?.4:.08}
+  else if(mode==='twinkle'||mode==='fireworks'){const seed=Math.sin(i*91.7+Math.floor(phase)*13.3)*43758.5453,rand=seed-Math.floor(seed);on=rand>.76;c=previewColor(i+Math.floor(phase),p);op=on?1:.08}
+  else if(mode==='rain'){const k=(i+Math.floor(phase*1.6))%8;on=k<2;c=previewColor(i,p);op=on?1:.08}
+  else if(mode==='fire'){const flick=(Math.sin(i*2.7+phase*1.9)+1)/2;c=flick>.66?p.main:flick>.33?p.fg:p.bg;op=.35+flick*.65}
+  else if(mode==='lightning'){const strike=Math.floor(phase)%17===0;on=strike&&(i%3!==0);c=on?p.main:p.bg;op=on?1:.08}
+  else if(mode==='pulse'){const pulse=(Math.sin(phase*.7)+1)/2;c=previewColor(i,p);op=.12+pulse*.88}
+  else if(mode==='balls'){const a=Math.floor((Math.sin(phase*.4)+1)/2*(n-1)),b=Math.floor((Math.sin(phase*.55+2)+1)/2*(n-1));const d=Math.min(Math.abs(i-a),Math.abs(i-b));c=d<1?p.main:d<2?p.fg:p.bg;op=d<1?1:d<2?.5:.08}
+  else if(mode==='spectrum'){const band=i%9,h=(Math.sin(phase*.55+band*.7)+1)/2;c=previewColor(Math.floor(i/5),p);op=.12+h*.88}
+  else if(mode==='strobe'){const onFrame=Math.floor(phase)%4<2;c=onFrame?previewColor(Math.floor(i/(n/3)),p):p.bg;op=onFrame?1:.08}
+  else if(mode==='rainbow'){const h=((i*360/n)+(phase*5))%360;c=hueHex(h);op=1}
+  else{c=previewColor(i+Math.floor(phase),p);op=.9}
+  const el=leds[i];el.style.background=c;el.style.color=c;el.style.opacity=op.toFixed(2)
+}
+previewRaf=requestAnimationFrame(renderPreview)}
+ensurePreview();previewRaf=requestAnimationFrame(renderPreview);
 
 function captureState(name='Preset'){const p=currentPalette();return {name,fx:uiFx,...p,bri:q('#bri').value,spd:q('#spd').value,int:q('#int').value,size:q('#size').value,dens:q('#dens').value,trail:q('#trail').value,dir:q('#dir').value,mirror:q('#mirror').checked}}
-function applyState(s){uiFx=s.fx||uiFx;setPalette({main:s.main||'#FFFFFF',bg:s.bg||'#000000',fg:s.fg||'#8000FF'},{transmit:true});['bri','spd','int','size','dens','trail'].forEach(k=>{if(s[k]!=null){const x=q('#'+k);x.value=s[k];x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))}});if(s.dir){q('#dir').value=s.dir;q('#dir').dispatchEvent(new Event('change',{bubbles:true}))}q('#mirror').checked=!!s.mirror;q('#mirror').dispatchEvent(new Event('change',{bubbles:true}));q('#mirrorBtn').classList.toggle('on',!!s.mirror);const b=q(`.fx[data-fx="${uiFx}"]`);if(b)b.click()}
-function loadList(key){try{const x=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(x)?x:[]}catch(_){return []}}
-function saveList(key,list){try{localStorage.setItem(key,JSON.stringify(list))}catch(_){}}
+function applyState(s){if(!s)return;uiFx=s.fx||uiFx;setPalette({main:s.main||'#FFFFFF',bg:s.bg||'#000000',fg:s.fg||'#8000FF'},{transmit:true});for(const k of ['bri','spd','int','size','dens','trail'])if(s[k]!=null&&q('#'+k)){q('#'+k).value=s[k];q('#'+k).dispatchEvent(new Event('input',{bubbles:true}));q('#'+k).dispatchEvent(new Event('change',{bubbles:true}))}if(s.dir&&q('#dir')){q('#dir').value=s.dir;q('#dir').dispatchEvent(new Event('change',{bubbles:true}))}if(q('#mirror')){q('#mirror').checked=!!s.mirror;q('#mirror').dispatchEvent(new Event('change',{bubbles:true}));q('#mirrorBtn')?.classList.toggle('on',!!s.mirror)}const b=q(`.fx[data-fx="${uiFx}"]`);if(b)b.click()}
+function presets(){const x=loadJSON(PRESET_KEY,[]);return Array.isArray(x)?x:[]}
+function savePresets(x){saveJSON(PRESET_KEY,x.slice(0,40))}
+function playlist(){const x=loadJSON(PLAYLIST_KEY,[]);return Array.isArray(x)?x:[]}
+function savePlaylist(x){saveJSON(PLAYLIST_KEY,x.slice(0,80))}
 
-function renderPresets(){const list=loadList(PRESET_KEY),grid=q('#presetGrid');q('#presetCount').textContent=list.length;grid.innerHTML=list.length?'':'<div class="empty">No saved presets yet.</div>';list.forEach((p,i)=>{const d=document.createElement('div');d.className='tile';d.innerHTML=`<b>${p.name}</b><small>${p.fx}<br>${p.main} · ${p.bg} · ${p.fg}</small><button type="button">LOAD</button>`;d.querySelector('button').onclick=()=>applyState(p);grid.append(d)})}
-q('#saveLook')?.addEventListener('click',()=>{const list=loadList(PRESET_KEY);list.unshift(captureState('Preset '+(list.length+1)));saveList(PRESET_KEY,list.slice(0,24));renderPresets()});
+function saveCurrentPreset(){const list=presets(),name='Preset '+(list.length+1);list.unshift(captureState(name));savePresets(list);renderPresets()}
+function addToPlaylist(state){const list=playlist();list.push({...state,name:state.name||state.fx||'Effect'});savePlaylist(list);renderPlaylist()}
+q('#saveLook')?.addEventListener('click',saveCurrentPreset);
+q('#saveFxPreset')?.addEventListener('click',saveCurrentPreset);
+q('#addFxPlaylist')?.addEventListener('click',()=>addToPlaylist(captureState(uiFx)));
+q('#addScene')?.addEventListener('click',()=>addToPlaylist(captureState(uiFx)));
 
-function renderCustom(){const list=loadList(CUSTOM_KEY),host=q('#customScenes');q('#customCount').textContent=list.length+' SCENES';host.innerHTML=list.length?'':'<div class="empty">No custom scenes yet.</div>';list.forEach((s,i)=>{const d=document.createElement('div');d.className='tile';d.innerHTML=`<b>Scene ${i+1}</b><small>${s.fx}<br>${s.main} · ${s.bg} · ${s.fg}</small><button type="button">LOAD</button>`;d.querySelector('button').onclick=()=>applyState(s);host.append(d)})}
-q('#addScene')?.addEventListener('click',()=>{const list=loadList(CUSTOM_KEY);list.push(captureState('Scene '+(list.length+1)));saveList(CUSTOM_KEY,list.slice(0,32));renderCustom()});
-q('#playCustom')?.addEventListener('click',()=>{const list=loadList(CUSTOM_KEY);if(!list.length)return;list.forEach((s,i)=>setTimeout(()=>applyState(s),i*850))});
-q('#clearCustom')?.addEventListener('click',()=>{saveList(CUSTOM_KEY,[]);renderCustom()});
+function renderPresets(){const list=presets(),grid=q('#presetGrid');q('#presetCount').textContent=list.length?`${list.length} SAVED`:'';grid.innerHTML='';if(!list.length){grid.innerHTML='<div class="empty">No saved presets yet.</div>';return}list.forEach((p,i)=>{const card=document.createElement('article');card.className='preset-card';const title=document.createElement('b');title.textContent=p.name||`Preset ${i+1}`;const info=document.createElement('small');info.textContent=`${p.fx} · ${p.main} · ${p.bg} · ${p.fg}`;const actions=document.createElement('div');actions.className='actions';const load=document.createElement('button');load.className='tiny-btn';load.textContent='LOAD';load.onclick=()=>applyState(p);const add=document.createElement('button');add.className='tiny-btn';add.textContent='+ PLAYLIST';add.onclick=()=>addToPlaylist(p);const del=document.createElement('button');del.className='tiny-btn danger';del.textContent='DELETE';del.onclick=()=>{const x=presets();x.splice(i,1);savePresets(x);renderPresets()};actions.append(load,add,del);card.append(title,info,actions);grid.append(card)})}
 
-q('#groupBoth')?.addEventListener('click',()=>{q('#sync').checked=true;q('#sync').dispatchEvent(new Event('change',{bubbles:true}))});
-qa('[data-group-use]').forEach(b=>b.addEventListener('click',()=>q(`.use[data-i="${b.dataset.groupUse}"]`)?.click()));
+function clearPlaylistTimers(){playlistTimers.forEach(clearTimeout);playlistTimers=[]}
+function renderPlaylist(){const list=playlist(),host=q('#customScenes');q('#customCount').textContent=list.length?`${list.length} ITEMS`:'';host.innerHTML='';if(!list.length){host.innerHTML='<div class="empty">Add an effect or preset to build a playlist.</div>';return}list.forEach((s,i)=>{const row=document.createElement('div');row.className='playlist-row';const num=document.createElement('span');num.className='playlist-num';num.textContent=i+1;const text=document.createElement('span');const b=document.createElement('b');b.textContent=s.name||s.fx||`Item ${i+1}`;const sm=document.createElement('small');sm.textContent=`${s.fx} · ${s.main} · ${s.bg} · ${s.fg}`;text.append(b,sm);const actions=document.createElement('div');actions.className='actions';const load=document.createElement('button');load.className='tiny-btn';load.textContent='LOAD';load.onclick=()=>applyState(s);const del=document.createElement('button');del.className='tiny-btn danger';del.textContent='DELETE';del.onclick=()=>{const x=playlist();x.splice(i,1);savePlaylist(x);renderPlaylist()};actions.append(load,del);row.append(num,text,actions);host.append(row)})}
+q('#playCustom')?.addEventListener('click',()=>{clearPlaylistTimers();const list=playlist();list.forEach((s,i)=>playlistTimers.push(setTimeout(()=>applyState(s),i*1200)))});
+q('#stopCustom')?.addEventListener('click',clearPlaylistTimers);
+q('#clearCustom')?.addEventListener('click',()=>{clearPlaylistTimers();savePlaylist([]);renderPlaylist()});
 
+function syncSpectrumPickersLocal(){const map=[['spectrumLow','bg'],['spectrumMid','main'],['spectrumHigh','fg']];for(const [sid,rid] of map)if(q('#'+sid)&&q('#'+rid))q('#'+sid).value=q('#'+rid).value}
+for(const [sid,rid] of [['spectrumLow','bg'],['spectrumMid','main'],['spectrumHigh','fg']])q('#'+sid)?.addEventListener('input',e=>applyRoleColor(rid,e.target.value));
+if(typeof updateSpectrumPalette==='function')updateSpectrumPalette=function(){const bars=qa('#spectrumBars i'),p=currentPalette();bars.forEach((bar,i)=>{const c=i<bars.length/3?p.bg:i<bars.length*2/3?p.main:p.fg;bar.style.background=c;bar.style.boxShadow=`0 0 6px ${c}`})};
 
-// --- Per-controller hardware settings -------------------------------------------------
-const DEVICE_CFG_KEY='stw-esp32-device-config-v1';
-function defaultDeviceCfg(){return {leds:300,gpio:13,order:'GRB',segFrom:0,segTo:299}}
-function loadDeviceCfg(){try{const x=JSON.parse(localStorage.getItem(DEVICE_CFG_KEY)||'[]');return [0,1].map(i=>({...defaultDeviceCfg(),...(x[i]||{})}))}catch(_){return [defaultDeviceCfg(),defaultDeviceCfg()]}}
-let deviceCfg=loadDeviceCfg();
-function persistDeviceCfg(){try{localStorage.setItem(DEVICE_CFG_KEY,JSON.stringify(deviceCfg))}catch(_){}}
-function formDeviceCfg(){return {leds:+q('#leds')?.value||300,gpio:+q('#gpio')?.value||0,order:q('#order')?.value||'GRB',segFrom:+q('#segFrom')?.value||0,segTo:+q('#segTo')?.value||0}}
-function renderDeviceCfg(i){const c=deviceCfg[i]||defaultDeviceCfg();if(q('#leds'))q('#leds').value=c.leds;if(q('#gpio'))q('#gpio').value=c.gpio;if(q('#order'))q('#order').value=c.order;if(q('#segFrom'))q('#segFrom').value=c.segFrom;if(q('#segTo'))q('#segTo').value=c.segTo;const t=q('#deviceSettingsTarget');if(t)t.textContent=q('#sync')?.checked?'— SYNC BOTH':`— ESP32 #${i+1}`}
-function rememberDeviceForm(i=typeof ai==='number'?ai:0){const c=formDeviceCfg();if(q('#sync')?.checked){deviceCfg[0]={...c};deviceCfg[1]={...c}}else deviceCfg[i]={...c};persistDeviceCfg()}
-function updateDeviceCfgFromStatus(i,text){const st={};String(text||'').split(';').forEach(p=>{const n=p.indexOf('=');if(n>0)st[p.slice(0,n)]=p.slice(n+1)});const c={...(deviceCfg[i]||defaultDeviceCfg())};if(st.CFGLEDS||st.LEDS)c.leds=+(st.CFGLEDS||st.LEDS)||c.leds;if(st.CFGPIN||st.PIN)c.gpio=+(st.CFGPIN||st.PIN);if(st.ORDER)c.order=st.ORDER;deviceCfg[i]=c;persistDeviceCfg();if(typeof ai==='number'&&i===ai&&!q('#sync')?.checked)renderDeviceCfg(i)}
+function deleteSavedColor(color,button){const key='stw-esp32-saved-colors-v1',list=loadJSON(key,[]).filter(x=>String(x).toUpperCase()!==String(color).toUpperCase());saveJSON(key,list);button?.remove();suppressSavedClickUntil=Date.now()+500}
+const savedHost=q('.saved');
+let holdTimer=null,holdBtn=null;
+savedHost?.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-user-color]');if(!b)return;holdBtn=b;holdTimer=setTimeout(()=>{deleteSavedColor(b.dataset.userColor,b);holdTimer=null},650)});
+for(const ev of ['pointerup','pointercancel','pointerleave'])savedHost?.addEventListener(ev,()=>{if(holdTimer)clearTimeout(holdTimer);holdTimer=null;holdBtn=null});
+savedHost?.addEventListener('click',e=>{if(Date.now()<suppressSavedClickUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
+savedHost?.addEventListener('contextmenu',e=>{if(e.target.closest('[data-user-color]'))e.preventDefault()});
 
-if(typeof use==='function'){
-  const coreUse=use;
-  use=function(i){
-    const previous=typeof ai==='number'?ai:0;
-    if(previous!==i)rememberDeviceForm(previous);
-    coreUse(i);
-    // Restore each controller's own hardware form and its last known controller state.
-    renderDeviceCfg(i);
-    if(typeof ds!=='undefined'&&ds[i]?.state&&Object.keys(ds[i].state).length&&typeof syncUI==='function')syncUI(ds[i].state);
-  };
-}
-if(typeof parseStatus==='function'){
-  const coreParseStatus=parseStatus;
-  parseStatus=function(i,text,syncUIAfter=false){coreParseStatus(i,text,syncUIAfter);updateDeviceCfgFromStatus(i,text)};
-}
-if(typeof saveConfig==='function'){
-  const coreSaveConfig=saveConfig;
-  saveConfig=async function(reboot=false){
-    rememberDeviceForm(typeof ai==='number'?ai:0);
-    const syncOn=!!q('#sync')?.checked;
-    const targetText=syncOn?'both ESP32 controllers':`ESP32 #${(typeof ai==='number'?ai:0)+1}`;
-    q('#deviceSettingsTarget').textContent=syncOn?'— SYNC BOTH':`— ESP32 #${(typeof ai==='number'?ai:0)+1}`;
-    await coreSaveConfig(reboot);
-    if(q('#status'))q('#status').textContent=`Device settings saved to ${targetText}${reboot?' and reboot requested':''}.`;
-  };
-}
-['leds','gpio','order','segFrom','segTo'].forEach(id=>q('#'+id)?.addEventListener('input',()=>rememberDeviceForm(typeof ai==='number'?ai:0)));
-q('#sync')?.addEventListener('change',()=>{
-  const i=typeof ai==='number'?ai:0;
-  if(q('#sync').checked){const c=formDeviceCfg();deviceCfg[0]={...c};deviceCfg[1]={...c};persistDeviceCfg();renderDeviceCfg(i);if(q('#status'))q('#status').textContent='SYNC BOTH enabled. Hardware settings will save to both controllers.'}
-  else{renderDeviceCfg(i);if(q('#status'))q('#status').textContent=`SYNC BOTH off. Hardware settings now apply only to ESP32 #${i+1}.`}
-});
-renderDeviceCfg(typeof ai==='number'?ai:0);
+function useSelectedState(i){if(typeof ds!=='undefined'&&ds[i]?.state&&Object.keys(ds[i].state).length&&typeof syncUI==='function')syncUI(ds[i].state)}
+if(typeof use==='function'){const coreUse=use;use=function(i){coreUse(i);useSelectedState(i)}}
 
-ensurePreview();syncColorUI();updateEffectSwatches();paintPreview();filterFx();renderPresets();renderCustom();
+renderEffectSwatches();syncColorUI();filterFx();renderPresets();renderPlaylist();
 if(typeof activateTab==='function')activateTab('device');
 })();
 </script>
