@@ -15,12 +15,15 @@ const ds=[slot(0),slot(1)];
 let ai=0;
 let selectedFx='AURORA';
 let activeConnectSlot=null;
+let connectLock=Promise.resolve();
 let micOn=false,stream=null,ctx=null,an=null,raf=0,lastAT=0,bassAvg=0,lastBeat=0;
 let smooth={l:0,b:0,m:0,h:0},peaks={l:30,b:30,m:30,h:30};
 
 function log(s){const x=$('log');if(!x)return;x.textContent+='\n'+new Date().toLocaleTimeString()+' '+s;x.scrollTop=x.scrollHeight}
 function setText(id,text){const x=$(id);if(x)x.textContent=text}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 function waitFor(promise,ms,label){return new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error(label)),ms);Promise.resolve(promise).then(v=>{clearTimeout(timer);resolve(v)},e=>{clearTimeout(timer);reject(e)})})}
+function withConnectLock(task){const run=()=>task();const p=connectLock.then(run,run);connectLock=p.catch(()=>{});return p}
 function chunks(t){const parts=String(t||'').split(';').map(x=>x.trim()).filter(Boolean),out=[];let current='';for(const p of parts){const next=current?current+';'+p:p;if(next.length<=18)current=next;else{if(current)out.push(current);current=p}}if(current)out.push(current);return out}
 function connectedCount(){return ds.filter(d=>d.on).length}
 function updateBadge(){const n=connectedCount(),b=$('badge');if(b){b.textContent=n?`${n} CONNECTED`:'BLE READY';b.classList.toggle('ok',n>0)}$('headerDot')?.classList.toggle('ok',!!ds[ai]?.on)}
@@ -41,16 +44,105 @@ function send(text,quiet=true){return sendTo(targets(),text,{quiet})}
 
 function parseStatus(i,text,syncUIAfter=false){const s={};for(const p of String(text||'').split(';')){const n=p.indexOf('=');if(n>0)s[p.slice(0,n)]=p.slice(n+1)}const d=ds[i];d.state={...d.state,...s};d.ver=+(s.VER||((s.MAIN||s.ORDER||s.SIZE)?3:2));if(i===ai){setText('status',`V${d.ver||'?'} · ${s.FX||'?'} · ${s.BRI||'?'} bri · ${s.LEDS||s.CFGLEDS||'?'} LEDs · GPIO ${s.PIN||s.CFGPIN||'?'} · ${s.ORDER||'?'}`);if(syncUIAfter&&!d.synced){d.synced=true;syncUI(s)}}}
 function syncUI(s){if(s.FX){selectedFx=s.FX;markFx();setText('activeFxName',s.FX)}for(const [k,id] of [['BG','bg'],['FG','fg'],['MAIN','main']])if(s[k]&&$(id)){$(id).value='#'+s[k];if($(id+'Swatch'))$(id+'Swatch').style.background='#'+s[k]}for(const [k,id] of [['BRI','bri'],['SPD','spd'],['INT','int'],['SIZE','size'],['DENS','dens'],['TRAIL','trail'],['AUDAMT','audamt']])if(s[k]!=null&&$(id)){$(id).value=s[k];if($(id+'V'))$(id+'V').textContent=s[k]}if(s.ORDER&&$('order'))$('order').value=s.ORDER;if(s.AUDMODE&&$('audmode'))$('audmode').value=s.AUDMODE;if(s.DIR&&$('dir'))$('dir').value=s.DIR;if(s.MIRROR!=null&&$('mirror'))$('mirror').checked=s.MIRROR==='1';if((s.CFGLEDS||s.LEDS)&&$('leds'))$('leds').value=s.CFGLEDS||s.LEDS;if((s.CFGPIN||s.PIN)&&$('gpio'))$('gpio').value=s.CFGPIN||s.PIN;syncSpectrumPickers();updateSpectrumPalette()}
-async function readStatus(i=ai,syncUIAfter=false){const d=ds[i];if(!d?.on||!d.st)return false;try{await queueWrite(d,'STATUS');await new Promise(r=>setTimeout(r,110));const v=await waitFor(d.st.readValue(),1800,'Status read timed out');parseStatus(i,D.decode(v),syncUIAfter);return true}catch(e){log(`#${i+1} STATUS ${e.message}`);return false}}
+async function readStatus(i=ai,syncUIAfter=false){const d=ds[i];if(!d?.on||!d.st)return false;try{await queueWrite(d,'STATUS');await sleep(110);const v=await waitFor(d.st.readValue(),1800,'Status read timed out');parseStatus(i,D.decode(v),syncUIAfter);return true}catch(e){log(`#${i+1} STATUS ${e.message}`);return false}}
 
 function cleanupSlot(i,keepDevice=true){const d=ds[i];d.on=false;d.server=null;d.cmd=null;d.st=null;d.state={};d.ver=0;d.synced=false;d.queue=Promise.resolve();if(!keepDevice)d.device=null;$('dot'+i)?.classList.remove('ok');setText('con'+i,'CONNECT #'+(i+1));updateBadge();setTargetLabel()}
 function handleDisconnect(i){cleanupSlot(i,true);setText('status',`ESP32 #${i+1} disconnected. It remains remembered for reconnect.`);if(micOn&&!targets().length)stopMic(false)}
 
-async function attachDevice(i,dev,{auto=false}={}){const d=ds[i],button=$('con'+i);if(d.on)return true;const duplicate=ds.findIndex((x,n)=>n!==i&&x.device?.id===dev.id&&(x.on||x.server));if(duplicate>=0)throw new Error(`That controller is already assigned to ESP32 #${duplicate+1}`);d.device=dev;d.on=false;d.synced=false;d.state={};d.ver=0;if(button)button.textContent=auto?'RECONNECTING…':'CONNECTING…';setText('name'+i,dev.name||`Remembered controller #${i+1}`);try{if(d.disconnectHandler)dev.removeEventListener('gattserverdisconnected',d.disconnectHandler);d.disconnectHandler=()=>handleDisconnect(i);dev.addEventListener('gattserverdisconnected',d.disconnectHandler);d.server=await waitFor(dev.gatt.connect(),7000,'Bluetooth connection timed out');const svc=await waitFor(d.server.getPrimaryService(SU),4000,'ShyneTyme BLE service not found — firmware may need updating');d.cmd=await waitFor(svc.getCharacteristic(CU),3000,'Control characteristic not found');d.st=await waitFor(svc.getCharacteristic(TU),3000,'Status characteristic not found');try{await waitFor(d.st.startNotifications(),2200,'Notifications unavailable');d.st.addEventListener('characteristicvaluechanged',e=>parseStatus(i,D.decode(e.target.value),false))}catch(e){log(`#${i+1} NOTIFY ${e.message}`)}d.on=true;$('dot'+i)?.classList.add('ok');setText('con'+i,'CONNECTED');rememberState();updateBadge();if(!auto)use(i);await readStatus(i,true);if($('sync')?.checked&&connectedCount()===2)await cloneCurrentStateToBoth();setText('status',`ESP32 #${i+1} connected${connectedCount()===2?' · both controllers ready':''}.`);return true}catch(e){if(d.server?.connected)try{d.server.disconnect()}catch(_){ }cleanupSlot(i,true);if(!auto)throw e;log(`AUTO #${i+1} ${e.message}`);return false}}
+async function openGatt(dev){if(dev.gatt?.connected)return dev.gatt;let lastError=null;for(let attempt=0;attempt<2;attempt++){try{await sleep(attempt?450:220);return await waitFor(dev.gatt.connect(),5200,'Bluetooth connection timed out')}catch(e){lastError=e;try{if(dev.gatt?.connected)dev.gatt.disconnect()}catch(_){} }}throw lastError||new Error('Bluetooth connection failed')}
 
-async function connect(i){if(!navigator.bluetooth){setText('status','Web Bluetooth is not available in this browser.');return false}if(!window.isSecureContext){setText('status','HTTPS is required for Bluetooth.');return false}if(ds[i]?.on){use(i);return true}if(activeConnectSlot!==null){setText('status',`Finish ESP32 #${activeConnectSlot+1} first.`);return false}activeConnectSlot=i;use(i);const button=$('con'+i),main=$('connect');if(button){button.disabled=true;button.textContent='SELECT DEVICE…'}if(main)main.disabled=true;setText('status',`Choose the physical controller for ESP32 #${i+1}.`);try{const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SU]});await attachDevice(i,dev,{auto:false});return true}catch(e){if(e?.name==='NotFoundError'||/cancel|chooser/i.test(e?.message||'')){setText('status',`ESP32 #${i+1} not connected. Choose it when you are ready.`);updateBadge();return false}setText('status',e?.message||'Bluetooth connection failed');log(`CONNECT #${i+1} ${e?.message||e}`);return false}finally{activeConnectSlot=null;if(button&&!ds[i].on){button.disabled=false;button.textContent='CONNECT #'+(i+1)}if(main)main.disabled=false;updateBadge()}}
+async function attachDevice(i,dev,{auto=false}={}){
+  const d=ds[i],button=$('con'+i);
+  if(d.on)return true;
+  const duplicate=ds.findIndex((x,n)=>n!==i&&x.device?.id===dev.id);
+  if(duplicate>=0)throw new Error(`That controller is already assigned to ESP32 #${duplicate+1}`);
+  d.device=dev;d.on=false;d.synced=false;d.state={};d.ver=0;
+  if(button)button.textContent=auto?'RECONNECTING…':'CONNECTING…';
+  setText('name'+i,dev.name||`Controller #${i+1}`);
+  try{
+    await withConnectLock(async()=>{
+      setText('status',`ESP32 #${i+1}: establishing Bluetooth link…`);
+      if(d.disconnectHandler)dev.removeEventListener('gattserverdisconnected',d.disconnectHandler);
+      d.disconnectHandler=()=>handleDisconnect(i);
+      dev.addEventListener('gattserverdisconnected',d.disconnectHandler);
+      d.server=await openGatt(dev);
+      setText('status',`ESP32 #${i+1}: finding ShyneTyme service…`);
+      const svc=await waitFor(d.server.getPrimaryService(SU),3500,'ShyneTyme BLE service not found — firmware may need updating');
+      d.cmd=await waitFor(svc.getCharacteristic(CU),2600,'Control characteristic not found');
+      d.st=await waitFor(svc.getCharacteristic(TU),2600,'Status characteristic not found');
+    });
 
-async function autoReconnectRemembered(){if(!navigator.bluetooth?.getDevices||!window.isSecureContext)return;const remembered=rememberedState();if(!remembered.some(Boolean))return;try{const permitted=await navigator.bluetooth.getDevices();for(let i=0;i<2;i++){const r=remembered[i];if(!r||ds[i].on)continue;const dev=permitted.find(x=>x.id===r.id);if(!dev)continue;setText('status',`Recognized ${r.name||'controller'} · reconnecting ESP32 #${i+1}…`);await attachDevice(i,dev,{auto:true})}if(connectedCount())setText('status',connectedCount()===2?'Recognized and reconnected both ESP32 controllers.':'Recognized and reconnected a saved ESP32 controller.')}catch(e){log('AUTO RECONNECT '+e.message)}}
+    d.on=true;
+    $('dot'+i)?.classList.add('ok');
+    setText('con'+i,'CONNECTED');
+    rememberState();
+    updateBadge();
+    if(!auto)use(i);
+    setText('status',`ESP32 #${i+1} connected${connectedCount()===2?' · both controllers ready':''}.`);
+
+    // Do not hold the connection transaction open for status reads, notifications or sync writes.
+    setTimeout(()=>readStatus(i,true),260);
+    if($('sync')?.checked&&connectedCount()===2)setTimeout(()=>cloneCurrentStateToBoth(),520);
+    return true;
+  }catch(e){
+    if(d.server?.connected)try{d.server.disconnect()}catch(_){}
+    cleanupSlot(i,true);
+    if(!auto)throw e;
+    log(`AUTO #${i+1} ${e.message}`);
+    return false;
+  }
+}
+
+async function connect(i){
+  if(!navigator.bluetooth){setText('status','Web Bluetooth is not available in this browser.');return false}
+  if(!window.isSecureContext){setText('status','HTTPS is required for Bluetooth.');return false}
+  if(ds[i]?.on){use(i);return true}
+  if(activeConnectSlot!==null){setText('status',`Finish ESP32 #${activeConnectSlot+1} first.`);return false}
+  activeConnectSlot=i;use(i);
+  const button=$('con'+i),main=$('connect');
+  if(button){button.disabled=true;button.textContent='SELECT DEVICE…'}
+  if(main)main.disabled=true;
+  setText('status',`Choose the physical controller for ESP32 #${i+1}.`);
+  try{
+    const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SU]});
+    setText('status',`Selected ${dev.name||'controller'} for ESP32 #${i+1}. Connecting…`);
+    await attachDevice(i,dev,{auto:false});
+    return true;
+  }catch(e){
+    if(e?.name==='NotFoundError'||/cancel|chooser/i.test(e?.message||'')){setText('status',`ESP32 #${i+1} not connected. Choose it when you are ready.`);updateBadge();return false}
+    setText('status',`ESP32 #${i+1}: ${e?.message||'Bluetooth connection failed'}`);
+    log(`CONNECT #${i+1} ${e?.message||e}`);
+    return false;
+  }finally{
+    activeConnectSlot=null;
+    if(button&&!ds[i].on){button.disabled=false;button.textContent='CONNECT #'+(i+1)}
+    if(main)main.disabled=false;
+    updateBadge();
+  }
+}
+
+async function autoReconnectRemembered(){
+  if(!navigator.bluetooth?.getDevices||!window.isSecureContext)return;
+  const remembered=rememberedState();
+  if(!remembered.some(Boolean))return;
+  // Give manual user selection priority so auto-reconnect never competes with the Android picker/GATT stack.
+  await sleep(900);
+  if(activeConnectSlot!==null)return;
+  try{
+    const permitted=await navigator.bluetooth.getDevices();
+    for(let i=0;i<2;i++){
+      if(activeConnectSlot!==null)break;
+      const r=remembered[i];
+      if(!r||ds[i].on)continue;
+      const dev=permitted.find(x=>x.id===r.id);
+      if(!dev)continue;
+      setText('status',`Recognized ${r.name||'controller'} · reconnecting ESP32 #${i+1}…`);
+      await attachDevice(i,dev,{auto:true});
+      await sleep(350);
+    }
+    if(connectedCount())setText('status',connectedCount()===2?'Recognized and reconnected both ESP32 controllers.':'Recognized and reconnected a saved ESP32 controller.');
+  }catch(e){log('AUTO RECONNECT '+e.message)}
+}
 
 function currentCommand(){const val=id=>$(id)?.value;const hex=id=>String(val(id)||'').replace('#','').toUpperCase();return [`FX=${selectedFx}`,`MAIN=${hex('main')||'FFFFFF'}`,`BG=${hex('bg')||'000000'}`,`FG=${hex('fg')||'8000FF'}`,`BRI=${val('bri')||70}`,`SPD=${val('spd')||220}`,`INT=${val('int')||190}`,`SIZE=${val('size')||72}`,`DENS=${val('dens')||110}`,`TRAIL=${val('trail')||145}`,`DIR=${val('dir')||'FWD'}`,`MIRROR=${$('mirror')?.checked?1:0}`].join(';')}
 async function cloneCurrentStateToBoth(){const z=ds.filter(d=>d.on);if(z.length<2){setText('status','SYNC BOTH is armed. Connect both controllers to mirror the current state.');return false}setText('status','Syncing current state to both controllers…');await sendTo(z,currentCommand(),{quiet:true});if(micOn)await sendAudioSetup(z);setText('status','Both controllers synchronized.');return true}
