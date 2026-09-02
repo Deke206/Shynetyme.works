@@ -32,3 +32,80 @@ if($('con0'))$('con0').onclick=()=>connect(0);if($('con1'))$('con1').onclick=()=
 color('bg','BG');color('fg','FG');color('main','MAIN');range('bri','BRI');range('spd','SPD');range('int','INT');range('size','SIZE');range('dens','DENS');range('trail','TRAIL');range('audamt','AUDAMT');range('gain','',v=>(+v/100).toFixed(1)+'x');range('sm','',v=>v+'%');range('floor','');range('beat','');
 if($('dir'))$('dir').onchange=()=>send('DIR='+$('dir').value,true);if($('mirror'))$('mirror').onchange=()=>send('MIRROR='+($('mirror').checked?1:0),true);if($('order'))$('order').onchange=()=>send('ORDER='+$('order').value,true);if($('audmode'))$('audmode').onchange=()=>send('AUDMODE='+$('audmode').value,true);if($('stat'))$('stat').onclick=()=>readStatus(ai,false);if($('off'))$('off').onclick=()=>{selectedFx='OFF';markFx();send('FX=OFF',true)};if($('save'))$('save').onclick=()=>saveConfig(false);if($('reboot'))$('reboot').onclick=()=>saveConfig(true);if($('rawgo'))$('rawgo').onclick=()=>{const v=$('raw').value.trim();if(v)send(v,false)};if($('mic'))$('mic').onclick=mic;
 document.querySelectorAll('[data-testcolor]').forEach(b=>b.onclick=()=>{const c=b.dataset.testcolor;$('fg').value='#'+c;selectedFx='SOLID';markFx();send('FX=SOLID;FG='+c,true)});use(0);markFx();badge(navigator.bluetooth?'BLE CORE V4 READY':'NO WEB BLUETOOTH');
+
+// Branch-only connection hardening for the ESP32 control-panel preview.
+// Runs after the page's inline UI script so this final handler owns the picker/GATT flow.
+setTimeout(()=>{
+  let activeConnectSlot=null;
+  const waitConnect=(promise,ms,label)=>new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>reject(new Error(label)),ms);
+    Promise.resolve(promise).then(v=>{clearTimeout(timer);resolve(v)},e=>{clearTimeout(timer);reject(e)});
+  });
+  const countConnected=()=>ds.filter(d=>d.on).length;
+  const setText=(id,text)=>{const el=$(id);if(el)el.textContent=text};
+  const setIdleBadge=()=>{const n=countConnected();const b=$('badge');if(b){b.textContent=n?`${n} CONNECTED`:'BLE READY';b.classList.toggle('ok',n>0)}};
+
+  connect=async function(i){
+    const slotState=ds[i],button=$('con'+i),activeButton=$('connect');
+    if(slotState?.on){use(i);setText('status',`ESP32 #${i+1} is already connected.`);return}
+    if(activeConnectSlot!==null){setText('status',`Finish ESP32 #${activeConnectSlot+1} first.`);return}
+    activeConnectSlot=i;
+    use(i);
+    if(button){button.disabled=true;button.textContent='SELECT DEVICE…'}
+    if(activeButton)activeButton.disabled=true;
+    setText('status',`Choose the physical controller for ESP32 #${i+1}.`);
+    const b=$('badge');if(b)b.textContent=`SELECT #${i+1}`;
+    try{
+      if(!navigator.bluetooth)throw Error('Web Bluetooth unavailable');
+      if(!window.isSecureContext)throw Error('HTTPS secure context required');
+      const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SU]});
+      const duplicate=ds.findIndex((d,n)=>n!==i&&d.on&&d.device?.id===dev.id);
+      if(duplicate>=0){
+        setText('status',`That physical controller is already ESP32 #${duplicate+1}. Choose the other controller for #${i+1}.`);
+        use(duplicate);
+        return;
+      }
+      const d=ds[i];
+      if(d.server?.connected)try{d.server.disconnect()}catch(_){ }
+      d.on=false;d.synced=false;d.device=dev;d.server=d.cmd=d.st=null;d.state={};d.ver=0;
+      dev.addEventListener('gattserverdisconnected',()=>disc(i),{once:true});
+      if(button)button.textContent='CONNECTING…';
+      setText('status',`Connecting ${dev.name||'selected controller'} as ESP32 #${i+1}…`);
+      if(b)b.textContent=`CONNECTING #${i+1}`;
+      d.server=await waitConnect(dev.gatt.connect(),7000,'Bluetooth connection timed out');
+      const svc=await waitConnect(d.server.getPrimaryService(SU),4000,'Selected device does not expose the ShyneTyme BLE service. Firmware may need updating.');
+      d.cmd=await waitConnect(svc.getCharacteristic(CU),3500,'Control characteristic not found');
+      d.st=await waitConnect(svc.getCharacteristic(TU),3500,'Status characteristic not found');
+      try{
+        await waitConnect(d.st.startNotifications(),2500,'Status notifications unavailable');
+        d.st.addEventListener('characteristicvaluechanged',e=>parseStatus(i,D.decode(e.target.value),false));
+      }catch(e){log('NOTIFY '+e.message)}
+      d.on=true;d.synced=false;
+      $('dot'+i)?.classList.add('ok');
+      setText('name'+i,dev.name||`ShyneTyme #${i+1}`);
+      if(button)button.textContent='CONNECTED';
+      use(i);setIdleBadge();
+      setText('status',`ESP32 #${i+1} connected${countConnected()===2?' · both controllers ready':''}.`);
+      waitConnect(readStatus(i,true),2800,'Status response timed out').catch(e=>log(e.message));
+    }catch(e){
+      const d=ds[i];
+      if(!d?.on&&d?.server?.connected)try{d.server.disconnect()}catch(_){ }
+      if(!d?.on){d.server=d.cmd=d.st=null}
+      if(e?.name==='NotFoundError'){
+        // User dismissed the picker. That is not an error.
+        setText('status',`ESP32 #${i+1} not connected. Choose it when you are ready.`);
+        setIdleBadge();
+      }else{
+        const msg=e?.message||'Bluetooth connection failed';
+        setText('status',msg);
+        if(b){b.textContent='CONNECT FAILED';b.classList.remove('ok')}
+        log(`CONNECT #${i+1} ${msg}`);
+      }
+    }finally{
+      activeConnectSlot=null;
+      if(button&&!ds[i].on){button.disabled=false;button.textContent=`CONNECT #${i+1}`}
+      if(activeButton)activeButton.disabled=false;
+      setIdleBadge();
+    }
+  };
+},0);
