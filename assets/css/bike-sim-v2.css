@@ -1,0 +1,180 @@
+@import url("simulator-repair-20260902.css");
+
+/*
+ * Bike SIM V2 viewport only.
+ * Bicycle geometry and LED routes are inline SVG in ledbikesim.html.
+ */
+
+.bike-sim-page .viewport {
+  position: absolute;
+  inset: var(--topbar) 0 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.bike-sim-page .bike-canvas {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+}
+
+.bike-sim-page #bikePreview {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.bike-sim-page .bike-ground {
+  stroke: rgba(238, 248, 255, 0.42);
+  stroke-width: 4;
+}
+
+.bike-sim-page .bike-fixture {
+  fill: none;
+  stroke: #f1f9ff;
+  stroke-width: 8;
+  opacity: 1;
+}
+
+.bike-sim-page .bike-metal {
+  fill: none;
+  stroke: #f1f9ff;
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 1;
+}
+
+.bike-sim-page .bike-accessory {
+  fill: rgba(5, 10, 17, 0.18);
+  stroke: #f1f9ff;
+  stroke-width: 6;
+  stroke-linejoin: round;
+  opacity: 1;
+}
+
+.bike-sim-page .bike-label {
+  fill: #fff;
+  font:
+    800 16px Oxanium,
+    sans-serif;
+  paint-order: stroke;
+  stroke: #020610;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+/*
+ * Six solid-color dotted strokes share each route. Round line caps turn
+ * every short dash into a visible individual LED bulb; offset animation
+ * moves a clean rainbow sequence without using an SVG gradient or dark-mode
+ * filter over the bicycle.
+ */
+
+.bike-sim-page .bike-led-dot {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1.15 88.85;
+  opacity: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 3px currentColor);
+}
+
+.bike-sim-page .bike-led-pink {
+  color: #ff2ca8;
+  stroke: #ff2ca8;
+  stroke-dashoffset: 0;
+  animation: bike-led-pink-run 2.6s linear infinite;
+}
+
+.bike-sim-page .bike-led-orange {
+  color: #ff7a18;
+  stroke: #ff7a18;
+  stroke-dashoffset: -15;
+  animation: bike-led-orange-run 2.6s linear infinite;
+}
+
+.bike-sim-page .bike-led-yellow {
+  color: #ffd928;
+  stroke: #ffd928;
+  stroke-dashoffset: -30;
+  animation: bike-led-yellow-run 2.6s linear infinite;
+}
+
+.bike-sim-page .bike-led-green {
+  color: #3cff70;
+  stroke: #3cff70;
+  stroke-dashoffset: -45;
+  animation: bike-led-green-run 2.6s linear infinite;
+}
+
+.bike-sim-page .bike-led-cyan {
+  color: #18e9ff;
+  stroke: #18e9ff;
+  stroke-dashoffset: -60;
+  animation: bike-led-cyan-run 2.6s linear infinite;
+}
+
+.bike-sim-page .bike-led-purple {
+  color: #8b51ff;
+  stroke: #8b51ff;
+  stroke-dashoffset: -75;
+  animation: bike-led-purple-run 2.6s linear infinite;
+}
+
+@keyframes bike-led-pink-run {
+  to {
+    stroke-dashoffset: -90;
+  }
+}
+
+@keyframes bike-led-orange-run {
+  to {
+    stroke-dashoffset: -105;
+  }
+}
+
+@keyframes bike-led-yellow-run {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+@keyframes bike-led-green-run {
+  to {
+    stroke-dashoffset: -135;
+  }
+}
+
+@keyframes bike-led-cyan-run {
+  to {
+    stroke-dashoffset: -150;
+  }
+}
+
+@keyframes bike-led-purple-run {
+  to {
+    stroke-dashoffset: -165;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bike-sim-page .bike-led-dot {
+    animation: none !important;
+  }
+}
