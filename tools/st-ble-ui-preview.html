@@ -23,11 +23,11 @@ button,input,select{font:inherit}button{cursor:pointer}
 .tabs{height:40px;display:grid;grid-template-columns:repeat(6,minmax(90px,1fr));gap:5px;align-items:center;padding:5px 10px;border-bottom:1px solid rgba(223,250,255,.14);background:#030918;overflow-x:auto}
 .tab{height:30px;padding:0 8px;border:1px solid rgba(223,250,255,.18);border-radius:5px;color:#8fa4b7;background:rgba(7,16,27,.72);font:800 8.5pt/1 Oxanium;white-space:nowrap}
 .tab.on{color:#fff;border-color:#fff;background:linear-gradient(145deg,rgba(24,233,255,.18),rgba(255,44,168,.12));box-shadow:0 0 0 1px var(--cyan),0 0 10px rgba(24,233,255,.18),inset 0 -2px 0 var(--pink)}
-.shell{display:grid;grid-template-columns:182px minmax(0,1fr);gap:8px;padding:8px;height:calc(100vh - 84px);min-height:580px}
+.shell{display:block;padding:8px;height:calc(100vh - 84px);min-height:580px}
 .rail,.workspace{min-width:0;min-height:0}
 .rail{border:1px solid rgba(223,250,255,.18);border-radius:8px;background:linear-gradient(180deg,rgba(4,10,19,.94),rgba(1,5,11,.97));overflow:hidden}
 .panel-title{height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 9px;border-bottom:1px solid rgba(223,250,255,.14);color:var(--cyan);font:900 8.5pt Oxanium;letter-spacing:.04em}
-.rail-body{height:calc(100% - 32px);overflow:auto;padding:7px}
+.rail-body{height:calc(100% - 32px);overflow:auto;padding:7px}.device-only{margin-bottom:8px}.device-only .rail-body{height:auto;overflow:visible;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.device-only .device-card{margin-bottom:0}.device-only .switchline,.device-only .rail-note{grid-column:1/-1}
 .device-card{width:100%;display:grid;grid-template-columns:8px 1fr auto;gap:7px;align-items:center;margin-bottom:6px;padding:8px;border:1px solid rgba(223,250,255,.18);border-radius:6px;color:#dce8f2;background:rgba(7,16,27,.72);text-align:left}
 .device-card.on{border-color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(24,233,255,.25)}
 .device-card b{font:800 8.5pt Oxanium}.device-card small{display:block;color:var(--muted);font-size:7.2pt}.use{height:24px;padding:0 6px;border:1px solid rgba(223,250,255,.22);border-radius:4px;color:var(--cyan);background:#07101b;font:800 7pt Oxanium}
@@ -65,7 +65,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 .music-layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(360px,1.2fr);gap:8px}.spectrum{height:180px;display:flex;align-items:end;gap:3px;padding:8px;border:1px solid rgba(223,250,255,.12);border-radius:6px;background:#02050a}.spectrum i{flex:1;height:5%;background:linear-gradient(180deg,var(--pink),var(--purple),var(--cyan));box-shadow:0 0 5px rgba(24,233,255,.2)}.music-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:7px}
 .preset-grid,.custom-grid,.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:7px}.tile{min-height:82px;padding:8px;border:1px solid rgba(223,250,255,.18);border-radius:6px;background:#050a14}.tile b{font:800 8.5pt Oxanium}.tile small{display:block;margin-top:4px;color:var(--muted);font-size:7pt}.tile button{margin-top:7px;height:25px;padding:0 7px;border:1px solid rgba(24,233,255,.28);border-radius:4px;color:var(--cyan);background:rgba(24,233,255,.06);font:800 7pt Oxanium}.empty{padding:14px;border:1px dashed rgba(223,250,255,.2);border-radius:6px;color:var(--muted);text-align:center}
 @media(max-width:980px){.shell{grid-template-columns:155px minmax(0,1fr)}.fx-layout{grid-template-columns:minmax(0,1fr) 250px}.fx-controls,.device-layout,.music-layout{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.hardware-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:720px){.top{grid-template-columns:1fr auto}.status-mini{display:none}.brand{justify-self:end}.tabs{grid-template-columns:repeat(6,110px)}.shell{height:auto;min-height:calc(100vh - 84px);grid-template-columns:1fr;padding:6px}.rail{max-height:180px}.workspace{min-height:660px}.fx-layout{height:auto;grid-template-columns:1fr}.fx-main{grid-template-rows:190px auto}.library{max-height:390px}.fx-controls{grid-template-columns:1fr}.triple-colors{grid-template-columns:1fr}.grid2,.grid3,.grid4,.hardware-grid,.device-actions{grid-template-columns:1fr}.strip{grid-template-columns:repeat(24,1fr)}}
+@media(max-width:720px){.device-only .rail-body{grid-template-columns:1fr}.top{grid-template-columns:1fr auto}.status-mini{display:none}.brand{justify-self:end}.tabs{grid-template-columns:repeat(6,110px)}.shell{height:auto;min-height:calc(100vh - 84px);grid-template-columns:1fr;padding:6px}.rail{max-height:180px}.workspace{min-height:660px}.fx-layout{height:auto;grid-template-columns:1fr}.fx-main{grid-template-rows:190px auto}.library{max-height:390px}.fx-controls{grid-template-columns:1fr}.triple-colors{grid-template-columns:1fr}.grid2,.grid3,.grid4,.hardware-grid,.device-actions{grid-template-columns:1fr}.strip{grid-template-columns:repeat(24,1fr)}}
 </style>
 </head>
 <body>
@@ -86,20 +86,21 @@ button,input,select{font:inherit}button{cursor:pointer}
 </nav>
 
 <div class="shell">
-  <aside class="rail">
-    <div class="panel-title"><span>CONTROLLERS</span><span class="muted">BLE</span></div>
-    <div class="rail-body">
-      <div id="d0" class="device-card on"><span id="dot0" class="dot"></span><span><b>ESP32 #1</b><small id="name0">Not connected</small></span><button class="use" data-i="0">USE</button></div>
-      <div id="d1" class="device-card"><span id="dot1" class="dot"></span><span><b>ESP32 #2</b><small id="name1">Not connected</small></span><button class="use" data-i="1">USE</button></div>
-      <label class="switchline"><span>SYNC BOTH</span><input id="sync" type="checkbox"></label>
-      <div class="rail-note">Select a controller here. Its target stays active while you move through Device, FX, Music, Presets, Groups and Custom.</div>
-    </div>
-  </aside>
+
 
   <main class="workspace">
     <section id="device" class="workspace-page on">
       <div class="page">
         <div class="page-head"><div><h1>Device</h1><p>Connection, identity, output target and controller-specific settings.</p></div><span class="target">CONTROLLER SETUP</span></div>
+  <aside class="rail device-only">
+    <div class="panel-title"><span>CONTROLLERS</span><span class="muted">BLE</span></div>
+    <div class="rail-body">
+      <div id="d0" class="device-card on"><span id="dot0" class="dot"></span><span><b>ESP32 #1</b><small id="name0">Not connected</small></span><button class="use" data-i="0">USE</button></div>
+      <div id="d1" class="device-card"><span id="dot1" class="dot"></span><span><b>ESP32 #2</b><small id="name1">Not connected</small></span><button class="use" data-i="1">USE</button></div>
+      <label class="switchline"><span>SYNC BOTH</span><input id="sync" type="checkbox"></label>
+      <div class="rail-note">Device selection and Sync Both live here only. With Sync off, hardware settings belong to the selected ESP32. With Sync on, saving hardware settings applies them to both.</div>
+    </div>
+  </aside>
         <div class="device-layout">
           <article class="box">
             <h2>Bluetooth controllers</h2>
@@ -119,7 +120,7 @@ button,input,select{font:inherit}button{cursor:pointer}
           </article>
 
           <article class="box">
-            <h2>Controller settings</h2>
+            <h2>Controller settings <span id="deviceSettingsTarget" class="muted">— ESP32 #1</span></h2>
             <div class="hardware-grid">
               <label class="field"><span>LED COUNT</span><input id="leds" type="number" min="1" max="600" value="300"></label>
               <label class="field"><span>GPIO</span><input id="gpio" type="number" min="0" max="39" value="13"></label>
@@ -178,7 +179,7 @@ button,input,select{font:inherit}button{cursor:pointer}
                 <div class="saved">
                   <button data-quick="#FF2CA8" style="--c:#FF2CA8"></button><button data-quick="#FFD928" style="--c:#FFD928"></button><button data-quick="#3CFF70" style="--c:#3CFF70"></button><button data-quick="#18E9FF" style="--c:#18E9FF"></button><button data-quick="#368FFF" style="--c:#368FFF"></button><button data-quick="#8B51FF" style="--c:#8B51FF"></button><button data-quick="#FF5A31" style="--c:#FF5A31"></button><button data-quick="#FFFFFF" style="--c:#FFFFFF"></button>
                 </div>
-                <div class="pickerline"><div><div id="hueSelector" class="hue-selector"><div id="hueSpectrum" class="hue-spectrum"></div><span id="hueThumb" class="hue-thumb"></span><input id="hueSlider" type="range" min="0" max="359" value="0" aria-label="Hue selector"></div><div class="hue-label"><span>GLASS HUE SELECTOR</span><b id="hueValue">0°</b></div></div><button class="savecolor" type="button">＋</button></div>
+                <div class="pickerline"><div><div id="hueSelector" class="hue-selector" aria-label="Hue selector"><span class="hue-spectrum"></span><span class="hue-thumb"></span><input id="hueRange" type="range" min="0" max="359" value="0" aria-label="Hue"></div><div class="hue-label"><span>SLIDE FOR COLOR</span><b id="hueValue">CLEAR</b></div></div><button class="savecolor" type="button">＋</button></div>
                 <input id="livePicker" type="color" value="#ffffff" hidden>
               </article>
             </div>
@@ -288,7 +289,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 </div>
 </div>
 
-<script src="st-ble-core.js?v=20260901-tabs3"></script>
+<script src="st-ble-core.js?v=20260901-device-state1"></script>
 <script>
 'use strict';
 (()=>{
@@ -304,8 +305,8 @@ function storePalette(fx=uiFx){const all=readPalettes();all[fx]=currentPalette()
 function setPalette(p,{transmit=false}={}){['main','bg','fg'].forEach(k=>{const x=q('#'+k);if(x&&p[k])x.value=p[k].toUpperCase()});syncColorUI();paintPreview();if(transmit&&typeof send==='function'){const c=currentPalette();send(`MAIN=${c.main.slice(1)};BG=${c.bg.slice(1)};FG=${c.fg.slice(1)}`,true)}}
 function hexHue(hex){const s=String(hex||'#ffffff').replace('#','');const r=parseInt(s.slice(0,2),16)/255,g=parseInt(s.slice(2,4),16)/255,b=parseInt(s.slice(4,6),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;if(!d)return null;let h;if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h=Math.round(h*60);return h<0?h+360:h}
 function hueHex(h){const c=1,x=1-Math.abs((h/60)%2-1),m=0;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}const hh=v=>Math.round((v+m)*255).toString(16).padStart(2,'0').toUpperCase();return '#'+hh(r)+hh(g)+hh(b)}
-function syncHueSelector(){const slider=q('#hueSlider'),sel=q('#hueSelector');if(!slider||!sel)return;const h=hexHue(currentPalette()[activeRole]);if(h!=null)slider.value=h;const pct=(+slider.value/359)*100;sel.style.setProperty('--hx',pct+'%');q('#hueValue').textContent=Math.round(+slider.value)+'°'}
-function syncColorUI(){const p=currentPalette();['main','bg','fg'].forEach(k=>{const s=q('#'+k+'Swatch');if(s)s.style.background=p[k]});const picker=q('#livePicker');if(picker)picker.value=p[activeRole];syncHueSelector()}
+function syncHueFromRole(){const slider=q('#hueRange'),rail=q('#hueSelector'),label=q('#hueValue');if(!slider||!rail)return;const h=hexHue(currentPalette()[activeRole]);if(h!=null){slider.value=h;rail.style.setProperty('--hx',(h/359*100)+'%')}if(label)label.textContent='CLEAR'}
+function syncColorUI(){const p=currentPalette();['main','bg','fg'].forEach(k=>{const s=q('#'+k+'Swatch');if(s)s.style.background=p[k]});const picker=q('#livePicker');if(picker)picker.value=p[activeRole];syncHueFromRole()}
 function updateEffectSwatches(){qa('.fx[data-fx]').forEach(b=>{const p=effectPalette(b.dataset.fx),host=b.querySelector('.fx-palette');if(!host)return;host.innerHTML='';[p.main,p.bg,p.fg].forEach(c=>{const i=document.createElement('i');i.style.background=c;i.style.boxShadow=`0 0 5px ${c}`;host.append(i)})})}
 
 function ensurePreview(){const box=q('#ledPreview');if(!box)return;while(box.children.length<48)box.append(document.createElement('i'))}
@@ -316,14 +317,13 @@ qa('[data-fx]').forEach(b=>b.addEventListener('click',()=>chooseEffect(q(`.fx[da
 ['main','bg','fg'].forEach(k=>q('#'+k)?.addEventListener('input',()=>{storePalette();syncColorUI();paintPreview()}));
 qa('.role').forEach(b=>b.addEventListener('click',()=>{qa('.role').forEach(x=>x.classList.remove('on'));b.classList.add('on');activeRole=b.dataset.role;syncColorUI()}));
 q('#livePicker')?.addEventListener('input',e=>{const x=q('#'+activeRole);if(!x)return;x.value=e.target.value;x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))});
-const hueSel=q('#hueSelector'),hueSlider=q('#hueSlider');
-function setHueActive(on){hueSel?.classList.toggle('is-active',on)}
-function applyHue(){if(!hueSlider)return;const x=q('#'+activeRole);if(!x)return;const pct=(+hueSlider.value/359)*100;hueSel?.style.setProperty('--hx',pct+'%');q('#hueValue').textContent=Math.round(+hueSlider.value)+'°';x.value=hueHex(+hueSlider.value);x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))}
-hueSlider?.addEventListener('pointerdown',()=>setHueActive(true));hueSlider?.addEventListener('pointerup',()=>setHueActive(false));hueSlider?.addEventListener('pointercancel',()=>setHueActive(false));hueSlider?.addEventListener('touchstart',()=>setHueActive(true),{passive:true});hueSlider?.addEventListener('touchend',()=>setHueActive(false),{passive:true});hueSlider?.addEventListener('input',applyHue);hueSlider?.addEventListener('change',()=>{applyHue();setHueActive(false)});
 qa('[data-quick]').forEach(b=>b.addEventListener('click',()=>{const x=q('#'+activeRole);if(!x)return;x.value=b.dataset.quick;x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))}));
+const hue=q('#hueRange'),hueRail=q('#hueSelector'),hueLabel=q('#hueValue');
+function applyHue(){if(!hue||!hueRail)return;const h=+hue.value,hex=hueHex(h),x=q('#'+activeRole);hueRail.style.setProperty('--hx',(h/359*100)+'%');if(hueLabel){hueLabel.textContent=hex;hueLabel.style.color=hex}if(x){x.value=hex;x.dispatchEvent(new Event('input',{bubbles:true}));x.dispatchEvent(new Event('change',{bubbles:true}))}}
+if(hue&&hueRail){hue.addEventListener('pointerdown',()=>hueRail.classList.add('is-active'));hue.addEventListener('touchstart',()=>hueRail.classList.add('is-active'),{passive:true});hue.addEventListener('input',applyHue);const endHue=()=>{hueRail.classList.remove('is-active');if(hueLabel){hueLabel.textContent='CLEAR';hueLabel.style.color=''}};hue.addEventListener('pointerup',endHue);hue.addEventListener('pointercancel',endHue);hue.addEventListener('change',()=>setTimeout(endHue,80));hue.addEventListener('blur',endHue)}
 
 function updateGlass(input){const rail=input.closest('.railglass');if(!rail)return;const min=+input.min||0,max=+input.max||100,v=+input.value,p=Math.max(0,Math.min(100,(v-min)/(max-min)*100));rail.querySelector('.fill').style.width=p+'%';rail.querySelector('.thumb').style.left=p+'%'}
-qa('input[type=range]').forEach(x=>{updateGlass(x);x.addEventListener('input',()=>{updateGlass(x);const o=q('#'+x.id+'V');if(o&&x.id!=='audamt')o.textContent=Math.round((+x.value-(+x.min||0))/((+x.max||100)-(+x.min||0))*100)+'%';if(o&&x.id==='audamt')o.textContent=x.value})});
+qa('input[type=range]').forEach(x=>{if(x.id==='hueRange')return;updateGlass(x);x.addEventListener('input',()=>{updateGlass(x);const o=q('#'+x.id+'V');if(o&&x.id!=='audamt')o.textContent=Math.round((+x.value-(+x.min||0))/((+x.max||100)-(+x.min||0))*100)+'%';if(o&&x.id==='audamt')o.textContent=x.value})});
 q('#mirrorBtn')?.addEventListener('click',()=>{const c=q('#mirror');c.checked=!c.checked;c.dispatchEvent(new Event('change',{bubbles:true}));q('#mirrorBtn').classList.toggle('on',c.checked)});
 
 function filterFx(){const term=q('#fxSearch').value.trim().toLowerCase(),cat=q('.chip.on')?.dataset.filter||'all';let n=0;qa('.fxlist .fx').forEach(x=>{const hit=(!term||x.textContent.toLowerCase().includes(term))&&(cat==='all'||(x.dataset.cat||'').includes(cat));x.classList.toggle('hide',!hit);if(hit)n++});q('#fxCount').textContent=n}
@@ -344,6 +344,52 @@ q('#clearCustom')?.addEventListener('click',()=>{saveList(CUSTOM_KEY,[]);renderC
 
 q('#groupBoth')?.addEventListener('click',()=>{q('#sync').checked=true;q('#sync').dispatchEvent(new Event('change',{bubbles:true}))});
 qa('[data-group-use]').forEach(b=>b.addEventListener('click',()=>q(`.use[data-i="${b.dataset.groupUse}"]`)?.click()));
+
+
+// --- Per-controller hardware settings -------------------------------------------------
+const DEVICE_CFG_KEY='stw-esp32-device-config-v1';
+function defaultDeviceCfg(){return {leds:300,gpio:13,order:'GRB',segFrom:0,segTo:299}}
+function loadDeviceCfg(){try{const x=JSON.parse(localStorage.getItem(DEVICE_CFG_KEY)||'[]');return [0,1].map(i=>({...defaultDeviceCfg(),...(x[i]||{})}))}catch(_){return [defaultDeviceCfg(),defaultDeviceCfg()]}}
+let deviceCfg=loadDeviceCfg();
+function persistDeviceCfg(){try{localStorage.setItem(DEVICE_CFG_KEY,JSON.stringify(deviceCfg))}catch(_){}}
+function formDeviceCfg(){return {leds:+q('#leds')?.value||300,gpio:+q('#gpio')?.value||0,order:q('#order')?.value||'GRB',segFrom:+q('#segFrom')?.value||0,segTo:+q('#segTo')?.value||0}}
+function renderDeviceCfg(i){const c=deviceCfg[i]||defaultDeviceCfg();if(q('#leds'))q('#leds').value=c.leds;if(q('#gpio'))q('#gpio').value=c.gpio;if(q('#order'))q('#order').value=c.order;if(q('#segFrom'))q('#segFrom').value=c.segFrom;if(q('#segTo'))q('#segTo').value=c.segTo;const t=q('#deviceSettingsTarget');if(t)t.textContent=q('#sync')?.checked?'— SYNC BOTH':`— ESP32 #${i+1}`}
+function rememberDeviceForm(i=typeof ai==='number'?ai:0){const c=formDeviceCfg();if(q('#sync')?.checked){deviceCfg[0]={...c};deviceCfg[1]={...c}}else deviceCfg[i]={...c};persistDeviceCfg()}
+function updateDeviceCfgFromStatus(i,text){const st={};String(text||'').split(';').forEach(p=>{const n=p.indexOf('=');if(n>0)st[p.slice(0,n)]=p.slice(n+1)});const c={...(deviceCfg[i]||defaultDeviceCfg())};if(st.CFGLEDS||st.LEDS)c.leds=+(st.CFGLEDS||st.LEDS)||c.leds;if(st.CFGPIN||st.PIN)c.gpio=+(st.CFGPIN||st.PIN);if(st.ORDER)c.order=st.ORDER;deviceCfg[i]=c;persistDeviceCfg();if(typeof ai==='number'&&i===ai&&!q('#sync')?.checked)renderDeviceCfg(i)}
+
+if(typeof use==='function'){
+  const coreUse=use;
+  use=function(i){
+    const previous=typeof ai==='number'?ai:0;
+    if(previous!==i)rememberDeviceForm(previous);
+    coreUse(i);
+    // Restore each controller's own hardware form and its last known controller state.
+    renderDeviceCfg(i);
+    if(typeof ds!=='undefined'&&ds[i]?.state&&Object.keys(ds[i].state).length&&typeof syncUI==='function')syncUI(ds[i].state);
+  };
+}
+if(typeof parseStatus==='function'){
+  const coreParseStatus=parseStatus;
+  parseStatus=function(i,text,syncUIAfter=false){coreParseStatus(i,text,syncUIAfter);updateDeviceCfgFromStatus(i,text)};
+}
+if(typeof saveConfig==='function'){
+  const coreSaveConfig=saveConfig;
+  saveConfig=async function(reboot=false){
+    rememberDeviceForm(typeof ai==='number'?ai:0);
+    const syncOn=!!q('#sync')?.checked;
+    const targetText=syncOn?'both ESP32 controllers':`ESP32 #${(typeof ai==='number'?ai:0)+1}`;
+    q('#deviceSettingsTarget').textContent=syncOn?'— SYNC BOTH':`— ESP32 #${(typeof ai==='number'?ai:0)+1}`;
+    await coreSaveConfig(reboot);
+    if(q('#status'))q('#status').textContent=`Device settings saved to ${targetText}${reboot?' and reboot requested':''}.`;
+  };
+}
+['leds','gpio','order','segFrom','segTo'].forEach(id=>q('#'+id)?.addEventListener('input',()=>rememberDeviceForm(typeof ai==='number'?ai:0)));
+q('#sync')?.addEventListener('change',()=>{
+  const i=typeof ai==='number'?ai:0;
+  if(q('#sync').checked){const c=formDeviceCfg();deviceCfg[0]={...c};deviceCfg[1]={...c};persistDeviceCfg();renderDeviceCfg(i);if(q('#status'))q('#status').textContent='SYNC BOTH enabled. Hardware settings will save to both controllers.'}
+  else{renderDeviceCfg(i);if(q('#status'))q('#status').textContent=`SYNC BOTH off. Hardware settings now apply only to ESP32 #${i+1}.`}
+});
+renderDeviceCfg(typeof ai==='number'?ai:0);
 
 ensurePreview();syncColorUI();updateEffectSwatches();paintPreview();filterFx();renderPresets();renderCustom();
 if(typeof activateTab==='function')activateTab('device');
