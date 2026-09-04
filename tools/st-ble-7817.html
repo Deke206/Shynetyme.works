@@ -1,1 +1,127 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#080b10"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet"><title>ShyneTyme Main Controller V5</title><link rel="stylesheet" href="st-ble-7817.css?v=20260903v5"><style>.roleTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.role{position:relative}.role.on{outline:2px solid var(--a)}.swatch{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid #fff6;vertical-align:-2px;margin-right:5px}.wheelWrap{display:grid;place-items:center;margin:12px 0;position:relative}.wheel{width:min(72vw,300px);height:min(72vw,300px);touch-action:none;border-radius:50%;box-shadow:0 0 0 1px #ffffff18}.wheelMarker{position:absolute;width:18px;height:18px;border:2px solid white;border-radius:50%;box-shadow:0 0 0 2px #0009;pointer-events:none;transform:translate(-50%,-50%)}.colorReadout{display:grid;grid-template-columns:1fr 1fr;gap:8px}.preview{height:42px;border-radius:10px;border:1px solid var(--l)}.preset{display:grid;grid-template-columns:1fr 74px 48px;gap:6px;margin-top:7px}.preset .btn{padding:8px;font-size:10px}.empty{border:1px dashed var(--l);border-radius:10px;padding:12px;color:var(--m);font-size:11px}@media(max-width:480px){.preset{grid-template-columns:1fr 64px 44px}}</style></head><body><div class="top"><div class="brand"><span>SHYNE<b>TYME</b> MAIN</span><span id="badge" class="pill">BLE READY</span></div><div class="tabs"><button class="tab on" data-p="ctl">CONTROL</button><button class="tab" data-p="aud">AUDIO</button><button class="tab" data-p="pre">SAVES</button><button class="tab" data-p="dev">DEVICE</button><button class="tab" data-p="set">SETTINGS</button></div></div><main><section id="ctl" class="page on"><div class="card"><div class="spread"><h2>EFFECT</h2><span id="target" class="pill">MAIN CONTROLLER</span></div><div class="sectionLabel">CORE / MOTION</div><div class="g4"><button class="btn fx" data-fx="OFF">OFF</button><button class="btn fx" data-fx="SOLID">SOLID</button><button class="btn fx" data-fx="BREATHE">BREATHE</button><button class="btn fx" data-fx="RAINBOW">RAINBOW</button><button class="btn fx" data-fx="COMET">COMET</button><button class="btn fx" data-fx="METEOR">METEOR</button><button class="btn fx" data-fx="SCANNER">SCANNER</button><button class="btn fx" data-fx="POLICE">POLICE</button><button class="btn fx" data-fx="CHASE">CHASE</button><button class="btn fx" data-fx="TRICOLOR_CHASE">TRI CHASE</button><button class="btn fx" data-fx="FLOW">FLOW</button><button class="btn fx" data-fx="COLOR_WAVES">WAVES</button></div><div class="sectionLabel">TEXTURE</div><div class="g4"><button class="btn fx" data-fx="SPARKLE">SPARKLE</button><button class="btn fx" data-fx="GLITTER">GLITTER</button><button class="btn fx" data-fx="TWINKLE">TWINKLE</button><button class="btn fx" data-fx="TWINKLEFOX">TWINKLE FOX</button><button class="btn fx" data-fx="TWINKLECAT">TWINKLE CAT</button><button class="btn fx" data-fx="FIREWORKS">FIREWORKS</button><button class="btn fx" data-fx="RAIN">RAIN</button><button class="btn fx" data-fx="LIGHTNING">LIGHTNING</button><button class="btn fx" data-fx="FIRE">FIRE</button><button class="btn fx" data-fx="PACIFICA">PACIFICA</button><button class="btn fx" data-fx="DANCING_SHADOWS">SHADOWS</button><button class="btn fx" data-fx="PRIDE">PRIDE</button></div><div class="sectionLabel">SHOW / AUDIO-READY</div><div class="g4"><button class="btn fx" data-fx="AURORA">AURORA</button><button class="btn fx" data-fx="SINELON">SINELON</button><button class="btn fx" data-fx="JUGGLE">JUGGLE</button><button class="btn fx" data-fx="RIPPLE">RIPPLE</button><button class="btn fx" data-fx="SONIC_STREAM">SONIC STREAM</button><button class="btn fx" data-fx="SONIC_BOOM">SONIC BOOM</button><button class="btn fx" data-fx="STARBURST">STARBURST</button><button class="btn fx" data-fx="BOUNCING_BALLS">BALLS</button><button class="btn fx" data-fx="POPCORN">POPCORN</button><button class="btn fx" data-fx="DRIPDROP">DRIPDROP</button><button class="btn fx" data-fx="LAVA_LAMP">LAVA</button><button class="btn fx" data-fx="MAGMA">MAGMA</button><button class="btn fx" data-fx="HEARTBEAT">HEARTBEAT</button><button class="btn fx" data-fx="VU">VU</button><button class="btn fx" data-fx="SPECTRUM">SPECTRUM</button><button class="btn fx" data-fx="BEAT_FLASH">BEAT FLASH</button></div></div><div class="card"><h2>COLOR WHEEL — SELECT ROLE, THEN COLOR + ROLE BRIGHTNESS</h2><div class="roleTabs"><button class="btn role on" data-role="BG"><span class="swatch" id="swBG"></span>BACKGROUND</button><button class="btn role" data-role="FG"><span class="swatch" id="swFG"></span>FOREGROUND</button><button class="btn role" data-role="MAIN"><span class="swatch" id="swMAIN"></span>MAIN</button></div><div class="wheelWrap"><canvas id="wheel" class="wheel" width="300" height="300"></canvas><div id="wheelMarker" class="wheelMarker"></div></div><div class="colorReadout"><div><label>Selected role</label><div id="roleName" class="metric"><b>BACKGROUND</b></div></div><div><label>Color</label><div id="rolePreview" class="preview"></div></div></div><div class="range"><span>Role bright</span><input id="roleBri" type="range" min="0" max="255" value="64"><span id="roleBriV">25%</span></div><div class="row"><input id="hex" value="#000000" maxlength="7"><button id="hexGo" class="btn" style="width:110px">SET HEX</button></div></div><div class="card"><h2>MASTER / MOTION</h2><div class="range"><span>Master bright</span><input id="bri" type="range" min="0" max="255" value="96"><span id="briV">38%</span></div><div class="range"><span>Speed</span><input id="spd" type="range" min="1" max="255" value="180"><span id="spdV">71%</span></div><div class="range"><span>Intensity</span><input id="int" type="range" min="1" max="255" value="180"><span id="intV">71%</span></div><div class="range"><span>Size</span><input id="size" type="range" min="1" max="255" value="96"><span id="sizeV">38%</span></div><div class="range"><span>Density</span><input id="dens" type="range" min="1" max="255" value="128"><span id="densV">50%</span></div><div class="range"><span>Trail</span><input id="trail" type="range" min="1" max="255" value="170"><span id="trailV">67%</span></div><div class="g2"><div><label>Direction</label><select id="dir"><option value="FWD">Forward</option><option value="REV">Reverse</option></select></div><label style="display:flex;align-items:center;gap:8px"><input id="mirror" type="checkbox" style="width:auto"> Mirror</label></div></div></section><section id="aud" class="page"><div class="card"><div class="spread"><h2>PHONE MIC → CURRENT EFFECT</h2><span id="micState" class="pill">OFF</span></div><button id="mic" class="btn primary full">START MICROPHONE</button><button id="audioTest" class="btn full" style="margin-top:7px">TEST AUDIO PIPE — SYNTHETIC</button><div class="g2" style="margin-top:8px"><div><label>Response</label><select id="audmode"><option value="OFF">Off</option><option value="LEVEL">Level / motion</option><option value="BEAT">Beat accents</option><option value="SPECTRUM">Spectrum overlay</option><option value="FULL" selected>Full reactive</option></select></div><div><label>Amount</label><div class="range" style="grid-template-columns:1fr 48px;margin:4px 0"><input id="audamt" type="range" min="0" max="255" value="210"><span id="audamtV">82%</span></div></div></div><div class="g4" style="margin-top:9px"><div class="metric"><small>LEVEL</small><b id="ml">0</b></div><div class="metric"><small>BASS</small><b id="mb">0</b></div><div class="metric"><small>MID</small><b id="mm">0</b></div><div class="metric"><small>HIGH</small><b id="mh">0</b></div></div><div class="g2" style="margin-top:8px"><div class="metric"><small>dBFS</small><b id="mdb">-∞</b></div><div class="metric"><small>BEAT</small><b id="mbeat">—</b></div></div><div class="compat">If TEST AUDIO PIPE moves the LEDs, the BLE/firmware audio path is working. If the four meters stay at zero with the microphone live, the phone/browser is not feeding microphone audio.</div></div><div class="card"><h2>MIC TUNING</h2><div class="range"><span>Gain</span><input id="gain" type="range" min="50" max="500" value="180"><span id="gainV">1.8x</span></div><div class="range"><span>Smooth</span><input id="sm" type="range" min="0" max="95" value="45"><span id="smV">45%</span></div><div class="range"><span>Floor</span><input id="floor" type="range" min="0" max="100" value="6"><span id="floorV">6</span></div><div class="range"><span>Beat sens</span><input id="beat" type="range" min="10" max="255" value="190"><span id="beatV">75%</span></div></div></section><section id="pre" class="page"><div class="card"><h2>STARTUP STATE</h2><button id="saveStartup" class="btn primary full">SAVE CURRENT STATE FOR POWER-UP</button><button id="loadStartup" class="btn full" style="margin-top:7px">LOAD SAVED STARTUP STATE</button><div class="compat">ESP32 Preferences/NVS is flash memory. It does not need a battery. A saved startup state survives unplugging the controller.</div></div><div class="card"><h2>NAMED PRESETS — 8 DEVICE SLOTS</h2><div class="row"><input id="presetName" placeholder="e.g. Red Safety"><button id="presetSave" class="btn primary" style="width:120px">SAVE NEW</button></div><div id="presetList"></div><div class="compat">The actual lighting state is stored in the ESP32 preset slot. The custom display name is stored in this browser.</div></div></section><section id="dev" class="page"><div class="card"><h2>MAIN CONTROLLER</h2><div id="status" class="muted">Not connected.</div><button id="statusBtn" class="btn full" style="margin-top:8px">READ STATUS</button></div><div class="card"><h2>CONSOLE</h2><div id="log" class="log">ShyneTyme V5 UI ready.</div></div></section><section id="set" class="page"><div class="card"><h2>HARDWARE CONFIG</h2><div class="g3"><div><label>LED count</label><input id="leds" type="number" min="1" max="600" value="300"></div><div><label>GPIO</label><input id="gpio" type="number" min="0" max="39" value="13"></div><div><label>Pixel order</label><select id="order"><option>RGB</option><option selected>GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></div></div><div class="g2" style="margin-top:8px"><button id="saveConfig" class="btn primary">SAVE CONFIG</button><button id="reboot" class="btn danger">SAVE + REBOOT</button></div></div><div class="card"><h2>RAW COMMAND</h2><div class="row"><input id="raw" placeholder="FX=LIGHTNING"><button id="rawGo" class="btn primary" style="width:90px">SEND</button></div></div></section></main><div class="bottom"><div><button id="connect" class="btn primary">CONNECT MAIN</button><button id="statusBottom" class="btn">STATUS</button><button id="blackout" class="btn danger">BLACKOUT</button></div></div><script src="st-ble-core.js?v=20260903v5"></script></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#080b10"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet"><title>ShyneTyme Main Controller V5.1</title><link rel="stylesheet" href="st-ble-7817.css?v=20260903v51">
+<style>
+.roleTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.role{position:relative}.role.on{outline:2px solid var(--a)}.swatch{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid #fff6;vertical-align:-2px;margin-right:5px}
+.wheelWrap{display:grid;place-items:center;margin:12px 0;position:relative}.wheel{width:min(72vw,300px);height:min(72vw,300px);touch-action:none;border-radius:50%;box-shadow:0 0 0 1px #ffffff18}.wheelMarker{position:absolute;width:18px;height:18px;border:2px solid white;border-radius:50%;box-shadow:0 0 0 2px #0009;pointer-events:none;transform:translate(-50%,-50%)}
+.colorReadout{display:grid;grid-template-columns:1fr 1fr;gap:8px}.preview{height:42px;border-radius:10px;border:1px solid var(--l)}.preset{display:grid;grid-template-columns:1fr 74px 48px;gap:6px;margin-top:7px}.preset .btn{padding:8px;font-size:10px}.empty{border:1px dashed var(--l);border-radius:10px;padding:12px;color:var(--m);font-size:11px}
+@media(max-width:480px){.preset{grid-template-columns:1fr 64px 44px}}
+</style>
+</head><body>
+<div class="top">
+  <div class="brand"><span>SHYNE<b>TYME</b> MAIN</span><span id="badge" class="pill">BLE READY</span></div>
+  <div class="tabs">
+    <button class="tab on" data-p="ctl">CONTROL</button><button class="tab" data-p="aud">AUDIO</button><button class="tab" data-p="pre">SAVES</button><button class="tab" data-p="dev">DEVICE</button><button class="tab" data-p="set">SETTINGS</button>
+  </div>
+</div>
+<main>
+<section id="ctl" class="page on">
+  <div class="card">
+    <div class="spread"><h2>EFFECT</h2><span id="target" class="pill">MAIN CONTROLLER</span></div>
+    <div class="sectionLabel">CORE / MOTION</div>
+    <div class="g4">
+      <button class="btn fx" data-fx="OFF">OFF</button><button class="btn fx" data-fx="SOLID">SOLID</button><button class="btn fx" data-fx="BREATHE">BREATHE</button><button class="btn fx" data-fx="RAINBOW">RAINBOW</button>
+      <button class="btn fx" data-fx="COMET">COMET</button><button class="btn fx" data-fx="METEOR">METEOR</button><button class="btn fx" data-fx="SCANNER">SCANNER</button><button class="btn fx" data-fx="POLICE">POLICE</button>
+      <button class="btn fx" data-fx="CHASE">CHASE</button><button class="btn fx" data-fx="TRICOLOR_CHASE">TRI CHASE</button><button class="btn fx" data-fx="FLOW">FLOW</button><button class="btn fx" data-fx="COLOR_WAVES">WAVES</button>
+    </div>
+    <div class="sectionLabel">TEXTURE</div>
+    <div class="g4">
+      <button class="btn fx" data-fx="SPARKLE">SPARKLE</button><button class="btn fx" data-fx="GLITTER">GLITTER</button><button class="btn fx" data-fx="TWINKLE">TWINKLE</button><button class="btn fx" data-fx="TWINKLEFOX">TWINKLE FOX</button>
+      <button class="btn fx" data-fx="TWINKLECAT">TWINKLE CAT</button><button class="btn fx" data-fx="FIREWORKS">FIREWORKS</button><button class="btn fx" data-fx="RAIN">RAIN</button><button class="btn fx" data-fx="LIGHTNING">LIGHTNING</button>
+      <button class="btn fx" data-fx="FIRE">FIRE</button><button class="btn fx" data-fx="PACIFICA">PACIFICA</button><button class="btn fx" data-fx="DANCING_SHADOWS">SHADOWS</button><button class="btn fx" data-fx="PRIDE">PRIDE</button>
+    </div>
+    <div class="sectionLabel">SHOW / AUDIO-READY</div>
+    <div class="g4">
+      <button class="btn fx" data-fx="AURORA">AURORA</button><button class="btn fx" data-fx="SINELON">SINELON</button><button class="btn fx" data-fx="JUGGLE">JUGGLE</button><button class="btn fx" data-fx="RIPPLE">RIPPLE</button>
+      <button class="btn fx" data-fx="SONIC_STREAM">SONIC STREAM</button><button class="btn fx" data-fx="SONIC_BOOM">SONIC BOOM</button><button class="btn fx" data-fx="STARBURST">STARBURST</button><button class="btn fx" data-fx="BOUNCING_BALLS">BALLS</button>
+      <button class="btn fx" data-fx="POPCORN">POPCORN</button><button class="btn fx" data-fx="DRIPDROP">DRIPDROP</button><button class="btn fx" data-fx="LAVA_LAMP">LAVA</button><button class="btn fx" data-fx="MAGMA">MAGMA</button>
+      <button class="btn fx" data-fx="HEARTBEAT">HEARTBEAT</button><button class="btn fx" data-fx="VU">VU</button><button class="btn fx" data-fx="SPECTRUM">SPECTRUM</button><button class="btn fx" data-fx="BEAT_FLASH">BEAT FLASH</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>COLOR WHEEL — SELECT ROLE, THEN COLOR + ROLE BRIGHTNESS</h2>
+    <div class="roleTabs">
+      <button class="btn role on" data-role="BG"><span class="swatch" id="swBG"></span>BACKGROUND</button>
+      <button class="btn role" data-role="FG"><span class="swatch" id="swFG"></span>FOREGROUND</button>
+      <button class="btn role" data-role="MAIN"><span class="swatch" id="swMAIN"></span>MAIN</button>
+    </div>
+    <div class="wheelWrap">
+      <canvas id="wheel" class="wheel" width="300" height="300"></canvas><div id="wheelMarker" class="wheelMarker"></div>
+    </div>
+    <div class="colorReadout">
+      <div><label>Selected role</label><div id="roleName" class="metric"><b>BACKGROUND</b></div></div>
+      <div><label>Color</label><div id="rolePreview" class="preview"></div></div>
+    </div>
+    <div class="range"><span>Role bright</span><input id="roleBri" type="range" min="0" max="255" value="64"><span id="roleBriV">25%</span></div>
+    <div class="row"><input id="hex" value="#000000" maxlength="7"><button id="hexGo" class="btn" style="width:110px">SET HEX</button></div>
+  </div>
+
+  <div class="card">
+    <h2>MASTER / MOTION</h2>
+    <div class="range"><span>Master bright</span><input id="bri" type="range" min="0" max="255" value="96"><span id="briV">38%</span></div>
+    <div class="range"><span>Speed</span><input id="spd" type="range" min="1" max="255" value="180"><span id="spdV">71%</span></div>
+    <div class="range"><span>Intensity</span><input id="int" type="range" min="1" max="255" value="180"><span id="intV">71%</span></div>
+    <div class="range"><span>Size</span><input id="size" type="range" min="1" max="255" value="96"><span id="sizeV">38%</span></div>
+    <div class="range"><span>Density</span><input id="dens" type="range" min="1" max="255" value="128"><span id="densV">50%</span></div>
+    <div class="range"><span>Trail</span><input id="trail" type="range" min="1" max="255" value="170"><span id="trailV">67%</span></div>
+    <div class="g2"><div><label>Direction</label><select id="dir"><option value="FWD">Forward</option><option value="REV">Reverse</option></select></div><label style="display:flex;align-items:center;gap:8px"><input id="mirror" type="checkbox" style="width:auto"> Mirror</label></div>
+  </div>
+</section>
+
+<section id="aud" class="page">
+  <div class="card">
+    <div class="spread"><h2>PHONE MIC → CURRENT EFFECT</h2><span id="micState" class="pill">OFF</span></div>
+    <button id="mic" class="btn primary full">START MICROPHONE</button>
+    <button id="audioTest" class="btn full" style="margin-top:7px">TEST AUDIO PIPE — SYNTHETIC</button>
+    <div class="g2" style="margin-top:8px">
+      <div><label>Response</label><select id="audmode"><option value="OFF">Off</option><option value="LEVEL">Level / motion</option><option value="BEAT">Beat accents</option><option value="SPECTRUM">Spectrum overlay</option><option value="FULL" selected>Full reactive</option></select></div>
+      <div><label>Amount</label><div class="range" style="grid-template-columns:1fr 48px;margin:4px 0"><input id="audamt" type="range" min="0" max="255" value="210"><span id="audamtV">82%</span></div></div>
+    </div>
+    <div class="g4" style="margin-top:9px"><div class="metric"><small>LEVEL</small><b id="ml">0</b></div><div class="metric"><small>BASS</small><b id="mb">0</b></div><div class="metric"><small>MID</small><b id="mm">0</b></div><div class="metric"><small>HIGH</small><b id="mh">0</b></div></div>
+    <div class="g2" style="margin-top:8px"><div class="metric"><small>dBFS</small><b id="mdb">-∞</b></div><div class="metric"><small>BEAT</small><b id="mbeat">—</b></div></div><div class="g2" style="margin-top:8px"><div class="metric"><small>AUDIO TX</small><b id="atx">0</b></div><div class="metric"><small>ESP32 RX</small><b id="arx">0</b></div></div>
+    <div class="compat">If TEST AUDIO PIPE moves the LEDs, the BLE/firmware audio path is working. If the four meters stay at zero with the microphone live, the phone/browser is not feeding microphone audio.</div>
+  </div>
+  <div class="card">
+    <h2>MIC TUNING</h2>
+    <div class="range"><span>Gain</span><input id="gain" type="range" min="50" max="500" value="180"><span id="gainV">1.8x</span></div>
+    <div class="range"><span>Smooth</span><input id="sm" type="range" min="0" max="95" value="45"><span id="smV">45%</span></div>
+    <div class="range"><span>Floor</span><input id="floor" type="range" min="0" max="100" value="6"><span id="floorV">6</span></div>
+    <div class="range"><span>Beat sens</span><input id="beat" type="range" min="10" max="255" value="190"><span id="beatV">75%</span></div>
+  </div>
+</section>
+
+<section id="pre" class="page">
+  <div class="card">
+    <h2>STARTUP STATE</h2>
+    <button id="saveStartup" class="btn primary full">SAVE CURRENT STATE FOR POWER-UP</button>
+    <button id="loadStartup" class="btn full" style="margin-top:7px">LOAD SAVED STARTUP STATE</button>
+    <div class="compat">ESP32 Preferences/NVS is flash memory. It does not need a battery. A saved startup state survives unplugging the controller.</div>
+  </div>
+  <div class="card">
+    <h2>NAMED PRESETS — 8 DEVICE SLOTS</h2>
+    <div class="row"><input id="presetName" placeholder="e.g. Red Safety"><button id="presetSave" class="btn primary" style="width:120px">SAVE NEW</button></div>
+    <div id="presetList"></div>
+    <div class="compat">The actual lighting state is stored in the ESP32 preset slot. The custom display name is stored in this browser.</div>
+  </div>
+</section>
+
+<section id="dev" class="page">
+  <div class="card">
+    <h2>MAIN CONTROLLER</h2>
+    <div id="status" class="muted">Not connected.</div>
+    <button id="statusBtn" class="btn full" style="margin-top:8px">READ STATUS</button>
+  </div>
+  <div class="card"><h2>CONSOLE</h2><div id="log" class="log">ShyneTyme V5.1 UI ready.</div></div>
+</section>
+
+<section id="set" class="page">
+  <div class="card">
+    <h2>HARDWARE CONFIG</h2>
+    <div class="g3"><div><label>LED count</label><input id="leds" type="number" min="1" max="600" value="300"></div><div><label>GPIO</label><input id="gpio" type="number" min="0" max="39" value="13"></div><div><label>Pixel order</label><select id="order"><option>RGB</option><option selected>GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></div></div>
+    <div class="g2" style="margin-top:8px"><button id="saveConfig" class="btn primary">SAVE CONFIG</button><button id="reboot" class="btn danger">SAVE + REBOOT</button></div>
+  </div>
+  <div class="card"><h2>RAW COMMAND</h2><div class="row"><input id="raw" placeholder="FX=LIGHTNING"><button id="rawGo" class="btn primary" style="width:90px">SEND</button></div></div>
+</section>
+</main>
+<div class="bottom"><div><button id="connect" class="btn primary">CONNECT MAIN</button><button id="statusBottom" class="btn">STATUS</button><button id="blackout" class="btn danger">BLACKOUT</button></div></div>
+
+<script src="st-ble-core.js?v=20260903v51"></script></body></html>
