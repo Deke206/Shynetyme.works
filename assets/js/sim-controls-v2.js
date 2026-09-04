@@ -27,9 +27,6 @@
     return;
   }
 
-  query(".status-right")?.remove();
-  query(".sim-drawer-meta")?.remove();
-
   /* Left drawer */
 
   const sidebarStates = ["closed", "one", "two"];
@@ -129,54 +126,20 @@
 
   /* Lower controls */
 
-  const drawerStates = ["closed", "peek", "open"];
-  const drawerSurface = query("#simDrawerSurface");
-  const drawerArrow = query(".sim-drawer-handle__arrow", drawerHandle);
-
-  function setDrawerState(state) {
-    const nextState = drawerStates.includes(state) ? state : "closed";
-    drawer.dataset.drawerState = nextState;
-    drawer.classList.toggle("is-peek", nextState === "peek");
-    drawer.classList.toggle("is-open", nextState === "open");
-
-    const labels = {
-      closed: "Peek simulator controls",
-      peek: "Open simulator controls fully",
-      open: "Close simulator controls",
-    };
-
-    drawerHandle.setAttribute("aria-expanded", String(nextState !== "closed"));
-    drawerHandle.setAttribute("aria-label", labels[nextState]);
-    drawerHandle.title = labels[nextState];
-    if (drawerArrow) drawerArrow.textContent = nextState === "open" ? "⌄" : "⌃";
-    drawerSurface?.toggleAttribute("inert", nextState === "closed");
+  function setDrawer(open) {
+    drawer.classList.toggle("is-open", open);
+    drawerHandle.setAttribute("aria-expanded", String(open));
+    drawerHandle.setAttribute(
+      "aria-label",
+      open ? "Close simulator controls" : "Open simulator controls",
+    );
+    query("#simDrawerSurface")?.toggleAttribute("inert", !open);
   }
 
   drawerHandle.addEventListener("click", (event) => {
     event.stopPropagation();
-    const currentIndex = drawerStates.indexOf(
-      drawer.dataset.drawerState || "closed",
-    );
-    setDrawerState(drawerStates[(currentIndex + 1) % drawerStates.length]);
+    setDrawer(!drawer.classList.contains("is-open"));
   });
-
-  const lowerControlSelector =
-    "button, input, select, textarea, [role='button'], [role='slider']";
-  const clearDrawerControlActive = () =>
-    drawer.classList.remove("is-control-active");
-
-  drawer.addEventListener(
-    "pointerdown",
-    (event) => {
-      if (event.target.closest(lowerControlSelector)) {
-        drawer.classList.add("is-control-active");
-      }
-    },
-    true,
-  );
-  window.addEventListener("pointerup", clearDrawerControlActive, true);
-  window.addEventListener("pointercancel", clearDrawerControlActive, true);
-  window.addEventListener("blur", clearDrawerControlActive);
 
   queryAll("[data-output]").forEach((range) => {
     range.addEventListener("input", () => {
@@ -527,7 +490,7 @@
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
-    setDrawerState("closed");
+    setDrawer(false);
     setSidebarState("closed");
     setMobileNavVisible(false);
   });
@@ -540,5 +503,5 @@
   const initialDevice = query(".device-tile.active");
   if (initialDevice) selectDevice(initialDevice, false);
   setSidebarState("closed");
-  setDrawerState("closed");
+  setDrawer(false);
 })();
