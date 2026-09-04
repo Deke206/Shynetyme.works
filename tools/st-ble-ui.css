@@ -194,3 +194,104 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
   .slider-row{grid-template-columns:66px minmax(100px,1fr) 32px}
   .preset-card{width:min(100%,230px)}
 }
+
+/* === SIM-format moving neon frames + index-style LED matrix formatting === */
+.device-card,.sync-box,.device-options,.debug-panel,
+#fxcolor .control-deck>.compact-panel,#fxcolor .library,.music-panel{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:3px solid transparent!important;
+  background-image:
+    radial-gradient(circle,rgba(54,191,255,.10) 0 1px,transparent 1.5px),
+    radial-gradient(circle,rgba(255,44,168,.07) 0 1px,transparent 1.5px)!important;
+  background-size:13px 13px,19px 19px!important;
+  background-position:0 0,7px 7px!important;
+  background-color:rgba(2,7,14,.28)!important;
+  backdrop-filter:blur(15px) saturate(1.14);
+  -webkit-backdrop-filter:blur(15px) saturate(1.14);
+}
+.device-card::before,.sync-box::before,.device-options::before,.debug-panel::before,
+#fxcolor .control-deck>.compact-panel::before,#fxcolor .library::before,.music-panel::before{
+  content:"";
+  position:absolute;
+  z-index:6;
+  inset:0;
+  padding:3px;
+  border-radius:inherit;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(255,44,168,.98),transparent 28%),
+    radial-gradient(circle at 86% 12%,rgba(255,217,40,.98),transparent 29%),
+    radial-gradient(circle at 88% 84%,rgba(54,191,255,.98),transparent 30%),
+    radial-gradient(circle at 14% 82%,rgba(255,44,168,.86),transparent 28%),
+    linear-gradient(96deg,var(--pink),var(--yellow),var(--blue),var(--pink));
+  background-size:235% 225%,245% 235%,255% 230%,240% 240%,310% 100%;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  filter:saturate(1.18) contrast(1.06)
+    drop-shadow(0 0 4px rgba(255,44,168,.48))
+    drop-shadow(0 0 5px rgba(255,217,40,.34))
+    drop-shadow(0 0 6px rgba(54,191,255,.46));
+  animation:esp32-liquid-border-flow 11s ease-in-out infinite alternate;
+}
+.device-card::after,.sync-box::after,.device-options::after,.debug-panel::after,
+#fxcolor .control-deck>.compact-panel::after,#fxcolor .library::after,.music-panel::after{
+  position:absolute;
+  z-index:0;
+  left:-10%;
+  top:3px;
+  width:180%;
+  height:calc(100% - 6px);
+  display:flex;
+  align-items:space-around;
+  pointer-events:none;
+  overflow:hidden;
+  white-space:pre;
+  color:rgba(54,191,255,.18);
+  font:800 clamp(7px,.76vw,9px)/3.15 Oxanium,sans-serif;
+  letter-spacing:.20em;
+  text-shadow:
+    0 0 7px rgba(54,191,255,.54),
+    0 12px 8px rgba(255,44,168,.42),
+    0 24px 8px rgba(255,217,40,.38);
+  opacity:.62;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  animation:esp32-matrix-message 30s linear infinite;
+}
+.device-card::after{content:"DEVICE · LEDS · GPIO · STARTUP · SHYNETYME · DEVICE · LIGHT · PIXELS · SIGNAL · SAVE ·   \A DEVICE · CONTROL · EFFECT · OUTPUT · SHYNETYME · DEVICE · CONTROL · EFFECT ·   \A PINK · YELLOW · BLUE · LEDS · GPIO · PIXELS · PINK · YELLOW · BLUE ·"}
+.sync-box::after{content:"SYNC · DEVICE ONE · DEVICE TWO · SHYNETYME · LINK · CONTROL · LIGHT · SYNC ·   \A MIRROR · OUTPUT · PAIR · SHYNETYME · DEVICE · CONTROL · MIRROR · OUTPUT ·   \A PINK · YELLOW · BLUE · SYNC · PAIR · PINK · YELLOW · BLUE ·"}
+.device-options::after{content:"LED COUNT · GPIO PIN · PIXEL ORDER · SHYNETYME · DEVICE SETTINGS · STARTUP · SAVE ·   \A FROM LED · TO LED · EFFECT RANGE · STARTUP EFFECT · DEVICE SETTINGS · OUTPUT ·   \A PINK · YELLOW · BLUE · PIXELS · SIGNAL · PINK · YELLOW · BLUE ·"}
+.debug-panel::after{content:"DEBUG · STATUS · RAW COMMAND · SHYNETYME · TEST · READ · WRITE · BLE ·   \A COMMAND · RESPONSE · STATUS · OUTPUT · DEBUG · COMMAND · RESPONSE · STATUS ·   \A PINK · YELLOW · BLUE · DEBUG · SIGNAL · PINK · YELLOW · BLUE ·"}
+#fxcolor .control-deck>.compact-panel:first-child::after{content:"EFFECT · SPEED · INTENSITY · SIZE · SHYNETYME · MOTION · LIGHT · CONTROL ·   \A DENSITY · TRAIL · DIRECTION · MIRROR · EFFECT · MOTION · SPEED · SIZE ·   \A PINK · YELLOW · BLUE · EFFECT · MOTION · PINK · YELLOW · BLUE ·";color:rgba(255,44,168,.19)}
+#fxcolor .control-deck>.compact-panel:last-child::after{content:"MAIN · BACKGROUND · FOREGROUND · SHYNETYME · COLOR · LIGHT · SAVE ·   \A PINK · YELLOW · BLUE · PICK · STORE · MAIN · BACKGROUND · FOREGROUND ·   \A COLOR · LIGHT · PRESET · PLAYLIST · PINK · YELLOW · BLUE · COLOR ·";color:rgba(255,217,40,.18);animation-direction:reverse;animation-duration:34s}
+#fxcolor .library::after{content:"EFFECTS · MOTION · SEASONAL · MUSIC · SHYNETYME · FX · LIGHT · MOTION ·   \A SEARCH · SELECT · PRESET · PLAYLIST · EFFECTS · MOTION · MUSIC · SEARCH ·   \A PINK · YELLOW · BLUE · EFFECT LIBRARY · PINK · YELLOW · BLUE ·";color:rgba(54,191,255,.18);animation-duration:36s}
+.music-panel:first-child::after{content:"MICROPHONE · RESPONSE · AMOUNT · SHYNETYME · MUSIC · REACTIVE · LIGHT ·   \A SPECTRUM · VU · STREAM · LIGHTNING · MICROPHONE · RESPONSE · AMOUNT ·   \A PINK · YELLOW · BLUE · MUSIC · REACTIVE · PINK · YELLOW · BLUE ·";color:rgba(255,44,168,.18)}
+.music-panel:last-child::after{content:"LOW · MID · HIGH · SPECTRUM · SHYNETYME · MUSIC · COLOR · LIGHT ·   \A AUDIO · LEVEL · BEAT · MOTION · LOW · MID · HIGH · SPECTRUM ·   \A PINK · YELLOW · BLUE · AUDIO · LIGHT · PINK · YELLOW · BLUE ·";color:rgba(54,191,255,.18);animation-direction:reverse;animation-duration:35s}
+.device-card>*,.sync-box>*,.device-options>*,.debug-panel>*,
+#fxcolor .control-deck>.compact-panel>*,#fxcolor .library>*,.music-panel>*{
+  position:relative;
+  z-index:2;
+}
+#fxcolor .control-deck>.compact-panel:first-child::before{animation-duration:10s}
+#fxcolor .control-deck>.compact-panel:last-child::before{animation-duration:12s;animation-direction:alternate-reverse}
+#fxcolor .library::before{animation-duration:14s}
+.music-panel:last-child::before{animation-duration:13s;animation-direction:alternate-reverse}
+@keyframes esp32-liquid-border-flow{
+  0%{background-position:0% 46%,72% 0%,100% 88%,15% 100%,0% 0%}
+  38%{background-position:68% 8%,18% 86%,54% 18%,92% 66%,38% 0%}
+  72%{background-position:96% 62%,85% 38%,12% 84%,42% 10%,72% 0%}
+  100%{background-position:34% 92%,100% 74%,78% 0%,0% 48%,100% 0%}
+}
+@keyframes esp32-matrix-message{
+  from{transform:translateX(0)}
+  to{transform:translateX(-32%)}
+}
+@media(prefers-reduced-motion:reduce){
+  .device-card::before,.sync-box::before,.device-options::before,.debug-panel::before,
+  #fxcolor .control-deck>.compact-panel::before,#fxcolor .library::before,.music-panel::before{animation-duration:22s}
+  .device-card::after,.sync-box::after,.device-options::after,.debug-panel::after,
+  #fxcolor .control-deck>.compact-panel::after,#fxcolor .library::after,.music-panel::after{animation-duration:60s}
+}
