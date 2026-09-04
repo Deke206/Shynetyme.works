@@ -1,78 +1,185 @@
 'use strict';
-const SU='78170001-7a32-4b19-913a-5354594d4501',CU='78170002-7a32-4b19-913a-5354594d4501',TU='78170003-7a32-4b19-913a-5354594d4501';
-const E=new TextEncoder(),D=new TextDecoder(),$=id=>document.getElementById(id);
-let dev=null,server=null,cmd=null,stat=null,connected=false,queue=Promise.resolve(),selectedFx='LIGHTNING';
-let micOn=false,stream=null,ctx=null,an=null,raf=0,lastAT=0,bassAvg=0,lastBeat=0,smooth={l:0,b:0,m:0,h:0},peaks={l:30,b:30,m:30,h:30};
-let audioBusy=false,pendingAudio=null,audioTxCount=0,lastAudioRx=0;
-let activeRole='BG';
-const roles={
-  BG:{hex:'#000000',bri:64,cmd:'BG',briCmd:'BGB',label:'BACKGROUND',h:0,s:0},
-  FG:{hex:'#8000ff',bri:220,cmd:'FG',briCmd:'FGB',label:'FOREGROUND',h:270,s:1},
-  MAIN:{hex:'#ffffff',bri:180,cmd:'MAIN',briCmd:'MAINB',label:'MAIN',h:0,s:0}
-};
-function log(s){const x=$('log');if(x){x.textContent+='\n'+new Date().toLocaleTimeString()+' '+s;x.scrollTop=x.scrollHeight}}
-function badge(s,ok=false){$('badge').textContent=s;$('badge').classList.toggle('ok',ok);log(s)}
-function chunks(t){const a=t.split(';').map(x=>x.trim()).filter(Boolean),o=[];let c='';for(const p of a){const n=c?c+';'+p:p;if(n.length<=18)c=n;else{if(c)o.push(c);c=p}}if(c)o.push(c);return o}
-async function writeCtrl(t){if(!connected||!cmd)throw Error('not connected');const b=E.encode(t);if(cmd.properties.write&&typeof cmd.writeValueWithResponse==='function'){await cmd.writeValueWithResponse(b);return}if(typeof cmd.writeValue==='function'){await cmd.writeValue(b);return}if(cmd.properties.writeWithoutResponse&&typeof cmd.writeValueWithoutResponse==='function'){await cmd.writeValueWithoutResponse(b);return}throw Error('No BLE write method')}
-async function writeFast(t){if(!connected||!cmd)return;const b=E.encode(t);if(cmd.properties.writeWithoutResponse&&typeof cmd.writeValueWithoutResponse==='function'){try{await cmd.writeValueWithoutResponse(b);return}catch(e){}}await writeCtrl(t)}
-function send(t,quiet=true){const run=async()=>{if(!connected){if(!quiet)log('CONNECT FIRST');return false}try{for(const c of chunks(t))await writeCtrl(c);if(!quiet)log('TX '+t);return true}catch(e){log('TX ERROR '+e.message);return false}};queue=queue.then(run,run);return queue}
-async function connect(){try{if(!navigator.bluetooth)throw Error('Web Bluetooth unavailable');badge('OPENING BLUETOOTH PICKER...');dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SU]});dev.addEventListener('gattserverdisconnected',disconnect);badge('CONNECTING '+(dev.name||'DEVICE')+'...');server=await dev.gatt.connect();const svc=await server.getPrimaryService(SU);cmd=await svc.getCharacteristic(CU);stat=await svc.getCharacteristic(TU);connected=true;$('connect').textContent='CONNECTED';badge('CONNECTED '+(dev.name||'SHYNETYME'),true);await readStatus(true)}catch(e){badge('CONNECT FAILED: '+e.message);alert('CONNECT FAILED: '+e.message)}}
-function disconnect(){connected=false;server=cmd=stat=null;$('connect').textContent='CONNECT MAIN';badge('DISCONNECTED');if(micOn)stopMic()}
-async function readStatus(sync=false){if(!connected||!stat)return;try{await writeCtrl('STATUS');await new Promise(r=>setTimeout(r,100));const t=D.decode(await stat.readValue());parseStatus(t,sync)}catch(e){log('STATUS '+e.message)}}
-function parseStatus(t,sync=false){const s={};for(const p of t.split(';')){const n=p.indexOf('=');if(n>0)s[p.slice(0,n)]=p.slice(n+1)}const bgb=s.BGB??s.BGBRI??'?',fgb=s.FGB??s.FGBRI??'?',mainb=s.MAINB??s.MAINBRI??'?',arx=+(s.ARX||0);lastAudioRx=arx;if($('arx'))$('arx').textContent=arx;$('status').textContent=`V${s.VER||'?'} · ${s.FX||'?'} · ${s.BRI||'?'} master · BG ${bgb} / FG ${fgb} / MAIN ${mainb} · ${s.LEDS||'?'} LEDs · GPIO ${s.PIN||'?'} · AUDIO ${s.AUDLIVE==='1'?'LIVE':'idle'} · RX ${arx}`;if(sync)syncUI(s);log('RX '+t)}
-function syncUI(s){
-  if(s.FX){selectedFx=s.FX;markFx()}
-  for(const k of ['BG','FG','MAIN'])if(s[k]){roles[k].hex='#'+s[k];const hv=rgbToHsv(hexRgb(roles[k].hex));roles[k].h=hv.h;roles[k].s=hv.s}
-  if(s.BGB!=null||s.BGBRI!=null)roles.BG.bri=+(s.BGB??s.BGBRI);if(s.FGB!=null||s.FGBRI!=null)roles.FG.bri=+(s.FGB??s.FGBRI);if(s.MAINB!=null||s.MAINBRI!=null)roles.MAIN.bri=+(s.MAINB??s.MAINBRI);
-  for(const [k,id] of [['BRI','bri'],['SPD','spd'],['INT','int'],['SIZE','size'],['DENS','dens'],['TRAIL','trail'],['AUDAMT','audamt']])if(s[k]!=null&&$(id)){ $(id).value=s[k];showRange(id)}
-  if(s.ORDER)$('order').value=s.ORDER;if(s.AUDMODE)$('audmode').value=s.AUDMODE;if(s.DIR)$('dir').value=s.DIR;if(s.MIRROR!=null)$('mirror').checked=s.MIRROR==='1';if(s.LEDS)$('leds').value=s.LEDS;if(s.CFGPIN||s.PIN)$('gpio').value=s.CFGPIN||s.PIN;
-  updateRoleUI();
+
+const SU='78170001-7a32-4b19-913a-5354594d4501';
+const CU='78170002-7a32-4b19-913a-5354594d4501';
+const TU='78170003-7a32-4b19-913a-5354594d4501';
+const E=new TextEncoder();
+const D=new TextDecoder();
+const $=id=>document.getElementById(id);
+const REMEMBER_KEY='stw-esp32-remembered-v2';
+const SAVED_COLORS_KEY='stw-esp32-saved-colors-v1';
+const AUDIO_READY=new Set(['SPECTRUM','VU','SONIC_STREAM','SONIC_BOOM','LIGHTNING','THUNDER','COMET','COLOR_WAVES','TWINKLE']);
+
+function slot(i){return {i,on:false,device:null,server:null,cmd:null,st:null,state:{},ver:0,synced:false,queue:Promise.resolve(),disconnectHandler:null}}
+const ds=[slot(0),slot(1)];
+let ai=0;
+let selectedFx='AURORA';
+let activeConnectSlot=null;
+let connectLock=Promise.resolve();
+let micOn=false,stream=null,ctx=null,an=null,raf=0,lastAT=0,bassAvg=0,lastBeat=0;
+let smooth={l:0,b:0,m:0,h:0},peaks={l:30,b:30,m:30,h:30};
+
+function log(s){const x=$('log');if(!x)return;x.textContent+='\n'+new Date().toLocaleTimeString()+' '+s;x.scrollTop=x.scrollHeight}
+function setText(id,text){const x=$(id);if(x)x.textContent=text}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function waitFor(promise,ms,label){return new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error(label)),ms);Promise.resolve(promise).then(v=>{clearTimeout(timer);resolve(v)},e=>{clearTimeout(timer);reject(e)})})}
+function withConnectLock(task){const run=()=>task();const p=connectLock.then(run,run);connectLock=p.catch(()=>{});return p}
+function chunks(t){const parts=String(t||'').split(';').map(x=>x.trim()).filter(Boolean),out=[];let current='';for(const p of parts){const next=current?current+';'+p:p;if(next.length<=18)current=next;else{if(current)out.push(current);current=p}}if(current)out.push(current);return out}
+function connectedCount(){return ds.filter(d=>d.on).length}
+function updateBadge(){const n=connectedCount(),b=$('badge');if(b){b.textContent=n?`${n} CONNECTED`:'BLE READY';b.classList.toggle('ok',n>0)}$('headerDot')?.classList.toggle('ok',!!ds[ai]?.on)}
+function rememberState(){try{localStorage.setItem(REMEMBER_KEY,JSON.stringify(ds.map(d=>d.device?{id:d.device.id,name:d.device.name||''}:null)))}catch(_){} }
+function rememberedState(){try{const x=JSON.parse(localStorage.getItem(REMEMBER_KEY)||'[]');return Array.isArray(x)?x:[]}catch(_){return []}}
+function targets(){return $('sync')?.checked?ds.filter(d=>d.on):(ds[ai]?.on?[ds[ai]]:[])}
+function setTargetLabel(){if($('target'))$('target').textContent=$('sync')?.checked?'TARGET BOTH':'TARGET #'+(ai+1)}
+function use(i){if(!ds[i])return;ai=i;$('d0')?.classList.toggle('on',i===0);$('d1')?.classList.toggle('on',i===1);setTargetLabel();setText('deviceHeaderName',ds[i].device?.name||`SHYNETYME #${i+1}`);$('headerDot')?.classList.toggle('ok',!!ds[i].on)}
+function markFx(){document.querySelectorAll('[data-fx]').forEach(x=>x.classList.toggle('on',x.dataset.fx===selectedFx))}
+
+function activateTab(id){const button=document.querySelector(`.tab[data-p="${id}"]`),panel=$(id);if(!button||!panel)return;document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('on',x===button);x.setAttribute('aria-selected',x===button?'true':'false')});document.querySelectorAll('.workspace-page').forEach(x=>x.classList.toggle('on',x===panel))}
+function bindTabs(){document.querySelectorAll('.tab[data-p]').forEach(b=>{b.setAttribute('role','tab');b.addEventListener('click',()=>activateTab(b.dataset.p))});const nav=document.querySelector('.tabs');if(nav)nav.setAttribute('role','tablist')}
+
+async function writeRaw(d,text,fast=false){if(!d?.on||!d.cmd)throw new Error('Controller not connected');const c=d.cmd,b=E.encode(text);let op;if(fast&&c.properties.writeWithoutResponse&&c.writeValueWithoutResponse)op=c.writeValueWithoutResponse(b);else if(c.properties.write&&c.writeValueWithResponse)op=c.writeValueWithResponse(b);else if(c.writeValue)op=c.writeValue(b);else if(c.properties.writeWithoutResponse&&c.writeValueWithoutResponse)op=c.writeValueWithoutResponse(b);else throw new Error('No BLE write method');await waitFor(op,1600,'Bluetooth write timed out')}
+function queueWrite(d,text,fast=false){const run=async()=>{for(const part of chunks(text))await writeRaw(d,part,fast);return true};d.queue=d.queue.then(run,run).catch(e=>{log(`#${d.i+1} TX ${e.message}`);return false});return d.queue}
+async function sendTo(list,text,{quiet=true,fast=false}={}){const active=(list||[]).filter(d=>d?.on&&d.cmd);if(!active.length)return false;const result=await Promise.all(active.map(d=>queueWrite(d,text,fast)));if(!quiet)log('TX '+text);return result.some(Boolean)}
+function send(text,quiet=true){return sendTo(targets(),text,{quiet})}
+
+function parseStatus(i,text,syncUIAfter=false){const s={};for(const p of String(text||'').split(';')){const n=p.indexOf('=');if(n>0)s[p.slice(0,n)]=p.slice(n+1)}const d=ds[i];d.state={...d.state,...s};d.ver=+(s.VER||((s.MAIN||s.ORDER||s.SIZE)?3:2));if(i===ai){setText('status',`V${d.ver||'?'} · ${s.FX||'?'} · ${s.BRI||'?'} bri · ${s.LEDS||s.CFGLEDS||'?'} LEDs · GPIO ${s.PIN||s.CFGPIN||'?'} · ${s.ORDER||'?'}`);if(syncUIAfter&&!d.synced){d.synced=true;syncUI(s)}}}
+function syncUI(s){if(s.FX){selectedFx=s.FX;markFx();setText('activeFxName',s.FX)}for(const [k,id] of [['BG','bg'],['FG','fg'],['MAIN','main']])if(s[k]&&$(id)){$(id).value='#'+s[k];if($(id+'Swatch'))$(id+'Swatch').style.background='#'+s[k]}for(const [k,id] of [['BRI','bri'],['SPD','spd'],['INT','int'],['SIZE','size'],['DENS','dens'],['TRAIL','trail'],['AUDAMT','audamt']])if(s[k]!=null&&$(id)){$(id).value=s[k];if($(id+'V'))$(id+'V').textContent=s[k]}if(s.ORDER&&$('order'))$('order').value=s.ORDER;if(s.AUDMODE&&$('audmode'))$('audmode').value=s.AUDMODE;if(s.DIR&&$('dir'))$('dir').value=s.DIR;if(s.MIRROR!=null&&$('mirror'))$('mirror').checked=s.MIRROR==='1';if((s.CFGLEDS||s.LEDS)&&$('leds'))$('leds').value=s.CFGLEDS||s.LEDS;if((s.CFGPIN||s.PIN)&&$('gpio'))$('gpio').value=s.CFGPIN||s.PIN;syncSpectrumPickers();updateSpectrumPalette()}
+async function readStatus(i=ai,syncUIAfter=false){const d=ds[i];if(!d?.on||!d.st)return false;try{await queueWrite(d,'STATUS');await sleep(110);const v=await waitFor(d.st.readValue(),1800,'Status read timed out');parseStatus(i,D.decode(v),syncUIAfter);return true}catch(e){log(`#${i+1} STATUS ${e.message}`);return false}}
+
+function cleanupSlot(i,keepDevice=true){const d=ds[i];d.on=false;d.server=null;d.cmd=null;d.st=null;d.state={};d.ver=0;d.synced=false;d.queue=Promise.resolve();if(!keepDevice)d.device=null;$('dot'+i)?.classList.remove('ok');setText('con'+i,'CONNECT #'+(i+1));updateBadge();setTargetLabel()}
+function handleDisconnect(i){cleanupSlot(i,true);setText('status',`ESP32 #${i+1} disconnected. It remains remembered for reconnect.`);if(micOn&&!targets().length)stopMic(false)}
+
+async function openGatt(dev){if(dev.gatt?.connected)return dev.gatt;let lastError=null;for(let attempt=0;attempt<2;attempt++){try{await sleep(attempt?450:220);return await waitFor(dev.gatt.connect(),5200,'Bluetooth connection timed out')}catch(e){lastError=e;try{if(dev.gatt?.connected)dev.gatt.disconnect()}catch(_){} }}throw lastError||new Error('Bluetooth connection failed')}
+
+async function attachDevice(i,dev,{auto=false}={}){
+  const d=ds[i],button=$('con'+i);
+  if(d.on)return true;
+  const duplicate=ds.findIndex((x,n)=>n!==i&&x.device?.id===dev.id);
+  if(duplicate>=0)throw new Error(`That controller is already assigned to ESP32 #${duplicate+1}`);
+  d.device=dev;d.on=false;d.synced=false;d.state={};d.ver=0;
+  if(button)button.textContent=auto?'RECONNECTING…':'CONNECTING…';
+  setText('name'+i,dev.name||`Controller #${i+1}`);
+  try{
+    await withConnectLock(async()=>{
+      setText('status',`ESP32 #${i+1}: establishing Bluetooth link…`);
+      if(d.disconnectHandler)dev.removeEventListener('gattserverdisconnected',d.disconnectHandler);
+      d.disconnectHandler=()=>handleDisconnect(i);
+      dev.addEventListener('gattserverdisconnected',d.disconnectHandler);
+      d.server=await openGatt(dev);
+      setText('status',`ESP32 #${i+1}: finding ShyneTyme service…`);
+      const svc=await waitFor(d.server.getPrimaryService(SU),3500,'ShyneTyme BLE service not found — firmware may need updating');
+      d.cmd=await waitFor(svc.getCharacteristic(CU),2600,'Control characteristic not found');
+      d.st=await waitFor(svc.getCharacteristic(TU),2600,'Status characteristic not found');
+    });
+
+    d.on=true;
+    $('dot'+i)?.classList.add('ok');
+    setText('con'+i,'CONNECTED');
+    rememberState();
+    updateBadge();
+    if(!auto)use(i);
+    setText('status',`ESP32 #${i+1} connected${connectedCount()===2?' · both controllers ready':''}.`);
+
+    // Do not hold the connection transaction open for status reads, notifications or sync writes.
+    setTimeout(()=>readStatus(i,true),260);
+    if($('sync')?.checked&&connectedCount()===2)setTimeout(()=>cloneCurrentStateToBoth(),520);
+    return true;
+  }catch(e){
+    if(d.server?.connected)try{d.server.disconnect()}catch(_){}
+    cleanupSlot(i,true);
+    if(!auto)throw e;
+    log(`AUTO #${i+1} ${e.message}`);
+    return false;
+  }
 }
-function debounce(fn,ms){let t;return v=>{clearTimeout(t);t=setTimeout(()=>fn(v),ms)}}
-function pct(v){return Math.round((+v/255)*100)+'%'}
-function showRange(id){const x=$(id),o=$(id+'V');if(!x||!o)return;if(id==='gain')o.textContent=(+x.value/100).toFixed(1)+'x';else if(id==='floor')o.textContent=x.value;else o.textContent=pct(x.value)}
-function bindRange(id,key){const x=$(id);if(!x)return;const tx=key?debounce(v=>send(key+'='+v,true),45):null;x.oninput=()=>{showRange(id);if(tx)tx(x.value)};x.onchange=()=>{showRange(id);if(key)send(key+'='+x.value,true)};showRange(id)}
-function markFx(){document.querySelectorAll('[data-fx]').forEach(b=>b.classList.toggle('on',b.dataset.fx===selectedFx))}
-document.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{selectedFx=b.dataset.fx;markFx();send('FX='+selectedFx,true)});
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.page').forEach(x=>x.classList.remove('on'));b.classList.add('on');$(b.dataset.p).classList.add('on')});
-bindRange('bri','BRI');bindRange('spd','SPD');bindRange('int','INT');bindRange('size','SIZE');bindRange('dens','DENS');bindRange('trail','TRAIL');bindRange('audamt','AUDAMT');bindRange('gain','');bindRange('sm','');bindRange('floor','');bindRange('beat','');
-$('dir').onchange=()=>send('DIR='+$('dir').value,true);$('mirror').onchange=()=>send('MIRROR='+($('mirror').checked?1:0),true);$('order').onchange=()=>send('ORDER='+$('order').value,true);$('audmode').onchange=()=>send('AUDMODE='+$('audmode').value,true);
-function hexRgb(hex){const n=parseInt(hex.replace('#',''),16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
-function rgbHex(r,g,b){return'#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
-function hsvToRgb(h,s,v){h=((h%360)+360)%360;const c=v*s,x=c*(1-Math.abs((h/60)%2-1)),m=v-c;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return{r:(r+m)*255,g:(g+m)*255,b:(b+m)*255}}
-function rgbToHsv({r,g,b}){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){if(mx===r)h=60*(((g-b)/d)%6);else if(mx===g)h=60*((b-r)/d+2);else h=60*((r-g)/d+4)}if(h<0)h+=360;return{h,s:mx?d/mx:0,v:mx}}
-const canvas=$('wheel'),wc=canvas.getContext('2d'),marker=$('wheelMarker');
-function drawWheel(){const w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,R=w/2-2,img=wc.createImageData(w,h);for(let y=0;y<h;y++)for(let x=0;x<w;x++){const dx=x-cx,dy=y-cy,r=Math.sqrt(dx*dx+dy*dy),i=(y*w+x)*4;if(r<=R){const hue=(Math.atan2(dy,dx)*180/Math.PI+360)%360,s=Math.min(1,r/R),q=hsvToRgb(hue,s,1);img.data[i]=q.r;img.data[i+1]=q.g;img.data[i+2]=q.b;img.data[i+3]=255}else img.data[i+3]=0}wc.putImageData(img,0,0)}
-function markerPos(){const r=roles[activeRole],rect=canvas.getBoundingClientRect(),R=rect.width/2-2,ang=r.h*Math.PI/180,rad=r.s*R;marker.style.left=(rect.left+rect.width/2+Math.cos(ang)*rad-$('wheel').parentElement.getBoundingClientRect().left)+'px';marker.style.top=(rect.top+rect.height/2+Math.sin(ang)*rad-$('wheel').parentElement.getBoundingClientRect().top)+'px'}
-function updateRoleUI(){for(const k of ['BG','FG','MAIN']){$('sw'+k).style.background=roles[k].hex;document.querySelector(`[data-role="${k}"]`).classList.toggle('on',k===activeRole)}const r=roles[activeRole];$('roleName').innerHTML='<b>'+r.label+'</b>';$('rolePreview').style.background=r.hex;$('hex').value=r.hex;$('roleBri').value=r.bri;$('roleBriV').textContent=pct(r.bri);requestAnimationFrame(markerPos)}
-const roleColorTx=debounce(v=>send(v,true),50),roleBriTx=debounce(v=>send(v,true),45);
-function setRoleColor(h,s){const r=roles[activeRole],rgb=hsvToRgb(h,s,1);r.h=h;r.s=s;r.hex=rgbHex(rgb.r,rgb.g,rgb.b);updateRoleUI();roleColorTx(r.cmd+'='+r.hex.slice(1).toUpperCase())}
-function wheelPoint(e){const rect=canvas.getBoundingClientRect(),p=e.touches?e.touches[0]:e,x=p.clientX-rect.left,y=p.clientY-rect.top,cx=rect.width/2,cy=rect.height/2,dx=x-cx,dy=y-cy,R=rect.width/2-2,rad=Math.min(R,Math.sqrt(dx*dx+dy*dy)),h=(Math.atan2(dy,dx)*180/Math.PI+360)%360,s=rad/R;setRoleColor(h,s)}
-canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);wheelPoint(e)});canvas.addEventListener('pointermove',e=>{if(e.buttons)wheelPoint(e)});
-document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{activeRole=b.dataset.role;updateRoleUI()});
-$('roleBri').oninput=()=>{const r=roles[activeRole];r.bri=+$('roleBri').value;$('roleBriV').textContent=pct(r.bri);roleBriTx(r.briCmd+'='+r.bri)};$('roleBri').onchange=()=>{const r=roles[activeRole];send(r.briCmd+'='+r.bri,true)};
-$('hexGo').onclick=()=>{let h=$('hex').value.trim();if(!/^#[0-9a-fA-F]{6}$/.test(h))return;const r=roles[activeRole],hv=rgbToHsv(hexRgb(h));r.hex=h.toLowerCase();r.h=hv.h;r.s=hv.s;updateRoleUI();send(r.cmd+'='+h.slice(1).toUpperCase(),true)};
+
+async function connect(i){
+  if(!navigator.bluetooth){setText('status','Web Bluetooth is not available in this browser.');return false}
+  if(!window.isSecureContext){setText('status','HTTPS is required for Bluetooth.');return false}
+  if(ds[i]?.on){use(i);return true}
+  if(activeConnectSlot!==null){setText('status',`Finish ESP32 #${activeConnectSlot+1} first.`);return false}
+  activeConnectSlot=i;use(i);
+  const button=$('con'+i),main=$('connect');
+  if(button){button.disabled=true;button.textContent='SELECT DEVICE…'}
+  if(main)main.disabled=true;
+  setText('status',`Choose the physical controller for ESP32 #${i+1}.`);
+  try{
+    const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SU]});
+    setText('status',`Selected ${dev.name||'controller'} for ESP32 #${i+1}. Connecting…`);
+    await attachDevice(i,dev,{auto:false});
+    return true;
+  }catch(e){
+    if(e?.name==='NotFoundError'||/cancel|chooser/i.test(e?.message||'')){setText('status',`ESP32 #${i+1} not connected. Choose it when you are ready.`);updateBadge();return false}
+    setText('status',`ESP32 #${i+1}: ${e?.message||'Bluetooth connection failed'}`);
+    log(`CONNECT #${i+1} ${e?.message||e}`);
+    return false;
+  }finally{
+    activeConnectSlot=null;
+    if(button&&!ds[i].on){button.disabled=false;button.textContent='CONNECT #'+(i+1)}
+    if(main)main.disabled=false;
+    updateBadge();
+  }
+}
+
+async function autoReconnectRemembered(){
+  if(!navigator.bluetooth?.getDevices||!window.isSecureContext)return;
+  const remembered=rememberedState();
+  if(!remembered.some(Boolean))return;
+  // Give manual user selection priority so auto-reconnect never competes with the Android picker/GATT stack.
+  await sleep(900);
+  if(activeConnectSlot!==null)return;
+  try{
+    const permitted=await navigator.bluetooth.getDevices();
+    for(let i=0;i<2;i++){
+      if(activeConnectSlot!==null)break;
+      const r=remembered[i];
+      if(!r||ds[i].on)continue;
+      const dev=permitted.find(x=>x.id===r.id);
+      if(!dev)continue;
+      setText('status',`Recognized ${r.name||'controller'} · reconnecting ESP32 #${i+1}…`);
+      await attachDevice(i,dev,{auto:true});
+      await sleep(350);
+    }
+    if(connectedCount())setText('status',connectedCount()===2?'Recognized and reconnected both ESP32 controllers.':'Recognized and reconnected a saved ESP32 controller.');
+  }catch(e){log('AUTO RECONNECT '+e.message)}
+}
+
+function currentCommand(){const val=id=>$(id)?.value;const hex=id=>String(val(id)||'').replace('#','').toUpperCase();return [`FX=${selectedFx}`,`MAIN=${hex('main')||'FFFFFF'}`,`BG=${hex('bg')||'000000'}`,`FG=${hex('fg')||'8000FF'}`,`BRI=${val('bri')||70}`,`SPD=${val('spd')||220}`,`INT=${val('int')||190}`,`SIZE=${val('size')||72}`,`DENS=${val('dens')||110}`,`TRAIL=${val('trail')||145}`,`DIR=${val('dir')||'FWD'}`,`MIRROR=${$('mirror')?.checked?1:0}`].join(';')}
+async function cloneCurrentStateToBoth(){const z=ds.filter(d=>d.on);if(z.length<2){setText('status','SYNC BOTH is armed. Connect both controllers to mirror the current state.');return false}setText('status','Syncing current state to both controllers…');await sendTo(z,currentCommand(),{quiet:true});if(micOn)await sendAudioSetup(z);setText('status','Both controllers synchronized.');return true}
+function handleSyncChange(){setTargetLabel();const on=!!$('sync')?.checked;if($('groupBoth'))$('groupBoth').textContent=on?'ENABLED':'ENABLE';if(on)cloneCurrentStateToBoth();else setText('status',`Controlling ESP32 #${ai+1} independently.`)}
+
+function debounce(fn,ms){let timer;return (...a)=>{clearTimeout(timer);timer=setTimeout(()=>fn(...a),ms)}}
+function bindRange(id,key,formatter=v=>v){const x=$(id);if(!x)return;const tx=key?debounce(v=>send(`${key}=${v}`,true),70):null;x.addEventListener('input',()=>{if($(id+'V'))$(id+'V').textContent=formatter(x.value);if(tx)tx(x.value)});x.addEventListener('change',()=>{if(key)send(`${key}=${x.value}`,true)})}
+function bindColor(id,key){const x=$(id);if(!x)return;const tx=debounce(v=>send(`${key}=${v}`,true),85);x.addEventListener('input',()=>{const v=x.value.slice(1).toUpperCase();tx(v);syncSpectrumPickers();updateSpectrumPalette()});x.addEventListener('change',()=>send(`${key}=${x.value.slice(1).toUpperCase()}`,true))}
+
+function rgb(hex){const s=String(hex||'#000000').replace('#','').padEnd(6,'0').slice(0,6);return [0,2,4].map(i=>parseInt(s.slice(i,i+2),16)||0)}
+function mix(a,b,t){const A=rgb(a),B=rgb(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('').toUpperCase()}
+function spectrumColor(t){const low=$('bg')?.value||'#000000',mid=$('main')?.value||'#FFFFFF',high=$('fg')?.value||'#8000FF';return t<=.5?mix(low,mid,t*2):mix(mid,high,(t-.5)*2)}
+function updateSpectrumPalette(){const bars=[...document.querySelectorAll('#spectrumBars i')];bars.forEach((bar,i)=>{const c=spectrumColor(bars.length<=1?0:i/(bars.length-1));bar.style.background=`linear-gradient(180deg,${mix(c,'#FFFFFF',.22)},${c})`;bar.style.boxShadow=`0 0 7px ${c}`})}
+function renderSpectrum(fd){const bars=[...document.querySelectorAll('#spectrumBars i')];if(!bars.length||!fd?.length)return;for(let i=0;i<bars.length;i++){const start=Math.floor(i*fd.length/bars.length),end=Math.max(start+1,Math.floor((i+1)*fd.length/bars.length));let sum=0;for(let n=start;n<end;n++)sum+=fd[n];const avg=sum/(end-start),height=Math.max(5,Math.min(100,(avg/255)*112));bars[i].style.height=height.toFixed(1)+'%'}updateSpectrumPalette()}
+function flattenSpectrum(){document.querySelectorAll('#spectrumBars i').forEach(b=>b.style.height='5%');updateSpectrumPalette()}
+function ensureSpectrumBars(){const spec=$('spectrumBars');if(!spec)return;if(!spec.children.length){for(let i=0;i<28;i++)spec.append(document.createElement('i'))}flattenSpectrum()}
+
+function applyRoleColor(role,hex){const input=$(role);if(!input)return;input.value=hex.toUpperCase();input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));if($(role+'Swatch'))$(role+'Swatch').style.background=hex;if($('livePicker'))$('livePicker').value=hex;syncSpectrumPickers();updateSpectrumPalette()}
+function createSpectrumColorControls(){const music=$('music');if(!music||$('spectrumColorControls'))return;const host=music.querySelector('.music-grid > div:first-child')||music.querySelector('.box');if(!host)return;const wrap=document.createElement('div');wrap.id='spectrumColorControls';wrap.className='utility';const head=document.createElement('div');head.className='subhead';head.textContent='SPECTRUM COLORS';wrap.append(head);const row=document.createElement('div');row.className='rolebar';const defs=[['spectrumLow','LOW','bg'],['spectrumMid','MID','main'],['spectrumHigh','HIGH','fg']];for(const [id,label,role] of defs){const lab=document.createElement('label');lab.className='mini-btn';lab.style.display='flex';lab.style.alignItems='center';lab.style.justifyContent='center';lab.style.gap='5px';lab.setAttribute('for',id);const input=document.createElement('input');input.id=id;input.type='color';input.value=$(role)?.value||'#FFFFFF';input.style.width='28px';input.style.height='22px';input.style.padding='0';input.style.border='0';input.style.background='transparent';input.addEventListener('input',()=>applyRoleColor(role,input.value));const span=document.createElement('span');span.textContent=label;lab.append(input,span);row.append(lab)}wrap.append(row);host.append(wrap);syncSpectrumPickers()}
+function syncSpectrumPickers(){const map=[['spectrumLow','bg'],['spectrumMid','main'],['spectrumHigh','fg']];for(const [sid,rid] of map)if($(sid)&&$(rid))$(sid).value=$(rid).value}
+
+function loadSavedColors(){try{const x=JSON.parse(localStorage.getItem(SAVED_COLORS_KEY)||'[]');return Array.isArray(x)?x:[]}catch(_){return []}}
+function saveSavedColors(list){try{localStorage.setItem(SAVED_COLORS_KEY,JSON.stringify(list.slice(0,16)))}catch(_){} }
+function renderSavedColors(){const host=document.querySelector('.saved');if(!host)return;host.querySelectorAll('[data-user-color]').forEach(x=>x.remove());for(const c of loadSavedColors()){const b=document.createElement('button');b.type='button';b.dataset.userColor=c;b.style.setProperty('--c',c);b.title=`Saved ${c}`;b.addEventListener('click',()=>{const role=document.querySelector('.role.on')?.dataset.role||'main';applyRoleColor(role,c)});host.append(b)}}
+function bindSaveColor(){const b=document.querySelector('.savecolor');if(!b)return;b.addEventListener('click',()=>{const c=($('livePicker')?.value||'#FFFFFF').toUpperCase(),list=loadSavedColors().filter(x=>x!==c);list.unshift(c);saveSavedColors(list);renderSavedColors();setText('status',`Saved color ${c}.`)})}
+
 function band(fd,lo,hi){const hz=ctx.sampleRate/an.fftSize,a=Math.max(0,Math.floor(lo/hz)),b=Math.min(fd.length-1,Math.ceil(hi/hz));let s=0,n=0;for(let i=a;i<=b;i++){s+=fd[i];n++}return n?s/n:0}
-function norm(raw,k,floor,sens){peaks[k]=Math.max(raw,peaks[k]*.994);return Math.max(0,Math.min(255,(raw-floor)/Math.max(12,peaks[k]-floor)*255*sens))}
+function norm(raw,k,floor,sens){peaks[k]=Math.max(raw,peaks[k]*.992);return Math.max(0,Math.min(255,(raw-floor)/Math.max(18,peaks[k]-floor)*255*sens))}
 function hx(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0').toUpperCase()}
-async function sendAudioPacket(p){await writeFast(p)}
-async function pumpAudio(){if(audioBusy)return;audioBusy=true;while(pendingAudio){const p=pendingAudio;pendingAudio=null;try{await sendAudioPacket(p);audioTxCount++;if($('atx'))$('atx').textContent=audioTxCount}catch(e){log('AUDIO TX '+e.message)}}audioBusy=false}
-function queueAudio(l,b,m,h,beat){pendingAudio='A='+hx(l)+hx(b)+hx(m)+hx(h)+(beat?'1':'0');pumpAudio()}
-async function mic(){if(micOn){stopMic();return}try{if(!window.isSecureContext)throw Error('HTTPS required');if(!navigator.mediaDevices?.getUserMedia)throw Error('Microphone API unavailable');$('micState').textContent='REQUESTING';stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const AC=window.AudioContext||window.webkitAudioContext;ctx=new AC({latencyHint:'interactive'});if(ctx.state==='suspended')await ctx.resume();an=ctx.createAnalyser();an.fftSize=2048;an.minDecibels=-95;an.maxDecibels=-10;an.smoothingTimeConstant=.15;ctx.createMediaStreamSource(stream).connect(an);micOn=true;$('mic').textContent='STOP MICROPHONE';$('micState').textContent='LIVE';$('micState').classList.add('ok');await send('AUDIO=1;AUDMODE='+$('audmode').value+';AUDAMT='+$('audamt').value,true);audioLoop()}catch(e){$('micState').textContent='ERROR';alert('MICROPHONE FAILED: '+e.message)}}
-function stopMic(){micOn=false;if(raf)cancelAnimationFrame(raf);raf=0;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;if(ctx)ctx.close().catch(()=>{});ctx=null;an=null;$('mic').textContent='START MICROPHONE';$('micState').textContent='OFF';$('micState').classList.remove('ok');send('AUDIO=0',true)}
-function audioLoop(t=performance.now()){if(!micOn||!an||!ctx)return;const td=new Uint8Array(an.fftSize),fd=new Uint8Array(an.frequencyBinCount);an.getByteTimeDomainData(td);an.getByteFrequencyData(fd);let ss=0;for(const v of td){const q=(v-128)/128;ss+=q*q}const rms=Math.sqrt(ss/td.length)*255,rb=band(fd,30,220),rm=band(fd,220,1800),rh=band(fd,1800,8500),floor=+$('floor').value,sens=+$('gain').value/100,sm=+$('sm').value/100,n={l:norm(rms,'l',floor,sens),b:norm(rb,'b',floor,sens),m:norm(rm,'m',floor,sens),h:norm(rh,'h',floor,sens)};for(const k of ['l','b','m','h'])smooth[k]=smooth[k]*sm+n[k]*(1-sm);bassAvg=bassAvg*.94+smooth.b*.06;const bs=+$('beat').value,ratio=1.02+(255-bs)/700,beat=smooth.b>Math.max(18,bassAvg*ratio+5)&&t-lastBeat>150;if(beat)lastBeat=t;$('ml').textContent=Math.round(smooth.l);$('mb').textContent=Math.round(smooth.b);$('mm').textContent=Math.round(smooth.m);$('mh').textContent=Math.round(smooth.h);$('mbeat').textContent=beat?'●':'—';$('mdb').textContent=rms?(20*Math.log10(Math.max(rms/255,1e-6))).toFixed(1):'-∞';if(t-lastAT>=60){lastAT=t;queueAudio(smooth.l,smooth.b,smooth.m,smooth.h,beat)}raf=requestAnimationFrame(audioLoop)}
-$('mic').onclick=mic;
-$('audioTest').onclick=async()=>{if(!connected)return alert('Connect the controller first.');const b=$('audioTest'),old=b.textContent,startRx=lastAudioRx;b.textContent='TESTING AUDIO PIPE...';await send('AUDIO=1;AUDMODE=FULL;AUDAMT=255',true);pendingAudio=null;for(let i=0;i<18;i++){const hit=i%4===0,l=hit?255:80,bass=hit?255:70+(i*13)%120,mid=60+(i*29)%180,high=50+(i*41)%190;await sendAudioPacket('A='+hx(l)+hx(bass)+hx(mid)+hx(high)+(hit?'1':'0'));audioTxCount++;if($('atx'))$('atx').textContent=audioTxCount;await new Promise(r=>setTimeout(r,85))}await new Promise(r=>setTimeout(r,180));await readStatus(false);const received=lastAudioRx-startRx;log('Synthetic audio test: '+received+' packets confirmed by ESP32');b.textContent=received>0?'AUDIO PIPE PASS ✓':'NO AUDIO RX';setTimeout(()=>b.textContent=old,1800)};
-const PRESET_KEY='shynetyme-v5-preset-names';
-function names(){try{return JSON.parse(localStorage.getItem(PRESET_KEY)||'{}')}catch{return{}}}
-function saveNames(o){localStorage.setItem(PRESET_KEY,JSON.stringify(o));renderPresets()}
-function renderPresets(){const box=$('presetList'),o=names();box.innerHTML='';for(let i=1;i<=8;i++){if(!o[i])continue;const row=document.createElement('div');row.className='preset';const load=document.createElement('button');load.className='btn';load.textContent=`${i}. ${o[i]}`;load.onclick=async()=>{await send('PLOAD='+i,true);setTimeout(()=>readStatus(true),160)};const save=document.createElement('button');save.className='btn';save.textContent='UPDATE';save.onclick=()=>send('PSAVE='+i,true);const del=document.createElement('button');del.className='btn danger';del.textContent='×';del.onclick=async()=>{await send('PDEL='+i,true);const n=names();delete n[i];saveNames(n)};row.append(load,save,del);box.appendChild(row)}if(!box.children.length)box.innerHTML='<div class="empty">No device presets saved yet.</div>'}
-$('presetSave').onclick=async()=>{const name=$('presetName').value.trim();if(!name)return;const o=names();let slot=0;for(let i=1;i<=8;i++)if(!o[i]){slot=i;break}if(!slot)return alert('All 8 preset slots are in use. Delete one first.');if(await send('PSAVE='+slot,true)){o[slot]=name;saveNames(o);$('presetName').value=''}};
-$('saveStartup').onclick=async()=>{if(await send('SAVE',true)){$('saveStartup').textContent='SAVED ✓';setTimeout(()=>$('saveStartup').textContent='SAVE CURRENT STATE FOR POWER-UP',1300)}};
-$('loadStartup').onclick=async()=>{await send('LOAD',true);setTimeout(()=>readStatus(true),160)};
-$('saveConfig').onclick=async()=>{const n=+$('leds').value,p=+$('gpio').value;if(n<1||n>600)return alert('LED count must be 1-600');await send(`LEDS=${n};PIN=${p};ORDER=${$('order').value};SAVE`,true);setTimeout(()=>readStatus(true),160)};
-$('reboot').onclick=async()=>{const n=+$('leds').value,p=+$('gpio').value;if(n<1||n>600)return alert('LED count must be 1-600');await send(`LEDS=${n};PIN=${p};ORDER=${$('order').value};SAVE`,true);await send('REBOOT',true)};
-$('rawGo').onclick=()=>{const v=$('raw').value.trim();if(v)send(v,false)};
-$('connect').onclick=connect;$('statusBtn').onclick=()=>readStatus(false);$('statusBottom').onclick=()=>readStatus(false);$('blackout').onclick=()=>{selectedFx='OFF';markFx();send('FX=OFF',true)};
-window.addEventListener('resize',markerPos);
-drawWheel();updateRoleUI();markFx();renderPresets();badge(navigator.bluetooth?'BLE CORE V5.1 READY':'NO WEB BLUETOOTH');
+async function sendAudioSetup(list=targets()){const mode=$('audmode')?.value||'FULL',amt=$('audamt')?.value||180,main=($('main')?.value||'#FFFFFF').slice(1).toUpperCase(),bg=($('bg')?.value||'#000000').slice(1).toUpperCase(),fg=($('fg')?.value||'#8000FF').slice(1).toUpperCase();await sendTo(list,`MAIN=${main};BG=${bg};FG=${fg}`,{quiet:true});if(mode==='SPECTRUM'||selectedFx==='SPECTRUM'){selectedFx='SPECTRUM';markFx();setText('activeFxName','SPECTRUM');await sendTo(list,'FX=SPECTRUM',{quiet:true})}else if(AUDIO_READY.has(selectedFx))await sendTo(list,`FX=${selectedFx}`,{quiet:true});await sendTo(list,`AUDIO=1;AUDMODE=${mode};AUDAMT=${amt}`,{quiet:true})}
+async function sendAudioFrame(level,bass,mid,high,beat){const z=targets();if(!z.length)return;await Promise.all(z.map(d=>d.ver>=4?queueWrite(d,'A='+hx(level)+hx(bass)+hx(mid)+hx(high)+(beat?'1':'0'),true):queueWrite(d,`LEVEL=${Math.round(level)};BASS=${Math.round(bass)};MID=${Math.round(mid)};HIGH=${Math.round(high)};BEAT=${beat?1:0}`,true)))}
+async function mic(){if(micOn){stopMic(true);return}try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Microphone API unavailable');if(!window.isSecureContext)throw new Error('HTTPS required');setText('micState','REQUESTING');stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const AC=window.AudioContext||window.webkitAudioContext;ctx=new AC({latencyHint:'interactive'});if(ctx.state==='suspended')await ctx.resume();an=ctx.createAnalyser();an.fftSize=1024;an.minDecibels=-90;an.maxDecibels=-10;an.smoothingTimeConstant=.3;ctx.createMediaStreamSource(stream).connect(an);micOn=true;setText('mic','STOP MICROPHONE');setText('micState','LIVE');$('micState')?.classList.add('ok');ensureSpectrumBars();updateSpectrumPalette();if(targets().length)await sendAudioSetup();else setText('status','Microphone is live for preview. Connect an ESP32 to transmit the spectrum.');loopAudio()}catch(e){setText('micState','ERROR');setText('status',`Microphone: ${e.message}`);stopMic(false)}}
+function stopMic(sendOff=true){micOn=false;if(raf)cancelAnimationFrame(raf);raf=0;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;if(ctx)ctx.close().catch(()=>{});ctx=null;an=null;setText('mic','START MICROPHONE');setText('micState','OFF');$('micState')?.classList.remove('ok');flattenSpectrum();if(sendOff)send('AUDIO=0',true)}
+function loopAudio(t=performance.now()){if(!micOn||!an||!ctx)return;const td=new Uint8Array(an.fftSize),fd=new Uint8Array(an.frequencyBinCount);an.getByteTimeDomainData(td);an.getByteFrequencyData(fd);renderSpectrum(fd);let sum=0;for(const v of td){const q=(v-128)/128;sum+=q*q}const rms=Math.sqrt(sum/td.length)*255,rawB=band(fd,35,220),rawM=band(fd,220,1800),rawH=band(fd,1800,8000),floor=+$('floor')?.value||10,sens=(+$('gain')?.value||135)/100,sm=(+$('sm')?.value||55)/100,n={l:norm(rms,'l',floor,sens),b:norm(rawB,'b',floor,sens),m:norm(rawM,'m',floor,sens),h:norm(rawH,'h',floor,sens)};for(const k of ['l','b','m','h'])smooth[k]=smooth[k]*sm+n[k]*(1-sm);bassAvg=bassAvg*.93+smooth.b*.07;const threshold=+$('beat')?.value||185,ratio=1.05+(255-threshold)/650,beat=smooth.b>Math.max(20,bassAvg*ratio+8)&&t-lastBeat>170;if(beat)lastBeat=t;setText('ml',Math.round(smooth.l));setText('mb',Math.round(smooth.b));setText('mm',Math.round(smooth.m));setText('mh',Math.round(smooth.h));setText('mbeat',beat?'●':'—');if(t-lastAT>=70){lastAT=t;sendAudioFrame(smooth.l,smooth.b,smooth.m,smooth.h,beat)}raf=requestAnimationFrame(loopAudio)}
+
+async function saveConfig(reboot=false){const n=+$('leds')?.value,p=+$('gpio')?.value;if(!Number.isFinite(n)||n<1||n>600){setText('status','LED count must be 1–600.');return}await send(`LEDS=${n};PIN=${p};ORDER=${$('order')?.value||'GRB'};SAVE`,true);if(reboot)await send('REBOOT',true)}
+
+function bindUI(){bindTabs();document.querySelectorAll('[data-fx]').forEach(b=>b.addEventListener('click',()=>{selectedFx=b.dataset.fx;markFx();setText('activeFxName',b.querySelector('b')?.textContent||selectedFx);send('FX='+selectedFx,true);if(micOn&&AUDIO_READY.has(selectedFx))sendAudioSetup()}));if($('con0'))$('con0').onclick=()=>connect(0);if($('con1'))$('con1').onclick=()=>connect(1);if($('connect'))$('connect').onclick=()=>connect(ai);document.querySelectorAll('.use').forEach(b=>b.onclick=()=>use(+b.dataset.i));if($('sync'))$('sync').addEventListener('change',handleSyncChange);bindColor('bg','BG');bindColor('fg','FG');bindColor('main','MAIN');bindRange('bri','BRI');bindRange('spd','SPD');bindRange('int','INT');bindRange('size','SIZE');bindRange('dens','DENS');bindRange('trail','TRAIL');bindRange('audamt','AUDAMT');bindRange('gain','',v=>(+v/100).toFixed(1)+'x');bindRange('sm','',v=>v+'%');bindRange('floor','');bindRange('beat','');if($('dir'))$('dir').addEventListener('change',()=>send('DIR='+$('dir').value,true));if($('mirror'))$('mirror').addEventListener('change',()=>send('MIRROR='+($('mirror').checked?1:0),true));if($('order'))$('order').addEventListener('change',()=>send('ORDER='+$('order').value,true));if($('audmode'))$('audmode').addEventListener('change',()=>{if($('audmode').value==='SPECTRUM'){selectedFx='SPECTRUM';markFx();setText('activeFxName','SPECTRUM')}if(micOn)sendAudioSetup();else send('AUDMODE='+$('audmode').value,true)});if($('stat'))$('stat').onclick=async()=>{const z=$('sync')?.checked?ds.filter(d=>d.on):(ds[ai].on?[ds[ai]]:[]);for(const d of z)await readStatus(d.i,false)};if($('off'))$('off').onclick=()=>{selectedFx='OFF';markFx();send('FX=OFF',true)};if($('save'))$('save').onclick=()=>saveConfig(false);if($('reboot'))$('reboot').onclick=()=>saveConfig(true);if($('rawgo'))$('rawgo').onclick=()=>{const v=$('raw')?.value.trim();if(v)send(v,false)};if($('mic'))$('mic').onclick=mic;document.addEventListener('input',e=>{if(e.target?.matches('#main,#bg,#fg')){syncSpectrumPickers();updateSpectrumPalette()}});createSpectrumColorControls();bindSaveColor();renderSavedColors();ensureSpectrumBars()}
+
+use(0);markFx();updateBadge();bindUI();activateTab('fxcolor');setTimeout(()=>{syncSpectrumPickers();updateSpectrumPalette();autoReconnectRemembered()},150);
