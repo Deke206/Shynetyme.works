@@ -16,6 +16,7 @@ let ai=0;
 let selectedFx='AURORA';
 let activeConnectSlot=null;
 let connectLock=Promise.resolve();
+let userInteracted=false;
 let micOn=false,stream=null,ctx=null,an=null,raf=0,lastAT=0,bassAvg=0,lastBeat=0;
 let smooth={l:0,b:0,m:0,h:0},peaks={l:30,b:30,m:30,h:30};
 
@@ -33,6 +34,9 @@ function targets(){return $('sync')?.checked?ds.filter(d=>d.on):(ds[ai]?.on?[ds[
 function setTargetLabel(){if($('target'))$('target').textContent=$('sync')?.checked?'TARGET BOTH':'TARGET #'+(ai+1)}
 function use(i){if(!ds[i])return;ai=i;$('d0')?.classList.toggle('on',i===0);$('d1')?.classList.toggle('on',i===1);setTargetLabel();setText('deviceHeaderName',ds[i].device?.name||`SHYNETYME #${i+1}`);$('headerDot')?.classList.toggle('ok',!!ds[i].on)}
 function markFx(){document.querySelectorAll('[data-fx]').forEach(x=>x.classList.toggle('on',x.dataset.fx===selectedFx))}
+function noteInteraction(){userInteracted=true}
+document.addEventListener('pointerdown',noteInteraction,{capture:true,passive:true});
+document.addEventListener('keydown',noteInteraction,{capture:true});
 
 function activateTab(id){const button=document.querySelector(`.tab[data-p="${id}"]`),panel=$(id);if(!button||!panel)return;document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('on',x===button);x.setAttribute('aria-selected',x===button?'true':'false')});document.querySelectorAll('.workspace-page').forEach(x=>x.classList.toggle('on',x===panel))}
 function bindTabs(){document.querySelectorAll('.tab[data-p]').forEach(b=>{b.setAttribute('role','tab');b.addEventListener('click',()=>activateTab(b.dataset.p))});const nav=document.querySelector('.tabs');if(nav)nav.setAttribute('role','tablist')}
@@ -48,110 +52,20 @@ async function readStatus(i=ai,syncUIAfter=false){const d=ds[i];if(!d?.on||!d.st
 
 function cleanupSlot(i,keepDevice=true){const d=ds[i];d.on=false;d.server=null;d.cmd=null;d.st=null;d.state={};d.ver=0;d.synced=false;d.queue=Promise.resolve();if(!keepDevice)d.device=null;$('dot'+i)?.classList.remove('ok');setText('con'+i,'CONNECT #'+(i+1));updateBadge();setTargetLabel()}
 function handleDisconnect(i){cleanupSlot(i,true);setText('status',`ESP32 #${i+1} disconnected. It remains remembered for reconnect.`);if(micOn&&!targets().length)stopMic(false)}
-
 async function openGatt(dev){if(dev.gatt?.connected)return dev.gatt;let lastError=null;for(let attempt=0;attempt<2;attempt++){try{await sleep(attempt?450:220);return await waitFor(dev.gatt.connect(),5200,'Bluetooth connection timed out')}catch(e){lastError=e;try{if(dev.gatt?.connected)dev.gatt.disconnect()}catch(_){} }}throw lastError||new Error('Bluetooth connection failed')}
 
-async function attachDevice(i,dev,{auto=false}={}){
-  const d=ds[i],button=$('con'+i);
-  if(d.on)return true;
-  const duplicate=ds.findIndex((x,n)=>n!==i&&x.device?.id===dev.id);
-  if(duplicate>=0)throw new Error(`That controller is already assigned to ESP32 #${duplicate+1}`);
-  d.device=dev;d.on=false;d.synced=false;d.state={};d.ver=0;
-  if(button)button.textContent=auto?'RECONNECTING…':'CONNECTING…';
-  setText('name'+i,dev.name||`Controller #${i+1}`);
-  try{
-    await withConnectLock(async()=>{
-      setText('status',`ESP32 #${i+1}: establishing Bluetooth link…`);
-      if(d.disconnectHandler)dev.removeEventListener('gattserverdisconnected',d.disconnectHandler);
-      d.disconnectHandler=()=>handleDisconnect(i);
-      dev.addEventListener('gattserverdisconnected',d.disconnectHandler);
-      d.server=await openGatt(dev);
-      setText('status',`ESP32 #${i+1}: finding ShyneTyme service…`);
-      const svc=await waitFor(d.server.getPrimaryService(SU),3500,'ShyneTyme BLE service not found — firmware may need updating');
-      d.cmd=await waitFor(svc.getCharacteristic(CU),2600,'Control characteristic not found');
-      d.st=await waitFor(svc.getCharacteristic(TU),2600,'Status characteristic not found');
-    });
+async function attachDevice(i,dev,{auto=false}={}){const d=ds[i],button=$('con'+i);if(d.on)return true;const duplicate=ds.findIndex((x,n)=>n!==i&&x.device?.id===dev.id);if(duplicate>=0)throw new Error(`That controller is already assigned to ESP32 #${duplicate+1}`);d.device=dev;d.on=false;d.synced=false;d.state={};d.ver=0;if(button)button.textContent=auto?'RECONNECTING…':'CONNECTING…';setText('name'+i,dev.name||`Controller #${i+1}`);try{await withConnectLock(async()=>{setText('status',`ESP32 #${i+1}: establishing Bluetooth link…`);if(d.disconnectHandler)dev.removeEventListener('gattserverdisconnected',d.disconnectHandler);d.disconnectHandler=()=>handleDisconnect(i);dev.addEventListener('gattserverdisconnected',d.disconnectHandler);d.server=await openGatt(dev);setText('status',`ESP32 #${i+1}: finding ShyneTyme service…`);const svc=await waitFor(d.server.getPrimaryService(SU),3500,'ShyneTyme BLE service not found — firmware may need updating');d.cmd=await waitFor(svc.getCharacteristic(CU),2600,'Control characteristic not found');d.st=await waitFor(svc.getCharacteristic(TU),2600,'Status characteristic not found')});d.on=true;$('dot'+i)?.classList.add('ok');setText('con'+i,'CONNECTED');rememberState();updateBadge();if(!auto)use(i);setText('status',`ESP32 #${i+1} connected${connectedCount()===2?' · both controllers ready':''}.`);setTimeout(()=>readStatus(i,false),220);return true}catch(e){if(d.server?.connected)try{d.server.disconnect()}catch(_){}cleanupSlot(i,true);if(!auto)throw e;log(`AUTO #${i+1} ${e.message}`);return false}}
 
-    d.on=true;
-    $('dot'+i)?.classList.add('ok');
-    setText('con'+i,'CONNECTED');
-    rememberState();
-    updateBadge();
-    if(!auto)use(i);
-    setText('status',`ESP32 #${i+1} connected${connectedCount()===2?' · both controllers ready':''}.`);
+async function connect(i){noteInteraction();if(!navigator.bluetooth){setText('status','Web Bluetooth is not available in this browser.');return false}if(!window.isSecureContext){setText('status','HTTPS is required for Bluetooth.');return false}if(ds[i]?.on){use(i);return true}if(activeConnectSlot!==null){setText('status',`Finish ESP32 #${activeConnectSlot+1} first.`);return false}activeConnectSlot=i;use(i);const button=$('con'+i),main=$('connect');if(button){button.disabled=true;button.textContent='SELECT DEVICE…'}if(main)main.disabled=true;setText('status',`Choose the physical controller for ESP32 #${i+1}.`);try{const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SU]});setText('status',`Selected ${dev.name||'controller'} for ESP32 #${i+1}. Connecting…`);await attachDevice(i,dev,{auto:false});return true}catch(e){if(e?.name==='NotFoundError'||/cancel|chooser/i.test(e?.message||'')){setText('status',`ESP32 #${i+1} not connected. Choose it when you are ready.`);updateBadge();return false}setText('status',`ESP32 #${i+1}: ${e?.message||'Bluetooth connection failed'}`);log(`CONNECT #${i+1} ${e?.message||e}`);return false}finally{activeConnectSlot=null;if(button&&!ds[i].on){button.disabled=false;button.textContent='CONNECT #'+(i+1)}if(main)main.disabled=false;updateBadge()}}
 
-    // Do not hold the connection transaction open for status reads, notifications or sync writes.
-    setTimeout(()=>readStatus(i,true),260);
-    if($('sync')?.checked&&connectedCount()===2)setTimeout(()=>cloneCurrentStateToBoth(),520);
-    return true;
-  }catch(e){
-    if(d.server?.connected)try{d.server.disconnect()}catch(_){}
-    cleanupSlot(i,true);
-    if(!auto)throw e;
-    log(`AUTO #${i+1} ${e.message}`);
-    return false;
-  }
-}
-
-async function connect(i){
-  if(!navigator.bluetooth){setText('status','Web Bluetooth is not available in this browser.');return false}
-  if(!window.isSecureContext){setText('status','HTTPS is required for Bluetooth.');return false}
-  if(ds[i]?.on){use(i);return true}
-  if(activeConnectSlot!==null){setText('status',`Finish ESP32 #${activeConnectSlot+1} first.`);return false}
-  activeConnectSlot=i;use(i);
-  const button=$('con'+i),main=$('connect');
-  if(button){button.disabled=true;button.textContent='SELECT DEVICE…'}
-  if(main)main.disabled=true;
-  setText('status',`Choose the physical controller for ESP32 #${i+1}.`);
-  try{
-    const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SU]});
-    setText('status',`Selected ${dev.name||'controller'} for ESP32 #${i+1}. Connecting…`);
-    await attachDevice(i,dev,{auto:false});
-    return true;
-  }catch(e){
-    if(e?.name==='NotFoundError'||/cancel|chooser/i.test(e?.message||'')){setText('status',`ESP32 #${i+1} not connected. Choose it when you are ready.`);updateBadge();return false}
-    setText('status',`ESP32 #${i+1}: ${e?.message||'Bluetooth connection failed'}`);
-    log(`CONNECT #${i+1} ${e?.message||e}`);
-    return false;
-  }finally{
-    activeConnectSlot=null;
-    if(button&&!ds[i].on){button.disabled=false;button.textContent='CONNECT #'+(i+1)}
-    if(main)main.disabled=false;
-    updateBadge();
-  }
-}
-
-async function autoReconnectRemembered(){
-  if(!navigator.bluetooth?.getDevices||!window.isSecureContext)return;
-  const remembered=rememberedState();
-  if(!remembered.some(Boolean))return;
-  // Give manual user selection priority so auto-reconnect never competes with the Android picker/GATT stack.
-  await sleep(900);
-  if(activeConnectSlot!==null)return;
-  try{
-    const permitted=await navigator.bluetooth.getDevices();
-    for(let i=0;i<2;i++){
-      if(activeConnectSlot!==null)break;
-      const r=remembered[i];
-      if(!r||ds[i].on)continue;
-      const dev=permitted.find(x=>x.id===r.id);
-      if(!dev)continue;
-      setText('status',`Recognized ${r.name||'controller'} · reconnecting ESP32 #${i+1}…`);
-      await attachDevice(i,dev,{auto:true});
-      await sleep(350);
-    }
-    if(connectedCount())setText('status',connectedCount()===2?'Recognized and reconnected both ESP32 controllers.':'Recognized and reconnected a saved ESP32 controller.');
-  }catch(e){log('AUTO RECONNECT '+e.message)}
-}
+async function autoReconnectRemembered(){if(!navigator.bluetooth?.getDevices||!window.isSecureContext)return;const remembered=rememberedState();if(!remembered.some(Boolean))return;await sleep(2600);if(userInteracted||activeConnectSlot!==null||document.visibilityState!=='visible')return;try{const permitted=await navigator.bluetooth.getDevices();if(userInteracted||activeConnectSlot!==null)return;for(let i=0;i<2;i++){if(userInteracted||activeConnectSlot!==null)break;const r=remembered[i];if(!r||ds[i].on)continue;const dev=permitted.find(x=>x.id===r.id);if(!dev)continue;setText('status',`Recognized ${r.name||'controller'} · reconnecting ESP32 #${i+1}…`);await attachDevice(i,dev,{auto:true});await sleep(350)}if(connectedCount())setText('status',connectedCount()===2?'Recognized and reconnected both ESP32 controllers.':'Recognized and reconnected a saved ESP32 controller.')}catch(e){log('AUTO RECONNECT '+e.message)}}
 
 function currentCommand(){const val=id=>$(id)?.value;const hex=id=>String(val(id)||'').replace('#','').toUpperCase();return [`FX=${selectedFx}`,`MAIN=${hex('main')||'FFFFFF'}`,`BG=${hex('bg')||'000000'}`,`FG=${hex('fg')||'8000FF'}`,`BRI=${val('bri')||70}`,`SPD=${val('spd')||220}`,`INT=${val('int')||190}`,`SIZE=${val('size')||72}`,`DENS=${val('dens')||110}`,`TRAIL=${val('trail')||145}`,`DIR=${val('dir')||'FWD'}`,`MIRROR=${$('mirror')?.checked?1:0}`].join(';')}
-async function cloneCurrentStateToBoth(){const z=ds.filter(d=>d.on);if(z.length<2){setText('status','SYNC BOTH is armed. Connect both controllers to mirror the current state.');return false}setText('status','Syncing current state to both controllers…');await sendTo(z,currentCommand(),{quiet:true});if(micOn)await sendAudioSetup(z);setText('status','Both controllers synchronized.');return true}
-function handleSyncChange(){setTargetLabel();const on=!!$('sync')?.checked;if($('groupBoth'))$('groupBoth').textContent=on?'ENABLED':'ENABLE';if(on)cloneCurrentStateToBoth();else setText('status',`Controlling ESP32 #${ai+1} independently.`)}
-
+async function cloneCurrentStateToBoth(){const z=ds.filter(d=>d.on);if(z.length<2){setText('status','SYNC BOTH is armed. Connect both controllers before sending shared changes.');return false}setText('status','Syncing current state to both controllers…');await sendTo(z,currentCommand(),{quiet:true});if(micOn)await sendAudioSetup(z);setText('status','Both controllers synchronized.');return true}
+function handleSyncChange(){setTargetLabel();const on=!!$('sync')?.checked;if($('groupBoth'))$('groupBoth').textContent=on?'ENABLED':'ENABLE';setText('status',on?'SYNC BOTH enabled. New changes will be sent to both controllers.':`Controlling ESP32 #${ai+1} independently.`)}
 function debounce(fn,ms){let timer;return (...a)=>{clearTimeout(timer);timer=setTimeout(()=>fn(...a),ms)}}
-function bindRange(id,key,formatter=v=>v){const x=$(id);if(!x)return;const tx=key?debounce(v=>send(`${key}=${v}`,true),70):null;x.addEventListener('input',()=>{if($(id+'V'))$(id+'V').textContent=formatter(x.value);if(tx)tx(x.value)});x.addEventListener('change',()=>{if(key)send(`${key}=${x.value}`,true)})}
-function bindColor(id,key){const x=$(id);if(!x)return;const tx=debounce(v=>send(`${key}=${v}`,true),85);x.addEventListener('input',()=>{const v=x.value.slice(1).toUpperCase();tx(v);syncSpectrumPickers();updateSpectrumPalette()});x.addEventListener('change',()=>send(`${key}=${x.value.slice(1).toUpperCase()}`,true))}
-
+function bindRange(id,key,formatter=v=>v){const x=$(id);if(!x)return;const tx=key?debounce(v=>send(`${key}=${v}`,true),90):null;x.addEventListener('input',()=>{if($(id+'V'))$(id+'V').textContent=formatter(x.value);if(tx)tx(x.value)});x.addEventListener('change',()=>{if(key)send(`${key}=${x.value}`,true)})}
+function bindColor(id,key){const x=$(id);if(!x)return;const tx=debounce(v=>send(`${key}=${v}`,true),110);x.addEventListener('input',()=>{const v=x.value.slice(1).toUpperCase();tx(v);syncSpectrumPickers();updateSpectrumPalette()});x.addEventListener('change',()=>send(`${key}=${x.value.slice(1).toUpperCase()}`,true))}
 function rgb(hex){const s=String(hex||'#000000').replace('#','').padEnd(6,'0').slice(0,6);return [0,2,4].map(i=>parseInt(s.slice(i,i+2),16)||0)}
 function mix(a,b,t){const A=rgb(a),B=rgb(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('').toUpperCase()}
 function spectrumColor(t){const low=$('bg')?.value||'#000000',mid=$('main')?.value||'#FFFFFF',high=$('fg')?.value||'#8000FF';return t<=.5?mix(low,mid,t*2):mix(mid,high,(t-.5)*2)}
@@ -159,16 +73,13 @@ function updateSpectrumPalette(){const bars=[...document.querySelectorAll('#spec
 function renderSpectrum(fd){const bars=[...document.querySelectorAll('#spectrumBars i')];if(!bars.length||!fd?.length)return;for(let i=0;i<bars.length;i++){const start=Math.floor(i*fd.length/bars.length),end=Math.max(start+1,Math.floor((i+1)*fd.length/bars.length));let sum=0;for(let n=start;n<end;n++)sum+=fd[n];const avg=sum/(end-start),height=Math.max(5,Math.min(100,(avg/255)*112));bars[i].style.height=height.toFixed(1)+'%'}updateSpectrumPalette()}
 function flattenSpectrum(){document.querySelectorAll('#spectrumBars i').forEach(b=>b.style.height='5%');updateSpectrumPalette()}
 function ensureSpectrumBars(){const spec=$('spectrumBars');if(!spec)return;if(!spec.children.length){for(let i=0;i<28;i++)spec.append(document.createElement('i'))}flattenSpectrum()}
-
 function applyRoleColor(role,hex){const input=$(role);if(!input)return;input.value=hex.toUpperCase();input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));if($(role+'Swatch'))$(role+'Swatch').style.background=hex;if($('livePicker'))$('livePicker').value=hex;syncSpectrumPickers();updateSpectrumPalette()}
 function createSpectrumColorControls(){const music=$('music');if(!music||$('spectrumColorControls'))return;const host=music.querySelector('.music-grid > div:first-child')||music.querySelector('.box');if(!host)return;const wrap=document.createElement('div');wrap.id='spectrumColorControls';wrap.className='utility';const head=document.createElement('div');head.className='subhead';head.textContent='SPECTRUM COLORS';wrap.append(head);const row=document.createElement('div');row.className='rolebar';const defs=[['spectrumLow','LOW','bg'],['spectrumMid','MID','main'],['spectrumHigh','HIGH','fg']];for(const [id,label,role] of defs){const lab=document.createElement('label');lab.className='mini-btn';lab.style.display='flex';lab.style.alignItems='center';lab.style.justifyContent='center';lab.style.gap='5px';lab.setAttribute('for',id);const input=document.createElement('input');input.id=id;input.type='color';input.value=$(role)?.value||'#FFFFFF';input.style.width='28px';input.style.height='22px';input.style.padding='0';input.style.border='0';input.style.background='transparent';input.addEventListener('input',()=>applyRoleColor(role,input.value));const span=document.createElement('span');span.textContent=label;lab.append(input,span);row.append(lab)}wrap.append(row);host.append(wrap);syncSpectrumPickers()}
 function syncSpectrumPickers(){const map=[['spectrumLow','bg'],['spectrumMid','main'],['spectrumHigh','fg']];for(const [sid,rid] of map)if($(sid)&&$(rid))$(sid).value=$(rid).value}
-
 function loadSavedColors(){try{const x=JSON.parse(localStorage.getItem(SAVED_COLORS_KEY)||'[]');return Array.isArray(x)?x:[]}catch(_){return []}}
 function saveSavedColors(list){try{localStorage.setItem(SAVED_COLORS_KEY,JSON.stringify(list.slice(0,16)))}catch(_){} }
 function renderSavedColors(){const host=document.querySelector('.saved');if(!host)return;host.querySelectorAll('[data-user-color]').forEach(x=>x.remove());for(const c of loadSavedColors()){const b=document.createElement('button');b.type='button';b.dataset.userColor=c;b.style.setProperty('--c',c);b.title=`Saved ${c}`;b.addEventListener('click',()=>{const role=document.querySelector('.role.on')?.dataset.role||'main';applyRoleColor(role,c)});host.append(b)}}
 function bindSaveColor(){const b=document.querySelector('.savecolor');if(!b)return;b.addEventListener('click',()=>{const c=($('livePicker')?.value||'#FFFFFF').toUpperCase(),list=loadSavedColors().filter(x=>x!==c);list.unshift(c);saveSavedColors(list);renderSavedColors();setText('status',`Saved color ${c}.`)})}
-
 function band(fd,lo,hi){const hz=ctx.sampleRate/an.fftSize,a=Math.max(0,Math.floor(lo/hz)),b=Math.min(fd.length-1,Math.ceil(hi/hz));let s=0,n=0;for(let i=a;i<=b;i++){s+=fd[i];n++}return n?s/n:0}
 function norm(raw,k,floor,sens){peaks[k]=Math.max(raw,peaks[k]*.992);return Math.max(0,Math.min(255,(raw-floor)/Math.max(18,peaks[k]-floor)*255*sens))}
 function hx(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0').toUpperCase()}
@@ -177,9 +88,6 @@ async function sendAudioFrame(level,bass,mid,high,beat){const z=targets();if(!z.
 async function mic(){if(micOn){stopMic(true);return}try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Microphone API unavailable');if(!window.isSecureContext)throw new Error('HTTPS required');setText('micState','REQUESTING');stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const AC=window.AudioContext||window.webkitAudioContext;ctx=new AC({latencyHint:'interactive'});if(ctx.state==='suspended')await ctx.resume();an=ctx.createAnalyser();an.fftSize=1024;an.minDecibels=-90;an.maxDecibels=-10;an.smoothingTimeConstant=.3;ctx.createMediaStreamSource(stream).connect(an);micOn=true;setText('mic','STOP MICROPHONE');setText('micState','LIVE');$('micState')?.classList.add('ok');ensureSpectrumBars();updateSpectrumPalette();if(targets().length)await sendAudioSetup();else setText('status','Microphone is live for preview. Connect an ESP32 to transmit the spectrum.');loopAudio()}catch(e){setText('micState','ERROR');setText('status',`Microphone: ${e.message}`);stopMic(false)}}
 function stopMic(sendOff=true){micOn=false;if(raf)cancelAnimationFrame(raf);raf=0;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;if(ctx)ctx.close().catch(()=>{});ctx=null;an=null;setText('mic','START MICROPHONE');setText('micState','OFF');$('micState')?.classList.remove('ok');flattenSpectrum();if(sendOff)send('AUDIO=0',true)}
 function loopAudio(t=performance.now()){if(!micOn||!an||!ctx)return;const td=new Uint8Array(an.fftSize),fd=new Uint8Array(an.frequencyBinCount);an.getByteTimeDomainData(td);an.getByteFrequencyData(fd);renderSpectrum(fd);let sum=0;for(const v of td){const q=(v-128)/128;sum+=q*q}const rms=Math.sqrt(sum/td.length)*255,rawB=band(fd,35,220),rawM=band(fd,220,1800),rawH=band(fd,1800,8000),floor=+$('floor')?.value||10,sens=(+$('gain')?.value||135)/100,sm=(+$('sm')?.value||55)/100,n={l:norm(rms,'l',floor,sens),b:norm(rawB,'b',floor,sens),m:norm(rawM,'m',floor,sens),h:norm(rawH,'h',floor,sens)};for(const k of ['l','b','m','h'])smooth[k]=smooth[k]*sm+n[k]*(1-sm);bassAvg=bassAvg*.93+smooth.b*.07;const threshold=+$('beat')?.value||185,ratio=1.05+(255-threshold)/650,beat=smooth.b>Math.max(20,bassAvg*ratio+8)&&t-lastBeat>170;if(beat)lastBeat=t;setText('ml',Math.round(smooth.l));setText('mb',Math.round(smooth.b));setText('mm',Math.round(smooth.m));setText('mh',Math.round(smooth.h));setText('mbeat',beat?'●':'—');if(t-lastAT>=70){lastAT=t;sendAudioFrame(smooth.l,smooth.b,smooth.m,smooth.h,beat)}raf=requestAnimationFrame(loopAudio)}
-
 async function saveConfig(reboot=false){const n=+$('leds')?.value,p=+$('gpio')?.value;if(!Number.isFinite(n)||n<1||n>600){setText('status','LED count must be 1–600.');return}await send(`LEDS=${n};PIN=${p};ORDER=${$('order')?.value||'GRB'};SAVE`,true);if(reboot)await send('REBOOT',true)}
-
 function bindUI(){bindTabs();document.querySelectorAll('[data-fx]').forEach(b=>b.addEventListener('click',()=>{selectedFx=b.dataset.fx;markFx();setText('activeFxName',b.querySelector('b')?.textContent||selectedFx);send('FX='+selectedFx,true);if(micOn&&AUDIO_READY.has(selectedFx))sendAudioSetup()}));if($('con0'))$('con0').onclick=()=>connect(0);if($('con1'))$('con1').onclick=()=>connect(1);if($('connect'))$('connect').onclick=()=>connect(ai);document.querySelectorAll('.use').forEach(b=>b.onclick=()=>use(+b.dataset.i));if($('sync'))$('sync').addEventListener('change',handleSyncChange);bindColor('bg','BG');bindColor('fg','FG');bindColor('main','MAIN');bindRange('bri','BRI');bindRange('spd','SPD');bindRange('int','INT');bindRange('size','SIZE');bindRange('dens','DENS');bindRange('trail','TRAIL');bindRange('audamt','AUDAMT');bindRange('gain','',v=>(+v/100).toFixed(1)+'x');bindRange('sm','',v=>v+'%');bindRange('floor','');bindRange('beat','');if($('dir'))$('dir').addEventListener('change',()=>send('DIR='+$('dir').value,true));if($('mirror'))$('mirror').addEventListener('change',()=>send('MIRROR='+($('mirror').checked?1:0),true));if($('order'))$('order').addEventListener('change',()=>send('ORDER='+$('order').value,true));if($('audmode'))$('audmode').addEventListener('change',()=>{if($('audmode').value==='SPECTRUM'){selectedFx='SPECTRUM';markFx();setText('activeFxName','SPECTRUM')}if(micOn)sendAudioSetup();else send('AUDMODE='+$('audmode').value,true)});if($('stat'))$('stat').onclick=async()=>{const z=$('sync')?.checked?ds.filter(d=>d.on):(ds[ai].on?[ds[ai]]:[]);for(const d of z)await readStatus(d.i,false)};if($('off'))$('off').onclick=()=>{selectedFx='OFF';markFx();send('FX=OFF',true)};if($('save'))$('save').onclick=()=>saveConfig(false);if($('reboot'))$('reboot').onclick=()=>saveConfig(true);if($('rawgo'))$('rawgo').onclick=()=>{const v=$('raw')?.value.trim();if(v)send(v,false)};if($('mic'))$('mic').onclick=mic;document.addEventListener('input',e=>{if(e.target?.matches('#main,#bg,#fg')){syncSpectrumPickers();updateSpectrumPalette()}});createSpectrumColorControls();bindSaveColor();renderSavedColors();ensureSpectrumBars()}
-
 use(0);markFx();updateBadge();bindUI();activateTab('fxcolor');setTimeout(()=>{syncSpectrumPickers();updateSpectrumPalette();autoReconnectRemembered()},150);
