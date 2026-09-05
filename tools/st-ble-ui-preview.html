@@ -102,9 +102,9 @@
       <section class="context-frame styling-frame matrix-styling">
         <div class="context-title">EFFECT STYLING</div>
         <div class="style-sliders">
-          <div class="slider-row"><label>BRIGHTNESS</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="160"></div><output id="briV">63%</output></div>
+          <div class="slider-row"><label>BRIGHTNESS</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="255"></div><output id="briV">100%</output></div>
           <div class="slider-row"><label>SPEED</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="spd" type="range" min="1" max="255" value="180"></div><output id="spdV">71%</output></div>
-          <div class="slider-row"><label>INTENSITY</label><div class="sim-slider"><span class="fill bg-fill"></span><span class="thumb"></span><input id="int" type="range" min="0" max="255" value="128"></div><output id="intV">50%</output></div>
+          <div class="slider-row"><label>BACKGROUND BRIGHTNESS</label><div class="sim-slider"><span class="fill bg-fill"></span><span class="thumb"></span><input id="int" type="range" min="0" max="255" value="255"></div><output id="intV">100%</output></div>
           <div class="slider-row"><label>SIZE</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="size" type="range" min="1" max="255" value="96"></div><output id="sizeV">38%</output></div>
           <details class="more-style"><summary>MORE</summary>
             <div class="slider-row"><label>DENSITY</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="dens" type="range" min="1" max="255" value="128"></div><output id="densV">50%</output></div>
@@ -116,16 +116,16 @@
 
       <section class="context-frame colors-frame matrix-colors">
         <div class="context-title">COLORS</div>
-        <input id="main" type="color" value="#FFF200" hidden>
-        <input id="bg" type="color" value="#00BFFF" hidden>
-        <input id="fg" type="color" value="#FF2CA8" hidden>
+        <input id="main" type="color" value="#000000" hidden>
+        <input id="bg" type="color" value="#000000" hidden>
+        <input id="fg" type="color" value="#000000" hidden>
         <div class="rolebar">
-          <button class="role on" data-role="main"><i id="mainSwatch" style="background:#FFF200"></i>MAIN</button>
-          <button class="role" data-role="bg"><i id="bgSwatch" style="background:#00BFFF"></i>BACKGROUND</button>
-          <button class="role" data-role="fg"><i id="fgSwatch" style="background:#FF2CA8"></i>FOREGROUND</button>
+          <button class="role on" data-role="main"><i id="mainSwatch" style="background:#000000"></i>MAIN</button>
+          <button class="role" data-role="bg"><i id="bgSwatch" style="background:#000000"></i>BACKGROUND</button>
+          <button class="role" data-role="fg"><i id="fgSwatch" style="background:#000000"></i>FOREGROUND</button>
         </div>
         <div id="hueSelector" class="hue-selector"><span class="hue-spectrum"></span><span class="hue-thumb"></span><input id="hueRange" type="range" min="0" max="359" value="60"></div>
-        <div class="hue-readout"><span>HUE</span><strong id="hueValue">#FFF200</strong></div>
+        <div class="hue-readout"><span>HUE</span><strong id="hueValue">#000000</strong></div>
         <div class="saved-colors"><div id="savedColors" class="saved-color-list"></div><button id="saveColor" class="glass-btn">+ SAVE COLOR</button></div>
         <div class="button-row"><button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button><button id="addFxPlaylist" class="glass-btn">ADD TO PLAYLIST</button></div>
       </section>
@@ -183,6 +183,6 @@
 <div id="modal" class="modal" hidden><div class="modal-card context-frame"><div id="modalTitle" class="context-title">CONFIRM</div><div id="modalText" class="modal-text"></div><input id="modalInput" class="glass-field" hidden><div class="button-row"><button id="modalCancel" class="glass-btn">CANCEL</button><button id="modalOk" class="glass-btn primary">OK</button></div></div></div>
 </div>
 <script src="st-ble-core.js?v=20260905-blefix2"></script>
-<script src="st-ble-ui.js?v=20260905-colors1"></script>
+<script src="st-ble-ui.js?v=20260905-colors2"></script>
 </body>
 </html>
