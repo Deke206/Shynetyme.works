@@ -1,272 +1,188 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
-<meta content="#01040a" name="theme-color"/>
-<meta content="noindex,nofollow" name="robots"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020817">
+<meta name="robots" content="noindex,nofollow">
 <title>ShyneTyme.Works — ESP32 LED Control</title>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="st-ble-ui.css?v=20260903-perf1" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="st-ble-ui.css?v=20260904-device-groups1">
 </head>
 <body>
 <div class="app">
-<header class="top">
-<div class="brand"><span class="s">SHYNE</span>TYME<span class="w">.WORKS</span></div>
-<div class="status-mini" id="badge">BLE READY</div>
+<header class="topbar">
+  <div class="brand"><span class="brand-pink">SHYNE</span><span class="brand-yellow">TYME</span><i class="brand-led" aria-hidden="true"></i><span class="brand-blue">WORKS</span></div>
+  <div id="bleSummary" class="ble-summary">LOCAL BLE</div>
 </header>
-<nav aria-label="ESP32 LED control sections" class="tabs">
-<button class="tab on" data-p="device">DEVICE</button>
-<button class="tab" data-p="fxcolor">FX + COLORS</button>
-<button class="tab" data-p="music">MUSIC</button>
-<button class="tab" data-p="presets">PRESETS</button>
-<button class="tab" data-p="custom">CUSTOM</button>
+
+<nav class="tabs" aria-label="ESP32 LED controller">
+  <button class="tab on" data-page="device">DEVICE</button>
+  <button class="tab gated" data-page="fxcolor">FX / COLORS</button>
+  <button class="tab gated" data-page="music">MUSIC</button>
+  <button class="tab gated" data-page="presets">PRESETS</button>
+  <button class="tab gated" data-page="custom">CUSTOM</button>
 </nav>
-<div class="live-state-wrap">
-<div aria-label="Current controller and LED effect" class="live-state">
-<div class="live-state-label">DEVICE <b id="stateDevice">ESP32 #1</b></div>
-<div aria-label="Current LED effect" class="live-strip" id="stateStrip"></div>
-<div class="live-state-label">EFFECT <b id="stateFx">AURORA</b></div>
-</div>
-</div>
-<div class="shell">
+
+<section class="live-state" aria-label="Current LED state">
+  <div class="state-copy">
+    <div><span class="descriptor">DEVICE:</span> <strong id="stateDevice">NONE</strong></div>
+    <div><span class="descriptor">EFFECT:</span> <strong id="stateFx">RAINBOW</strong></div>
+  </div>
+  <div id="stateStrip" class="state-strip" aria-label="Current effect preview"></div>
+</section>
+
 <main class="workspace">
-<section class="workspace-page on" id="device">
-<div class="page">
-<h1 class="sr-only">Devices</h1>
-<div class="device-grid">
-<article aria-label="Focus ESP32 number 1" class="device-card on" id="d0" role="button" tabindex="0">
-<div class="device-title"><span class="dot" id="dot0"></span><span><b>ESP32 #1</b><small id="name0">Not connected</small></span></div>
-<div class="device-meta" id="deviceMeta0">300 LEDs · GPIO 13 · 0–299</div>
-<div class="actions"><button class="glass-btn primary" id="con0">CONNECT</button></div>
-</article>
-<article aria-label="Focus ESP32 number 2" class="device-card" id="d1" role="button" tabindex="0">
-<div class="device-title"><span class="dot" id="dot1"></span><span><b>ESP32 #2</b><small id="name1">Not connected</small></span></div>
-<div class="device-meta" id="deviceMeta1">300 LEDs · GPIO 13 · 0–299</div>
-<div class="actions"><button class="glass-btn primary" id="con1">CONNECT</button></div>
-</article>
-<article class="sync-box glass-panel">
-<div class="sync-line"><span>SYNC BOTH</span><input aria-label="Sync both controllers" id="sync" type="checkbox"/></div>
-<div class="muted" style="margin-top:5px;font-size:6.6pt">Off controls the focused device. On mirrors control state to both.</div>
-</article>
-</div>
-<section aria-label="Focused device settings" class="device-options glass-panel">
-<div class="device-options-head"><b>DEVICE SETTINGS</b><span id="deviceSettingsTarget">ESP32 #1</span></div>
-<div class="device-fields">
-<label class="device-field"><span>LED COUNT</span><input id="leds" max="600" min="1" type="number" value="300"/></label>
-<label class="device-field"><span>GPIO PIN</span><input id="gpio" max="39" min="0" type="number" value="13"/></label>
-<label class="device-field"><span>PIXEL ORDER</span><select id="order"><option>RGB</option><option selected="">GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></label>
-</div>
-<div class="subhead">Effect range</div>
-<div class="device-range">
-<label class="device-field"><span>FROM LED</span><input id="segFrom" min="0" type="number" value="0"/></label>
-<label class="device-field"><span>TO LED</span><input id="segTo" min="0" type="number" value="299"/></label>
-</div>
-<div class="subhead">Startup</div>
-<label class="device-field" style="max-width:250px"><span>STARTUP EFFECT</span><select id="startupFx"></select></label>
-<div class="device-save-row">
-<button class="glass-btn primary" id="save">SAVE SETTINGS</button>
-<button class="glass-btn" id="reboot">SAVE + REBOOT</button>
-<button class="glass-btn" id="saveStartup">SAVE STARTUP</button>
-</div>
-<div class="device-note" id="deviceSaveNote">Switching devices discards unsaved edits and restores that device's last saved settings.</div>
+<section id="device" class="page on">
+  <div class="context-frame device-zone matrix-device">
+    <div class="context-title">DEVICES</div>
+    <div id="deviceList" class="device-list"></div>
+    <div class="device-add-row">
+      <button id="addLogicalDevice" class="glass-btn">+ DEVICE</button>
+      <span class="microcopy">Tap a device to focus it. Bluetooth assignment is local to this browser.</span>
+    </div>
+  </div>
+
+  <div id="deviceTools" class="device-tools locked-panel">
+    <section class="context-frame assignment-frame matrix-bluetooth">
+      <div class="context-title">BLUETOOTH ASSIGNMENT</div>
+      <div class="assignment-grid">
+        <select id="grantedBluetooth" class="glass-field"><option value="">Previously granted Bluetooth devices</option></select>
+        <button id="assignGranted" class="glass-btn primary">ASSIGN</button>
+        <button id="addBluetooth" class="glass-btn">ADD BLUETOOTH — ONE TIME</button>
+        <button id="reconnectSelected" class="glass-btn">RECONNECT</button>
+        <button id="unassignBluetooth" class="glass-btn danger">UNASSIGN</button>
+      </div>
+      <div class="microcopy">After the first browser permission grant, the page remembers the Bluetooth device ID and reconnects it by ID on later page loads.</div>
+    </section>
+
+    <section class="context-frame settings-frame matrix-settings">
+      <div class="context-title">DEVICE SETTINGS — <span id="settingsDeviceName">NONE</span></div>
+      <div class="settings-grid">
+        <label>NAME<input id="deviceName" class="glass-field" type="text"></label>
+        <label>LED COUNT<input id="leds" class="glass-field" type="number" min="1" max="600" value="300"></label>
+        <label>GPIO<input id="gpio" class="glass-field" type="number" min="0" max="39" value="13"></label>
+        <label>PIXEL ORDER<select id="order" class="glass-field"><option>RGB</option><option selected>GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></label>
+        <label>FROM LED<input id="segFrom" class="glass-field" type="number" min="0" value="0"></label>
+        <label>TO LED<input id="segTo" class="glass-field" type="number" min="0" value="299"></label>
+        <label class="startup-field">STARTUP EFFECT<select id="startupFx" class="glass-field"></select></label>
+      </div>
+      <div class="button-row">
+        <button id="saveDeviceSettings" class="glass-btn primary">SAVE SETTINGS</button>
+        <button id="saveDeviceReboot" class="glass-btn">SAVE + REBOOT</button>
+        <button id="saveStartup" class="glass-btn">SAVE STARTUP EFFECT</button>
+      </div>
+      <div class="microcopy">Settings belong only to the focused device. FROM/TO is retained by the app; the current firmware has no verified segment-bound command.</div>
+    </section>
+
+    <section class="context-frame debug-frame matrix-debug">
+      <div class="context-title">DEBUG</div>
+      <div class="button-row">
+        <button id="readStatus" class="glass-btn">READ STATUS</button>
+        <button id="blackout" class="glass-btn danger">BLACKOUT</button>
+      </div>
+      <div class="raw-row"><input id="rawCommand" class="glass-field" placeholder="RAW COMMAND"><button id="sendRaw" class="glass-btn">SEND</button></div>
+      <pre id="debugLog" class="debug-log">Ready.</pre>
+    </section>
+  </div>
+
+  <section class="context-frame group-frame matrix-group">
+    <div class="context-title">GROUPS</div>
+    <div class="group-create"><input id="groupName" class="glass-field" placeholder="Living Room"><button id="createGroup" class="glass-btn primary">CREATE GROUP</button></div>
+    <div id="groupList" class="group-list"></div>
+  </section>
 </section>
-<details class="debug-panel glass-panel">
-<summary>DEBUG / RAW COMMANDS</summary>
-<div class="actions" style="margin-bottom:6px"><button class="glass-btn" id="stat">READ STATUS</button><button class="glass-btn danger" id="off">BLACKOUT</button></div>
-<div class="raw-line"><input id="raw" placeholder="FX=LIGHTNING;MAIN=FFFFFF"/><button class="glass-btn primary" id="rawgo">SEND</button></div>
-<div class="status" id="status">Ready. Choose the controller you want to connect.</div>
-<div class="debug-console" id="log">ShyneTyme controller ready.</div>
-</details>
-</div>
+
+<section id="fxcolor" class="page locked-page">
+  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
+  <div class="fx-layout page-content">
+    <div class="fx-left">
+      <section class="context-frame styling-frame matrix-styling">
+        <div class="context-title">EFFECT STYLING</div>
+        <div class="style-sliders">
+          <div class="slider-row"><label>BRIGHTNESS</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="160"></div><output id="briV">63%</output></div>
+          <div class="slider-row"><label>SPEED</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="spd" type="range" min="1" max="255" value="180"></div><output id="spdV">71%</output></div>
+          <div class="slider-row"><label>INTENSITY</label><div class="sim-slider"><span class="fill bg-fill"></span><span class="thumb"></span><input id="int" type="range" min="0" max="255" value="128"></div><output id="intV">50%</output></div>
+          <div class="slider-row"><label>SIZE</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="size" type="range" min="1" max="255" value="96"></div><output id="sizeV">38%</output></div>
+          <details class="more-style"><summary>MORE</summary>
+            <div class="slider-row"><label>DENSITY</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="dens" type="range" min="1" max="255" value="128"></div><output id="densV">50%</output></div>
+            <div class="slider-row"><label>TRAIL</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="trail" type="range" min="1" max="255" value="170"></div><output id="trailV">67%</output></div>
+            <div class="compact-row"><select id="dir" class="glass-field"><option value="FWD">FORWARD</option><option value="REV">REVERSE</option></select><button id="mirrorBtn" class="glass-btn">MIRROR</button><input id="mirror" type="checkbox" hidden></div>
+          </details>
+        </div>
+      </section>
+
+      <section class="context-frame colors-frame matrix-colors">
+        <div class="context-title">COLORS</div>
+        <input id="main" type="color" value="#FFF200" hidden>
+        <input id="bg" type="color" value="#00BFFF" hidden>
+        <input id="fg" type="color" value="#FF2CA8" hidden>
+        <div class="rolebar">
+          <button class="role on" data-role="main"><i id="mainSwatch" style="background:#FFF200"></i>MAIN</button>
+          <button class="role" data-role="bg"><i id="bgSwatch" style="background:#00BFFF"></i>BACKGROUND</button>
+          <button class="role" data-role="fg"><i id="fgSwatch" style="background:#FF2CA8"></i>FOREGROUND</button>
+        </div>
+        <div id="hueSelector" class="hue-selector"><span class="hue-spectrum"></span><span class="hue-thumb"></span><input id="hueRange" type="range" min="0" max="359" value="60"></div>
+        <div class="hue-readout"><span>HUE</span><strong id="hueValue">#FFF200</strong></div>
+        <div class="saved-colors"><div id="savedColors" class="saved-color-list"></div><button id="saveColor" class="glass-btn">+ SAVE COLOR</button></div>
+        <div class="button-row"><button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button><button id="addFxPlaylist" class="glass-btn">ADD TO PLAYLIST</button></div>
+      </section>
+    </div>
+
+    <section class="context-frame effects-frame matrix-effects">
+      <div class="effects-head"><span class="context-title">EFFECTS</span><span id="fxCount" class="effect-count"></span></div>
+      <input id="fxSearch" class="glass-field effect-search" placeholder="Search all firmware effects…">
+      <div id="effectList" class="effect-list"></div>
+    </section>
+  </div>
 </section>
-<section class="workspace-page" id="fxcolor">
-<div class="page">
-<h1 class="sr-only">FX + Colors</h1>
-<span class="hidden-core" id="target">TARGET #1</span>
-<div class="fx-shell">
-<div class="fx-main">
-<section class="preview glass-panel">
-<div class="preview-name" id="activeFxName">AURORA</div>
-<div class="led-stage"><div aria-label="Live LED effect preview" class="strip" id="ledPreview"></div></div>
+
+<section id="music" class="page locked-page">
+  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
+  <div class="music-layout page-content">
+    <section class="context-frame music-control matrix-music">
+      <div class="context-title">MICROPHONE</div>
+      <div class="button-row"><button id="micToggle" class="glass-btn primary">START MICROPHONE</button><span id="micState" class="mic-state">OFF</span></div>
+      <div class="slider-row sensitivity"><label>SENSITIVITY</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="micSensitivity" type="range" min="25" max="300" value="135"></div><output id="micSensitivityV">1.35×</output></div>
+      <div class="microcopy">Music effects are selected in FX / COLORS. This tab supplies microphone analysis only.</div>
+    </section>
+    <section class="context-frame spectrum-frame matrix-spectrum">
+      <div class="context-title">16 CHANNEL SPECTROGRAPH</div>
+      <div id="spectrograph" class="spectrograph" aria-label="16 channel audio spectrum"></div>
+      <div id="bandLabels" class="band-labels"></div>
+    </section>
+  </div>
 </section>
-<div class="control-deck">
-<section class="compact-panel glass-panel">
-<h2>Effect</h2>
-<div class="slider-grid">
-<div class="slider-row"><label>BRIGHT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="bri" max="255" min="0" type="range" value="70"/></div><output id="briV">27%</output></div>
-<div class="slider-row"><label>SPEED</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="spd" max="255" min="1" type="range" value="220"/></div><output id="spdV">86%</output></div>
-<div class="slider-row"><label>INTENSE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="int" max="255" min="1" type="range" value="190"/></div><output id="intV">74%</output></div>
-<div class="slider-row"><label>SIZE</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="size" max="255" min="1" type="range" value="72"/></div><output id="sizeV">28%</output></div>
-</div>
-<details class="more-controls">
-<summary>MORE EFFECT CONTROLS</summary>
-<div class="slider-grid" style="margin-top:7px">
-<div class="slider-row"><label>DENSITY</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="dens" max="255" min="1" type="range" value="110"/></div><output id="densV">43%</output></div>
-<div class="slider-row"><label>TRAIL</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="trail" max="255" min="1" type="range" value="145"/></div><output id="trailV">57%</output></div>
-</div>
-<div class="more-row">
-<select aria-label="Direction" class="compact-select" id="dir"><option value="FWD">Forward →</option><option value="REV">← Reverse</option></select>
-<button class="toggle" id="mirrorBtn" type="button">MIRROR</button>
-<input hidden="" id="mirror" type="checkbox"/>
-</div>
-</details>
+
+<section id="presets" class="page locked-page">
+  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
+  <div class="page-content centered-content">
+    <section class="context-frame presets-frame matrix-presets">
+      <div class="context-title">PRESETS</div>
+      <div class="button-row centered"><button id="saveCurrentPreset" class="glass-btn primary">SAVE CURRENT PRESET</button><span id="presetCount" class="microcopy"></span></div>
+      <div id="presetGrid" class="preset-grid"></div>
+    </section>
+  </div>
 </section>
-<section class="compact-panel glass-panel">
-<h2>Colors</h2>
-<input hidden="" id="main" type="color" value="#FFFFFF"/>
-<input hidden="" id="bg" type="color" value="#000000"/>
-<input hidden="" id="fg" type="color" value="#8000FF"/>
-<div class="rolebar">
-<button class="role on" data-role="main"><span class="swatch" id="mainSwatch" style="background:#fff"></span>MAIN</button>
-<button class="role" data-role="bg"><span class="swatch" id="bgSwatch" style="background:#000"></span>BACKGROUND</button>
-<button class="role" data-role="fg"><span class="swatch" id="fgSwatch" style="background:#8000ff"></span>FOREGROUND</button>
-</div>
-<div aria-label="Hue selector" class="hue-selector" id="hueSelector">
-<span class="hue-spectrum"></span><span class="hue-thumb"></span>
-<input aria-label="Hue" id="hueRange" max="359" min="0" type="range" value="0"/>
-</div>
-<div class="hue-meta"><span>SLIDE FOR COLOR</span><b id="hueValue">CLEAR</b></div>
-<div class="saved-wrap">
-<div class="subhead">Saved colors</div>
-<div aria-label="Saved colors" class="saved"></div>
-<div class="actions" style="margin-top:6px"><button class="savecolor glass-btn" type="button">+ SAVE COLOR</button></div>
-<div class="saved-help">Press and hold a saved color to delete it.</div>
-</div>
-<input hidden="" id="livePicker" type="color" value="#ffffff"/>
-<div class="fx-actions actions">
-<button class="glass-btn primary" id="saveFxPreset" type="button">SAVE PRESET</button>
-<button class="glass-btn" id="addFxPlaylist" type="button">ADD TO PLAYLIST</button>
-</div>
+
+<section id="custom" class="page locked-page">
+  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
+  <div class="page-content centered-content">
+    <section class="context-frame playlist-frame matrix-playlist">
+      <div class="context-title">CUSTOM PLAYLIST</div>
+      <input id="playlistName" class="glass-field playlist-name" value="My Light Sequence">
+      <div class="button-row centered"><button id="addCurrentFx" class="glass-btn">ADD CURRENT FX</button><button id="playPlaylist" class="glass-btn primary">PLAY</button><button id="stopPlaylist" class="glass-btn">STOP</button><button id="clearPlaylist" class="glass-btn danger">CLEAR</button></div>
+      <div id="playlistList" class="playlist-list"></div>
+    </section>
+  </div>
 </section>
-</div>
-</div>
-<aside class="library">
-<div class="library-head"><span>EFFECTS</span><span class="muted" id="fxCount">0</span></div>
-<input aria-label="Search effects" class="search" id="fxSearch" placeholder="Search effects…"/>
-<div class="filters">
-<button class="filter-chip" data-filter="motion">MOTION</button>
-<button class="filter-chip" data-filter="season">SEASONAL</button>
-<button class="filter-chip" data-filter="audio">MUSIC</button>
-</div>
-<div class="fxlist">
-<button class="fx on" data-cat="motion" data-fx="AURORA" data-preview="flow"><b>AURORA</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="CHASE" data-preview="chase"><b>CHASE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="TRICOLOR_CHASE" data-preview="chase"><b>TRI CHASE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion audio" data-fx="COMET" data-preview="comet"><b>COMET</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="METEOR" data-preview="comet"><b>METEOR</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="SCANNER" data-preview="scanner"><b>SCANNER</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="SINELON" data-preview="scanner"><b>SINELON</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="FLOW" data-preview="flow"><b>FLOW</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion audio" data-fx="SONIC_STREAM" data-preview="flow"><b>SONIC STREAM</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion audio" data-fx="RIPPLE" data-preview="ripple"><b>RIPPLE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion audio" data-fx="SONIC_BOOM" data-preview="ripple"><b>SONIC BOOM</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="STARBURST" data-preview="ripple"><b>STARBURST</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="BOUNCING_BALLS" data-preview="balls"><b>BOUNCING BALLS</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="JUGGLE" data-preview="balls"><b>JUGGLE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="TWINKLE" data-preview="twinkle"><b>TWINKLE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="TWINKLEFOX" data-preview="twinkle"><b>TWINKLEFOX</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="TWINKLECAT" data-preview="twinkle"><b>TWINKLECAT</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="season" data-fx="SPARKLE" data-preview="twinkle"><b>SPARKLE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="season" data-fx="FIREWORKS" data-preview="fireworks"><b>FIREWORKS</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="POPCORN" data-preview="twinkle"><b>POPCORN</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="DRIPDROP" data-preview="rain"><b>DRIPDROP</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="RAIN" data-preview="rain"><b>RAIN</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="FIRE" data-preview="fire"><b>FIRE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="MAGMA" data-preview="fire"><b>MAGMA</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="LAVA_LAMP" data-preview="fire"><b>LAVA LAMP</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="audio" data-fx="LIGHTNING" data-preview="lightning"><b>LIGHTNING</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="audio" data-fx="HEARTBEAT" data-preview="pulse"><b>HEARTBEAT</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="BREATHE" data-preview="pulse"><b>BREATHE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="audio" data-fx="AUDIO_PULSE" data-preview="pulse"><b>AUDIO PULSE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="audio" data-fx="SPECTRUM" data-preview="spectrum"><b>SPECTRUM</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="audio" data-fx="VU" data-preview="spectrum"><b>VU</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="POLICE" data-preview="strobe"><b>POLICE</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="SOLID" data-preview="solid"><b>SOLID</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="motion" data-fx="RAINBOW" data-preview="rainbow"><b>RAINBOW</b><span class="fx-palette"></span></button>
-<button class="fx" data-cat="" data-fx="OFF" data-preview="off"><b>OFF</b><span class="fx-palette"></span></button>
-</div>
-</aside>
-</div>
-</div>
-</section>
-<section class="workspace-page" id="music">
-<div class="page">
-<h1 class="sr-only">Music</h1>
-<div class="music-grid">
-<section class="music-panel glass-panel">
-<h2>Microphone</h2>
-<div class="actions">
-<button class="glass-btn primary" id="mic">START MICROPHONE</button>
-<span class="muted" id="micState" style="font:800 7pt Oxanium">OFF</span>
-</div>
-<div class="subhead">Response</div>
-<select class="compact-select" id="audmode"><option value="LEVEL">Level / motion</option><option value="BEAT">Beat</option><option value="SPECTRUM">Spectrum</option><option selected="" value="FULL">Full reactive</option><option value="OFF">Off</option></select>
-<div class="slider-row" style="margin-top:8px"><label>AMOUNT</label><div class="railglass"><span class="fill"></span><span class="thumb"></span><input id="audamt" max="255" min="0" type="range" value="180"/></div><output id="audamtV">180</output></div>
-<div class="subhead">Music effects</div>
-<div class="actions">
-<button class="glass-btn" data-fx="SPECTRUM">SPECTRUM</button>
-<button class="glass-btn" data-fx="VU">VU</button>
-<button class="glass-btn" data-fx="SONIC_STREAM">SONIC STREAM</button>
-<button class="glass-btn" data-fx="LIGHTNING">LIGHTNING</button>
-</div>
-</section>
-<section class="music-panel glass-panel">
-<h2>Live spectrum</h2>
-<div class="spectrum" id="spectrumBars"></div>
-<div class="spectrum-colors" id="spectrumColorControls">
-<label class="spectrum-color"><input id="spectrumLow" type="color" value="#000000"/>LOW</label>
-<label class="spectrum-color"><input id="spectrumMid" type="color" value="#FFFFFF"/>MID</label>
-<label class="spectrum-color"><input id="spectrumHigh" type="color" value="#8000FF"/>HIGH</label>
-</div>
-</section>
-</div>
-</div>
-</section>
-<section class="workspace-page" id="presets">
-<div class="page">
-<h1 class="sr-only">Presets</h1>
-<div class="preset-tools">
-<button class="glass-btn primary" id="saveLook">SAVE CURRENT PRESET</button>
-<span class="muted" id="presetCount" style="font:800 6.7pt Oxanium"></span>
-</div>
-<div class="preset-grid" id="presetGrid"><div class="empty">No saved presets yet.</div></div>
-</div>
-</section>
-<section class="workspace-page" id="custom">
-<div class="page">
-<h1 class="sr-only">Custom Playlist</h1>
-<div class="playlist-name"><label for="playlistName">PLAYLIST</label><input aria-label="Playlist name" id="playlistName" maxlength="40" value="My Light Sequence"/></div>
-<div class="playlist-tools">
-<button class="glass-btn" id="addScene">ADD CURRENT FX</button>
-<button class="glass-btn primary" id="playCustom">PLAY</button>
-<button class="glass-btn" id="stopCustom">STOP</button>
-<span class="muted" id="customCount" style="font:800 6.7pt Oxanium"></span>
-</div>
-<div class="playlist" id="customScenes"><div class="empty">Add an effect or preset to build a playlist.</div></div>
-</div>
-</section>
-<!-- Core compatibility values that are not consumer-facing controls. -->
-<div class="hidden-core">
-<input id="gain" value="135"/><input id="sm" value="55"/><input id="floor" value="10"/><input id="beat" value="185"/>
-<button id="connect"></button>
-<span id="ml"></span><span id="mb"></span><span id="mm"></span><span id="mh"></span><span id="mdb"></span><span id="mbeat"></span>
-<span id="shortcutGrid"></span>
-</div>
 </main>
+
+<div id="modal" class="modal" hidden><div class="modal-card context-frame"><div id="modalTitle" class="context-title">CONFIRM</div><div id="modalText" class="modal-text"></div><input id="modalInput" class="glass-field" hidden><div class="button-row"><button id="modalCancel" class="glass-btn">CANCEL</button><button id="modalOk" class="glass-btn primary">OK</button></div></div></div>
 </div>
-</div>
-<div class="app-dialog" hidden="" id="appDialog">
-<div aria-labelledby="dialogTitle" aria-modal="true" class="dialog-card glass-panel" role="dialog">
-<div class="dialog-title" id="dialogTitle">Confirm</div>
-<div class="dialog-message" id="dialogMessage"></div>
-<input class="dialog-input" hidden="" id="dialogInput"/>
-<div class="dialog-actions"><button class="glass-btn" id="dialogCancel">CANCEL</button><button class="glass-btn primary" id="dialogOk">OK</button></div>
-</div>
-</div>
-<script src="st-ble-core.js?v=20260903-perf1"></script>
-<script src="st-ble-ui.js?v=20260903-perf1"></script>
+<script src="st-ble-core.js?v=20260904-device-groups1"></script>
+<script src="st-ble-ui.js?v=20260904-device-groups1"></script>
 </body>
 </html>
