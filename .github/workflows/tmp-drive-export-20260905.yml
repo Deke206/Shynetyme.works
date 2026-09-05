@@ -1,0 +1,27 @@
+name: Temporary Drive Export 2026-09-05
+
+on:
+  push:
+    branches:
+      - feat/esp32-webapp-control-panel
+
+jobs:
+  export-site:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout current main snapshot
+        uses: actions/checkout@v4
+        with:
+          ref: 889b93f0bfae4330d88ff271da6f53bbc6f377b4
+          fetch-depth: 1
+      - name: Upload exact repository snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: shynetyme-works-9-5-2026
+          path: |
+            .
+            !.git/**
+          include-hidden-files: true
+          retention-days: 1
