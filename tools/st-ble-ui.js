@@ -1,123 +1,1436 @@
-'use strict';
-(()=>{
-const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
-const EFFECTS=["OFF","SOLID","RAINBOW","RAINBOW_GLITTER","COMET","METEOR","SCANNER","DUAL_SCANNER","POLICE","CHASE","TRICOLOR_CHASE","RUNNING_DOTS","THEATER","WIPE","FLOW","FLOW_STRIPE","COLOR_WAVES","SPARKLE","GLITTER","TWINKLE","TWINKLEFOX","TWINKLECAT","FIREWORKS","RAIN","TETRIX","FIRE","LIGHTNING","PACIFICA","SUNRISE","DANCING_SHADOWS","PRIDE","SINELON","JUGGLE","RIPPLE","SONIC_STREAM","SONIC_BOOM","STARBURST","BOUNCING_BALLS","POPCORN","DRIPDROP","LAVA_LAMP","MAGMA","AURORA","HEARTBEAT","BREATHE","FLASH","DUAL_FLASH","VU","SPECTRUM","AUDIO_PULSE","BEAT_FLASH"];
-const DEFAULT_PALETTE=Object.freeze({main:'#000000',bg:'#000000',fg:'#000000'});
-const EFFECT_META=Object.freeze({SOLID:'1 COLOR',RAINBOW:'BUILT-IN COLOR',RAINBOW_GLITTER:'BUILT-IN COLOR + MAIN',POLICE:'2 COLOR',FLASH:'2 COLOR',VU:'MUSIC · 3 COLOR',SPECTRUM:'MUSIC · 3 COLOR',AUDIO_PULSE:'MUSIC · 3 COLOR',BEAT_FLASH:'MUSIC · 3 COLOR',SONIC_STREAM:'MUSIC REACTIVE · 3 COLOR',SONIC_BOOM:'MUSIC REACTIVE · 3 COLOR',RIPPLE:'AUDIO REACTIVE · 3 COLOR',STARBURST:'AUDIO REACTIVE · 3 COLOR',POPCORN:'AUDIO REACTIVE · 3 COLOR',DRIPDROP:'AUDIO REACTIVE · 3 COLOR',HEARTBEAT:'AUDIO REACTIVE · 3 COLOR'});
-const REQUIRED_SAVED=['#FFF200','#00BFFF','#FF2CA8','#000000','#FFFFFF'];
-const PALETTE_KEY='stw-esp32-effect-palettes-v2',SAVED_KEY='stw-esp32-saved-colors-v2',PRESET_KEY='stw-esp32-presets-v4',PLAYLIST_KEY='stw-esp32-custom-v4',PLAYLIST_NAME_KEY='stw-esp32-playlist-name-v2';
-const AUDIO_BANDS=[[43,86],[86,129],[129,216],[216,301],[301,430],[430,560],[560,818],[818,1120],[1120,1421],[1421,1895],[1895,2412],[2412,3015],[3015,3704],[3704,4479],[4479,7106],[7106,9259]];
-let snap=STWBLE.snapshot(),activePage='device',activeFx='RAINBOW',activeRole='main',selectedDeviceId=null,formDirty=false,previewPhase=0,lastPreview=0,lastPreviewPaint=0;
-let colorTouched=false;
-let micOn=false,audioCtx=null,analyser=null,micStream=null,audioRaf=0,lastAudioSend=0,bassBase=12,lastBeat=0,playlistTimers=[];
-const loadJSON=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch(_){return f}};
-const saveJSON=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function log(msg){const x=q('#debugLog');if(!x)return;const ts=new Date().toLocaleTimeString();x.textContent=`${ts}  ${msg}\n${x.textContent}`.slice(0,5000)}
-function prettyFx(fx){return String(fx||'').replace(/^PS_/,'PS ').replaceAll('_',' ')}
-function palettes(){return {}}
-function paletteFor(){return q('#main')?currentPalette():{...DEFAULT_PALETTE}}
-function savePalette(){return false}
-function currentPalette(){return {main:q('#main').value.toUpperCase(),bg:q('#bg').value.toUpperCase(),fg:q('#fg').value.toUpperCase()}}
-function savedColors(){if(localStorage.getItem(SAVED_KEY)===null)saveSavedColors(REQUIRED_SAVED);const list=loadJSON(SAVED_KEY,REQUIRED_SAVED);return [...new Set([...REQUIRED_SAVED,...list].map(x=>String(x).toUpperCase()))].slice(0,24)}
-function saveSavedColors(list){saveJSON(SAVED_KEY,[...new Set(list.map(x=>String(x).toUpperCase()))].slice(0,24))}
-function presets(){const x=loadJSON(PRESET_KEY,[]);return Array.isArray(x)?x:[]}
-function savePresets(x){saveJSON(PRESET_KEY,x.slice(0,50))}
-function playlist(){const x=loadJSON(PLAYLIST_KEY,[]);return Array.isArray(x)?x:[]}
-function savePlaylist(x){saveJSON(PLAYLIST_KEY,x.slice(0,100))}
+"use strict";
+(() => {
+  const q = (s) => document.querySelector(s),
+    qa = (s) => [...document.querySelectorAll(s)];
+  // Firmware-direct IDs only. Add an effect only when V5.2 setEffect() accepts that exact ID.
+  const EFFECTS = [
+    "OFF",
+    "SOLID",
+    "RAINBOW",
+    "RAINBOW_GLITTER",
+    "COMET",
+    "METEOR",
+    "SCANNER",
+    "DUAL_SCANNER",
+    "POLICE",
+    "CHASE",
+    "TRICOLOR_CHASE",
+    "RUNNING_DOTS",
+    "THEATER",
+    "WIPE",
+    "FLOW",
+    "FLOW_STRIPE",
+    "COLOR_WAVES",
+    "SPARKLE",
+    "GLITTER",
+    "TWINKLE",
+    "TWINKLEFOX",
+    "TWINKLECAT",
+    "FIREWORKS",
+    "RAIN",
+    "TETRIX",
+    "FIRE",
+    "LIGHTNING",
+    "PACIFICA",
+    "SUNRISE",
+    "DANCING_SHADOWS",
+    "PRIDE",
+    "SINELON",
+    "JUGGLE",
+    "RIPPLE",
+    "SONIC_STREAM",
+    "SONIC_BOOM",
+    "STARBURST",
+    "BOUNCING_BALLS",
+    "POPCORN",
+    "DRIPDROP",
+    "LAVA_LAMP",
+    "MAGMA",
+    "AURORA",
+    "HEARTBEAT",
+    "BREATHE",
+    "FLASH",
+    "DUAL_FLASH",
+    "VU",
+    "SPECTRUM",
+    "AUDIO_PULSE",
+    "BEAT_FLASH",
+  ];
+  const DEFAULT_PALETTE = Object.freeze({
+    main: "#000000",
+    bg: "#000000",
+    fg: "#000000",
+  });
+  // Display-only behavior/type labels; these labels never alter firmware rendering.
+  const EFFECT_META = Object.freeze({
+    SOLID: "1 COLOR",
+    RAINBOW: "BUILT-IN COLOR",
+    RAINBOW_GLITTER: "BUILT-IN COLOR + MAIN",
+    POLICE: "2 COLOR",
+    FLASH: "2 COLOR",
+    VU: "MUSIC · 3 COLOR",
+    SPECTRUM: "MUSIC · 3 COLOR",
+    AUDIO_PULSE: "MUSIC · 3 COLOR",
+    BEAT_FLASH: "MUSIC · 3 COLOR",
+    SONIC_STREAM: "MUSIC REACTIVE · 3 COLOR",
+    SONIC_BOOM: "MUSIC REACTIVE · 3 COLOR",
+    RIPPLE: "AUDIO REACTIVE · 3 COLOR",
+    STARBURST: "AUDIO REACTIVE · 3 COLOR",
+    POPCORN: "AUDIO REACTIVE · 3 COLOR",
+    DRIPDROP: "AUDIO REACTIVE · 3 COLOR",
+    HEARTBEAT: "AUDIO REACTIVE · 3 COLOR",
+  });
+  const REQUIRED_SAVED = [
+    "#FFF200",
+    "#00BFFF",
+    "#FF2CA8",
+    "#000000",
+    "#FFFFFF",
+  ];
+  const PALETTE_KEY = "stw-esp32-effect-palettes-v2",
+    SAVED_KEY = "stw-esp32-saved-colors-v2",
+    PRESET_KEY = "stw-esp32-presets-v4",
+    PLAYLIST_KEY = "stw-esp32-custom-v4",
+    PLAYLIST_NAME_KEY = "stw-esp32-playlist-name-v2";
+  // Sixteen analysis bands used to build V5.2 F=<32 hex chars>[beat] packets.
+  const AUDIO_BANDS = [
+    [43, 86],
+    [86, 129],
+    [129, 216],
+    [216, 301],
+    [301, 430],
+    [430, 560],
+    [560, 818],
+    [818, 1120],
+    [1120, 1421],
+    [1421, 1895],
+    [1895, 2412],
+    [2412, 3015],
+    [3015, 3704],
+    [3704, 4479],
+    [4479, 7106],
+    [7106, 9259],
+  ];
+  // UI runtime state. BLE/device truth is refreshed from STWBLE.snapshot().
+  let snap = STWBLE.snapshot(),
+    activePage = "device",
+    activeFx = "RAINBOW",
+    activeRole = "main",
+    selectedDeviceId = null,
+    formDirty = false,
+    previewPhase = 0,
+    lastPreview = 0,
+    lastPreviewPaint = 0;
+  let colorTouched = false;
+  let micOn = false,
+    audioCtx = null,
+    analyser = null,
+    micStream = null,
+    audioRaf = 0,
+    lastAudioSend = 0,
+    bassBase = 12,
+    lastBeat = 0,
+    playlistTimers = [];
+  // Local-only storage helpers for presets, playlists, saved colors, and UI preferences.
+  const loadJSON = (k, f) => {
+    try {
+      const v = JSON.parse(localStorage.getItem(k));
+      return v ?? f;
+    } catch (_) {
+      return f;
+    }
+  };
+  const saveJSON = (k, v) => {
+    try {
+      localStorage.setItem(k, JSON.stringify(v));
+    } catch (_) {}
+  };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  function log(msg) {
+    const x = q("#debugLog");
+    if (!x) return;
+    const ts = new Date().toLocaleTimeString();
+    x.textContent = `${ts}  ${msg}\n${x.textContent}`.slice(0, 5000);
+  }
+  function prettyFx(fx) {
+    return String(fx || "")
+      .replace(/^PS_/, "PS ")
+      .replaceAll("_", " ");
+  }
+  function palettes() {
+    return {};
+  }
+  function paletteFor() {
+    return q("#main") ? currentPalette() : { ...DEFAULT_PALETTE };
+  }
+  function savePalette() {
+    return false;
+  }
+  function currentPalette() {
+    return {
+      main: q("#main").value.toUpperCase(),
+      bg: q("#bg").value.toUpperCase(),
+      fg: q("#fg").value.toUpperCase(),
+    };
+  }
+  function savedColors() {
+    if (localStorage.getItem(SAVED_KEY) === null)
+      saveSavedColors(REQUIRED_SAVED);
+    const list = loadJSON(SAVED_KEY, REQUIRED_SAVED);
+    return [
+      ...new Set(
+        [...REQUIRED_SAVED, ...list].map((x) => String(x).toUpperCase()),
+      ),
+    ].slice(0, 24);
+  }
+  function saveSavedColors(list) {
+    saveJSON(
+      SAVED_KEY,
+      [...new Set(list.map((x) => String(x).toUpperCase()))].slice(0, 24),
+    );
+  }
+  function presets() {
+    const x = loadJSON(PRESET_KEY, []);
+    return Array.isArray(x) ? x : [];
+  }
+  function savePresets(x) {
+    saveJSON(PRESET_KEY, x.slice(0, 50));
+  }
+  function playlist() {
+    const x = loadJSON(PLAYLIST_KEY, []);
+    return Array.isArray(x) ? x : [];
+  }
+  function savePlaylist(x) {
+    saveJSON(PLAYLIST_KEY, x.slice(0, 100));
+  }
 
-function injectMatrix(){const textByClass={
- 'device-zone':'DEVICE · LOCAL BLE · GPIO · PIXELS · SIGNAL · SHYNETYME',
- 'assignment-frame':'BLUETOOTH · DEVICE ID · ASSIGN · REMEMBER · RECONNECT · LOCAL',
- 'settings-frame':'LED COUNT · GPIO · PIXEL ORDER · STARTUP · SAVE · DEVICE',
- 'debug-frame':'DEBUG · STATUS · COMMAND · READ · WRITE · TEST · LOCAL',
- 'group-frame':'GROUP · LINK · SIMULCAST · PRESET · PLAYLIST · EFFECT · STYLE',
- 'styling-frame':'SPEED · SIZE · DENSITY · TRAIL · BRIGHTNESS · INTENSITY',
- 'colors-frame':'NEON YELLOW · NEON BLUE · NEON PINK · BLACK · WHITE · COLOR',
- 'effects-frame':'WLED 1D · EFFECTS · MOTION · LIGHT · SHYNETYME · SELECT',
- 'music-control':'MICROPHONE · SENSITIVITY · FFT · AUDIO · REACTIVE · INPUT',
- 'spectrum-frame':'43HZ · BASS · MID · HIGH · 16 CHANNEL · SPECTRUM · FFT',
- 'presets-frame':'PRESET · EFFECT · COLOR · STYLE · SAVE · RECALL · LOAD',
- 'playlist-frame':'PLAYLIST · SEQUENCE · EFFECT · PRESET · PLAY · STOP'};
- qa('.context-frame').forEach(frame=>{if(frame.querySelector(':scope > .matrix-lanes'))return;const cls=Object.keys(textByClass).find(c=>frame.classList.contains(c)),base=textByClass[cls]||'SHYNETYME · PINK · YELLOW · BLUE · LIGHT';const lanes=document.createElement('div');lanes.className='matrix-lanes';for(let i=0;i<3;i++){const s=document.createElement('span');s.className='matrix-lane';s.textContent=`${base} · PINK · YELLOW · BLUE · ${base} · ${base} ·`;lanes.append(s)}frame.prepend(lanes)});
- const music=q('.music-control');if(music&&!music.querySelector('.music-note')){const defs=[['♪','pink',9,22,-1.2],['♫','yellow',72,18,-3.4],['♬','blue',48,68,-2.1],['♪','blue',88,54,-4.4],['♫','pink',24,76,-5.2]];for(const [t,c,l,top,d] of defs){const n=document.createElement('i');n.className=`music-note ${c}`;n.textContent=t;n.style.left=l+'%';n.style.top=top+'%';n.style.animationDelay=d+'s';music.append(n)}}
-}
-function fillSelect(sel,value){if(!sel)return;sel.innerHTML='';for(const fx of EFFECTS){if(fx==='OFF')continue;const o=document.createElement('option');o.value=fx;o.textContent=prettyFx(fx);sel.append(o)}if(value&&EFFECTS.includes(value))sel.value=value}
-function activatePage(id){if(id!=='device'&&!snap.passkey){id='device';log('Effects locked until a connected device or complete group is selected.')}activePage=id;qa('.tab').forEach(b=>b.classList.toggle('on',b.dataset.page===id));qa('.page').forEach(p=>p.classList.toggle('on',p.id===id))}
-qa('.tab').forEach(b=>b.addEventListener('click',()=>activatePage(b.dataset.page)));
-function updateGate(){qa('.tab.gated').forEach(b=>{b.classList.toggle('locked',!snap.passkey);b.setAttribute('aria-disabled',snap.passkey?'false':'true')});for(const id of ['fxcolor','music','presets','custom'])q('#'+id)?.classList.toggle('locked-page',!snap.passkey);if(!snap.passkey&&activePage!=='device')activatePage('device')}
-function targetPrimaryDevice(){if(snap.target?.type==='device')return snap.devices.find(d=>d.id===snap.target.id)||null;if(snap.target?.type==='group'){const g=snap.groups.find(x=>x.id===snap.target.id);return snap.devices.find(d=>g?.members.includes(d.id))||null}return null}
-function updateStateHeader(){q('#stateDevice').textContent=snap.targetLabel||'NONE';q('#stateFx').textContent=prettyFx(activeFx);q('#bleSummary').textContent=`${snap.devices.filter(d=>d.bleStatus==='connected').length} LOCAL BLE`;updateGate()}
+  // Build decorative matrix lanes/music notes once; visual only.
+  function injectMatrix() {
+    const textByClass = {
+      "device-zone": "DEVICE · LOCAL BLE · GPIO · PIXELS · SIGNAL · SHYNETYME",
+      "assignment-frame":
+        "BLUETOOTH · DEVICE ID · ASSIGN · REMEMBER · RECONNECT · LOCAL",
+      "settings-frame":
+        "LED COUNT · GPIO · PIXEL ORDER · STARTUP · SAVE · DEVICE",
+      "debug-frame": "DEBUG · STATUS · COMMAND · READ · WRITE · TEST · LOCAL",
+      "group-frame":
+        "GROUP · LINK · SIMULCAST · PRESET · PLAYLIST · EFFECT · STYLE",
+      "styling-frame":
+        "SPEED · SIZE · DENSITY · TRAIL · BRIGHTNESS · INTENSITY",
+      "colors-frame":
+        "NEON YELLOW · NEON BLUE · NEON PINK · BLACK · WHITE · COLOR",
+      "effects-frame":
+        "WLED 1D · EFFECTS · MOTION · LIGHT · SHYNETYME · SELECT",
+      "music-control":
+        "MICROPHONE · SENSITIVITY · FFT · AUDIO · REACTIVE · INPUT",
+      "spectrum-frame":
+        "43HZ · BASS · MID · HIGH · 16 CHANNEL · SPECTRUM · FFT",
+      "presets-frame": "PRESET · EFFECT · COLOR · STYLE · SAVE · RECALL · LOAD",
+      "playlist-frame": "PLAYLIST · SEQUENCE · EFFECT · PRESET · PLAY · STOP",
+    };
+    qa(".context-frame").forEach((frame) => {
+      if (frame.querySelector(":scope > .matrix-lanes")) return;
+      const cls = Object.keys(textByClass).find((c) =>
+          frame.classList.contains(c),
+        ),
+        base = textByClass[cls] || "SHYNETYME · PINK · YELLOW · BLUE · LIGHT";
+      const lanes = document.createElement("div");
+      lanes.className = "matrix-lanes";
+      for (let i = 0; i < 3; i++) {
+        const s = document.createElement("span");
+        s.className = "matrix-lane";
+        s.textContent = `${base} · PINK · YELLOW · BLUE · ${base} · ${base} ·`;
+        lanes.append(s);
+      }
+      frame.prepend(lanes);
+    });
+    const music = q(".music-control");
+    if (music && !music.querySelector(".music-note")) {
+      const defs = [
+        ["♪", "pink", 9, 22, -1.2],
+        ["♫", "yellow", 72, 18, -3.4],
+        ["♬", "blue", 48, 68, -2.1],
+        ["♪", "blue", 88, 54, -4.4],
+        ["♫", "pink", 24, 76, -5.2],
+      ];
+      for (const [t, c, l, top, d] of defs) {
+        const n = document.createElement("i");
+        n.className = `music-note ${c}`;
+        n.textContent = t;
+        n.style.left = l + "%";
+        n.style.top = top + "%";
+        n.style.animationDelay = d + "s";
+        music.append(n);
+      }
+    }
+  }
+  // Fill effect dropdowns from the same verified direct-effect list.
+  function fillSelect(sel, value) {
+    if (!sel) return;
+    sel.innerHTML = "";
+    for (const fx of EFFECTS) {
+      if (fx === "OFF") continue;
+      const o = document.createElement("option");
+      o.value = fx;
+      o.textContent = prettyFx(fx);
+      sel.append(o);
+    }
+    if (value && EFFECTS.includes(value)) sel.value = value;
+  }
+  // Switch tabs; gated pages return to Device until a connected target has passkey.
+  function activatePage(id) {
+    if (id !== "device" && !snap.passkey) {
+      id = "device";
+      log(
+        "Effects locked until a connected device or complete group is selected.",
+      );
+    }
+    activePage = id;
+    qa(".tab").forEach((b) => b.classList.toggle("on", b.dataset.page === id));
+    qa(".page").forEach((p) => p.classList.toggle("on", p.id === id));
+  }
+  qa(".tab").forEach((b) =>
+    b.addEventListener("click", () => activatePage(b.dataset.page)),
+  );
+  function updateGate() {
+    qa(".tab.gated").forEach((b) => {
+      b.classList.toggle("locked", !snap.passkey);
+      b.setAttribute("aria-disabled", snap.passkey ? "false" : "true");
+    });
+    for (const id of ["fxcolor", "music", "presets", "custom"])
+      q("#" + id)?.classList.toggle("locked-page", !snap.passkey);
+    if (!snap.passkey && activePage !== "device") activatePage("device");
+  }
+  function targetPrimaryDevice() {
+    if (snap.target?.type === "device")
+      return snap.devices.find((d) => d.id === snap.target.id) || null;
+    if (snap.target?.type === "group") {
+      const g = snap.groups.find((x) => x.id === snap.target.id);
+      return snap.devices.find((d) => g?.members.includes(d.id)) || null;
+    }
+    return null;
+  }
+  function updateStateHeader() {
+    q("#stateDevice").textContent = snap.targetLabel || "NONE";
+    q("#stateFx").textContent = prettyFx(activeFx);
+    q("#bleSummary").textContent =
+      `${snap.devices.filter((d) => d.bleStatus === "connected").length} LOCAL BLE`;
+    updateGate();
+  }
 
-function boardMarkup(){return '<div class="esp32-art"><span class="esp32-chip">ESP32</span><span class="esp32-usb"></span></div>'}
-function renderDevices(){const host=q('#deviceList');host.innerHTML='';for(const d of snap.devices){const selected=snap.target?.type==='device'&&snap.target.id===d.id;const card=document.createElement('article');card.className='device-card'+(selected?' selected':'');card.tabIndex=0;card.dataset.id=d.id;card.innerHTML=`${boardMarkup()}<div class="device-info"><div class="device-name"></div><div class="device-bt"></div></div><i class="ble-dot ${d.bleStatus}"></i><button class="power-ring ${d.powered?'on':''}" aria-label="Power">⏻</button>`;card.querySelector('.device-name').textContent=d.name;card.querySelector('.device-bt').textContent=d.bluetoothName||'Bluetooth not assigned';const select=()=>STWBLE.selectDevice(d.id);card.addEventListener('click',e=>{if(!e.target.closest('.power-ring'))select()});card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select()}});card.querySelector('.power-ring').addEventListener('click',async e=>{e.stopPropagation();try{await STWBLE.togglePower(d.id)}catch(err){log(err.message)}});host.append(card)}}
-function selectedSingleDevice(){return snap.target?.type==='device'?snap.devices.find(d=>d.id===snap.target.id)||null:null}
-function populateGranted(){const sel=q('#grantedBluetooth'),cur=sel.value;sel.innerHTML='<option value="">Previously granted Bluetooth devices</option>';for(const b of snap.granted){const o=document.createElement('option');o.value=b.id;o.textContent=b.name||b.id;sel.append(o)}if([...sel.options].some(o=>o.value===cur))sel.value=cur}
-function loadDeviceForm(force=false){const d=selectedSingleDevice();q('#deviceTools').classList.toggle('locked-panel',!d);q('.settings-frame')?.classList.toggle('unpaired',!d?.bluetoothId);q('.debug-frame')?.classList.toggle('unpaired',!d?.bluetoothId);if(!d)return;if(formDirty&&!force)return;selectedDeviceId=d.id;q('#settingsDeviceName').textContent=d.name;q('#deviceName').value=d.name;q('#leds').value=d.config.leds;q('#gpio').value=d.config.gpio;q('#order').value=d.config.order;q('#segFrom').value=d.config.segFrom;q('#segTo').value=d.config.segTo;q('#segFrom').max=q('#segTo').max=Math.max(0,d.config.leds-1);fillSelect(q('#startupFx'),d.config.startupFx||d.lastFx||activeFx);formDirty=false}
-for(const id of ['deviceName','leds','gpio','order','segFrom','segTo','startupFx'])q('#'+id)?.addEventListener('input',()=>{formDirty=true;if(id==='leds'){const max=Math.max(0,(+q('#leds').value||1)-1);q('#segFrom').max=q('#segTo').max=max}});
-q('#addLogicalDevice').addEventListener('click',()=>{const id=STWBLE.addLogicalDevice();STWBLE.selectDevice(id)});
-q('#assignGranted').addEventListener('click',async()=>{const d=selectedSingleDevice(),id=q('#grantedBluetooth').value;if(!d||!id)return;try{log('Assigning granted Bluetooth device…');await STWBLE.assignGranted(d.id,id)}catch(e){log(e.message)}});
-q('#addBluetooth').addEventListener('click',async()=>{const d=selectedSingleDevice();if(!d)return;try{log('Opening one-time Bluetooth permission picker…');await STWBLE.assignNew(d.id)}catch(e){log(e.name==='NotFoundError'?'Bluetooth selection cancelled.':e.message)}});
-q('#reconnectSelected').addEventListener('click',async()=>{const d=selectedSingleDevice();if(!d)return;try{await STWBLE.connectAssigned(d.id)}catch(e){log(e.message)}});
-q('#unassignBluetooth').addEventListener('click',async()=>{const d=selectedSingleDevice();if(!d)return;const ok=await modal({title:'UNASSIGN BLUETOOTH',text:`Forget Bluetooth assignment for ${d.name}?`,ok:'UNASSIGN'});if(ok)STWBLE.unassignBluetooth(d.id)});
-async function saveSettings(reboot=false){const d=selectedSingleDevice();if(!d)return;const cfg={leds:+q('#leds').value,gpio:+q('#gpio').value,order:q('#order').value,segFrom:+q('#segFrom').value,segTo:+q('#segTo').value,startupFx:q('#startupFx').value},name=q('#deviceName').value.trim()||d.name;try{await STWBLE.saveDeviceConfig(d.id,cfg,{reboot});STWBLE.renameDevice(d.id,name);formDirty=false;log(`${reboot?'Saved and rebooted':'Saved'} settings for ${name}.`)}catch(e){log(e.message)}}
-q('#saveDeviceSettings').addEventListener('click',()=>saveSettings(false));q('#saveDeviceReboot').addEventListener('click',()=>saveSettings(true));
-q('#saveStartup').addEventListener('click',async()=>{const d=selectedSingleDevice();if(!d)return;const fx=q('#startupFx').value,p=paletteFor(fx),startup=buildCommand(fx,p),restore=buildCommand(activeFx,currentPalette());try{await STWBLE.saveStartup(d.id,startup,restore,fx);log(`Startup effect saved as ${prettyFx(fx)} for ${d.name}.`)}catch(e){log(e.message)}});
-q('#readStatus').addEventListener('click',async()=>{const d=selectedSingleDevice();if(d)await STWBLE.readStatus(d.id)});q('#blackout').addEventListener('click',async()=>{const d=selectedSingleDevice();if(d){await STWBLE.sendToDevice(d.id,'FX=OFF');log(`Blackout sent to ${d.name}.`)}});q('#sendRaw').addEventListener('click',async()=>{const d=selectedSingleDevice(),v=q('#rawCommand').value.trim();if(d&&v){await STWBLE.sendToDevice(d.id,v);log(`TX ${v}`)}});
+  // Render the logical ESP32 card surface.
+  function boardMarkup() {
+    return '<div class="esp32-art"><span class="esp32-chip">ESP32</span><span class="esp32-usb"></span></div>';
+  }
+  function renderDevices() {
+    const host = q("#deviceList");
+    host.innerHTML = "";
+    for (const d of snap.devices) {
+      const selected =
+        snap.target?.type === "device" && snap.target.id === d.id;
+      const card = document.createElement("article");
+      card.className = "device-card" + (selected ? " selected" : "");
+      card.tabIndex = 0;
+      card.dataset.id = d.id;
+      card.innerHTML = `${boardMarkup()}<div class="device-info"><div class="device-name"></div><div class="device-bt"></div></div><i class="ble-dot ${d.bleStatus}"></i><button class="power-ring ${d.powered ? "on" : ""}" aria-label="Power">⏻</button>`;
+      card.querySelector(".device-name").textContent = d.name;
+      card.querySelector(".device-bt").textContent =
+        d.bluetoothName || "Bluetooth not assigned";
+      const select = () => STWBLE.selectDevice(d.id);
+      card.addEventListener("click", (e) => {
+        if (!e.target.closest(".power-ring")) select();
+      });
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          select();
+        }
+      });
+      card.querySelector(".power-ring").addEventListener("click", async (e) => {
+        e.stopPropagation();
+        try {
+          await STWBLE.togglePower(d.id);
+        } catch (err) {
+          log(err.message);
+        }
+      });
+      host.append(card);
+    }
+  }
+  function selectedSingleDevice() {
+    return snap.target?.type === "device"
+      ? snap.devices.find((d) => d.id === snap.target.id) || null
+      : null;
+  }
+  function populateGranted() {
+    const sel = q("#grantedBluetooth"),
+      cur = sel.value;
+    sel.innerHTML =
+      '<option value="">Previously granted Bluetooth devices</option>';
+    for (const b of snap.granted) {
+      const o = document.createElement("option");
+      o.value = b.id;
+      o.textContent = b.name || b.id;
+      sel.append(o);
+    }
+    if ([...sel.options].some((o) => o.value === cur)) sel.value = cur;
+  }
+  function loadDeviceForm(force = false) {
+    const d = selectedSingleDevice();
+    q("#deviceTools").classList.toggle("locked-panel", !d);
+    q(".settings-frame")?.classList.toggle("unpaired", !d?.bluetoothId);
+    q(".debug-frame")?.classList.toggle("unpaired", !d?.bluetoothId);
+    if (!d) return;
+    if (formDirty && !force) return;
+    selectedDeviceId = d.id;
+    q("#settingsDeviceName").textContent = d.name;
+    q("#deviceName").value = d.name;
+    q("#leds").value = d.config.leds;
+    q("#gpio").value = d.config.gpio;
+    q("#order").value = d.config.order;
+    q("#segFrom").value = d.config.segFrom;
+    q("#segTo").value = d.config.segTo;
+    q("#segFrom").max = q("#segTo").max = Math.max(0, d.config.leds - 1);
+    fillSelect(q("#startupFx"), d.config.startupFx || d.lastFx || activeFx);
+    formDirty = false;
+  }
+  for (const id of [
+    "deviceName",
+    "leds",
+    "gpio",
+    "order",
+    "segFrom",
+    "segTo",
+    "startupFx",
+  ])
+    q("#" + id)?.addEventListener("input", () => {
+      formDirty = true;
+      if (id === "leds") {
+        const max = Math.max(0, (+q("#leds").value || 1) - 1);
+        q("#segFrom").max = q("#segTo").max = max;
+      }
+    });
+  q("#addLogicalDevice").addEventListener("click", () => {
+    const id = STWBLE.addLogicalDevice();
+    STWBLE.selectDevice(id);
+  });
+  q("#assignGranted").addEventListener("click", async () => {
+    const d = selectedSingleDevice(),
+      id = q("#grantedBluetooth").value;
+    if (!d || !id) return;
+    try {
+      log("Assigning granted Bluetooth device…");
+      await STWBLE.assignGranted(d.id, id);
+    } catch (e) {
+      log(e.message);
+    }
+  });
+  q("#addBluetooth").addEventListener("click", async () => {
+    const d = selectedSingleDevice();
+    if (!d) return;
+    try {
+      log("Opening one-time Bluetooth permission picker…");
+      await STWBLE.assignNew(d.id);
+    } catch (e) {
+      log(
+        e.name === "NotFoundError"
+          ? "Bluetooth selection cancelled."
+          : e.message,
+      );
+    }
+  });
+  q("#reconnectSelected").addEventListener("click", async () => {
+    const d = selectedSingleDevice();
+    if (!d) return;
+    try {
+      await STWBLE.connectAssigned(d.id);
+    } catch (e) {
+      log(e.message);
+    }
+  });
+  q("#unassignBluetooth").addEventListener("click", async () => {
+    const d = selectedSingleDevice();
+    if (!d) return;
+    const ok = await modal({
+      title: "UNASSIGN BLUETOOTH",
+      text: `Forget Bluetooth assignment for ${d.name}?`,
+      ok: "UNASSIGN",
+    });
+    if (ok) STWBLE.unassignBluetooth(d.id);
+  });
+  async function saveSettings(reboot = false) {
+    const d = selectedSingleDevice();
+    if (!d) return;
+    const cfg = {
+        leds: +q("#leds").value,
+        gpio: +q("#gpio").value,
+        order: q("#order").value,
+        segFrom: +q("#segFrom").value,
+        segTo: +q("#segTo").value,
+        startupFx: q("#startupFx").value,
+      },
+      name = q("#deviceName").value.trim() || d.name;
+    try {
+      await STWBLE.saveDeviceConfig(d.id, cfg, { reboot });
+      STWBLE.renameDevice(d.id, name);
+      formDirty = false;
+      log(`${reboot ? "Saved and rebooted" : "Saved"} settings for ${name}.`);
+    } catch (e) {
+      log(e.message);
+    }
+  }
+  q("#saveDeviceSettings").addEventListener("click", () => saveSettings(false));
+  q("#saveDeviceReboot").addEventListener("click", () => saveSettings(true));
+  q("#saveStartup").addEventListener("click", async () => {
+    const d = selectedSingleDevice();
+    if (!d) return;
+    const fx = q("#startupFx").value,
+      p = paletteFor(fx),
+      startup = buildCommand(fx, p),
+      restore = buildCommand(activeFx, currentPalette());
+    try {
+      await STWBLE.saveStartup(d.id, startup, restore, fx);
+      log(`Startup effect saved as ${prettyFx(fx)} for ${d.name}.`);
+    } catch (e) {
+      log(e.message);
+    }
+  });
+  q("#readStatus").addEventListener("click", async () => {
+    const d = selectedSingleDevice();
+    if (d) await STWBLE.readStatus(d.id);
+  });
+  q("#blackout").addEventListener("click", async () => {
+    const d = selectedSingleDevice();
+    if (d) {
+      await STWBLE.sendToDevice(d.id, "FX=OFF");
+      log(`Blackout sent to ${d.name}.`);
+    }
+  });
+  q("#sendRaw").addEventListener("click", async () => {
+    const d = selectedSingleDevice(),
+      v = q("#rawCommand").value.trim();
+    if (d && v) {
+      await STWBLE.sendToDevice(d.id, v);
+      log(`TX ${v}`);
+    }
+  });
 
-q('#createGroup').addEventListener('click',()=>{try{const id=STWBLE.createGroup(q('#groupName').value);q('#groupName').value='';STWBLE.selectGroup(id)}catch(e){log(e.message)}});
-function renderGroups(){const host=q('#groupList');host.innerHTML='';if(!snap.groups.length){host.innerHTML='<div class="microcopy" style="text-align:center">Create a group when you want selected controllers to receive the same effect, styling, preset, or playlist commands.</div>';return}for(const g of snap.groups){const selected=snap.target?.type==='group'&&snap.target.id===g.id,card=document.createElement('article');card.className='group-card'+(selected?' selected':'');const names=g.members.map(id=>snap.devices.find(d=>d.id===id)?.name).filter(Boolean),joiner=selected?'🔗':'⛓️‍💥';card.innerHTML='<div><div class="group-name"></div><div class="group-chain"></div></div><div class="group-members"></div><button class="tiny-btn danger">DELETE</button>';card.querySelector('.group-name').textContent=g.name;card.querySelector('.group-chain').textContent=names.length?names.join(joiner):'No devices assigned';const members=card.querySelector('.group-members');for(const d of snap.devices){const b=document.createElement('button');b.className='member-toggle'+(g.members.includes(d.id)?' on':'');b.textContent=d.name;b.addEventListener('click',e=>{e.stopPropagation();const next=g.members.includes(d.id)?g.members.filter(x=>x!==d.id):[...g.members,d.id];STWBLE.setGroupMembers(g.id,next)});members.append(b)}card.addEventListener('click',e=>{if(e.target.closest('button'))return;STWBLE.selectGroup(g.id)});card.querySelector('.danger').addEventListener('click',async e=>{e.stopPropagation();const ok=await modal({title:'DELETE GROUP',text:`Delete group “${g.name}”?`,ok:'DELETE'});if(ok)STWBLE.deleteGroup(g.id)});host.append(card)}}
+  q("#createGroup").addEventListener("click", () => {
+    try {
+      const id = STWBLE.createGroup(q("#groupName").value);
+      q("#groupName").value = "";
+      STWBLE.selectGroup(id);
+    } catch (e) {
+      log(e.message);
+    }
+  });
+  // Group editor. Selecting a group is the only deliberate simulcast path.
+  function renderGroups() {
+    const host = q("#groupList");
+    host.innerHTML = "";
+    if (!snap.groups.length) {
+      host.innerHTML =
+        '<div class="microcopy" style="text-align:center">Create a group when you want selected controllers to receive the same effect, styling, preset, or playlist commands.</div>';
+      return;
+    }
+    for (const g of snap.groups) {
+      const selected = snap.target?.type === "group" && snap.target.id === g.id,
+        card = document.createElement("article");
+      card.className = "group-card" + (selected ? " selected" : "");
+      const names = g.members
+          .map((id) => snap.devices.find((d) => d.id === id)?.name)
+          .filter(Boolean),
+        joiner = selected ? "🔗" : "⛓️‍💥";
+      card.innerHTML =
+        '<div><div class="group-name"></div><div class="group-chain"></div></div><div class="group-members"></div><button class="tiny-btn danger">DELETE</button>';
+      card.querySelector(".group-name").textContent = g.name;
+      card.querySelector(".group-chain").textContent = names.length
+        ? names.join(joiner)
+        : "No devices assigned";
+      const members = card.querySelector(".group-members");
+      for (const d of snap.devices) {
+        const b = document.createElement("button");
+        b.className = "member-toggle" + (g.members.includes(d.id) ? " on" : "");
+        b.textContent = d.name;
+        b.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const next = g.members.includes(d.id)
+            ? g.members.filter((x) => x !== d.id)
+            : [...g.members, d.id];
+          STWBLE.setGroupMembers(g.id, next);
+        });
+        members.append(b);
+      }
+      card.addEventListener("click", (e) => {
+        if (e.target.closest("button")) return;
+        STWBLE.selectGroup(g.id);
+      });
+      card.querySelector(".danger").addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const ok = await modal({
+          title: "DELETE GROUP",
+          text: `Delete group “${g.name}”?`,
+          ok: "DELETE",
+        });
+        if (ok) STWBLE.deleteGroup(g.id);
+      });
+      host.append(card);
+    }
+  }
 
-function syncFromTarget(){const d=targetPrimaryDevice();if(!d)return;const st=d.lastStatus||{};activeFx=EFFECTS.includes(st.FX)?st.FX:(EFFECTS.includes(d.lastFx)?d.lastFx:activeFx);const p={main:st.MAIN?('#'+st.MAIN):paletteFor(activeFx).main,bg:st.BG?('#'+st.BG):paletteFor(activeFx).bg,fg:st.FG?('#'+st.FG):paletteFor(activeFx).fg};setPaletteUI(p,false);if(st.MAINB!=null)q('#bri').value=st.MAINB;if(st.SPD!=null)q('#spd').value=st.SPD;if(st.BGB!=null)q('#int').value=st.BGB;if(st.SIZE!=null)q('#size').value=st.SIZE;if(st.DENS!=null)q('#dens').value=st.DENS;if(st.TRAIL!=null)q('#trail').value=st.TRAIL;if(st.DIR)q('#dir').value=st.DIR;if(st.MIRROR!=null)q('#mirror').checked=st.MIRROR==='1';updateAllSliders();markEffect();renderEffects()}
-function renderEffects(){const host=q('#effectList'),term=q('#fxSearch').value.trim().toLowerCase();host.innerHTML='';let n=0;for(const fx of EFFECTS){if(fx==='OFF')continue;const label=prettyFx(fx),meta=EFFECT_META[fx]||'3 COLOR';if(term&&!label.toLowerCase().includes(term)&&!fx.toLowerCase().includes(term)&&!meta.toLowerCase().includes(term))continue;n++;const b=document.createElement('button');b.className='fx-item'+(fx===activeFx?' on':'');b.dataset.fx=fx;b.innerHTML='<span></span><small></small>';b.querySelector('span').textContent=label;b.querySelector('small').textContent=meta;b.querySelector('small').style.cssText='color:#6f879e;font-size:6pt;letter-spacing:.04em;text-align:right';b.addEventListener('click',()=>chooseEffect(fx));host.append(b)}q('#fxCount').textContent=`${n} / ${EFFECTS.length-1}`}
-q('#fxSearch').addEventListener('input',renderEffects);
-function markEffect(){qa('.fx-item').forEach(b=>b.classList.toggle('on',b.dataset.fx===activeFx));q('#stateFx').textContent=prettyFx(activeFx)}
-async function chooseEffect(fx){activeFx=fx;markEffect();if(fx==='SOLID'){const p=currentPalette();await STWBLE.send(`FG=${p.main.slice(1)};FX=SOLID`,{fast:true})}else await STWBLE.send(`FX=${fx}`,{fast:true});STWBLE.setLastFx(fx)}
-function buildCommand(fx,p=currentPalette()){return `FX=${fx};MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)};BGB=${q('#int').value};MAINB=${q('#bri').value};SPD=${q('#spd').value};SIZE=${q('#size').value};DENS=${q('#dens').value};TRAIL=${q('#trail').value};DIR=${q('#dir').value};MIRROR=${q('#mirror').checked?1:0}`}
-function setPaletteUI(p,save=false){q('#main').value=(p.main||DEFAULT_PALETTE.main).toUpperCase();q('#bg').value=(p.bg||DEFAULT_PALETTE.bg).toUpperCase();q('#fg').value=(p.fg||DEFAULT_PALETTE.fg).toUpperCase();updatePaletteUI();if(save)savePalette(activeFx,currentPalette())}
-function updatePaletteUI(){const p=currentPalette();for(const k of ['main','bg','fg'])q('#'+k+'Swatch').style.background=p[k];syncHue();renderSavedColors()}
-qa('.role').forEach(b=>b.addEventListener('click',()=>{activeRole=b.dataset.role;qa('.role').forEach(x=>x.classList.toggle('on',x===b));syncHue()}));
-function rgbToHue(hex){const s=hex.replace('#',''),r=parseInt(s.slice(0,2),16)/255,g=parseInt(s.slice(2,4),16)/255,b=parseInt(s.slice(4,6),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;if(!d)return null;let h=max===r?((g-b)/d)%6:max===g?(b-r)/d+2:(r-g)/d+4;h*=60;return h<0?h+360:h}
-function hueHex(h){const x=1-Math.abs((h/60)%2-1);let r=0,g=0,b=0;if(h<60){r=1;g=x}else if(h<120){r=x;g=1}else if(h<180){g=1;b=x}else if(h<240){g=x;b=1}else if(h<300){r=x;b=1}else{r=1;b=x}const z=v=>Math.round(v*255).toString(16).padStart(2,'0').toUpperCase();return '#'+z(r)+z(g)+z(b)}
-function syncHue(){const p=currentPalette()[activeRole],h=rgbToHue(p);if(h!=null){q('#hueRange').value=Math.round(h);q('#hueSelector').style.setProperty('--hx',(h/359*100)+'%')}q('#hueValue').textContent=p;q('#hueValue').style.color=p}
-let hueDirty=false;function liveHue(){const h=+q('#hueRange').value,hex=hueHex(h);q('#hueSelector').style.setProperty('--hx',(h/359*100)+'%');q('#hueValue').textContent=hex;q('#hueValue').style.color=hex;q('#'+activeRole).value=hex;hueDirty=true;updatePalettePreviewOnly()}
-function updatePalettePreviewOnly(){const p=currentPalette();for(const k of ['main','bg','fg'])q('#'+k+'Swatch').style.background=p[k]}
-async function commitHue(){if(!hueDirty)return;hueDirty=false;colorTouched=true;renderEffects();const p=currentPalette();await STWBLE.send(`MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)}`,{fast:true})}
-q('#hueRange').addEventListener('pointerdown',()=>q('#hueSelector').classList.add('dragging'));q('#hueRange').addEventListener('input',liveHue);for(const ev of ['pointerup','pointercancel','blur','change'])q('#hueRange').addEventListener(ev,async()=>{q('#hueSelector').classList.remove('dragging');await commitHue();syncHue()});
-function renderSavedColors(){const host=q('#savedColors');host.innerHTML='';for(const c of savedColors()){const b=document.createElement('button');b.className='saved-color';b.style.setProperty('--c',c);b.title=c;b.addEventListener('click',async()=>{q('#'+activeRole).value=c;colorTouched=true;updatePaletteUI();renderEffects();const p=currentPalette();await STWBLE.send(`MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)}`,{fast:true})});let timer;b.addEventListener('pointerdown',()=>timer=setTimeout(()=>{const next=savedColors().filter(x=>x!==c);saveSavedColors(next);renderSavedColors()},650));for(const e of ['pointerup','pointerleave','pointercancel'])b.addEventListener(e,()=>clearTimeout(timer));host.append(b)}}
-q('#saveColor').addEventListener('click',()=>{const c=currentPalette()[activeRole],list=savedColors().filter(x=>x!==c);list.unshift(c);saveSavedColors(list);renderSavedColors()});
-function updateSlider(x){const min=+x.min||0,max=+x.max||255,p=clamp((+x.value-min)/(max-min)*100,0,100),rail=x.closest('.sim-slider');if(!rail)return;rail.querySelector('.fill').style.width=p+'%';rail.querySelector('.thumb').style.left=p+'%';const out=q('#'+x.id+'V');if(out)out.textContent=x.id==='micSensitivity'?(+x.value/100).toFixed(2)+'×':Math.round(p)+'%'}
-function updateAllSliders(){qa('.sim-slider input').forEach(updateSlider)}
-const sliderKeys={bri:'MAINB',spd:'SPD',int:'BGB',size:'SIZE',dens:'DENS',trail:'TRAIL'},pending={},lastSent={};for(const [id,key] of Object.entries(sliderKeys)){const x=q('#'+id),sendSlider=()=>STWBLE.send(`${key}=${x.value}`,{fast:true});x.addEventListener('input',()=>{updateSlider(x);const now=performance.now(),wait=Math.max(0,55-(now-(lastSent[id]||0)));clearTimeout(pending[id]);if(wait===0){lastSent[id]=now;sendSlider()}else pending[id]=setTimeout(()=>{lastSent[id]=performance.now();sendSlider()},wait)});x.addEventListener('change',()=>{clearTimeout(pending[id]);lastSent[id]=performance.now();sendSlider()})}
-q('#dir').addEventListener('change',()=>STWBLE.send(`DIR=${q('#dir').value}`,{fast:true}));q('#mirrorBtn').addEventListener('click',()=>{q('#mirror').checked=!q('#mirror').checked;q('#mirrorBtn').classList.toggle('primary',q('#mirror').checked);STWBLE.send(`MIRROR=${q('#mirror').checked?1:0}`,{fast:true})});
+  // Pull device status into visible controls without restoring canned per-effect palettes.
+  function syncFromTarget() {
+    const d = targetPrimaryDevice();
+    if (!d) return;
+    const st = d.lastStatus || {};
+    activeFx = EFFECTS.includes(st.FX)
+      ? st.FX
+      : EFFECTS.includes(d.lastFx)
+        ? d.lastFx
+        : activeFx;
+    const p = {
+      main: st.MAIN ? "#" + st.MAIN : paletteFor(activeFx).main,
+      bg: st.BG ? "#" + st.BG : paletteFor(activeFx).bg,
+      fg: st.FG ? "#" + st.FG : paletteFor(activeFx).fg,
+    };
+    setPaletteUI(p, false);
+    if (st.MAINB != null) q("#bri").value = st.MAINB;
+    if (st.SPD != null) q("#spd").value = st.SPD;
+    if (st.BGB != null) q("#int").value = st.BGB;
+    if (st.SIZE != null) q("#size").value = st.SIZE;
+    if (st.DENS != null) q("#dens").value = st.DENS;
+    if (st.TRAIL != null) q("#trail").value = st.TRAIL;
+    if (st.DIR) q("#dir").value = st.DIR;
+    if (st.MIRROR != null) q("#mirror").checked = st.MIRROR === "1";
+    updateAllSliders();
+    markEffect();
+    renderEffects();
+  }
+  // Render verified direct effect selectors and their type labels.
+  function renderEffects() {
+    const host = q("#effectList"),
+      term = q("#fxSearch").value.trim().toLowerCase();
+    host.innerHTML = "";
+    let n = 0;
+    for (const fx of EFFECTS) {
+      if (fx === "OFF") continue;
+      const label = prettyFx(fx),
+        meta = EFFECT_META[fx] || "3 COLOR";
+      if (
+        term &&
+        !label.toLowerCase().includes(term) &&
+        !fx.toLowerCase().includes(term) &&
+        !meta.toLowerCase().includes(term)
+      )
+        continue;
+      n++;
+      const b = document.createElement("button");
+      b.className = "fx-item" + (fx === activeFx ? " on" : "");
+      b.dataset.fx = fx;
+      b.innerHTML = "<span></span><small></small>";
+      b.querySelector("span").textContent = label;
+      b.querySelector("small").textContent = meta;
+      b.querySelector("small").style.cssText =
+        "color:#6f879e;font-size:6pt;letter-spacing:.04em;text-align:right";
+      b.addEventListener("click", () => chooseEffect(fx));
+      host.append(b);
+    }
+    q("#fxCount").textContent = `${n} / ${EFFECTS.length - 1}`;
+  }
+  q("#fxSearch").addEventListener("input", renderEffects);
+  function markEffect() {
+    qa(".fx-item").forEach((b) =>
+      b.classList.toggle("on", b.dataset.fx === activeFx),
+    );
+    q("#stateFx").textContent = prettyFx(activeFx);
+  }
+  // Send the shortest verified FX command for responsive effect changes.
+  async function chooseEffect(fx) {
+    activeFx = fx;
+    markEffect();
+    if (fx === "SOLID") {
+      const p = currentPalette();
+      await STWBLE.send(`FG=${p.main.slice(1)};FX=SOLID`, { fast: true });
+    } else await STWBLE.send(`FX=${fx}`, { fast: true });
+    STWBLE.setLastFx(fx);
+  }
+  // Serialize complete saved state. MAINB and BGB are independent brightness commands.
+  function buildCommand(fx, p = currentPalette()) {
+    return `FX=${fx};MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)};BGB=${q("#int").value};MAINB=${q("#bri").value};SPD=${q("#spd").value};SIZE=${q("#size").value};DENS=${q("#dens").value};TRAIL=${q("#trail").value};DIR=${q("#dir").value};MIRROR=${q("#mirror").checked ? 1 : 0}`;
+  }
+  // Update visible MAIN/BG/FG controls only; no per-effect palette restore occurs here.
+  function setPaletteUI(p, save = false) {
+    q("#main").value = (p.main || DEFAULT_PALETTE.main).toUpperCase();
+    q("#bg").value = (p.bg || DEFAULT_PALETTE.bg).toUpperCase();
+    q("#fg").value = (p.fg || DEFAULT_PALETTE.fg).toUpperCase();
+    updatePaletteUI();
+    if (save) savePalette(activeFx, currentPalette());
+  }
+  function updatePaletteUI() {
+    const p = currentPalette();
+    for (const k of ["main", "bg", "fg"])
+      q("#" + k + "Swatch").style.background = p[k];
+    syncHue();
+    renderSavedColors();
+  }
+  qa(".role").forEach((b) =>
+    b.addEventListener("click", () => {
+      activeRole = b.dataset.role;
+      qa(".role").forEach((x) => x.classList.toggle("on", x === b));
+      syncHue();
+    }),
+  );
+  // Color conversion helpers for the hue selector.
+  function rgbToHue(hex) {
+    const s = hex.replace("#", ""),
+      r = parseInt(s.slice(0, 2), 16) / 255,
+      g = parseInt(s.slice(2, 4), 16) / 255,
+      b = parseInt(s.slice(4, 6), 16) / 255,
+      max = Math.max(r, g, b),
+      min = Math.min(r, g, b),
+      d = max - min;
+    if (!d) return null;
+    let h =
+      max === r
+        ? ((g - b) / d) % 6
+        : max === g
+          ? (b - r) / d + 2
+          : (r - g) / d + 4;
+    h *= 60;
+    return h < 0 ? h + 360 : h;
+  }
+  function hueHex(h) {
+    const x = 1 - Math.abs(((h / 60) % 2) - 1);
+    let r = 0,
+      g = 0,
+      b = 0;
+    if (h < 60) {
+      r = 1;
+      g = x;
+    } else if (h < 120) {
+      r = x;
+      g = 1;
+    } else if (h < 180) {
+      g = 1;
+      b = x;
+    } else if (h < 240) {
+      g = x;
+      b = 1;
+    } else if (h < 300) {
+      r = x;
+      b = 1;
+    } else {
+      r = 1;
+      b = x;
+    }
+    const z = (v) =>
+      Math.round(v * 255)
+        .toString(16)
+        .padStart(2, "0")
+        .toUpperCase();
+    return "#" + z(r) + z(g) + z(b);
+  }
+  function syncHue() {
+    const p = currentPalette()[activeRole],
+      h = rgbToHue(p);
+    if (h != null) {
+      q("#hueRange").value = Math.round(h);
+      q("#hueSelector").style.setProperty("--hx", (h / 359) * 100 + "%");
+    }
+    q("#hueValue").textContent = p;
+    q("#hueValue").style.color = p;
+  }
+  let hueDirty = false;
+  function liveHue() {
+    const h = +q("#hueRange").value,
+      hex = hueHex(h);
+    q("#hueSelector").style.setProperty("--hx", (h / 359) * 100 + "%");
+    q("#hueValue").textContent = hex;
+    q("#hueValue").style.color = hex;
+    q("#" + activeRole).value = hex;
+    hueDirty = true;
+    updatePalettePreviewOnly();
+  }
+  function updatePalettePreviewOnly() {
+    const p = currentPalette();
+    for (const k of ["main", "bg", "fg"])
+      q("#" + k + "Swatch").style.background = p[k];
+  }
+  async function commitHue() {
+    if (!hueDirty) return;
+    hueDirty = false;
+    colorTouched = true;
+    renderEffects();
+    const p = currentPalette();
+    await STWBLE.send(
+      `MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)}`,
+      { fast: true },
+    );
+  }
+  q("#hueRange").addEventListener("pointerdown", () =>
+    q("#hueSelector").classList.add("dragging"),
+  );
+  q("#hueRange").addEventListener("input", liveHue);
+  for (const ev of ["pointerup", "pointercancel", "blur", "change"])
+    q("#hueRange").addEventListener(ev, async () => {
+      q("#hueSelector").classList.remove("dragging");
+      await commitHue();
+      syncHue();
+    });
+  // Saved-color buttons update the chosen role and explicitly send current role colors.
+  function renderSavedColors() {
+    const host = q("#savedColors");
+    host.innerHTML = "";
+    for (const c of savedColors()) {
+      const b = document.createElement("button");
+      b.className = "saved-color";
+      b.style.setProperty("--c", c);
+      b.title = c;
+      b.addEventListener("click", async () => {
+        q("#" + activeRole).value = c;
+        colorTouched = true;
+        updatePaletteUI();
+        renderEffects();
+        const p = currentPalette();
+        await STWBLE.send(
+          `MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)}`,
+          { fast: true },
+        );
+      });
+      let timer;
+      b.addEventListener(
+        "pointerdown",
+        () =>
+          (timer = setTimeout(() => {
+            const next = savedColors().filter((x) => x !== c);
+            saveSavedColors(next);
+            renderSavedColors();
+          }, 650)),
+      );
+      for (const e of ["pointerup", "pointerleave", "pointercancel"])
+        b.addEventListener(e, () => clearTimeout(timer));
+      host.append(b);
+    }
+  }
+  q("#saveColor").addEventListener("click", () => {
+    const c = currentPalette()[activeRole],
+      list = savedColors().filter((x) => x !== c);
+    list.unshift(c);
+    saveSavedColors(list);
+    renderSavedColors();
+  });
+  function updateSlider(x) {
+    const min = +x.min || 0,
+      max = +x.max || 255,
+      p = clamp(((+x.value - min) / (max - min)) * 100, 0, 100),
+      rail = x.closest(".sim-slider");
+    if (!rail) return;
+    rail.querySelector(".fill").style.width = p + "%";
+    rail.querySelector(".thumb").style.left = p + "%";
+    const out = q("#" + x.id + "V");
+    if (out)
+      out.textContent =
+        x.id === "micSensitivity"
+          ? (+x.value / 100).toFixed(2) + "×"
+          : Math.round(p) + "%";
+  }
+  function updateAllSliders() {
+    qa(".sim-slider input").forEach(updateSlider);
+  }
+  // Styling command map: bri=MAINB, int=BGB, plus SPD/SIZE/DENS/TRAIL.
+  const sliderKeys = {
+      bri: "MAINB",
+      spd: "SPD",
+      int: "BGB",
+      size: "SIZE",
+      dens: "DENS",
+      trail: "TRAIL",
+    },
+    pending = {},
+    lastSent = {};
+  for (const [id, key] of Object.entries(sliderKeys)) {
+    const x = q("#" + id),
+      sendSlider = () => STWBLE.send(`${key}=${x.value}`, { fast: true });
+    x.addEventListener("input", () => {
+      updateSlider(x);
+      const now = performance.now(),
+        wait = Math.max(0, 55 - (now - (lastSent[id] || 0)));
+      clearTimeout(pending[id]);
+      if (wait === 0) {
+        lastSent[id] = now;
+        sendSlider();
+      } else
+        pending[id] = setTimeout(() => {
+          lastSent[id] = performance.now();
+          sendSlider();
+        }, wait);
+    });
+    x.addEventListener("change", () => {
+      clearTimeout(pending[id]);
+      lastSent[id] = performance.now();
+      sendSlider();
+    });
+  }
+  q("#dir").addEventListener("change", () =>
+    STWBLE.send(`DIR=${q("#dir").value}`, { fast: true }),
+  );
+  q("#mirrorBtn").addEventListener("click", () => {
+    q("#mirror").checked = !q("#mirror").checked;
+    q("#mirrorBtn").classList.toggle("primary", q("#mirror").checked);
+    STWBLE.send(`MIRROR=${q("#mirror").checked ? 1 : 0}`, { fast: true });
+  });
 
-function captureState(name=activeFx){return {name,fx:activeFx,...currentPalette(),bri:+q('#bri').value,spd:+q('#spd').value,int:+q('#int').value,size:+q('#size').value,dens:+q('#dens').value,trail:+q('#trail').value,dir:q('#dir').value,mirror:q('#mirror').checked}}
-async function applyState(s){activeFx=s.fx||activeFx;setPaletteUI({main:s.main||DEFAULT_PALETTE.main,bg:s.bg||DEFAULT_PALETTE.bg,fg:s.fg||DEFAULT_PALETTE.fg},true);for(const id of ['bri','spd','int','size','dens','trail'])if(s[id]!=null)q('#'+id).value=s[id];q('#dir').value=s.dir||'FWD';q('#mirror').checked=!!s.mirror;updateAllSliders();markEffect();renderEffects();await STWBLE.send(buildCommand(activeFx,currentPalette()));STWBLE.setLastFx(activeFx)}
-async function savePresetCurrent(){const name=await modal({title:'NAME PRESET',text:'Give this effect state a name.',input:true,value:prettyFx(activeFx),ok:'SAVE'});if(name===null)return;const list=presets();list.unshift(captureState(String(name).trim()||prettyFx(activeFx)));savePresets(list);renderPresets()}
-q('#saveFxPreset').addEventListener('click',savePresetCurrent);q('#saveCurrentPreset').addEventListener('click',savePresetCurrent);
-function renderPresets(){const list=presets(),host=q('#presetGrid');q('#presetCount').textContent=list.length?`${list.length} SAVED`:'';host.innerHTML='';if(!list.length){host.innerHTML='<div class="microcopy" style="text-align:center">No presets saved yet.</div>';return}list.forEach((p,i)=>{const card=document.createElement('article');card.className='preset-card';card.innerHTML='<div class="preset-title"></div><div class="preset-meta"></div><div class="preset-colors"><i></i><i></i><i></i></div><div class="button-row"><button class="tiny-btn load">LOAD</button><button class="tiny-btn add">+ PLAYLIST</button><button class="tiny-btn edit">EDIT</button><button class="tiny-btn danger del">DELETE</button></div><div class="preset-editor" hidden></div>';card.querySelector('.preset-title').textContent=p.name;card.querySelector('.preset-meta').textContent=prettyFx(p.fx);[p.main,p.bg,p.fg].forEach((c,n)=>card.querySelectorAll('.preset-colors i')[n].style.background=c);const ed=card.querySelector('.preset-editor'),fxSel=document.createElement('select');fxSel.className='glass-field';fillSelect(fxSel,p.fx);ed.append(fxSel);const colors=document.createElement('div');colors.className='mini-grid';for(const k of ['main','bg','fg']){const x=document.createElement('input');x.type='color';x.value=p[k]||DEFAULT_PALETTE[k];x.dataset.key=k;colors.append(x)}ed.append(colors);for(const [key,label] of [['bri','BRI'],['spd','SPD'],['int','INT'],['size','SIZE']]){const row=document.createElement('label');row.className='preset-mini-slider';row.innerHTML=`<span>${label}</span><input type="range" min="${key==='bri'||key==='int'?0:1}" max="255" value="${p[key]??128}"><output>${p[key]??128}</output>`;row.querySelector('input').dataset.key=key;row.querySelector('input').addEventListener('input',e=>row.querySelector('output').textContent=e.target.value);ed.append(row)}const save=document.createElement('button');save.className='tiny-btn';save.textContent='SAVE EDIT';save.addEventListener('click',()=>{const list=presets(),item=list[i];item.fx=fxSel.value;ed.querySelectorAll('input[type=color]').forEach(x=>item[x.dataset.key]=x.value.toUpperCase());ed.querySelectorAll('input[type=range]').forEach(x=>item[x.dataset.key]=+x.value);savePresets(list);renderPresets()});ed.append(save);card.querySelector('.load').addEventListener('click',()=>applyState(p));card.querySelector('.add').addEventListener('click',()=>addPlaylist(p));card.querySelector('.edit').addEventListener('click',()=>ed.hidden=!ed.hidden);card.querySelector('.del').addEventListener('click',async()=>{const ok=await modal({title:'DELETE PRESET',text:`Delete “${p.name}”?`,ok:'DELETE'});if(ok){const x=presets();x.splice(i,1);savePresets(x);renderPresets()}});host.append(card)})}
-function addPlaylist(state){const list=playlist();list.push({...state,name:state.name||prettyFx(state.fx)});savePlaylist(list);renderPlaylist()}
-q('#addFxPlaylist').addEventListener('click',()=>addPlaylist(captureState(prettyFx(activeFx))));q('#addCurrentFx').addEventListener('click',()=>addPlaylist(captureState(prettyFx(activeFx))));
-function renderPlaylist(){const list=playlist(),host=q('#playlistList');host.innerHTML='';if(!list.length){host.innerHTML='<div class="microcopy" style="text-align:center">Playlist is empty.</div>';return}list.forEach((s,i)=>{const row=document.createElement('article');row.className='playlist-item';row.innerHTML='<span class="playlist-num"></span><span><b></b><small></small></span><div class="button-row"><button class="tiny-btn load">LOAD</button><button class="tiny-btn danger del">DELETE</button></div>';row.querySelector('.playlist-num').textContent=i+1;row.querySelector('b').textContent=s.name||prettyFx(s.fx);row.querySelector('small').textContent=prettyFx(s.fx);row.querySelector('.load').addEventListener('click',()=>applyState(s));row.querySelector('.del').addEventListener('click',async()=>{const ok=await modal({title:'DELETE PLAYLIST ITEM',text:`Remove “${s.name||prettyFx(s.fx)}”?`,ok:'DELETE'});if(ok){const x=playlist();x.splice(i,1);savePlaylist(x);renderPlaylist()}});host.append(row)})}
-function clearPlaylistTimers(){playlistTimers.forEach(clearTimeout);playlistTimers=[]}
-q('#playPlaylist').addEventListener('click',()=>{clearPlaylistTimers();playlist().forEach((s,i)=>playlistTimers.push(setTimeout(()=>applyState(s),i*1300)))});q('#stopPlaylist').addEventListener('click',()=>{clearPlaylistTimers();STWBLE.send('FX=OFF')});q('#clearPlaylist').addEventListener('click',async()=>{const ok=await modal({title:'CLEAR PLAYLIST',text:'Delete every item in this playlist?',ok:'CLEAR'});if(ok){clearPlaylistTimers();savePlaylist([]);renderPlaylist()}});q('#playlistName').value=localStorage.getItem(PLAYLIST_NAME_KEY)||'My Light Sequence';q('#playlistName').addEventListener('input',e=>localStorage.setItem(PLAYLIST_NAME_KEY,e.target.value));
+  // Snapshot the current effect/color/style state for presets/playlists.
+  function captureState(name = activeFx) {
+    return {
+      name,
+      fx: activeFx,
+      ...currentPalette(),
+      bri: +q("#bri").value,
+      spd: +q("#spd").value,
+      int: +q("#int").value,
+      size: +q("#size").value,
+      dens: +q("#dens").value,
+      trail: +q("#trail").value,
+      dir: q("#dir").value,
+      mirror: q("#mirror").checked,
+    };
+  }
+  // Apply a saved preset/playlist state through the verified command serializer.
+  async function applyState(s) {
+    activeFx = s.fx || activeFx;
+    setPaletteUI(
+      {
+        main: s.main || DEFAULT_PALETTE.main,
+        bg: s.bg || DEFAULT_PALETTE.bg,
+        fg: s.fg || DEFAULT_PALETTE.fg,
+      },
+      true,
+    );
+    for (const id of ["bri", "spd", "int", "size", "dens", "trail"])
+      if (s[id] != null) q("#" + id).value = s[id];
+    q("#dir").value = s.dir || "FWD";
+    q("#mirror").checked = !!s.mirror;
+    updateAllSliders();
+    markEffect();
+    renderEffects();
+    await STWBLE.send(buildCommand(activeFx, currentPalette()));
+    STWBLE.setLastFx(activeFx);
+  }
+  async function savePresetCurrent() {
+    const name = await modal({
+      title: "NAME PRESET",
+      text: "Give this effect state a name.",
+      input: true,
+      value: prettyFx(activeFx),
+      ok: "SAVE",
+    });
+    if (name === null) return;
+    const list = presets();
+    list.unshift(captureState(String(name).trim() || prettyFx(activeFx)));
+    savePresets(list);
+    renderPresets();
+  }
+  q("#saveFxPreset").addEventListener("click", savePresetCurrent);
+  q("#saveCurrentPreset").addEventListener("click", savePresetCurrent);
+  // Preset cards and compact preset editor.
+  function renderPresets() {
+    const list = presets(),
+      host = q("#presetGrid");
+    q("#presetCount").textContent = list.length ? `${list.length} SAVED` : "";
+    host.innerHTML = "";
+    if (!list.length) {
+      host.innerHTML =
+        '<div class="microcopy" style="text-align:center">No presets saved yet.</div>';
+      return;
+    }
+    list.forEach((p, i) => {
+      const card = document.createElement("article");
+      card.className = "preset-card";
+      card.innerHTML =
+        '<div class="preset-title"></div><div class="preset-meta"></div><div class="preset-colors"><i></i><i></i><i></i></div><div class="button-row"><button class="tiny-btn load">LOAD</button><button class="tiny-btn add">+ PLAYLIST</button><button class="tiny-btn edit">EDIT</button><button class="tiny-btn danger del">DELETE</button></div><div class="preset-editor" hidden></div>';
+      card.querySelector(".preset-title").textContent = p.name;
+      card.querySelector(".preset-meta").textContent = prettyFx(p.fx);
+      [p.main, p.bg, p.fg].forEach(
+        (c, n) =>
+          (card.querySelectorAll(".preset-colors i")[n].style.background = c),
+      );
+      const ed = card.querySelector(".preset-editor"),
+        fxSel = document.createElement("select");
+      fxSel.className = "glass-field";
+      fillSelect(fxSel, p.fx);
+      ed.append(fxSel);
+      const colors = document.createElement("div");
+      colors.className = "mini-grid";
+      for (const k of ["main", "bg", "fg"]) {
+        const x = document.createElement("input");
+        x.type = "color";
+        x.value = p[k] || DEFAULT_PALETTE[k];
+        x.dataset.key = k;
+        colors.append(x);
+      }
+      ed.append(colors);
+      for (const [key, label] of [
+        ["bri", "BRI"],
+        ["spd", "SPD"],
+        ["int", "INT"],
+        ["size", "SIZE"],
+      ]) {
+        const row = document.createElement("label");
+        row.className = "preset-mini-slider";
+        row.innerHTML = `<span>${label}</span><input type="range" min="${key === "bri" || key === "int" ? 0 : 1}" max="255" value="${p[key] ?? 128}"><output>${p[key] ?? 128}</output>`;
+        row.querySelector("input").dataset.key = key;
+        row
+          .querySelector("input")
+          .addEventListener(
+            "input",
+            (e) => (row.querySelector("output").textContent = e.target.value),
+          );
+        ed.append(row);
+      }
+      const save = document.createElement("button");
+      save.className = "tiny-btn";
+      save.textContent = "SAVE EDIT";
+      save.addEventListener("click", () => {
+        const list = presets(),
+          item = list[i];
+        item.fx = fxSel.value;
+        ed.querySelectorAll("input[type=color]").forEach(
+          (x) => (item[x.dataset.key] = x.value.toUpperCase()),
+        );
+        ed.querySelectorAll("input[type=range]").forEach(
+          (x) => (item[x.dataset.key] = +x.value),
+        );
+        savePresets(list);
+        renderPresets();
+      });
+      ed.append(save);
+      card
+        .querySelector(".load")
+        .addEventListener("click", () => applyState(p));
+      card
+        .querySelector(".add")
+        .addEventListener("click", () => addPlaylist(p));
+      card
+        .querySelector(".edit")
+        .addEventListener("click", () => (ed.hidden = !ed.hidden));
+      card.querySelector(".del").addEventListener("click", async () => {
+        const ok = await modal({
+          title: "DELETE PRESET",
+          text: `Delete “${p.name}”?`,
+          ok: "DELETE",
+        });
+        if (ok) {
+          const x = presets();
+          x.splice(i, 1);
+          savePresets(x);
+          renderPresets();
+        }
+      });
+      host.append(card);
+    });
+  }
+  // Append a captured effect state to the local playlist.
+  function addPlaylist(state) {
+    const list = playlist();
+    list.push({ ...state, name: state.name || prettyFx(state.fx) });
+    savePlaylist(list);
+    renderPlaylist();
+  }
+  q("#addFxPlaylist").addEventListener("click", () =>
+    addPlaylist(captureState(prettyFx(activeFx))),
+  );
+  q("#addCurrentFx").addEventListener("click", () =>
+    addPlaylist(captureState(prettyFx(activeFx))),
+  );
+  // Render playlist rows; playback reuses applyState in sequence.
+  function renderPlaylist() {
+    const list = playlist(),
+      host = q("#playlistList");
+    host.innerHTML = "";
+    if (!list.length) {
+      host.innerHTML =
+        '<div class="microcopy" style="text-align:center">Playlist is empty.</div>';
+      return;
+    }
+    list.forEach((s, i) => {
+      const row = document.createElement("article");
+      row.className = "playlist-item";
+      row.innerHTML =
+        '<span class="playlist-num"></span><span><b></b><small></small></span><div class="button-row"><button class="tiny-btn load">LOAD</button><button class="tiny-btn danger del">DELETE</button></div>';
+      row.querySelector(".playlist-num").textContent = i + 1;
+      row.querySelector("b").textContent = s.name || prettyFx(s.fx);
+      row.querySelector("small").textContent = prettyFx(s.fx);
+      row.querySelector(".load").addEventListener("click", () => applyState(s));
+      row.querySelector(".del").addEventListener("click", async () => {
+        const ok = await modal({
+          title: "DELETE PLAYLIST ITEM",
+          text: `Remove “${s.name || prettyFx(s.fx)}”?`,
+          ok: "DELETE",
+        });
+        if (ok) {
+          const x = playlist();
+          x.splice(i, 1);
+          savePlaylist(x);
+          renderPlaylist();
+        }
+      });
+      host.append(row);
+    });
+  }
+  function clearPlaylistTimers() {
+    playlistTimers.forEach(clearTimeout);
+    playlistTimers = [];
+  }
+  q("#playPlaylist").addEventListener("click", () => {
+    clearPlaylistTimers();
+    playlist().forEach((s, i) =>
+      playlistTimers.push(setTimeout(() => applyState(s), i * 1300)),
+    );
+  });
+  q("#stopPlaylist").addEventListener("click", () => {
+    clearPlaylistTimers();
+    STWBLE.send("FX=OFF");
+  });
+  q("#clearPlaylist").addEventListener("click", async () => {
+    const ok = await modal({
+      title: "CLEAR PLAYLIST",
+      text: "Delete every item in this playlist?",
+      ok: "CLEAR",
+    });
+    if (ok) {
+      clearPlaylistTimers();
+      savePlaylist([]);
+      renderPlaylist();
+    }
+  });
+  q("#playlistName").value =
+    localStorage.getItem(PLAYLIST_NAME_KEY) || "My Light Sequence";
+  q("#playlistName").addEventListener("input", (e) =>
+    localStorage.setItem(PLAYLIST_NAME_KEY, e.target.value),
+  );
 
-function renderSpectrumBase(){const host=q('#spectrograph'),labs=q('#bandLabels');host.innerHTML='';labs.innerHTML='';AUDIO_BANDS.forEach(([lo],i)=>{const b=document.createElement('i');b.className='spectrum-bar';host.append(b);const l=document.createElement('span');l.textContent=i%2===0?(lo>=1000?(lo/1000).toFixed(1)+'k':lo):'';labs.append(l)})}
-function bandValue(fd,lo,hi){const hz=audioCtx.sampleRate/analyser.fftSize,a=clamp(Math.floor(lo/hz),0,fd.length-1),b=clamp(Math.ceil(Math.min(hi,audioCtx.sampleRate/2)/hz),a+1,fd.length);let sum=0,n=0;for(let i=a;i<b;i++){sum+=fd[i];n++}return n?sum/n:0}
-function hex2(v){return clamp(Math.round(v),0,255).toString(16).padStart(2,'0').toUpperCase()}
-async function startMic(){try{micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const AC=window.AudioContext||window.webkitAudioContext;audioCtx=new AC({latencyHint:'interactive'});if(audioCtx.state==='suspended')await audioCtx.resume();analyser=audioCtx.createAnalyser();analyser.fftSize=1024;analyser.minDecibels=-90;analyser.maxDecibels=-10;analyser.smoothingTimeConstant=.32;audioCtx.createMediaStreamSource(micStream).connect(analyser);micOn=true;q('#micToggle').textContent='STOP MICROPHONE';q('#micState').textContent='LIVE';q('#micState').classList.add('live');await STWBLE.send('AUDIO=1;AUDMODE=FULL;AUDAMT=255');audioLoop();log('Microphone spectrum streaming started.')}catch(e){log(`Microphone: ${e.message}`);stopMic(false)}}
-function stopMic(send=true){micOn=false;if(audioRaf)cancelAnimationFrame(audioRaf);audioRaf=0;micStream?.getTracks().forEach(t=>t.stop());micStream=null;audioCtx?.close().catch(()=>{});audioCtx=null;analyser=null;q('#micToggle').textContent='START MICROPHONE';q('#micState').textContent='OFF';q('#micState').classList.remove('live');qa('.spectrum-bar').forEach(b=>b.style.height='4%');if(send)STWBLE.send('AUDIO=0')}
-q('#micToggle').addEventListener('click',()=>micOn?stopMic(true):startMic());q('#micSensitivity').addEventListener('input',e=>{updateSlider(e.target);q('#micSensitivityV').textContent=(+e.target.value/100).toFixed(2)+'×'});
-function audioLoop(t=performance.now()){if(!micOn||!analyser||!audioCtx)return;const fd=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(fd);const sens=+q('#micSensitivity').value/100,vals=AUDIO_BANDS.map(([lo,hi])=>clamp(bandValue(fd,lo,hi)*sens,0,255));qa('.spectrum-bar').forEach((b,i)=>b.style.height=Math.max(4,vals[i]/255*100).toFixed(1)+'%');const bass=(vals[0]+vals[1]+vals[2]+vals[3])/4;bassBase=bassBase*.94+bass*.06;const beat=bass>Math.max(28,bassBase*1.45)&&t-lastBeat>180;if(beat)lastBeat=t;if(t-lastAudioSend>=65){lastAudioSend=t;STWBLE.send('F='+vals.map(hex2).join('')+(beat?'1':'0'),{fast:true})}audioRaf=requestAnimationFrame(audioLoop)}
+  // Create sixteen visual spectrum bars and their frequency labels.
+  function renderSpectrumBase() {
+    const host = q("#spectrograph"),
+      labs = q("#bandLabels");
+    host.innerHTML = "";
+    labs.innerHTML = "";
+    AUDIO_BANDS.forEach(([lo], i) => {
+      const b = document.createElement("i");
+      b.className = "spectrum-bar";
+      host.append(b);
+      const l = document.createElement("span");
+      l.textContent =
+        i % 2 === 0 ? (lo >= 1000 ? (lo / 1000).toFixed(1) + "k" : lo) : "";
+      labs.append(l);
+    });
+  }
+  function bandValue(fd, lo, hi) {
+    const hz = audioCtx.sampleRate / analyser.fftSize,
+      a = clamp(Math.floor(lo / hz), 0, fd.length - 1),
+      b = clamp(
+        Math.ceil(Math.min(hi, audioCtx.sampleRate / 2) / hz),
+        a + 1,
+        fd.length,
+      );
+    let sum = 0,
+      n = 0;
+    for (let i = a; i < b; i++) {
+      sum += fd[i];
+      n++;
+    }
+    return n ? sum / n : 0;
+  }
+  function hex2(v) {
+    return clamp(Math.round(v), 0, 255)
+      .toString(16)
+      .padStart(2, "0")
+      .toUpperCase();
+  }
+  // Request microphone input and start low-latency FFT analysis.
+  async function startMic() {
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+        },
+      });
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC({ latencyHint: "interactive" });
+      if (audioCtx.state === "suspended") await audioCtx.resume();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.minDecibels = -90;
+      analyser.maxDecibels = -10;
+      analyser.smoothingTimeConstant = 0.32;
+      audioCtx.createMediaStreamSource(micStream).connect(analyser);
+      micOn = true;
+      q("#micToggle").textContent = "STOP MICROPHONE";
+      q("#micState").textContent = "LIVE";
+      q("#micState").classList.add("live");
+      await STWBLE.send("AUDIO=1;AUDMODE=FULL;AUDAMT=255");
+      audioLoop();
+      log("Microphone spectrum streaming started.");
+    } catch (e) {
+      log(`Microphone: ${e.message}`);
+      stopMic(false);
+    }
+  }
+  function stopMic(send = true) {
+    micOn = false;
+    if (audioRaf) cancelAnimationFrame(audioRaf);
+    audioRaf = 0;
+    micStream?.getTracks().forEach((t) => t.stop());
+    micStream = null;
+    audioCtx?.close().catch(() => {});
+    audioCtx = null;
+    analyser = null;
+    q("#micToggle").textContent = "START MICROPHONE";
+    q("#micState").textContent = "OFF";
+    q("#micState").classList.remove("live");
+    qa(".spectrum-bar").forEach((b) => (b.style.height = "4%"));
+    if (send) STWBLE.send("AUDIO=0");
+  }
+  q("#micToggle").addEventListener("click", () =>
+    micOn ? stopMic(true) : startMic(),
+  );
+  q("#micSensitivity").addEventListener("input", (e) => {
+    updateSlider(e.target);
+    q("#micSensitivityV").textContent =
+      (+e.target.value / 100).toFixed(2) + "×";
+  });
+  // Analyze microphone bins and stream bounded-rate F= packets to the selected target.
+  function audioLoop(t = performance.now()) {
+    if (!micOn || !analyser || !audioCtx) return;
+    const fd = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(fd);
+    const sens = +q("#micSensitivity").value / 100,
+      vals = AUDIO_BANDS.map(([lo, hi]) =>
+        clamp(bandValue(fd, lo, hi) * sens, 0, 255),
+      );
+    qa(".spectrum-bar").forEach(
+      (b, i) =>
+        (b.style.height = Math.max(4, (vals[i] / 255) * 100).toFixed(1) + "%"),
+    );
+    const bass = (vals[0] + vals[1] + vals[2] + vals[3]) / 4;
+    bassBase = bassBase * 0.94 + bass * 0.06;
+    const beat = bass > Math.max(28, bassBase * 1.45) && t - lastBeat > 180;
+    if (beat) lastBeat = t;
+    if (t - lastAudioSend >= 65) {
+      lastAudioSend = t;
+      STWBLE.send("F=" + vals.map(hex2).join("") + (beat ? "1" : "0"), {
+        fast: true,
+      });
+    }
+    audioRaf = requestAnimationFrame(audioLoop);
+  }
 
-function effectMode(fx){if(fx==='OFF')return'off';if(fx==='SOLID')return'solid';if(/^RAINBOW(_GLITTER)?$/.test(fx))return'rainbow';if(/STROBE|FLASH|BLINK/.test(fx))return'strobe';if(/SCAN|SINELON|ICU|LIGHTHOUSE|COMET|METEOR|PERLIN/.test(fx))return'scan';if(/TWINKLE|SPARKLE|GLITTER|FAIRY|POPCORN|FIREWORK/.test(fx))return'twinkle';if(/FIRE|CANDLE|MAGMA|LAVA/.test(fx))return'fire';if(/RIPPLE|PUDDLE|SONIC_BOOM|STARBURST/.test(fx))return'ripple';if(/VU|SPECTRUM|FREQ|GRAV|MATRIPIX|PIXEL|AUDIO|GEQ|DJ_LIGHT|WATERFALL|BLURZ|MIDNOISE|NOISEMETER/.test(fx))return'spectrum';if(/WIPE|DISSOLVE|LOADING|PERCENT|SWEEP/.test(fx))return'wipe';if(/CHASE|RUNNING|STREAM|THEATER|ANDROID|ANTS/.test(fx))return'chase';if(/WAVE|SINE|PHASE|BPM|OSCILLATE|PRIDE|PACIFICA/.test(fx))return'wave';return'flow'}
-function previewColor(i,p){return [p.main,p.bg,p.fg][Math.abs(Math.floor(i))%3]}
-function previewLoop(t=0){requestAnimationFrame(previewLoop);if(document.hidden||t-lastPreviewPaint<33)return;if(!lastPreview)lastPreview=t;const dt=clamp((t-lastPreview)/1000,0,.07);lastPreview=t;lastPreviewPaint=t;previewPhase+=dt*(2+Math.pow(+q('#spd').value/255,1.35)*44)*(q('#dir').value==='REV'?-1:1);const leds=qa('#stateStrip i'),p=currentPalette(),mode=effectMode(activeFx),bgScale=+q('#int').value/255,n=leds.length;for(let i=0;i<n;i++){let c=p.bg,op=.12;const x=(i+previewPhase+n)%n;if(mode==='off'){c='#000';op=.04}else if(mode==='solid'){c=p.main;op=1}else if(mode==='rainbow'){c=hueHex(((i*360/n+previewPhase*7)%360+360)%360);op=1}else if(mode==='strobe'){const on=Math.floor(Math.abs(previewPhase))%4<2;c=on?previewColor(Math.floor(i/(n/3)),p):p.bg;op=on?1:.08}else if(mode==='scan'){const head=Math.abs((Math.abs(previewPhase)%(2*n-2))-(n-1)),d=Math.abs(i-head);c=d<1?p.main:d<4?p.fg:p.bg;op=d<1?1:d<4?.42:.08}else if(mode==='twinkle'){const r=Math.sin(i*91+Math.floor(previewPhase)*13)*43758,on=(r-Math.floor(r))>.78;c=on?previewColor(i+previewPhase,p):p.bg;op=on?1:.07}else if(mode==='fire'){const f=(Math.sin(i*2.4+previewPhase*1.3)+1)/2;c=f>.66?p.main:f>.33?p.fg:p.bg;op=.25+f*.75}else if(mode==='ripple'){const d=Math.abs(i-(n-1)/2),r=Math.abs(previewPhase)%(n/2),qd=Math.abs(d-r);c=qd<1?p.main:qd<3?p.fg:p.bg;op=qd<1?1:qd<3?.4:.07}else if(mode==='spectrum'){const h=(Math.sin(previewPhase*.5+i*.8)+1)/2;c=previewColor(Math.floor(i/(n/3)),p);op=.12+h*.88}else if(mode==='wipe'){c=i<Math.floor(Math.abs(previewPhase)%n)?p.main:p.bg;op=.85}else if(mode==='chase'){const k=Math.floor(x%9);c=k<3?previewColor(k,p):p.bg;op=k<3?1:.08}else if(mode==='wave'){const h=(Math.sin(i*.55+previewPhase*.6)+1)/2;c=h>.66?p.main:h>.33?p.fg:p.bg;op=.25+h*.75}else{const k=Math.floor(x%12);c=k<5?previewColor(Math.floor(k/2),p):p.bg;op=k<5?1:.08}if(c===p.bg)op*=.25+.75*bgScale;const el=leds[i];el.style.background=c;el.style.color=c;el.style.opacity=clamp(op*(.25+.75*+q('#bri').value/255),.03,1)}}
-function ensureStateStrip(){const host=q('#stateStrip');while(host.children.length<24)host.append(document.createElement('i'))}
-function modal({title='CONFIRM',text='',input=false,value='',ok='OK'}={}){return new Promise(resolve=>{const wrap=q('#modal'),ti=q('#modalTitle'),tx=q('#modalText'),inp=q('#modalInput'),cancel=q('#modalCancel'),yes=q('#modalOk');ti.textContent=title;tx.textContent=text;inp.hidden=!input;inp.value=value;yes.textContent=ok;wrap.hidden=false;const done=v=>{wrap.hidden=true;cancel.onclick=yes.onclick=null;inp.onkeydown=null;resolve(v)};cancel.onclick=()=>done(null);yes.onclick=()=>done(input?inp.value:true);inp.onkeydown=e=>{if(e.key==='Enter')done(inp.value);if(e.key==='Escape')done(null)};setTimeout(()=>input?inp.focus():yes.focus(),20)})}
+  // Browser-preview classifier only; never changes the physical firmware effect.
+  function effectMode(fx) {
+    if (fx === "OFF") return "off";
+    if (fx === "SOLID") return "solid";
+    if (/^RAINBOW(_GLITTER)?$/.test(fx)) return "rainbow";
+    if (/STROBE|FLASH|BLINK/.test(fx)) return "strobe";
+    if (/SCAN|SINELON|ICU|LIGHTHOUSE|COMET|METEOR|PERLIN/.test(fx))
+      return "scan";
+    if (/TWINKLE|SPARKLE|GLITTER|FAIRY|POPCORN|FIREWORK/.test(fx))
+      return "twinkle";
+    if (/FIRE|CANDLE|MAGMA|LAVA/.test(fx)) return "fire";
+    if (/RIPPLE|PUDDLE|SONIC_BOOM|STARBURST/.test(fx)) return "ripple";
+    if (
+      /VU|SPECTRUM|FREQ|GRAV|MATRIPIX|PIXEL|AUDIO|GEQ|DJ_LIGHT|WATERFALL|BLURZ|MIDNOISE|NOISEMETER/.test(
+        fx,
+      )
+    )
+      return "spectrum";
+    if (/WIPE|DISSOLVE|LOADING|PERCENT|SWEEP/.test(fx)) return "wipe";
+    if (/CHASE|RUNNING|STREAM|THEATER|ANDROID|ANTS/.test(fx)) return "chase";
+    if (/WAVE|SINE|PHASE|BPM|OSCILLATE|PRIDE|PACIFICA/.test(fx)) return "wave";
+    return "flow";
+  }
+  function previewColor(i, p) {
+    return [p.main, p.bg, p.fg][Math.abs(Math.floor(i)) % 3];
+  }
+  // Draw the small top preview at about 30 FPS without BLE traffic.
+  function previewLoop(t = 0) {
+    requestAnimationFrame(previewLoop);
+    if (document.hidden || t - lastPreviewPaint < 33) return;
+    if (!lastPreview) lastPreview = t;
+    const dt = clamp((t - lastPreview) / 1000, 0, 0.07);
+    lastPreview = t;
+    lastPreviewPaint = t;
+    previewPhase +=
+      dt *
+      (2 + Math.pow(+q("#spd").value / 255, 1.35) * 44) *
+      (q("#dir").value === "REV" ? -1 : 1);
+    const leds = qa("#stateStrip i"),
+      p = currentPalette(),
+      mode = effectMode(activeFx),
+      bgScale = +q("#int").value / 255,
+      n = leds.length;
+    for (let i = 0; i < n; i++) {
+      let c = p.bg,
+        op = 0.12;
+      const x = (i + previewPhase + n) % n;
+      if (mode === "off") {
+        c = "#000";
+        op = 0.04;
+      } else if (mode === "solid") {
+        c = p.main;
+        op = 1;
+      } else if (mode === "rainbow") {
+        c = hueHex(((((i * 360) / n + previewPhase * 7) % 360) + 360) % 360);
+        op = 1;
+      } else if (mode === "strobe") {
+        const on = Math.floor(Math.abs(previewPhase)) % 4 < 2;
+        c = on ? previewColor(Math.floor(i / (n / 3)), p) : p.bg;
+        op = on ? 1 : 0.08;
+      } else if (mode === "scan") {
+        const head = Math.abs((Math.abs(previewPhase) % (2 * n - 2)) - (n - 1)),
+          d = Math.abs(i - head);
+        c = d < 1 ? p.main : d < 4 ? p.fg : p.bg;
+        op = d < 1 ? 1 : d < 4 ? 0.42 : 0.08;
+      } else if (mode === "twinkle") {
+        const r = Math.sin(i * 91 + Math.floor(previewPhase) * 13) * 43758,
+          on = r - Math.floor(r) > 0.78;
+        c = on ? previewColor(i + previewPhase, p) : p.bg;
+        op = on ? 1 : 0.07;
+      } else if (mode === "fire") {
+        const f = (Math.sin(i * 2.4 + previewPhase * 1.3) + 1) / 2;
+        c = f > 0.66 ? p.main : f > 0.33 ? p.fg : p.bg;
+        op = 0.25 + f * 0.75;
+      } else if (mode === "ripple") {
+        const d = Math.abs(i - (n - 1) / 2),
+          r = Math.abs(previewPhase) % (n / 2),
+          qd = Math.abs(d - r);
+        c = qd < 1 ? p.main : qd < 3 ? p.fg : p.bg;
+        op = qd < 1 ? 1 : qd < 3 ? 0.4 : 0.07;
+      } else if (mode === "spectrum") {
+        const h = (Math.sin(previewPhase * 0.5 + i * 0.8) + 1) / 2;
+        c = previewColor(Math.floor(i / (n / 3)), p);
+        op = 0.12 + h * 0.88;
+      } else if (mode === "wipe") {
+        c = i < Math.floor(Math.abs(previewPhase) % n) ? p.main : p.bg;
+        op = 0.85;
+      } else if (mode === "chase") {
+        const k = Math.floor(x % 9);
+        c = k < 3 ? previewColor(k, p) : p.bg;
+        op = k < 3 ? 1 : 0.08;
+      } else if (mode === "wave") {
+        const h = (Math.sin(i * 0.55 + previewPhase * 0.6) + 1) / 2;
+        c = h > 0.66 ? p.main : h > 0.33 ? p.fg : p.bg;
+        op = 0.25 + h * 0.75;
+      } else {
+        const k = Math.floor(x % 12);
+        c = k < 5 ? previewColor(Math.floor(k / 2), p) : p.bg;
+        op = k < 5 ? 1 : 0.08;
+      }
+      if (c === p.bg) op *= 0.25 + 0.75 * bgScale;
+      const el = leds[i];
+      el.style.background = c;
+      el.style.color = c;
+      el.style.opacity = clamp(
+        op * (0.25 + (0.75 * +q("#bri").value) / 255),
+        0.03,
+        1,
+      );
+    }
+  }
+  function ensureStateStrip() {
+    const host = q("#stateStrip");
+    while (host.children.length < 24) host.append(document.createElement("i"));
+  }
+  // Shared Promise-based confirmation/name modal.
+  function modal({
+    title = "CONFIRM",
+    text = "",
+    input = false,
+    value = "",
+    ok = "OK",
+  } = {}) {
+    return new Promise((resolve) => {
+      const wrap = q("#modal"),
+        ti = q("#modalTitle"),
+        tx = q("#modalText"),
+        inp = q("#modalInput"),
+        cancel = q("#modalCancel"),
+        yes = q("#modalOk");
+      ti.textContent = title;
+      tx.textContent = text;
+      inp.hidden = !input;
+      inp.value = value;
+      yes.textContent = ok;
+      wrap.hidden = false;
+      const done = (v) => {
+        wrap.hidden = true;
+        cancel.onclick = yes.onclick = null;
+        inp.onkeydown = null;
+        resolve(v);
+      };
+      cancel.onclick = () => done(null);
+      yes.onclick = () => done(input ? inp.value : true);
+      inp.onkeydown = (e) => {
+        if (e.key === "Enter") done(inp.value);
+        if (e.key === "Escape") done(null);
+      };
+      setTimeout(() => (input ? inp.focus() : yes.focus()), 20);
+    });
+  }
 
-document.addEventListener('stw:ble',e=>{const oldTarget=JSON.stringify(snap.target);snap=STWBLE.snapshot();renderDevices();populateGranted();renderGroups();updateStateHeader();if(JSON.stringify(snap.target)!==oldTarget){formDirty=false;loadDeviceForm(true);syncFromTarget()}else loadDeviceForm(false);if(e.detail?.type==='status'&&snap.target?.type==='device'&&snap.target.id===e.detail.deviceId)syncFromTarget();if(e.detail?.type==='connected'){log(`${snap.devices.find(d=>d.id===e.detail.deviceId)?.name||'ESP32'} Bluetooth connected.`);STWBLE.sendToDevice(e.detail.deviceId,'BRI=255',{fast:true})}if(['connect-error','tx-error','status-error','granted-error'].includes(e.detail?.type))log(e.detail.message||'Bluetooth error')});
+  document.addEventListener("stw:ble", (e) => {
+    const oldTarget = JSON.stringify(snap.target);
+    snap = STWBLE.snapshot();
+    renderDevices();
+    populateGranted();
+    renderGroups();
+    updateStateHeader();
+    if (JSON.stringify(snap.target) !== oldTarget) {
+      formDirty = false;
+      loadDeviceForm(true);
+      syncFromTarget();
+    } else loadDeviceForm(false);
+    if (
+      e.detail?.type === "status" &&
+      snap.target?.type === "device" &&
+      snap.target.id === e.detail.deviceId
+    )
+      syncFromTarget();
+    if (e.detail?.type === "connected") {
+      log(
+        `${snap.devices.find((d) => d.id === e.detail.deviceId)?.name || "ESP32"} Bluetooth connected.`,
+      );
+      STWBLE.sendToDevice(e.detail.deviceId, "BRI=255", { fast: true });
+    }
+    if (
+      ["connect-error", "tx-error", "status-error", "granted-error"].includes(
+        e.detail?.type,
+      )
+    )
+      log(e.detail.message || "Bluetooth error");
+  });
 
-try{localStorage.removeItem(PALETTE_KEY)}catch(_){}
-injectMatrix();fillSelect(q('#startupFx'),'RAINBOW');ensureStateStrip();renderSpectrumBase();setPaletteUI(DEFAULT_PALETTE,false);renderEffects();renderSavedColors();renderPresets();renderPlaylist();renderDevices();populateGranted();renderGroups();loadDeviceForm(true);updateAllSliders();updateStateHeader();syncFromTarget();requestAnimationFrame(previewLoop);activatePage('device');
+  try {
+    localStorage.removeItem(PALETTE_KEY);
+  } catch (_) {}
+  injectMatrix();
+  fillSelect(q("#startupFx"), "RAINBOW");
+  ensureStateStrip();
+  renderSpectrumBase();
+  setPaletteUI(DEFAULT_PALETTE, false);
+  renderEffects();
+  renderSavedColors();
+  renderPresets();
+  renderPlaylist();
+  renderDevices();
+  populateGranted();
+  renderGroups();
+  loadDeviceForm(true);
+  updateAllSliders();
+  updateStateHeader();
+  syncFromTarget();
+  requestAnimationFrame(previewLoop);
+  activatePage("device");
 })();

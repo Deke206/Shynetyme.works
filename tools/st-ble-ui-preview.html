@@ -1,188 +1,509 @@
 <!doctype html>
+<!--
+  ShyneTyme.Works ESP32 LED controller — live page shell.
+  Maintenance snapshot: 2026-09-05.
+
+  Dependency order is intentional:
+    1. st-ble-ui.css  — presentation only.
+    2. st-ble-core.js — Bluetooth, device/group state, BLE writes.
+    3. st-ble-ui.js   — tabs, effects, colors, music, presets, preview.
+
+  Current controller contract:
+    - RAINBOW remains the startup/connection confirmation effect.
+    - MAIN BRIGHTNESS sends MAINB.
+    - BACKGROUND BRIGHTNESS sends BGB.
+    - The UI sends BRI=255 once after BLE connection so the firmware's
+      global FastLED cap does not dim the visible role-brightness controls.
+    - Selecting an effect does not restore canned per-effect colors.
+    - The effect browser exposes only direct V5.2 firmware effect IDs.
+-->
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#020817">
-<meta name="robots" content="noindex,nofollow">
-<title>ShyneTyme.Works — ESP32 LED Control</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="st-ble-ui.css?v=20260904-device-groups1">
-</head>
-<body>
-<div class="app">
-<header class="topbar">
-  <div class="brand"><span class="brand-pink">SHYNE</span><span class="brand-yellow">TYME</span><i class="brand-led" aria-hidden="true"></i><span class="brand-blue">WORKS</span></div>
-  <div id="bleSummary" class="ble-summary">LOCAL BLE</div>
-</header>
-
-<nav class="tabs" aria-label="ESP32 LED controller">
-  <button class="tab on" data-page="device">DEVICE</button>
-  <button class="tab gated" data-page="fxcolor">FX / COLORS</button>
-  <button class="tab gated" data-page="music">MUSIC</button>
-  <button class="tab gated" data-page="presets">PRESETS</button>
-  <button class="tab gated" data-page="custom">CUSTOM</button>
-</nav>
-
-<section class="live-state" aria-label="Current LED state">
-  <div class="state-copy">
-    <div><span class="descriptor">DEVICE:</span> <strong id="stateDevice">NONE</strong></div>
-    <div><span class="descriptor">EFFECT:</span> <strong id="stateFx">RAINBOW</strong></div>
-  </div>
-  <div id="stateStrip" class="state-strip" aria-label="Current effect preview"></div>
-</section>
-
-<main class="workspace">
-<section id="device" class="page on">
-  <div class="context-frame device-zone matrix-device">
-    <div class="context-title">DEVICES</div>
-    <div id="deviceList" class="device-list"></div>
-    <div class="device-add-row">
-      <button id="addLogicalDevice" class="glass-btn">+ DEVICE</button>
-      <span class="microcopy">Tap a device to focus it. Bluetooth assignment is local to this browser.</span>
-    </div>
-  </div>
-
-  <div id="deviceTools" class="device-tools locked-panel">
-    <section class="context-frame assignment-frame matrix-bluetooth">
-      <div class="context-title">BLUETOOTH ASSIGNMENT</div>
-      <div class="assignment-grid">
-        <select id="grantedBluetooth" class="glass-field"><option value="">Previously granted Bluetooth devices</option></select>
-        <button id="assignGranted" class="glass-btn primary">ASSIGN</button>
-        <button id="addBluetooth" class="glass-btn" onclick="const s=STWBLE.snapshot();if(s.target?.type!=='device'){const d=s.devices?.[0];if(d)STWBLE.selectDevice(d.id)}">ADD BLUETOOTH — ONE TIME</button>
-        <button id="reconnectSelected" class="glass-btn">RECONNECT</button>
-        <button id="unassignBluetooth" class="glass-btn danger">UNASSIGN</button>
-      </div>
-      <div class="microcopy">After the first browser permission grant, the page remembers the Bluetooth device ID and reconnects it by ID on later page loads.</div>
-    </section>
-
-    <section class="context-frame settings-frame matrix-settings">
-      <div class="context-title">DEVICE SETTINGS — <span id="settingsDeviceName">NONE</span></div>
-      <div class="settings-grid">
-        <label>NAME<input id="deviceName" class="glass-field" type="text"></label>
-        <label>LED COUNT<input id="leds" class="glass-field" type="number" min="1" max="600" value="300"></label>
-        <label>GPIO<input id="gpio" class="glass-field" type="number" min="0" max="39" value="13"></label>
-        <label>PIXEL ORDER<select id="order" class="glass-field"><option>RGB</option><option selected>GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></label>
-        <label>FROM LED<input id="segFrom" class="glass-field" type="number" min="0" value="0"></label>
-        <label>TO LED<input id="segTo" class="glass-field" type="number" min="0" value="299"></label>
-        <label class="startup-field">STARTUP EFFECT<select id="startupFx" class="glass-field"></select></label>
-      </div>
-      <div class="button-row">
-        <button id="saveDeviceSettings" class="glass-btn primary">SAVE SETTINGS</button>
-        <button id="saveDeviceReboot" class="glass-btn">SAVE + REBOOT</button>
-        <button id="saveStartup" class="glass-btn">SAVE STARTUP EFFECT</button>
-      </div>
-      <div class="microcopy">Settings belong only to the focused device. FROM/TO is retained by the app; the current firmware has no verified segment-bound command.</div>
-    </section>
-
-    <section class="context-frame debug-frame matrix-debug">
-      <div class="context-title">DEBUG</div>
-      <div class="button-row">
-        <button id="readStatus" class="glass-btn">READ STATUS</button>
-        <button id="blackout" class="glass-btn danger">BLACKOUT</button>
-      </div>
-      <div class="raw-row"><input id="rawCommand" class="glass-field" placeholder="RAW COMMAND"><button id="sendRaw" class="glass-btn">SEND</button></div>
-      <pre id="debugLog" class="debug-log">Ready.</pre>
-    </section>
-  </div>
-
-  <section class="context-frame group-frame matrix-group">
-    <div class="context-title">GROUPS</div>
-    <div class="group-create"><input id="groupName" class="glass-field" placeholder="Living Room"><button id="createGroup" class="glass-btn primary">CREATE GROUP</button></div>
-    <div id="groupList" class="group-list"></div>
-  </section>
-</section>
-
-<section id="fxcolor" class="page locked-page">
-  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
-  <div class="fx-layout page-content">
-    <div class="fx-left">
-      <section class="context-frame styling-frame matrix-styling">
-        <div class="context-title">EFFECT STYLING</div>
-        <div class="style-sliders">
-          <div class="slider-row"><label>MAIN BRIGHTNESS</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="255"></div><output id="briV">100%</output></div>
-          <div class="slider-row"><label>SPEED</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="spd" type="range" min="1" max="255" value="180"></div><output id="spdV">71%</output></div>
-          <div class="slider-row"><label>BACKGROUND BRIGHTNESS</label><div class="sim-slider"><span class="fill bg-fill"></span><span class="thumb"></span><input id="int" type="range" min="0" max="255" value="255"></div><output id="intV">100%</output></div>
-          <div class="slider-row"><label>SIZE</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="size" type="range" min="1" max="255" value="96"></div><output id="sizeV">38%</output></div>
-          <details class="more-style"><summary>MORE</summary>
-            <div class="slider-row"><label>DENSITY</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="dens" type="range" min="1" max="255" value="128"></div><output id="densV">50%</output></div>
-            <div class="slider-row"><label>TRAIL</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="trail" type="range" min="1" max="255" value="170"></div><output id="trailV">67%</output></div>
-            <div class="compact-row"><select id="dir" class="glass-field"><option value="FWD">FORWARD</option><option value="REV">REVERSE</option></select><button id="mirrorBtn" class="glass-btn">MIRROR</button><input id="mirror" type="checkbox" hidden></div>
-          </details>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#020817" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>ShyneTyme.Works — ESP32 LED Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="st-ble-ui.css?v=20260905-documented1" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- Global brand/status bar. #bleSummary reports active local BLE links. -->
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-pink">SHYNE</span
+          ><span class="brand-yellow">TYME</span
+          ><i class="brand-led" aria-hidden="true"></i
+          ><span class="brand-blue">WORKS</span>
         </div>
+        <div id="bleSummary" class="ble-summary">LOCAL BLE</div>
+      </header>
+
+      <!-- Five application tabs. Gated tabs require a connected selected device or complete group. -->
+      <nav class="tabs" aria-label="ESP32 LED controller">
+        <button class="tab on" data-page="device">DEVICE</button>
+        <button class="tab gated" data-page="fxcolor">FX / COLORS</button>
+        <button class="tab gated" data-page="music">MUSIC</button>
+        <button class="tab gated" data-page="presets">PRESETS</button>
+        <button class="tab gated" data-page="custom">CUSTOM</button>
+      </nav>
+
+      <!-- Persistent selected-device/effect summary and lightweight LED preview. -->
+      <section class="live-state" aria-label="Current LED state">
+        <div class="state-copy">
+          <div>
+            <span class="descriptor">DEVICE:</span>
+            <strong id="stateDevice">NONE</strong>
+          </div>
+          <div>
+            <span class="descriptor">EFFECT:</span>
+            <strong id="stateFx">RAINBOW</strong>
+          </div>
+        </div>
+        <div
+          id="stateStrip"
+          class="state-strip"
+          aria-label="Current effect preview"
+        ></div>
       </section>
 
-      <section class="context-frame colors-frame matrix-colors">
-        <div class="context-title">COLORS</div>
-        <input id="main" type="color" value="#000000" hidden>
-        <input id="bg" type="color" value="#000000" hidden>
-        <input id="fg" type="color" value="#000000" hidden>
-        <div class="rolebar">
-          <button class="role on" data-role="main"><i id="mainSwatch" style="background:#000000"></i>MAIN</button>
-          <button class="role" data-role="bg"><i id="bgSwatch" style="background:#000000"></i>BACKGROUND</button>
-          <button class="role" data-role="fg"><i id="fgSwatch" style="background:#000000"></i>FOREGROUND</button>
+      <main class="workspace">
+        <!-- DEVICE: logical ESP32 cards, Bluetooth assignment, per-device settings, debug, and groups. -->
+        <section id="device" class="page on">
+          <div class="context-frame device-zone matrix-device">
+            <div class="context-title">DEVICES</div>
+            <div id="deviceList" class="device-list"></div>
+            <div class="device-add-row">
+              <button id="addLogicalDevice" class="glass-btn">+ DEVICE</button>
+              <span class="microcopy"
+                >Tap a device to focus it. Bluetooth assignment is local to this
+                browser.</span
+              >
+            </div>
+          </div>
+
+          <div id="deviceTools" class="device-tools locked-panel">
+            <section class="context-frame assignment-frame matrix-bluetooth">
+              <div class="context-title">BLUETOOTH ASSIGNMENT</div>
+              <div class="assignment-grid">
+                <select id="grantedBluetooth" class="glass-field">
+                  <option value="">Previously granted Bluetooth devices</option>
+                </select>
+                <button id="assignGranted" class="glass-btn primary">
+                  ASSIGN
+                </button>
+                <button
+                  id="addBluetooth"
+                  class="glass-btn"
+                  onclick="const s=STWBLE.snapshot();if(s.target?.type!=='device'){const d=s.devices?.[0];if(d)STWBLE.selectDevice(d.id)}"
+                >
+                  ADD BLUETOOTH — ONE TIME
+                </button>
+                <button id="reconnectSelected" class="glass-btn">
+                  RECONNECT
+                </button>
+                <button id="unassignBluetooth" class="glass-btn danger">
+                  UNASSIGN
+                </button>
+              </div>
+              <div class="microcopy">
+                After the first browser permission grant, the page remembers the
+                Bluetooth device ID and reconnects it by ID on later page loads.
+              </div>
+            </section>
+
+            <section class="context-frame settings-frame matrix-settings">
+              <div class="context-title">
+                DEVICE SETTINGS — <span id="settingsDeviceName">NONE</span>
+              </div>
+              <div class="settings-grid">
+                <label
+                  >NAME<input id="deviceName" class="glass-field" type="text"
+                /></label>
+                <label
+                  >LED COUNT<input
+                    id="leds"
+                    class="glass-field"
+                    type="number"
+                    min="1"
+                    max="600"
+                    value="300"
+                /></label>
+                <label
+                  >GPIO<input
+                    id="gpio"
+                    class="glass-field"
+                    type="number"
+                    min="0"
+                    max="39"
+                    value="13"
+                /></label>
+                <label
+                  >PIXEL ORDER<select id="order" class="glass-field">
+                    <option>RGB</option>
+                    <option selected>GRB</option>
+                    <option>BRG</option>
+                    <option>GBR</option>
+                    <option>RBG</option>
+                    <option>BGR</option>
+                  </select></label
+                >
+                <label
+                  >FROM LED<input
+                    id="segFrom"
+                    class="glass-field"
+                    type="number"
+                    min="0"
+                    value="0"
+                /></label>
+                <label
+                  >TO LED<input
+                    id="segTo"
+                    class="glass-field"
+                    type="number"
+                    min="0"
+                    value="299"
+                /></label>
+                <label class="startup-field"
+                  >STARTUP EFFECT<select
+                    id="startupFx"
+                    class="glass-field"
+                  ></select
+                ></label>
+              </div>
+              <div class="button-row">
+                <button id="saveDeviceSettings" class="glass-btn primary">
+                  SAVE SETTINGS
+                </button>
+                <button id="saveDeviceReboot" class="glass-btn">
+                  SAVE + REBOOT
+                </button>
+                <button id="saveStartup" class="glass-btn">
+                  SAVE STARTUP EFFECT
+                </button>
+              </div>
+              <div class="microcopy">
+                Settings belong only to the focused device. FROM/TO is retained
+                by the app; the current firmware has no verified segment-bound
+                command.
+              </div>
+            </section>
+
+            <section class="context-frame debug-frame matrix-debug">
+              <div class="context-title">DEBUG</div>
+              <div class="button-row">
+                <button id="readStatus" class="glass-btn">READ STATUS</button>
+                <button id="blackout" class="glass-btn danger">BLACKOUT</button>
+              </div>
+              <div class="raw-row">
+                <input
+                  id="rawCommand"
+                  class="glass-field"
+                  placeholder="RAW COMMAND"
+                /><button id="sendRaw" class="glass-btn">SEND</button>
+              </div>
+              <pre id="debugLog" class="debug-log">Ready.</pre>
+            </section>
+          </div>
+
+          <section class="context-frame group-frame matrix-group">
+            <div class="context-title">GROUPS</div>
+            <div class="group-create">
+              <input
+                id="groupName"
+                class="glass-field"
+                placeholder="Living Room"
+              /><button id="createGroup" class="glass-btn primary">
+                CREATE GROUP
+              </button>
+            </div>
+            <div id="groupList" class="group-list"></div>
+          </section>
+        </section>
+
+        <!-- FX / COLORS: direct firmware effects, role colors, and effect styling controls. -->
+        <section id="fxcolor" class="page locked-page">
+          <div class="lock-message">
+            SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
+          </div>
+          <div class="fx-layout page-content">
+            <div class="fx-left">
+              <section class="context-frame styling-frame matrix-styling">
+                <div class="context-title">EFFECT STYLING</div>
+                <div class="style-sliders">
+                  <div class="slider-row">
+                    <label>MAIN BRIGHTNESS</label>
+                    <div class="sim-slider">
+                      <span class="fill"></span><span class="thumb"></span
+                      ><input
+                        id="bri"
+                        type="range"
+                        min="0"
+                        max="255"
+                        value="255"
+                      />
+                    </div>
+                    <output id="briV">100%</output>
+                  </div>
+                  <div class="slider-row">
+                    <label>SPEED</label>
+                    <div class="sim-slider">
+                      <span class="fill"></span><span class="thumb"></span
+                      ><input
+                        id="spd"
+                        type="range"
+                        min="1"
+                        max="255"
+                        value="180"
+                      />
+                    </div>
+                    <output id="spdV">71%</output>
+                  </div>
+                  <div class="slider-row">
+                    <label>BACKGROUND BRIGHTNESS</label>
+                    <div class="sim-slider">
+                      <span class="fill bg-fill"></span
+                      ><span class="thumb"></span
+                      ><input
+                        id="int"
+                        type="range"
+                        min="0"
+                        max="255"
+                        value="255"
+                      />
+                    </div>
+                    <output id="intV">100%</output>
+                  </div>
+                  <div class="slider-row">
+                    <label>SIZE</label>
+                    <div class="sim-slider">
+                      <span class="fill"></span><span class="thumb"></span
+                      ><input
+                        id="size"
+                        type="range"
+                        min="1"
+                        max="255"
+                        value="96"
+                      />
+                    </div>
+                    <output id="sizeV">38%</output>
+                  </div>
+                  <details class="more-style">
+                    <summary>MORE</summary>
+                    <div class="slider-row">
+                      <label>DENSITY</label>
+                      <div class="sim-slider">
+                        <span class="fill"></span><span class="thumb"></span
+                        ><input
+                          id="dens"
+                          type="range"
+                          min="1"
+                          max="255"
+                          value="128"
+                        />
+                      </div>
+                      <output id="densV">50%</output>
+                    </div>
+                    <div class="slider-row">
+                      <label>TRAIL</label>
+                      <div class="sim-slider">
+                        <span class="fill"></span><span class="thumb"></span
+                        ><input
+                          id="trail"
+                          type="range"
+                          min="1"
+                          max="255"
+                          value="170"
+                        />
+                      </div>
+                      <output id="trailV">67%</output>
+                    </div>
+                    <div class="compact-row">
+                      <select id="dir" class="glass-field">
+                        <option value="FWD">FORWARD</option>
+                        <option value="REV">REVERSE</option></select
+                      ><button id="mirrorBtn" class="glass-btn">MIRROR</button
+                      ><input id="mirror" type="checkbox" hidden />
+                    </div>
+                  </details>
+                </div>
+              </section>
+
+              <section class="context-frame colors-frame matrix-colors">
+                <div class="context-title">COLORS</div>
+                <input id="main" type="color" value="#000000" hidden />
+                <input id="bg" type="color" value="#000000" hidden />
+                <input id="fg" type="color" value="#000000" hidden />
+                <div class="rolebar">
+                  <button class="role on" data-role="main">
+                    <i id="mainSwatch" style="background: #000000"></i>MAIN
+                  </button>
+                  <button class="role" data-role="bg">
+                    <i id="bgSwatch" style="background: #000000"></i>BACKGROUND
+                  </button>
+                  <button class="role" data-role="fg">
+                    <i id="fgSwatch" style="background: #000000"></i>FOREGROUND
+                  </button>
+                </div>
+                <div id="hueSelector" class="hue-selector">
+                  <span class="hue-spectrum"></span
+                  ><span class="hue-thumb"></span
+                  ><input
+                    id="hueRange"
+                    type="range"
+                    min="0"
+                    max="359"
+                    value="60"
+                  />
+                </div>
+                <div class="hue-readout">
+                  <span>HUE</span><strong id="hueValue">#000000</strong>
+                </div>
+                <div class="saved-colors">
+                  <div id="savedColors" class="saved-color-list"></div>
+                  <button id="saveColor" class="glass-btn">+ SAVE COLOR</button>
+                </div>
+                <div class="button-row">
+                  <button id="saveFxPreset" class="glass-btn primary">
+                    SAVE PRESET</button
+                  ><button id="addFxPlaylist" class="glass-btn">
+                    ADD TO PLAYLIST
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <section class="context-frame effects-frame matrix-effects">
+              <div class="effects-head">
+                <span class="context-title">EFFECTS</span
+                ><span id="fxCount" class="effect-count"></span>
+              </div>
+              <input
+                id="fxSearch"
+                class="glass-field effect-search"
+                placeholder="Search all firmware effects…"
+              />
+              <div id="effectList" class="effect-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- MUSIC: microphone capture and 16-channel FFT feed. Audio effects are selected in FX / COLORS. -->
+        <section id="music" class="page locked-page">
+          <div class="lock-message">
+            SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
+          </div>
+          <div class="music-layout page-content">
+            <section class="context-frame music-control matrix-music">
+              <div class="context-title">MICROPHONE</div>
+              <div class="button-row">
+                <button id="micToggle" class="glass-btn primary">
+                  START MICROPHONE</button
+                ><span id="micState" class="mic-state">OFF</span>
+              </div>
+              <div class="slider-row sensitivity">
+                <label>SENSITIVITY</label>
+                <div class="sim-slider">
+                  <span class="fill"></span><span class="thumb"></span
+                  ><input
+                    id="micSensitivity"
+                    type="range"
+                    min="25"
+                    max="300"
+                    value="135"
+                  />
+                </div>
+                <output id="micSensitivityV">1.35×</output>
+              </div>
+              <div class="microcopy">
+                Music effects are selected in FX / COLORS. This tab supplies
+                microphone analysis only.
+              </div>
+            </section>
+            <section class="context-frame spectrum-frame matrix-spectrum">
+              <div class="context-title">16 CHANNEL SPECTROGRAPH</div>
+              <div
+                id="spectrograph"
+                class="spectrograph"
+                aria-label="16 channel audio spectrum"
+              ></div>
+              <div id="bandLabels" class="band-labels"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- PRESETS: saved effect/color/style states with compact editing. -->
+        <section id="presets" class="page locked-page">
+          <div class="lock-message">
+            SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
+          </div>
+          <div class="page-content centered-content">
+            <section class="context-frame presets-frame matrix-presets">
+              <div class="context-title">PRESETS</div>
+              <div class="button-row centered">
+                <button id="saveCurrentPreset" class="glass-btn primary">
+                  SAVE CURRENT PRESET</button
+                ><span id="presetCount" class="microcopy"></span>
+              </div>
+              <div id="presetGrid" class="preset-grid"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- CUSTOM: ordered local playlist of saved effect states. -->
+        <section id="custom" class="page locked-page">
+          <div class="lock-message">
+            SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
+          </div>
+          <div class="page-content centered-content">
+            <section class="context-frame playlist-frame matrix-playlist">
+              <div class="context-title">CUSTOM PLAYLIST</div>
+              <input
+                id="playlistName"
+                class="glass-field playlist-name"
+                value="My Light Sequence"
+              />
+              <div class="button-row centered">
+                <button id="addCurrentFx" class="glass-btn">
+                  ADD CURRENT FX</button
+                ><button id="playPlaylist" class="glass-btn primary">
+                  PLAY</button
+                ><button id="stopPlaylist" class="glass-btn">STOP</button
+                ><button id="clearPlaylist" class="glass-btn danger">
+                  CLEAR
+                </button>
+              </div>
+              <div id="playlistList" class="playlist-list"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <!-- Shared confirmation/name modal. -->
+      <div id="modal" class="modal" hidden>
+        <div class="modal-card context-frame">
+          <div id="modalTitle" class="context-title">CONFIRM</div>
+          <div id="modalText" class="modal-text"></div>
+          <input id="modalInput" class="glass-field" hidden />
+          <div class="button-row">
+            <button id="modalCancel" class="glass-btn">CANCEL</button
+            ><button id="modalOk" class="glass-btn primary">OK</button>
+          </div>
         </div>
-        <div id="hueSelector" class="hue-selector"><span class="hue-spectrum"></span><span class="hue-thumb"></span><input id="hueRange" type="range" min="0" max="359" value="60"></div>
-        <div class="hue-readout"><span>HUE</span><strong id="hueValue">#000000</strong></div>
-        <div class="saved-colors"><div id="savedColors" class="saved-color-list"></div><button id="saveColor" class="glass-btn">+ SAVE COLOR</button></div>
-        <div class="button-row"><button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button><button id="addFxPlaylist" class="glass-btn">ADD TO PLAYLIST</button></div>
-      </section>
+      </div>
     </div>
-
-    <section class="context-frame effects-frame matrix-effects">
-      <div class="effects-head"><span class="context-title">EFFECTS</span><span id="fxCount" class="effect-count"></span></div>
-      <input id="fxSearch" class="glass-field effect-search" placeholder="Search all firmware effects…">
-      <div id="effectList" class="effect-list"></div>
-    </section>
-  </div>
-</section>
-
-<section id="music" class="page locked-page">
-  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
-  <div class="music-layout page-content">
-    <section class="context-frame music-control matrix-music">
-      <div class="context-title">MICROPHONE</div>
-      <div class="button-row"><button id="micToggle" class="glass-btn primary">START MICROPHONE</button><span id="micState" class="mic-state">OFF</span></div>
-      <div class="slider-row sensitivity"><label>SENSITIVITY</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="micSensitivity" type="range" min="25" max="300" value="135"></div><output id="micSensitivityV">1.35×</output></div>
-      <div class="microcopy">Music effects are selected in FX / COLORS. This tab supplies microphone analysis only.</div>
-    </section>
-    <section class="context-frame spectrum-frame matrix-spectrum">
-      <div class="context-title">16 CHANNEL SPECTROGRAPH</div>
-      <div id="spectrograph" class="spectrograph" aria-label="16 channel audio spectrum"></div>
-      <div id="bandLabels" class="band-labels"></div>
-    </section>
-  </div>
-</section>
-
-<section id="presets" class="page locked-page">
-  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
-  <div class="page-content centered-content">
-    <section class="context-frame presets-frame matrix-presets">
-      <div class="context-title">PRESETS</div>
-      <div class="button-row centered"><button id="saveCurrentPreset" class="glass-btn primary">SAVE CURRENT PRESET</button><span id="presetCount" class="microcopy"></span></div>
-      <div id="presetGrid" class="preset-grid"></div>
-    </section>
-  </div>
-</section>
-
-<section id="custom" class="page locked-page">
-  <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
-  <div class="page-content centered-content">
-    <section class="context-frame playlist-frame matrix-playlist">
-      <div class="context-title">CUSTOM PLAYLIST</div>
-      <input id="playlistName" class="glass-field playlist-name" value="My Light Sequence">
-      <div class="button-row centered"><button id="addCurrentFx" class="glass-btn">ADD CURRENT FX</button><button id="playPlaylist" class="glass-btn primary">PLAY</button><button id="stopPlaylist" class="glass-btn">STOP</button><button id="clearPlaylist" class="glass-btn danger">CLEAR</button></div>
-      <div id="playlistList" class="playlist-list"></div>
-    </section>
-  </div>
-</section>
-</main>
-
-<div id="modal" class="modal" hidden><div class="modal-card context-frame"><div id="modalTitle" class="context-title">CONFIRM</div><div id="modalText" class="modal-text"></div><input id="modalInput" class="glass-field" hidden><div class="button-row"><button id="modalCancel" class="glass-btn">CANCEL</button><button id="modalOk" class="glass-btn primary">OK</button></div></div></div>
-</div>
-<script src="st-ble-core.js?v=20260905-blefix2"></script>
-<script src="st-ble-ui.js?v=20260905-colors3"></script>
-</body>
+    <!-- BLE core loads first because st-ble-ui.js consumes window.STWBLE. -->
+    <script src="st-ble-core.js?v=20260905-documented1"></script>
+    <!-- UI controller binds the page after the BLE core is available. -->
+    <script src="st-ble-ui.js?v=20260905-documented1"></script>
+  </body>
 </html>
