@@ -1,0 +1,72 @@
+name: Temporary Color Brightness Fix 2026-09-05
+
+on:
+  push:
+    branches:
+      - feat/esp32-webapp-control-panel
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Patch live controller behavior
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('tools/st-ble-ui.js')
+          s=p.read_text()
+          s=s.replace("let snap=STWBLE.snapshot(),activePage='device',activeFx='OFF',activeRole='main',selectedDeviceId=null,formDirty=false,previewPhase=0,lastPreview=0,lastPreviewPaint=0;\nconst neutralizedDevices=new Set();",
+                      "let snap=STWBLE.snapshot(),activePage='device',activeFx='RAINBOW',activeRole='main',selectedDeviceId=null,formDirty=false,previewPhase=0,lastPreview=0,lastPreviewPaint=0;\nlet colorTouched=false;")
+          old="if(e.detail?.type==='connected'){const id=e.detail.deviceId;log(`${snap.devices.find(d=>d.id===id)?.name||'ESP32'} Bluetooth connected.`);if(!neutralizedDevices.has(id)){neutralizedDevices.add(id);activeFx='OFF';setPaletteUI(DEFAULT_PALETTE,false);markEffect();STWBLE.sendToDevice(id,'BG=000000;FG=000000;MAIN=000000;FX=OFF',{fast:true});STWBLE.setLastFx('OFF')}}"
+          new="if(e.detail?.type==='connected')log(`${snap.devices.find(d=>d.id===e.detail.deviceId)?.name||'ESP32'} Bluetooth connected.`);"
+          assert old in s
+          s=s.replace(old,new,1)
+          # Brightness semantics: BRIGHTNESS controls main-role brightness; background slider controls BGB.
+          s=s.replace("const sliderKeys={bri:'BRI',spd:'SPD',int:'BGB',size:'SIZE',dens:'DENS',trail:'TRAIL'}",
+                      "const sliderKeys={bri:'MAINB',spd:'SPD',int:'BGB',size:'SIZE',dens:'DENS',trail:'TRAIL'}",1)
+          # Any explicit user color choice sends the entire neutral/current role set, preventing old firmware colors from leaking through.
+          old="async function commitHue(){if(!hueDirty)return;hueDirty=false;renderEffects();await STWBLE.send(`${activeRole==='main'?'MAIN':activeRole==='bg'?'BG':'FG'}=${q('#'+activeRole).value.slice(1)}`,{fast:true})}"
+          new="async function commitHue(){if(!hueDirty)return;hueDirty=false;colorTouched=true;renderEffects();const p=currentPalette();await STWBLE.send(`MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)}`,{fast:true})}"
+          assert old in s
+          s=s.replace(old,new,1)
+          old="b.addEventListener('click',async()=>{q('#'+activeRole).value=c;updatePaletteUI();renderEffects();await STWBLE.send(`${activeRole==='main'?'MAIN':activeRole==='bg'?'BG':'FG'}=${c.slice(1)}`,{fast:true})})"
+          new="b.addEventListener('click',async()=>{q('#'+activeRole).value=c;colorTouched=true;updatePaletteUI();renderEffects();const p=currentPalette();await STWBLE.send(`MAIN=${p.main.slice(1)};BG=${p.bg.slice(1)};FG=${p.fg.slice(1)}`,{fast:true})})"
+          assert old in s
+          s=s.replace(old,new,1)
+          # SOLID is a one-color firmware effect implemented with FG; map the user's MAIN color into that single role when selected.
+          old="async function chooseEffect(fx){activeFx=fx;markEffect();await STWBLE.send(`FX=${fx}`,{fast:true});STWBLE.setLastFx(fx)}"
+          new="async function chooseEffect(fx){activeFx=fx;markEffect();if(fx==='SOLID'){const p=currentPalette();await STWBLE.send(`FG=${p.main.slice(1)};FX=SOLID`,{fast:true})}else await STWBLE.send(`FX=${fx}`,{fast:true});STWBLE.setLastFx(fx)}"
+          assert old in s
+          s=s.replace(old,new,1)
+          p.write_text(s)
+
+          h=Path('tools/st-ble-ui-preview.html')
+          t=h.read_text()
+          t=t.replace('<div class="slider-row"><label>BRIGHTNESS</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="160"></div><output id="briV">63%</output></div>',
+                      '<div class="slider-row"><label>BRIGHTNESS</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="255"></div><output id="briV">100%</output></div>')
+          t=t.replace('<div class="slider-row"><label>INTENSITY</label><div class="sim-slider"><span class="fill bg-fill"></span><span class="thumb"></span><input id="int" type="range" min="0" max="255" value="128"></div><output id="intV">50%</output></div>',
+                      '<div class="slider-row"><label>BACKGROUND BRIGHTNESS</label><div class="sim-slider"><span class="fill bg-fill"></span><span class="thumb"></span><input id="int" type="range" min="0" max="255" value="255"></div><output id="intV">100%</output></div>')
+          t=t.replace('<input id="main" type="color" value="#FFF200" hidden>','<input id="main" type="color" value="#000000" hidden>')
+          t=t.replace('<input id="bg" type="color" value="#00BFFF" hidden>','<input id="bg" type="color" value="#000000" hidden>')
+          t=t.replace('<input id="fg" type="color" value="#FF2CA8" hidden>','<input id="fg" type="color" value="#000000" hidden>')
+          t=t.replace('id="mainSwatch" style="background:#FFF200"','id="mainSwatch" style="background:#000000"')
+          t=t.replace('id="bgSwatch" style="background:#00BFFF"','id="bgSwatch" style="background:#000000"')
+          t=t.replace('id="fgSwatch" style="background:#FF2CA8"','id="fgSwatch" style="background:#000000"')
+          t=t.replace('<strong id="hueValue">#FFF200</strong>','<strong id="hueValue">#000000</strong>')
+          t=t.replace('st-ble-ui.js?v=20260905-colors1','st-ble-ui.js?v=20260905-colors2')
+          h.write_text(t)
+          PY
+          node --check tools/st-ble-ui.js
+          git config user.name "Deke310"
+          git config user.email "135410011+Deke206@users.noreply.github.com"
+          git add tools/st-ble-ui.js tools/st-ble-ui-preview.html
+          git commit -m "Fix global colors and split main/background brightness"
+          git push origin HEAD:main
