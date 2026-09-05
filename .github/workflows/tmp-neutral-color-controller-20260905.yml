@@ -1,0 +1,68 @@
+name: Temporary Neutral Color Controller Fix 2026-09-05
+
+on:
+  push:
+    branches:
+      - feat/esp32-webapp-control-panel
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Patch controller color behavior
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('tools/st-ble-ui.js')
+          s=p.read_text()
+          old="const DEFAULT_PALETTE=Object.freeze({main:'#FFF200',bg:'#00BFFF',fg:'#FF2CA8'});"
+          new="const DEFAULT_PALETTE=Object.freeze({main:'#000000',bg:'#000000',fg:'#000000'});\nconst EFFECT_META=Object.freeze({SOLID:'1 COLOR',RAINBOW:'BUILT-IN COLOR',RAINBOW_GLITTER:'BUILT-IN COLOR + MAIN',POLICE:'2 COLOR',FLASH:'2 COLOR',VU:'MUSIC · 3 COLOR',SPECTRUM:'MUSIC · 3 COLOR',AUDIO_PULSE:'MUSIC · 3 COLOR',BEAT_FLASH:'MUSIC · 3 COLOR',SONIC_STREAM:'MUSIC REACTIVE · 3 COLOR',SONIC_BOOM:'MUSIC REACTIVE · 3 COLOR',RIPPLE:'AUDIO REACTIVE · 3 COLOR',STARBURST:'AUDIO REACTIVE · 3 COLOR',POPCORN:'AUDIO REACTIVE · 3 COLOR',DRIPDROP:'AUDIO REACTIVE · 3 COLOR',HEARTBEAT:'AUDIO REACTIVE · 3 COLOR'});"
+          assert old in s
+          s=s.replace(old,new,1)
+          old="function palettes(){const x=loadJSON(PALETTE_KEY,{});return x&&typeof x==='object'?x:{}}\nfunction paletteFor(fx){const p=palettes()[fx];return p&&p.main&&p.bg&&p.fg?{...p}:{...DEFAULT_PALETTE}}\nfunction savePalette(fx,p){const all=palettes();all[fx]={...p};saveJSON(PALETTE_KEY,all)}"
+          new="function palettes(){return {}}\nfunction paletteFor(){return q('#main')?currentPalette():{...DEFAULT_PALETTE}}\nfunction savePalette(){return false}"
+          assert old in s
+          s=s.replace(old,new,1)
+          old="let snap=STWBLE.snapshot(),activePage='device',activeFx='RAINBOW',activeRole='main',selectedDeviceId=null,formDirty=false,previewPhase=0,lastPreview=0,lastPreviewPaint=0;"
+          new="let snap=STWBLE.snapshot(),activePage='device',activeFx='OFF',activeRole='main',selectedDeviceId=null,formDirty=false,previewPhase=0,lastPreview=0,lastPreviewPaint=0;\nconst neutralizedDevices=new Set();"
+          assert old in s
+          s=s.replace(old,new,1)
+          old="function renderEffects(){const host=q('#effectList'),term=q('#fxSearch').value.trim().toLowerCase(),all=palettes();host.innerHTML='';let n=0;for(const fx of EFFECTS){if(fx==='OFF')continue;const label=prettyFx(fx);if(term&&!label.toLowerCase().includes(term)&&!fx.toLowerCase().includes(term))continue;n++;const b=document.createElement('button');b.className='fx-item'+(fx===activeFx?' on':'');b.dataset.fx=fx;const p=all[fx]||DEFAULT_PALETTE;b.innerHTML='<span></span><span class=\"fx-dots\"><i></i><i></i><i></i></span>';b.querySelector('span').textContent=label;[p.main,p.bg,p.fg].forEach((c,i)=>b.querySelectorAll('.fx-dots i')[i].style.setProperty('--c',c));b.addEventListener('click',()=>chooseEffect(fx));host.append(b)}q('#fxCount').textContent=`${n} / ${EFFECTS.length-1}`}"
+          new="function renderEffects(){const host=q('#effectList'),term=q('#fxSearch').value.trim().toLowerCase();host.innerHTML='';let n=0;for(const fx of EFFECTS){if(fx==='OFF')continue;const label=prettyFx(fx),meta=EFFECT_META[fx]||'3 COLOR';if(term&&!label.toLowerCase().includes(term)&&!fx.toLowerCase().includes(term)&&!meta.toLowerCase().includes(term))continue;n++;const b=document.createElement('button');b.className='fx-item'+(fx===activeFx?' on':'');b.dataset.fx=fx;b.innerHTML='<span></span><small></small>';b.querySelector('span').textContent=label;b.querySelector('small').textContent=meta;b.querySelector('small').style.cssText='color:#6f879e;font-size:6pt;letter-spacing:.04em;text-align:right';b.addEventListener('click',()=>chooseEffect(fx));host.append(b)}q('#fxCount').textContent=`${n} / ${EFFECTS.length-1}`}"
+          assert old in s
+          s=s.replace(old,new,1)
+          old="async function chooseEffect(fx){activeFx=fx;setPaletteUI(paletteFor(fx),false);markEffect();await STWBLE.send(`FX=${fx}`,{fast:true});STWBLE.setLastFx(fx)}"
+          new="async function chooseEffect(fx){activeFx=fx;markEffect();await STWBLE.send(`FX=${fx}`,{fast:true});STWBLE.setLastFx(fx)}"
+          assert old in s
+          s=s.replace(old,new,1)
+          s=s.replace("hueDirty=false;savePalette(activeFx,currentPalette());renderEffects();await STWBLE.send", "hueDirty=false;renderEffects();await STWBLE.send",1)
+          s=s.replace("q('#'+activeRole).value=c;savePalette(activeFx,currentPalette());updatePaletteUI();renderEffects();await STWBLE.send", "q('#'+activeRole).value=c;updatePaletteUI();renderEffects();await STWBLE.send",1)
+          old="if(e.detail?.type==='connected')log(`${snap.devices.find(d=>d.id===e.detail.deviceId)?.name||'ESP32'} Bluetooth connected.`);"
+          new="if(e.detail?.type==='connected'){const id=e.detail.deviceId;log(`${snap.devices.find(d=>d.id===id)?.name||'ESP32'} Bluetooth connected.`);if(!neutralizedDevices.has(id)){neutralizedDevices.add(id);activeFx='OFF';setPaletteUI(DEFAULT_PALETTE,false);markEffect();STWBLE.sendToDevice(id,'BG=000000;FG=000000;MAIN=000000;FX=OFF',{fast:true});STWBLE.setLastFx('OFF')}}"
+          assert old in s
+          s=s.replace(old,new,1)
+          old="injectMatrix();fillSelect(q('#startupFx'),'RAINBOW');ensureStateStrip();renderSpectrumBase();setPaletteUI(DEFAULT_PALETTE,false);"
+          new="try{localStorage.removeItem(PALETTE_KEY)}catch(_){}\ninjectMatrix();fillSelect(q('#startupFx'),'RAINBOW');ensureStateStrip();renderSpectrumBase();setPaletteUI(DEFAULT_PALETTE,false);"
+          assert old in s
+          s=s.replace(old,new,1)
+          p.write_text(s)
+
+          h=Path('tools/st-ble-ui-preview.html')
+          t=h.read_text()
+          t=t.replace('st-ble-ui.js?v=20260905-basic1','st-ble-ui.js?v=20260905-colors1')
+          h.write_text(t)
+          PY
+          node --check tools/st-ble-ui.js
+          git config user.name "Deke310"
+          git config user.email "135410011+Deke206@users.noreply.github.com"
+          git add tools/st-ble-ui.js tools/st-ble-ui-preview.html
+          git commit -m "Neutralize effect colors and label direct effect types"
+          git push origin HEAD:main
