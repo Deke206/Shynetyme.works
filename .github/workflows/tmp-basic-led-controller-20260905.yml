@@ -1,0 +1,82 @@
+name: Temporary Basic LED Controller Fix 2026-09-05
+
+on:
+  push:
+    branches:
+      - feat/esp32-webapp-control-panel
+
+permissions:
+  contents: write
+
+jobs:
+  patch-main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Simplify controller to direct firmware effects
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('tools/st-ble-ui.js')
+          s = p.read_text()
+
+          effects = [
+            'OFF','SOLID','RAINBOW','RAINBOW_GLITTER','COMET','METEOR','SCANNER','DUAL_SCANNER','POLICE',
+            'CHASE','TRICOLOR_CHASE','RUNNING_DOTS','THEATER','WIPE','FLOW','FLOW_STRIPE','COLOR_WAVES',
+            'SPARKLE','GLITTER','TWINKLE','TWINKLEFOX','TWINKLECAT','FIREWORKS','RAIN','TETRIX','FIRE','LIGHTNING',
+            'PACIFICA','SUNRISE','DANCING_SHADOWS','PRIDE','SINELON','JUGGLE','RIPPLE','SONIC_STREAM','SONIC_BOOM',
+            'STARBURST','BOUNCING_BALLS','POPCORN','DRIPDROP','LAVA_LAMP','MAGMA','AURORA','HEARTBEAT','BREATHE',
+            'FLASH','DUAL_FLASH','VU','SPECTRUM','AUDIO_PULSE','BEAT_FLASH'
+          ]
+          new_effects = 'const EFFECTS=' + repr(effects).replace("'", '"').replace(' ', '') + ';'
+          s, n = re.subn(r'const EFFECTS=\[.*?\];', new_effects, s, count=1)
+          assert n == 1, 'EFFECTS replacement failed'
+
+          old = "async function chooseEffect(fx){activeFx=fx;setPaletteUI(paletteFor(fx),false);markEffect();renderEffects();await STWBLE.send(buildCommand(fx,currentPalette()));STWBLE.setLastFx(fx)}"
+          new = "async function chooseEffect(fx){activeFx=fx;setPaletteUI(paletteFor(fx),false);markEffect();await STWBLE.send(`FX=${fx}`,{fast:true});STWBLE.setLastFx(fx)}"
+          assert old in s, 'chooseEffect source not found'
+          s = s.replace(old, new, 1)
+
+          old = "const sliderKeys={bri:'BRI',spd:'SPD',int:'BGB',size:'SIZE',dens:'DENS',trail:'TRAIL'},pending={};for(const [id,key] of Object.entries(sliderKeys)){const x=q('#'+id);x.addEventListener('input',()=>{updateSlider(x);clearTimeout(pending[id]);pending[id]=setTimeout(()=>STWBLE.send(`${key}=${x.value}`),120)});x.addEventListener('change',()=>{clearTimeout(pending[id]);STWBLE.send(`${key}=${x.value}`)})}"
+          new = "const sliderKeys={bri:'BRI',spd:'SPD',int:'BGB',size:'SIZE',dens:'DENS',trail:'TRAIL'},pending={},lastSent={};for(const [id,key] of Object.entries(sliderKeys)){const x=q('#'+id),sendSlider=()=>STWBLE.send(`${key}=${x.value}`,{fast:true});x.addEventListener('input',()=>{updateSlider(x);const now=performance.now(),wait=Math.max(0,55-(now-(lastSent[id]||0)));clearTimeout(pending[id]);if(wait===0){lastSent[id]=now;sendSlider()}else pending[id]=setTimeout(()=>{lastSent[id]=performance.now();sendSlider()},wait)});x.addEventListener('change',()=>{clearTimeout(pending[id]);lastSent[id]=performance.now();sendSlider()})}"
+          assert old in s, 'slider source not found'
+          s = s.replace(old, new, 1)
+
+          s = s.replace("await STWBLE.send(`${activeRole==='main'?'MAIN':activeRole==='bg'?'BG':'FG'}=${q('#'+activeRole).value.slice(1)}`)", "await STWBLE.send(`${activeRole==='main'?'MAIN':activeRole==='bg'?'BG':'FG'}=${q('#'+activeRole).value.slice(1)}`,{fast:true})")
+          s = s.replace("await STWBLE.send(`${activeRole==='main'?'MAIN':activeRole==='bg'?'BG':'FG'}=${c.slice(1)}`)", "await STWBLE.send(`${activeRole==='main'?'MAIN':activeRole==='bg'?'BG':'FG'}=${c.slice(1)}`,{fast:true})")
+          s = s.replace("q('#dir').addEventListener('change',()=>STWBLE.send(`DIR=${q('#dir').value}`));", "q('#dir').addEventListener('change',()=>STWBLE.send(`DIR=${q('#dir').value}`,{fast:true}));")
+          s = s.replace("STWBLE.send(`MIRROR=${q('#mirror').checked?1:0}`)", "STWBLE.send(`MIRROR=${q('#mirror').checked?1:0}`,{fast:true})")
+
+          p.write_text(s)
+
+          h = Path('tools/st-ble-ui-preview.html')
+          hs = h.read_text()
+          hs = re.sub(r'st-ble-ui\.js\?v=[^\"\']+', 'st-ble-ui.js?v=20260905-basic1', hs, count=1)
+          h.write_text(hs)
+
+      - name: Validate JavaScript
+        run: |
+          node --check tools/st-ble-core.js
+          node --check tools/st-ble-ui.js
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('tools/st-ble-ui.js').read_text()
+          assert 'const EFFECTS=' in s
+          assert s.count('"BEAT_FLASH"') >= 1
+          assert '"ANDROID"' not in s.split('const EFFECTS=',1)[1].split(';',1)[0]
+          assert 'await STWBLE.send(`FX=${fx}`,{fast:true})' in s
+          assert "spd:'SPD'" in s and '{fast:true}' in s
+          print('basic LED controller validation passed')
+          PY
+      - name: Commit to main
+        run: |
+          git config user.name "Deke310"
+          git config user.email "135410011+Deke206@users.noreply.github.com"
+          git add tools/st-ble-ui.js tools/st-ble-ui-preview.html
+          git commit -m "Simplify live controller to direct responsive LED effects"
+          git push origin HEAD:main
