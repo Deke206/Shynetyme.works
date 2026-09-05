@@ -1,0 +1,51 @@
+name: Temporary Fix Live Controller 2026-09-05
+
+on:
+  push:
+    branches:
+      - feat/esp32-webapp-control-panel
+
+permissions:
+  contents: write
+
+jobs:
+  fix-live-controller:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Patch only broken controller UI line
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tools/st-ble-ui.js')
+          s=p.read_text()
+          bad="const max=Math.max(0,+q('#leds').value||1)-1);q('#segFrom').max=q('#segTog').max=max"
+          good="const max=Math.max(0,(+q('#leds').value||1)-1);q('#segFrom').max=q('#segTo').max=max"
+          if bad not in s:
+              raise SystemExit('Expected broken UI line was not found; refusing unrelated edit')
+          p.write_text(s.replace(bad,good,1))
+          h=Path('tools/st-ble-ui-preview.html')
+          x=h.read_text()
+          old='st-ble-ui.js?v=20260904-device-groups1'
+          new='st-ble-ui.js?v=20260905-blefix1'
+          if old not in x:
+              raise SystemExit('Expected UI cache tag was not found; refusing unrelated edit')
+          h.write_text(x.replace(old,new,1))
+          PY
+      - name: Validate controller scripts
+        run: |
+          node --check tools/st-ble-ui.js
+          node --check tools/st-ble-core.js
+          git diff --check
+          git diff -- tools/st-ble-ui.js tools/st-ble-ui-preview.html
+      - name: Commit live fix
+        run: |
+          git config user.name "Deke310"
+          git config user.email "135410011+Deke206@users.noreply.github.com"
+          git add tools/st-ble-ui.js tools/st-ble-ui-preview.html
+          git commit -m "Fix live ESP32 controller UI initialization"
+          git push origin HEAD:main
