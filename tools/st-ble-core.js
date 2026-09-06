@@ -77,6 +77,7 @@ let granted = new Map();
 let connectLock = Promise.resolve();
 let autoConnectTimer = 0;
 let manualBluetoothEpoch = 0;
+let userInteracted = false;
 const runtimes = new Map();
 
 // Per-logical-device runtime GATT state and write queue.
@@ -229,6 +230,7 @@ function snapshot() {
 
 // Manual Bluetooth interaction cancels/preempts startup autoconnect.
 function beginManualBluetooth() {
+  userInteracted = true;
   manualBluetoothEpoch++;
   if (autoConnectTimer) {
     clearTimeout(autoConnectTimer);
@@ -246,6 +248,20 @@ function beginManualBluetooth() {
   }
   connectLock = Promise.resolve();
 }
+// Give pointer/keyboard interaction priority over startup Bluetooth work so the Android chooser never competes with autoconnect.
+function noteUserInteraction() {
+  userInteracted = true;
+  const autoBusy = [...runtimes.values()].some(
+    (r) => r.auto && r.status === "connecting",
+  );
+  if (autoConnectTimer || autoBusy) beginManualBluetooth();
+}
+document.addEventListener("pointerdown", noteUserInteraction, {
+  capture: true,
+  passive: true,
+});
+document.addEventListener("keydown", noteUserInteraction, { capture: true });
+
 // BLE-core helper: releaseExistingAssignment().
 function releaseExistingAssignment(btId, keepId) {
   const owner = devices.find((x) => x.id !== keepId && x.bluetoothId === btId);
@@ -416,7 +432,7 @@ async function connectAssigned(
     r = runtime(id);
   if (!d?.bluetoothId) throw new Error("No Bluetooth device assigned");
   if (connected(id)) return true;
-  if (auto && epoch !== manualBluetoothEpoch) return false;
+  if (auto && (userInteracted || epoch !== manualBluetoothEpoch)) return false;
   let bt = granted.get(d.bluetoothId);
   if (!bt) {
     await refreshGranted();
@@ -435,11 +451,11 @@ async function connectAssigned(
   emit("connecting", { deviceId: id, auto });
   try {
     await withConnectLock(async () => {
-      if (auto && epoch !== manualBluetoothEpoch)
+      if (auto && (userInteracted || epoch !== manualBluetoothEpoch))
         throw new Error("Auto reconnect cancelled");
       attachDisconnect(id, bt);
       r.server = await openGatt(bt, { auto });
-      if (auto && epoch !== manualBluetoothEpoch)
+      if (auto && (userInteracted || epoch !== manualBluetoothEpoch))
         throw new Error("Auto reconnect cancelled");
       const svc = await waitFor(
         r.server.getPrimaryService(STW_SERVICE_UUID),
@@ -511,11 +527,17 @@ async function assignNew(id) {
   emit("assigned", { deviceId: id });
   return connectAssigned(id);
 }
-// Startup reconnect yields immediately to manual Bluetooth interaction.
+// Startup reconnect runs only while the page is untouched and visible, then yields immediately to any manual Bluetooth interaction.
 async function autoConnect() {
+  if (userInteracted || document.visibilityState !== "visible") return false;
   const epoch = manualBluetoothEpoch;
   await refreshGranted();
-  if (epoch !== manualBluetoothEpoch) return false;
+  if (
+    userInteracted ||
+    document.visibilityState !== "visible" ||
+    epoch !== manualBluetoothEpoch
+  )
+    return false;
   let ids = targetMemberIds();
   if (!ids.length) {
     const first = devices.find(
@@ -524,12 +546,12 @@ async function autoConnect() {
     ids = first ? [first.id] : [];
   }
   for (const id of ids) {
-    if (epoch !== manualBluetoothEpoch) break;
+    if (userInteracted || epoch !== manualBluetoothEpoch) break;
     const d = deviceById(id);
     if (d?.bluetoothId && granted.has(d.bluetoothId))
       await connectAssigned(id, { auto: true, epoch });
   }
-  if (epoch !== manualBluetoothEpoch) return false;
+  if (userInteracted || epoch !== manualBluetoothEpoch) return false;
   if (!target) {
     const first = devices.find((d) => connected(d.id));
     if (first) target = { type: "device", id: first.id };
@@ -778,5 +800,5 @@ queueMicrotask(() => {
   autoConnectTimer = setTimeout(() => {
     autoConnectTimer = 0;
     autoConnect();
-  }, 1200);
+  }, 2600);
 });
