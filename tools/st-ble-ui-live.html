@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#020817" />
+  <title>ShyneTyme Lights</title>
+  <style>html,body{margin:0;min-height:100%;background:#020817;color:#dff6ff;font-family:system-ui,sans-serif}body{display:grid;place-items:center}.boot{padding:24px;text-align:center}</style>
+</head>
+<body>
+  <div class="boot">Loading ShyneTyme Lights…</div>
+  <script>
+    (async () => {
+      const stamp = "20260907-musicfix1";
+      const r = await fetch(`./st-ble-ui-preview.html?v=${stamp}`, { cache: "no-store" });
+      if (!r.ok) throw new Error(`Controller shell HTTP ${r.status}`);
+      let html = await r.text();
+      html = html
+        .replace(/st-ble-ui\.css\?v=[^"']+/g, `st-ble-ui.css?v=${stamp}`)
+        .replace(/st-ble-core\.js\?v=[^"']+/g, `st-ble-core.js?v=${stamp}`)
+        .replace(/st-ble-ui\.js\?v=[^"']+/g, `st-ble-ui.js?v=${stamp}`)
+        .replace(/st-ble-live\.js\?v=[^"']+/g, `st-ble-live.js?v=${stamp}`);
+      document.open();
+      document.write(html);
+      document.close();
+    })().catch((e) => {
+      document.body.innerHTML = `<div class="boot"><b>Controller failed to load.</b><br><br>${String(e.message || e)}</div>`;
+    });
+  </script>
+</body>
+</html>
