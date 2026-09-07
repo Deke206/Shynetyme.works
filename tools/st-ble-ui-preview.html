@@ -1,19 +1,20 @@
 <!doctype html>
 <!--
   ShyneTyme.Works ESP32 LED controller — live page shell.
-  Maintenance snapshot: 2026-09-05.
+  Maintenance snapshot: 2026-09-06.
 
   Dependency order is intentional:
     1. st-ble-ui.css  — presentation only.
     2. st-ble-core.js — Bluetooth, device/group state, BLE writes.
     3. st-ble-ui.js   — tabs, effects, colors, music, presets, preview.
+    4. st-ble-live.js — live role brightness, full color wheel, audio stream,
+                        named-look persistence, and reconnect recovery.
 
   Current controller contract:
     - RAINBOW remains the startup/connection confirmation effect.
-    - MAIN BRIGHTNESS sends MAINB.
-    - BACKGROUND BRIGHTNESS sends BGB.
-    - The UI sends BRI=255 once after BLE connection so the firmware's
-      global FastLED cap does not dim the visible role-brightness controls.
+    - GLOBAL BRIGHTNESS sends BRI.
+    - MAIN / BACKGROUND / FOREGROUND role brightness send MAINB / BGB / FGB.
+    - INTENSITY sends INT.
     - Selecting an effect does not restore canned per-effect colors.
     - The effect browser exposes only direct V5.2 firmware effect IDs.
 -->
@@ -33,7 +34,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="st-ble-ui.css?v=20260905-documented1" />
+    <link rel="stylesheet" href="st-ble-ui.css?v=20260906-live2" />
   </head>
   <body>
     <div class="app">
@@ -241,7 +242,7 @@
                 <div class="context-title">EFFECT STYLING</div>
                 <div class="style-sliders">
                   <div class="slider-row">
-                    <label>MAIN BRIGHTNESS</label>
+                    <label>GLOBAL BRIGHTNESS</label>
                     <div class="sim-slider">
                       <span class="fill"></span><span class="thumb"></span
                       ><input
@@ -249,10 +250,10 @@
                         type="range"
                         min="0"
                         max="255"
-                        value="255"
+                        value="96"
                       />
                     </div>
-                    <output id="briV">100%</output>
+                    <output id="briV">38%</output>
                   </div>
                   <div class="slider-row">
                     <label>SPEED</label>
@@ -269,7 +270,7 @@
                     <output id="spdV">71%</output>
                   </div>
                   <div class="slider-row">
-                    <label>BACKGROUND BRIGHTNESS</label>
+                    <label>INTENSITY</label>
                     <div class="sim-slider">
                       <span class="fill bg-fill"></span
                       ><span class="thumb"></span
@@ -278,10 +279,10 @@
                         type="range"
                         min="0"
                         max="255"
-                        value="255"
+                        value="180"
                       />
                     </div>
-                    <output id="intV">100%</output>
+                    <output id="intV">71%</output>
                   </div>
                   <div class="slider-row">
                     <label>SIZE</label>
@@ -502,8 +503,9 @@
       </div>
     </div>
     <!-- BLE core loads first because st-ble-ui.js consumes window.STWBLE. -->
-    <script src="st-ble-core.js?v=20260906-pickerfix1"></script>
-    <!-- UI controller binds the page after the BLE core is available. -->
-    <script src="st-ble-ui.js?v=20260905-documented1"></script>
+    <script src="st-ble-core.js?v=20260906-live2"></script>
+    <!-- Base UI binds first; st-ble-live.js upgrades the live controls in place. -->
+    <script src="st-ble-ui.js?v=20260906-live2"></script>
+    <script src="st-ble-live.js?v=20260906-live2"></script>
   </body>
 </html>
