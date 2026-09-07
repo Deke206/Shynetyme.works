@@ -11,7 +11,7 @@
   <div class="boot">Loading ShyneTyme Lights…</div>
   <script>
     (async () => {
-      const stamp = "20260907-musicfix1";
+      const stamp = "20260907-bgfix2";
       const r = await fetch(`./st-ble-ui-preview.html?v=${stamp}`, { cache: "no-store" });
       if (!r.ok) throw new Error(`Controller shell HTTP ${r.status}`);
       let html = await r.text();
@@ -19,7 +19,8 @@
         .replace(/st-ble-ui\.css\?v=[^"']+/g, `st-ble-ui.css?v=${stamp}`)
         .replace(/st-ble-core\.js\?v=[^"']+/g, `st-ble-core.js?v=${stamp}`)
         .replace(/st-ble-ui\.js\?v=[^"']+/g, `st-ble-ui.js?v=${stamp}`)
-        .replace(/st-ble-live\.js\?v=[^"']+/g, `st-ble-live.js?v=${stamp}`);
+        .replace(/st-ble-live\.js\?v=[^"']+/g, `st-ble-live.js?v=${stamp}`)
+        .replace("</body>", `<script src="st-ble-bgfix.js?v=${stamp}"><\/script></body>`);
       document.open();
       document.write(html);
       document.close();
