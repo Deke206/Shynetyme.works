@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#020817">
+  <title>ShyneTyme BLE Debug — Iteration 1</title>
+  <!--
+    PURPOSE
+    -------
+    This page tests only the Web Bluetooth picker and V5.2 GATT connection.
+
+    It intentionally has:
+      - no auto reconnect
+      - no navigator.bluetooth.getDevices()
+      - no saved assignments
+      - no groups
+      - no playlist/music/effects code
+      - no focus/pageshow handlers
+      - no injected scripts or cloned controls
+
+    PASS CONDITION
+    --------------
+    CONNECT ESP32 -> Android picker -> select board -> CONNECTED.
+
+    If the picker itself will not return a selected BluetoothDevice on this page,
+    the failure is outside the ShyneTyme controller stack.
+  -->
+  <style>
+    body{margin:0;background:#020817;color:#e8f7ff;font:16px system-ui,sans-serif}
+    main{max-width:620px;margin:auto;padding:24px}
+    h1{font-size:22px;margin:0 0 8px}
+    p{color:#9db5c6}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+    button{padding:14px 18px;border:1px solid #567;background:#10243c;color:#fff;border-radius:10px;font-weight:700}
+    button:disabled{opacity:.45}
+    #state{font-weight:800;margin:12px 0}
+    pre{white-space:pre-wrap;background:#07111f;padding:14px;border-radius:10px;min-height:180px}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>ShyneTyme BLE Debug — Iteration 1</h1>
+    <p>Bare picker test. Nothing from the controller app runs here.</p>
+    <div class="row">
+      <button id="connect">CONNECT ESP32</button>
+      <button id="status" disabled>READ STATUS</button>
+      <button id="disconnect" disabled>DISCONNECT</button>
+    </div>
+    <div id="state">IDLE</div>
+    <pre id="log">Ready.</pre>
+  </main>
+  <script src="./ble-connect.js?v=1"></script>
+</body>
+</html>
