@@ -6,14 +6,14 @@ on:
       - "tools/st-ble-**"
       - "tools/stble-**"
       - "tools/AGENTS.md"
-      - "firmware/ST_BT_V5_2_MAIN.ino"
+      - "tools/STBLE_FIRMWARE_CONTRACT.md"
       - ".github/workflows/stble-webapp-check.yml"
   pull_request:
     paths:
       - "tools/st-ble-**"
       - "tools/stble-**"
       - "tools/AGENTS.md"
-      - "firmware/ST_BT_V5_2_MAIN.ino"
+      - "tools/STBLE_FIRMWARE_CONTRACT.md"
       - ".github/workflows/stble-webapp-check.yml"
   workflow_dispatch:
 
@@ -49,12 +49,24 @@ jobs:
           test "$(grep -c 'st-ble-ui.js' tools/st-ble-ui-preview.html)" -eq 1
           ! grep -Eq 'st-ble-(live|bgfix|playlist|hotfix|uuidfix)\.js' tools/st-ble-ui-preview.html
 
-      - name: Show controller files
+      - name: Build verified controller bundle
+        shell: bash
         run: |
-          echo "Canonical runtime:"
-          printf '%s\n' \
-            tools/st-ble-ui-preview.html \
-            tools/st-ble-ui.css \
-            tools/st-ble-core.js \
-            tools/st-ble-ui.js \
-            firmware/ST_BT_V5_2_MAIN.ino
+          set -euo pipefail
+          mkdir -p verified-stble-controller/tools
+          cp tools/st-ble-ui-preview.html verified-stble-controller/tools/
+          cp tools/st-ble-ui.css verified-stble-controller/tools/
+          cp tools/st-ble-core.js verified-stble-controller/tools/
+          cp tools/st-ble-ui.js verified-stble-controller/tools/
+          cp tools/AGENTS.md verified-stble-controller/tools/
+          cp tools/STBLE_FIRMWARE_CONTRACT.md verified-stble-controller/tools/
+          cp tools/stble-regression-check.mjs verified-stble-controller/tools/
+          printf '%s\n' "Commit: $GITHUB_SHA" > verified-stble-controller/VERIFIED_COMMIT.txt
+
+      - name: Upload verified controller artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-stble-controller-${{ github.sha }}
+          path: verified-stble-controller
+          if-no-files-found: error
+          retention-days: 30
