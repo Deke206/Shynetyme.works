@@ -1,0 +1,1 @@
+Recovery Iteration 1 uses the previously responsive 3a5eb9c controller behavior. Test connection and effect taps before any feature additions.
