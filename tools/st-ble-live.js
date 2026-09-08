@@ -52,6 +52,9 @@
     [3015,3704],[3704,4479],[4479,7106],[7106,9259]
   ];
 
+  const PLAYLIST_KEY = "stw-esp32-custom-v4";
+  const DEFAULT_PLAYLIST_SECONDS = 5;
+
   let micOn = false;
   let micStream = null;
   let audioCtx = null;
@@ -61,6 +64,8 @@
   let lastAudioSend = 0;
   let bassBase = 12;
   let lastBeat = 0;
+  let playlistRunToken = 0;
+  let playlistTimer = 0;
 
   function snap() {
     return window.STWBLE?.snapshot?.() || {
@@ -471,9 +476,167 @@
       .stw-meter{padding:7px;border-radius:7px;background:rgba(4,16,35,.28);text-align:center}
       .stw-meter small{display:block;color:#70869d;font:700 6pt Oxanium}
       .stw-meter b{display:block;color:var(--blue);font:800 10pt Oxanium}
-      @media(max-width:820px){#music .music-layout{grid-template-columns:1fr}}
+      .stw-playlist-time{display:grid;grid-template-columns:auto 76px;align-items:center;gap:5px;margin-left:auto;color:#70869d;font:700 6pt Oxanium}
+      .stw-playlist-time input{width:76px;min-width:0;text-align:center}
+      #stwPlaylistStatus{display:block;text-align:center;margin:7px 0;color:#70869d;font:700 6.4pt Oxanium}
+      @media(max-width:820px){#music .music-layout{grid-template-columns:1fr}.stw-playlist-time{grid-template-columns:auto 68px}.stw-playlist-time input{width:68px}}
     `;
     document.head.append(s);
+  }
+
+  function readPlaylistData() {
+    try {
+      const list = JSON.parse(localStorage.getItem(PLAYLIST_KEY) || "[]");
+      return Array.isArray(list) ? list : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function writePlaylistData(list) {
+    try {
+      localStorage.setItem(PLAYLIST_KEY, JSON.stringify(list.slice(0, 100)));
+    } catch (_) {}
+  }
+
+  function normalizedDuration(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return DEFAULT_PLAYLIST_SECONDS;
+    return clamp(n, 0.25, 3600);
+  }
+
+  function ensurePlaylistDurations() {
+    const list = readPlaylistData();
+    let changed = false;
+    list.forEach((item) => {
+      const next = normalizedDuration(item.durationSec ?? item.duration ?? DEFAULT_PLAYLIST_SECONDS);
+      if (item.durationSec !== next) {
+        item.durationSec = next;
+        changed = true;
+      }
+      if (Object.prototype.hasOwnProperty.call(item, "duration")) {
+        delete item.duration;
+        changed = true;
+      }
+    });
+    if (changed) writePlaylistData(list);
+    return list;
+  }
+
+  function setPlaylistStatus(text) {
+    let x = q("#stwPlaylistStatus");
+    if (!x) {
+      x = document.createElement("span");
+      x.id = "stwPlaylistStatus";
+      q("#playlistList")?.before(x);
+    }
+    if (x) x.textContent = text;
+  }
+
+  function decoratePlaylistRows() {
+    const host = q("#playlistList");
+    if (!host) return;
+    const list = ensurePlaylistDurations();
+    const rows = qa("#playlistList .playlist-item");
+    rows.forEach((row, i) => {
+      if (row.querySelector(".stw-playlist-time")) return;
+      const item = list[i];
+      if (!item) return;
+      const wrap = document.createElement("label");
+      wrap.className = "stw-playlist-time";
+      wrap.innerHTML = '<span>TIME SEC</span><input class="glass-field" type="number" min="0.25" max="3600" step="0.25">';
+      const input = wrap.querySelector("input");
+      input.value = normalizedDuration(item.durationSec);
+      const save = () => {
+        const current = readPlaylistData();
+        if (!current[i]) return;
+        const seconds = normalizedDuration(input.value);
+        input.value = seconds;
+        current[i].durationSec = seconds;
+        writePlaylistData(current);
+        setPlaylistStatus(`Item ${i + 1}: ${seconds}s`);
+      };
+      input.addEventListener("change", save);
+      input.addEventListener("blur", save);
+      const buttons = row.querySelector(".button-row");
+      if (buttons) row.insertBefore(wrap, buttons);
+      else row.append(wrap);
+    });
+  }
+
+  function stopPlaylistDurationRun(reason = "Stopped · current effect held") {
+    playlistRunToken++;
+    if (playlistTimer) clearTimeout(playlistTimer);
+    playlistTimer = 0;
+    const play = q("#playPlaylist");
+    if (play) play.textContent = "PLAY";
+    setPlaylistStatus(reason);
+  }
+
+  function runPlaylistDurationStep(token, index) {
+    if (token !== playlistRunToken) return;
+    const list = ensurePlaylistDurations();
+    const buttons = qa("#playlistList .playlist-item .load");
+    const count = Math.min(list.length, buttons.length);
+    if (!count || index >= count) {
+      stopPlaylistDurationRun("Playlist complete · current effect held");
+      return;
+    }
+    const item = list[index];
+    const seconds = normalizedDuration(item.durationSec);
+    buttons[index].click();
+    setPlaylistStatus(`${item.name || prettyFx(item.fx) || `Item ${index + 1}`} · ${seconds}s`);
+    playlistTimer = setTimeout(
+      () => runPlaylistDurationStep(token, index + 1),
+      Math.max(250, Math.round(seconds * 1000))
+    );
+  }
+
+  function installPlaylistDuration() {
+    const host = q("#playlistList");
+    const oldPlay = q("#playPlaylist");
+    const oldStop = q("#stopPlaylist");
+    if (!host || !oldPlay || !oldStop || oldPlay.dataset.durationBound === "1") return;
+
+    ensurePlaylistDurations();
+    decoratePlaylistRows();
+
+    const play = oldPlay.cloneNode(true);
+    const stop = oldStop.cloneNode(true);
+    play.dataset.durationBound = "1";
+    stop.dataset.durationBound = "1";
+    oldPlay.replaceWith(play);
+    oldStop.replaceWith(stop);
+
+    play.textContent = "PLAY";
+    play.addEventListener("click", () => {
+      const list = ensurePlaylistDurations();
+      if (!snap().passkey) {
+        log("Playlist needs a connected target.");
+        return;
+      }
+      if (!list.length) {
+        log("Playlist is empty.");
+        return;
+      }
+      playlistRunToken++;
+      if (playlistTimer) clearTimeout(playlistTimer);
+      const token = playlistRunToken;
+      play.textContent = "RESTART";
+      setPlaylistStatus("Playlist running with per-item durations");
+      runPlaylistDurationStep(token, 0);
+    });
+
+    stop.addEventListener("click", () => stopPlaylistDurationRun());
+
+    const observer = new MutationObserver(() => {
+      ensurePlaylistDurations();
+      decoratePlaylistRows();
+    });
+    observer.observe(host, { childList: true });
+
+    q("#clearPlaylist")?.addEventListener("click", () => stopPlaylistDurationRun("Playlist stopped"), true);
+    log("Playlist duration restored: each item has its own saved TIME SEC value.");
   }
 
   function renderSavedAssignments() {
@@ -571,8 +734,9 @@
   installMusicControls();
   installMicFix();
   installReconnectFix();
+  installPlaylistDuration();
   renderSavedAssignments();
   syncBrightnessFromStatus(targetPrimary()?.lastStatus || {});
   syncMusicEffect(targetPrimary()?.lastStatus || {});
-  log("V5.2 controller fix loaded: BGB background slider, firmware music FX, microphone diagnostics, saved-device reconnect.");
+  log("V5.2 controller fix loaded: BGB background slider, firmware music FX, microphone diagnostics, saved-device reconnect, playlist duration.");
 })();
