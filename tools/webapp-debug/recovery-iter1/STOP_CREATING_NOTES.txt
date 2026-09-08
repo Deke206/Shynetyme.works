@@ -1,0 +1,1 @@
+No more note files should be added. Next operation must copy exact source blobs.
