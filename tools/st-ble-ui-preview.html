@@ -1,22 +1,19 @@
 <!doctype html>
 <!--
-  ShyneTyme.Works ESP32 LED controller — live page shell.
-  Maintenance snapshot: 2026-09-06.
+  ShyneTyme.Works ESP32 LED controller.
+  Music reset: 2026-09-07.
 
-  Dependency order is intentional:
-    1. st-ble-ui.css  — presentation only.
-    2. st-ble-core.js — Bluetooth, device/group state, BLE writes.
-    3. st-ble-ui.js   — tabs, effects, colors, music, presets, preview.
-    4. st-ble-live.js — live role brightness, full color wheel, audio stream,
-                        named-look persistence, and reconnect recovery.
+  Dependency order:
+    1. st-ble-ui.css  — presentation.
+    2. st-ble-core.js — Bluetooth/device/group transport state.
+    3. st-ble-ui.js   — the single UI owner for controls, effects, music, presets and playlists.
 
-  Current controller contract:
-    - RAINBOW remains the startup/connection confirmation effect.
+  Controller contract:
     - GLOBAL BRIGHTNESS sends BRI.
-    - MAIN / BACKGROUND / FOREGROUND role brightness send MAINB / BGB / FGB.
-    - INTENSITY sends INT.
-    - Selecting an effect does not restore canned per-effect colors.
-    - The effect browser exposes only direct V5.2 firmware effect IDs.
+    - BACKGROUND BRIGHTNESS sends BGB.
+    - Music effects exist only in MUSIC.
+    - MUSIC uses compact A=LLBBMMHHb packets and verifies ESP32 ARX status.
+    - FX / COLORS contains non-music direct V5.2 effects only.
 -->
 <html lang="en">
   <head>
@@ -34,11 +31,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="st-ble-ui.css?v=20260906-live2" />
+    <link rel="stylesheet" href="st-ble-ui.css?v=20260907-musicreset1" />
   </head>
   <body>
     <div class="app">
-      <!-- Global brand/status bar. #bleSummary reports active local BLE links. -->
       <header class="topbar">
         <div class="brand">
           <span class="brand-pink">SHYNE</span
@@ -49,7 +45,6 @@
         <div id="bleSummary" class="ble-summary">LOCAL BLE</div>
       </header>
 
-      <!-- Five application tabs. Gated tabs require a connected selected device or complete group. -->
       <nav class="tabs" aria-label="ESP32 LED controller">
         <button class="tab on" data-page="device">DEVICE</button>
         <button class="tab gated" data-page="fxcolor">FX / COLORS</button>
@@ -58,7 +53,6 @@
         <button class="tab gated" data-page="custom">CUSTOM</button>
       </nav>
 
-      <!-- Persistent selected-device/effect summary and lightweight LED preview. -->
       <section class="live-state" aria-label="Current LED state">
         <div class="state-copy">
           <div>
@@ -78,7 +72,6 @@
       </section>
 
       <main class="workspace">
-        <!-- DEVICE: logical ESP32 cards, Bluetooth assignment, per-device settings, debug, and groups. -->
         <section id="device" class="page on">
           <div class="context-frame device-zone matrix-device">
             <div class="context-title">DEVICES</div>
@@ -102,11 +95,7 @@
                 <button id="assignGranted" class="glass-btn primary">
                   ASSIGN
                 </button>
-                <button
-                  id="addBluetooth"
-                  class="glass-btn"
-                  onclick="const s=STWBLE.snapshot();if(s.target?.type!=='device'){const d=s.devices?.[0];if(d)STWBLE.selectDevice(d.id)}"
-                >
+                <button id="addBluetooth" class="glass-btn">
                   ADD BLUETOOTH — ONE TIME
                 </button>
                 <button id="reconnectSelected" class="glass-btn">
@@ -117,8 +106,8 @@
                 </button>
               </div>
               <div class="microcopy">
-                After the first browser permission grant, the page remembers the
-                Bluetooth device ID and reconnects it by ID on later page loads.
+                The browser-granted Bluetooth ID is remembered. Manual picker
+                interaction is never triggered by page focus or visibility changes.
               </div>
             </section>
 
@@ -231,7 +220,6 @@
           </section>
         </section>
 
-        <!-- FX / COLORS: direct firmware effects, role colors, and effect styling controls. -->
         <section id="fxcolor" class="page locked-page">
           <div class="lock-message">
             SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
@@ -270,7 +258,7 @@
                     <output id="spdV">71%</output>
                   </div>
                   <div class="slider-row">
-                    <label>INTENSITY</label>
+                    <label>BACKGROUND BRIGHTNESS</label>
                     <div class="sim-slider">
                       <span class="fill bg-fill"></span
                       ><span class="thumb"></span
@@ -279,10 +267,10 @@
                         type="range"
                         min="0"
                         max="255"
-                        value="180"
+                        value="64"
                       />
                     </div>
-                    <output id="intV">71%</output>
+                    <output id="intV">25%</output>
                   </div>
                   <div class="slider-row">
                     <label>SIZE</label>
@@ -341,18 +329,18 @@
 
               <section class="context-frame colors-frame matrix-colors">
                 <div class="context-title">COLORS</div>
-                <input id="main" type="color" value="#000000" hidden />
+                <input id="main" type="color" value="#FFFFFF" hidden />
                 <input id="bg" type="color" value="#000000" hidden />
-                <input id="fg" type="color" value="#000000" hidden />
+                <input id="fg" type="color" value="#8000FF" hidden />
                 <div class="rolebar">
                   <button class="role on" data-role="main">
-                    <i id="mainSwatch" style="background: #000000"></i>MAIN
+                    <i id="mainSwatch" style="background: #FFFFFF"></i>MAIN
                   </button>
                   <button class="role" data-role="bg">
                     <i id="bgSwatch" style="background: #000000"></i>BACKGROUND
                   </button>
                   <button class="role" data-role="fg">
-                    <i id="fgSwatch" style="background: #000000"></i>FOREGROUND
+                    <i id="fgSwatch" style="background: #8000FF"></i>FOREGROUND
                   </button>
                 </div>
                 <div id="hueSelector" class="hue-selector">
@@ -367,7 +355,7 @@
                   />
                 </div>
                 <div class="hue-readout">
-                  <span>HUE</span><strong id="hueValue">#000000</strong>
+                  <span>HUE</span><strong id="hueValue">#FFFFFF</strong>
                 </div>
                 <div class="saved-colors">
                   <div id="savedColors" class="saved-color-list"></div>
@@ -391,21 +379,33 @@
               <input
                 id="fxSearch"
                 class="glass-field effect-search"
-                placeholder="Search all firmware effects…"
+                placeholder="Search non-music firmware effects…"
               />
               <div id="effectList" class="effect-list"></div>
             </section>
           </div>
         </section>
 
-        <!-- MUSIC: microphone capture and 16-channel FFT feed. Audio effects are selected in FX / COLORS. -->
         <section id="music" class="page locked-page">
           <div class="lock-message">
             SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
           </div>
           <div class="music-layout page-content">
             <section class="context-frame music-control matrix-music">
-              <div class="context-title">MICROPHONE</div>
+              <div class="context-title">MUSIC EFFECT</div>
+              <select id="musicFx" class="glass-field" style="width:100%;margin-bottom:10px">
+                <option value="SPECTRUM" selected>SPECTRUM</option>
+                <option value="VU">VU</option>
+                <option value="AUDIO_PULSE">AUDIO PULSE</option>
+                <option value="BEAT_FLASH">BEAT FLASH</option>
+                <option value="SONIC_STREAM">SONIC STREAM</option>
+                <option value="SONIC_BOOM">SONIC BOOM</option>
+                <option value="RIPPLE">RIPPLE</option>
+                <option value="STARBURST">STARBURST</option>
+                <option value="POPCORN">POPCORN</option>
+                <option value="DRIPDROP">DRIPDROP</option>
+                <option value="HEARTBEAT">HEARTBEAT</option>
+              </select>
               <div class="button-row">
                 <button id="micToggle" class="glass-btn primary">
                   START MICROPHONE</button
@@ -425,24 +425,40 @@
                 </div>
                 <output id="micSensitivityV">1.35×</output>
               </div>
-              <div class="microcopy">
-                Music effects are selected in FX / COLORS. This tab supplies
-                microphone analysis only.
+
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;text-align:center">
+                <div><small class="microcopy">LEVEL</small><strong id="musicLevel" style="display:block">0</strong></div>
+                <div><small class="microcopy">BASS</small><strong id="musicBass" style="display:block">0</strong></div>
+                <div><small class="microcopy">MID</small><strong id="musicMid" style="display:block">0</strong></div>
+                <div><small class="microcopy">HIGH</small><strong id="musicHigh" style="display:block">0</strong></div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;text-align:center">
+                <div><small class="microcopy">BLE TX</small><strong id="musicTx" style="display:block">0</strong></div>
+                <div><small class="microcopy">ESP32 ARX</small><strong id="musicRx" style="display:block">0</strong></div>
+                <div><small class="microcopy">FAIL</small><strong id="musicFail" style="display:block">0</strong></div>
+              </div>
+              <div id="musicLinkState" class="mic-state" style="display:block;margin-top:10px">IDLE</div>
+              <div class="microcopy" style="margin-top:8px">
+                PHONE MIC → BLE. Opening MUSIC stops the playlist and selects SPECTRUM.
+                LED audio is accepted only when ESP32 ARX increases.
               </div>
             </section>
             <section class="context-frame spectrum-frame matrix-spectrum">
-              <div class="context-title">16 CHANNEL SPECTROGRAPH</div>
+              <div class="context-title">16 CHANNEL PHONE SPECTROGRAPH</div>
               <div
                 id="spectrograph"
                 class="spectrograph"
-                aria-label="16 channel audio spectrum"
+                aria-label="16 channel microphone spectrum"
               ></div>
               <div id="bandLabels" class="band-labels"></div>
+              <div class="microcopy" style="margin-top:8px;text-align:center">
+                The phone analyzes 16 bands. The firmware-direct SPECTRUM renderer uses
+                bass / mid / high LED zones through the compact audio packet.
+              </div>
             </section>
           </div>
         </section>
 
-        <!-- PRESETS: saved effect/color/style states with compact editing. -->
         <section id="presets" class="page locked-page">
           <div class="lock-message">
             SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
@@ -460,7 +476,6 @@
           </div>
         </section>
 
-        <!-- CUSTOM: ordered local playlist of saved effect states. -->
         <section id="custom" class="page locked-page">
           <div class="lock-message">
             SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE
@@ -478,18 +493,20 @@
                   ADD CURRENT FX</button
                 ><button id="playPlaylist" class="glass-btn primary">
                   PLAY</button
+                ><button id="shufflePlaylist" class="glass-btn" aria-pressed="false">
+                  SHUFFLE</button
                 ><button id="stopPlaylist" class="glass-btn">STOP</button
                 ><button id="clearPlaylist" class="glass-btn danger">
                   CLEAR
                 </button>
               </div>
+              <span id="playlistStatus" class="microcopy" style="display:block;text-align:center;margin:7px 0">Ordered loop ready</span>
               <div id="playlistList" class="playlist-list"></div>
             </section>
           </div>
         </section>
       </main>
 
-      <!-- Shared confirmation/name modal. -->
       <div id="modal" class="modal" hidden>
         <div class="modal-card context-frame">
           <div id="modalTitle" class="context-title">CONFIRM</div>
@@ -502,10 +519,7 @@
         </div>
       </div>
     </div>
-    <!-- BLE core loads first because st-ble-ui.js consumes window.STWBLE. -->
-    <script src="st-ble-core.js?v=20260906-live2"></script>
-    <!-- Base UI binds first; st-ble-live.js upgrades the live controls in place. -->
-    <script src="st-ble-ui.js?v=20260906-live2"></script>
-    <script src="st-ble-live.js?v=20260906-live2"></script>
+    <script src="st-ble-core.js?v=20260907-musicreset1"></script>
+    <script src="st-ble-ui.js?v=20260907-musicreset1"></script>
   </body>
 </html>
