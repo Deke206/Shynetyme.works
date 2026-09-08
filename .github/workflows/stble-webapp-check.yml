@@ -1,0 +1,60 @@
+name: STBLE Web App Check
+
+on:
+  push:
+    paths:
+      - "tools/st-ble-**"
+      - "tools/stble-**"
+      - "tools/AGENTS.md"
+      - "firmware/ST_BT_V5_2_MAIN.ino"
+      - ".github/workflows/stble-webapp-check.yml"
+  pull_request:
+    paths:
+      - "tools/st-ble-**"
+      - "tools/stble-**"
+      - "tools/AGENTS.md"
+      - "firmware/ST_BT_V5_2_MAIN.ino"
+      - ".github/workflows/stble-webapp-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-web-controller:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: JavaScript syntax
+        run: |
+          node --check tools/st-ble-core.js
+          node --check tools/st-ble-ui.js
+          node --check tools/stble-regression-check.mjs
+
+      - name: STBLE regression contract
+        run: node tools/stble-regression-check.mjs
+
+      - name: Canonical HTML script ownership
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'st-ble-core.js' tools/st-ble-ui-preview.html)" -eq 1
+          test "$(grep -c 'st-ble-ui.js' tools/st-ble-ui-preview.html)" -eq 1
+          ! grep -Eq 'st-ble-(live|bgfix|playlist|hotfix|uuidfix)\.js' tools/st-ble-ui-preview.html
+
+      - name: Show controller files
+        run: |
+          echo "Canonical runtime:"
+          printf '%s\n' \
+            tools/st-ble-ui-preview.html \
+            tools/st-ble-ui.css \
+            tools/st-ble-core.js \
+            tools/st-ble-ui.js \
+            firmware/ST_BT_V5_2_MAIN.ino
