@@ -10,7 +10,6 @@ const STW_TARGET_KEY = "stw-esp32-target-v2";
 const enc = new TextEncoder(),
   dec = new TextDecoder();
 
-// Default logical-device configuration; startup RAINBOW is intentional.
 const DEFAULT_CONFIG = Object.freeze({
   leds: 300,
   gpio: 13,
@@ -24,7 +23,6 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const uid = (p) =>
   `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
 
-// Defensive localStorage helpers.
 function loadJSON(key, fallback) {
   try {
     const v = JSON.parse(localStorage.getItem(key));
@@ -33,13 +31,11 @@ function loadJSON(key, fallback) {
     return fallback;
   }
 }
-// BLE-core helper: saveJSON().
 function saveJSON(key, v) {
   try {
     localStorage.setItem(key, JSON.stringify(v));
   } catch (_) {}
 }
-// BLE-core helper: newLogicalDevice().
 function newLogicalDevice(name) {
   return {
     id: uid("dev"),
@@ -51,7 +47,6 @@ function newLogicalDevice(name) {
     powered: true,
   };
 }
-// BLE-core helper: normalizeDevice().
 function normalizeDevice(d, i) {
   return {
     id: d?.id || uid("dev"),
@@ -63,7 +58,7 @@ function normalizeDevice(d, i) {
     powered: d?.powered !== false,
   };
 }
-// Persistent logical devices/groups/target plus ephemeral granted/runtime connection state.
+
 let devices = (loadJSON(STW_DEVICE_KEY, []) || []).map(normalizeDevice);
 if (!devices.length)
   devices = [newLogicalDevice("ESP32 1"), newLogicalDevice("ESP32 2")];
@@ -80,7 +75,6 @@ let manualBluetoothEpoch = 0;
 let userInteracted = false;
 const runtimes = new Map();
 
-// Per-logical-device runtime GATT state and write queue.
 function runtime(id) {
   if (!runtimes.has(id))
     runtimes.set(id, {
@@ -98,37 +92,29 @@ function runtime(id) {
   return runtimes.get(id);
 }
 devices.forEach((d) => runtime(d.id));
-// BLE-core helper: saveDevices().
 function saveDevices() {
   saveJSON(STW_DEVICE_KEY, devices);
 }
-// BLE-core helper: saveGroups().
 function saveGroups() {
   saveJSON(STW_GROUP_KEY, groups);
 }
-// BLE-core helper: saveTarget().
 function saveTarget() {
   saveJSON(STW_TARGET_KEY, target);
 }
-// BLE-core helper: deviceById().
 function deviceById(id) {
   return devices.find((d) => d.id === id) || null;
 }
-// BLE-core helper: groupById().
 function groupById(id) {
   return groups.find((g) => g.id === id) || null;
 }
-// BLE-core helper: connected().
 function connected(id) {
   return runtime(id).status === "connected" && !!runtime(id).cmd;
 }
-// BLE-core helper: withConnectLock().
 function withConnectLock(task) {
   const p = connectLock.then(task, task);
   connectLock = p.catch(() => {});
   return p;
 }
-// BLE-core helper: waitFor().
 function waitFor(promise, ms, label) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(label)), ms);
@@ -144,7 +130,6 @@ function waitFor(promise, ms, label) {
     );
   });
 }
-// BLE-core helper: chunks().
 function chunks(text) {
   const parts = String(text || "")
       .split(";")
@@ -163,13 +148,11 @@ function chunks(text) {
   if (cur) out.push(cur);
   return out;
 }
-// Publish a complete state snapshot to the UI through the stw:ble CustomEvent.
 function emit(type = "state", extra = {}) {
   document.dispatchEvent(
     new CustomEvent("stw:ble", { detail: { type, ...snapshot(), ...extra } }),
   );
 }
-// Resolve the selected single device or explicit group into command recipients.
 function targetMemberIds() {
   if (!target) return [];
   if (target.type === "device") return deviceById(target.id) ? [target.id] : [];
@@ -179,14 +162,12 @@ function targetMemberIds() {
   }
   return [];
 }
-// Gate controls until the selected device or every selected-group member is connected.
 function hasPasskey() {
   const ids = targetMemberIds();
   if (!ids.length) return false;
   if (target?.type === "group" && ids.length < 2) return false;
   return ids.every(connected);
 }
-// BLE-core helper: targetLabel().
 function targetLabel() {
   if (!target) return "NONE";
   if (target.type === "device") return deviceById(target.id)?.name || "NONE";
@@ -199,7 +180,6 @@ function targetLabel() {
       .join("🔗") || g.name
   );
 }
-// BLE-core helper: snapshot().
 function snapshot() {
   return {
     devices: devices.map((d) => {
@@ -228,7 +208,6 @@ function snapshot() {
   };
 }
 
-// Manual Bluetooth interaction cancels/preempts startup autoconnect.
 function beginManualBluetooth() {
   userInteracted = true;
   manualBluetoothEpoch++;
@@ -248,7 +227,6 @@ function beginManualBluetooth() {
   }
   connectLock = Promise.resolve();
 }
-// Give pointer/keyboard interaction priority over startup Bluetooth work so the Android chooser never competes with autoconnect.
 function noteUserInteraction() {
   userInteracted = true;
   const autoBusy = [...runtimes.values()].some(
@@ -262,7 +240,6 @@ document.addEventListener("pointerdown", noteUserInteraction, {
 });
 document.addEventListener("keydown", noteUserInteraction, { capture: true });
 
-// BLE-core helper: releaseExistingAssignment().
 function releaseExistingAssignment(btId, keepId) {
   const owner = devices.find((x) => x.id !== keepId && x.bluetoothId === btId);
   if (!owner) return;
@@ -274,7 +251,6 @@ function releaseExistingAssignment(btId, keepId) {
   emit("reassigned", { deviceId: owner.id });
 }
 
-// Perform one GATT write; short fast controls prefer write-without-response when available.
 async function writeRaw(id, text, fast = false) {
   const r = runtime(id);
   if (!connected(id)) throw new Error("Device not connected");
@@ -298,7 +274,6 @@ async function writeRaw(id, text, fast = false) {
   else throw new Error("No BLE write method");
   await waitFor(op, longPacket ? 2400 : 1800, "Bluetooth write timed out");
 }
-// Serialize each controller write stream to prevent overlapping GATT writes.
 function queueWrite(id, text, fast = false) {
   const r = runtime(id);
   const run = async () => {
@@ -312,25 +287,22 @@ function queueWrite(id, text, fast = false) {
   });
   return r.queue;
 }
-// BLE-core helper: sendToIds().
 async function sendToIds(ids, text, { fast = false } = {}) {
-  const active = [...new Set(ids)].filter(connected);
-  if (!active.length) return false;
+  const requested = [...new Set(ids)];
+  const active = requested.filter(connected);
+  if (!active.length || active.length !== requested.length) return false;
   const result = await Promise.all(
     active.map((id) => queueWrite(id, text, fast)),
   );
-  return result.some(Boolean);
+  return result.every(Boolean);
 }
-// BLE-core helper: sendToTarget().
 async function sendToTarget(text, opts = {}) {
   return sendToIds(targetMemberIds(), text, opts);
 }
-// BLE-core helper: sendToDevice().
 async function sendToDevice(id, text, opts = {}) {
   return sendToIds([id], text, opts);
 }
 
-// Parse firmware semicolon-delimited KEY=VALUE status text.
 function parseStatus(text) {
   const o = {};
   for (const p of String(text || "").split(";")) {
@@ -339,7 +311,6 @@ function parseStatus(text) {
   }
   return o;
 }
-// BLE-core helper: readStatus().
 async function readStatus(id) {
   const r = runtime(id);
   if (!connected(id) || !r.st) return null;
@@ -367,7 +338,6 @@ async function readStatus(id) {
   }
 }
 
-// Refresh browser-granted devices through navigator.bluetooth.getDevices().
 async function refreshGranted() {
   granted.clear();
   if (!navigator.bluetooth?.getDevices) {
@@ -384,7 +354,6 @@ async function refreshGranted() {
     return [];
   }
 }
-// Reset runtime connection state when Android/browser reports GATT disconnect.
 function attachDisconnect(id, bt) {
   const r = runtime(id);
   if (r.disconnectHandler)
@@ -400,7 +369,6 @@ function attachDisconnect(id, bt) {
   };
   bt.addEventListener("gattserverdisconnected", r.disconnectHandler);
 }
-// Connect GATT with bounded retries/timeouts.
 async function openGatt(bt, { auto = false } = {}) {
   if (bt.gatt?.connected) return bt.gatt;
   let last;
@@ -422,7 +390,6 @@ async function openGatt(bt, { auto = false } = {}) {
   }
   throw last || new Error("Bluetooth connection failed");
 }
-// Reconnect one logical device to its remembered browser Bluetooth device ID.
 async function connectAssigned(
   id,
   { auto = false, epoch = manualBluetoothEpoch } = {},
@@ -492,7 +459,6 @@ async function connectAssigned(
     return false;
   }
 }
-// Assign an already browser-granted physical device to a logical ESP32.
 async function assignGranted(id, btId) {
   beginManualBluetooth();
   const d = deviceById(id);
@@ -507,7 +473,6 @@ async function assignGranted(id, btId) {
   emit("assigned", { deviceId: id });
   return connectAssigned(id);
 }
-// One-time Web Bluetooth permission picker for a new physical controller.
 async function assignNew(id) {
   beginManualBluetooth();
   if (!navigator.bluetooth) throw new Error("Web Bluetooth is not available");
@@ -527,7 +492,6 @@ async function assignNew(id) {
   emit("assigned", { deviceId: id });
   return connectAssigned(id);
 }
-// Startup reconnect runs only while the page is untouched and visible, then yields immediately to any manual Bluetooth interaction.
 async function autoConnect() {
   if (userInteracted || document.visibilityState !== "visible") return false;
   const epoch = manualBluetoothEpoch;
@@ -560,7 +524,6 @@ async function autoConnect() {
   emit("autoconnect-complete");
   return true;
 }
-// Drop GATT runtime state without forgetting the saved Bluetooth assignment.
 function disconnectDevice(id) {
   const r = runtime(id);
   try {
@@ -573,7 +536,6 @@ function disconnectDevice(id) {
   emit("disconnected", { deviceId: id });
 }
 
-// Select exactly one logical device as the normal command target.
 function selectDevice(id) {
   if (!deviceById(id)) return false;
   target = { type: "device", id };
@@ -581,7 +543,6 @@ function selectDevice(id) {
   emit("target");
   return true;
 }
-// Select an explicit group as the simulcast target.
 function selectGroup(id) {
   const g = groupById(id);
   if (!g) return false;
@@ -590,13 +551,11 @@ function selectGroup(id) {
   emit("target");
   return true;
 }
-// BLE-core helper: clearTarget().
 function clearTarget() {
   target = null;
   saveTarget();
   emit("target");
 }
-// BLE-core helper: addLogicalDevice().
 function addLogicalDevice(name) {
   const d = newLogicalDevice(
     (name || `ESP32 ${devices.length + 1}`).trim() ||
@@ -608,7 +567,6 @@ function addLogicalDevice(name) {
   emit("devices");
   return d.id;
 }
-// BLE-core helper: removeLogicalDevice().
 function removeLogicalDevice(id) {
   const d = deviceById(id);
   if (!d) return false;
@@ -625,7 +583,6 @@ function removeLogicalDevice(id) {
   emit("devices");
   return true;
 }
-// BLE-core helper: renameDevice().
 function renameDevice(id, name) {
   const d = deviceById(id);
   if (!d) return false;
@@ -634,7 +591,6 @@ function renameDevice(id, name) {
   emit("devices");
   return true;
 }
-// BLE-core helper: unassignBluetooth().
 function unassignBluetooth(id) {
   beginManualBluetooth();
   const d = deviceById(id);
@@ -649,7 +605,6 @@ function unassignBluetooth(id) {
   return true;
 }
 
-// Persistent group CRUD used by the Device tab.
 function createGroup(name) {
   const clean = (name || "").trim();
   if (!clean) throw new Error("Group name required");
@@ -659,7 +614,6 @@ function createGroup(name) {
   emit("groups");
   return g.id;
 }
-// BLE-core helper: renameGroup().
 function renameGroup(id, name) {
   const g = groupById(id);
   if (!g) return false;
@@ -668,16 +622,21 @@ function renameGroup(id, name) {
   emit("groups");
   return true;
 }
-// BLE-core helper: setGroupMembers().
 function setGroupMembers(id, members) {
   const g = groupById(id);
   if (!g) return false;
   g.members = [...new Set(members)].filter((x) => deviceById(x));
   saveGroups();
+  if (g.members.length >= 2) {
+    target = { type: "group", id };
+    saveTarget();
+  } else if (target?.type === "group" && target.id === id) {
+    target = null;
+    saveTarget();
+  }
   emit("groups");
   return true;
 }
-// BLE-core helper: deleteGroup().
 function deleteGroup(id) {
   groups = groups.filter((g) => g.id !== id);
   if (target?.type === "group" && target.id === id) target = null;
@@ -687,7 +646,6 @@ function deleteGroup(id) {
   return true;
 }
 
-// Validate per-device settings before firmware configuration commands are sent.
 function validateConfig(c) {
   if (!Number.isFinite(c.leds) || c.leds < 1 || c.leds > 600)
     return "LED count must be 1–600";
@@ -699,7 +657,6 @@ function validateConfig(c) {
     return `Effect range must stay inside 0–${c.leds - 1}`;
   return "";
 }
-// Persist LED count/GPIO/order to the selected physical ESP32.
 async function saveDeviceConfig(id, cfg, { reboot = false } = {}) {
   const d = deviceById(id);
   if (!d) throw new Error("Select one device");
@@ -721,7 +678,6 @@ async function saveDeviceConfig(id, cfg, { reboot = false } = {}) {
   emit("config", { deviceId: id });
   return true;
 }
-// BLE-core helper: saveStartup().
 async function saveStartup(id, startupCommand, restoreCommand, startupFx) {
   const d = deviceById(id);
   if (!d || !connected(id)) throw new Error("Selected device is not connected");
@@ -734,7 +690,6 @@ async function saveStartup(id, startupCommand, restoreCommand, startupFx) {
   emit("config", { deviceId: id });
   return true;
 }
-// BLE-core helper: setLastFx().
 function setLastFx(fx) {
   for (const id of targetMemberIds()) {
     const d = deviceById(id);
@@ -746,7 +701,6 @@ function setLastFx(fx) {
   saveDevices();
   emit("effect");
 }
-// BLE-core helper: togglePower().
 async function togglePower(id) {
   const d = deviceById(id);
   if (!d || !connected(id)) return false;
@@ -765,7 +719,6 @@ async function togglePower(id) {
   return d.powered;
 }
 
-// Public API consumed by st-ble-ui.js. Keep this surface stable during internal refactors.
 window.STWBLE = {
   snapshot,
   refreshGranted,
@@ -795,10 +748,6 @@ window.STWBLE = {
   hasPasskey,
   autoConnect,
 };
-queueMicrotask(() => {
-  emit("ready");
-  autoConnectTimer = setTimeout(() => {
-    autoConnectTimer = 0;
-    autoConnect();
-  }, 2600);
-});
+
+// Iteration 1: do not auto-connect saved assignments on page load. Manual user action wins.
+queueMicrotask(() => emit("ready"));
