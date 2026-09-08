@@ -1,0 +1,27 @@
+@import url("./st-ble-ui-base.css");
+
+/* Recovery Iteration 1: keep borders only on major section frames. */
+.glass-btn,
+.glass-field,
+.role,
+.tiny-btn,
+.member-toggle,
+.group-card,
+.preset-card,
+.playlist-item,
+.debug-log,
+.state-strip,
+.power-ring,
+.saved-color {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.glass-btn:hover,
+.role:hover,
+.tiny-btn:hover,
+.member-toggle:hover,
+.group-card.selected,
+.device-card.selected .power-ring {
+  border: 0 !important;
+}
