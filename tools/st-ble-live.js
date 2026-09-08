@@ -53,6 +53,7 @@
   ];
 
   const PLAYLIST_KEY = "stw-esp32-custom-v4";
+  const PLAYLIST_SHUFFLE_KEY = "stw-esp32-playlist-shuffle-v2";
   const DEFAULT_PLAYLIST_SECONDS = 5;
 
   let micOn = false;
@@ -66,6 +67,9 @@
   let lastBeat = 0;
   let playlistRunToken = 0;
   let playlistTimer = 0;
+  let playlistRunning = false;
+  let playlistShuffle = localStorage.getItem(PLAYLIST_SHUFFLE_KEY) === "1";
+  let playlistLastIndex = -1;
 
   function snap() {
     return window.STWBLE?.snapshot?.() || {
@@ -533,6 +537,14 @@
     if (x) x.textContent = text;
   }
 
+  function syncPlaylistShuffleButton() {
+    const b = q("#shufflePlaylist");
+    if (!b) return;
+    b.classList.toggle("primary", playlistShuffle);
+    b.textContent = playlistShuffle ? "SHUFFLE ON" : "SHUFFLE";
+    b.setAttribute("aria-pressed", playlistShuffle ? "true" : "false");
+  }
+
   function decoratePlaylistRows() {
     const host = q("#playlistList");
     if (!host) return;
@@ -565,6 +577,7 @@
   }
 
   function stopPlaylistDurationRun(reason = "Stopped · current effect held") {
+    playlistRunning = false;
     playlistRunToken++;
     if (playlistTimer) clearTimeout(playlistTimer);
     playlistTimer = 0;
@@ -573,23 +586,55 @@
     setPlaylistStatus(reason);
   }
 
-  function runPlaylistDurationStep(token, index) {
-    if (token !== playlistRunToken) return;
+  function choosePlaylistIndex(count, orderedIndex) {
+    if (!playlistShuffle) return orderedIndex % count;
+    if (count === 1) return 0;
+    let next;
+    do next = Math.floor(Math.random() * count);
+    while (next === playlistLastIndex);
+    return next;
+  }
+
+  function runPlaylistDurationStep(token, orderedIndex = 0) {
+    if (!playlistRunning || token !== playlistRunToken) return;
     const list = ensurePlaylistDurations();
     const buttons = qa("#playlistList .playlist-item .load");
     const count = Math.min(list.length, buttons.length);
-    if (!count || index >= count) {
-      stopPlaylistDurationRun("Playlist complete · current effect held");
+    if (!count) {
+      stopPlaylistDurationRun("Playlist is empty");
       return;
     }
+    const index = choosePlaylistIndex(count, orderedIndex);
+    playlistLastIndex = index;
     const item = list[index];
     const seconds = normalizedDuration(item.durationSec);
     buttons[index].click();
-    setPlaylistStatus(`${item.name || prettyFx(item.fx) || `Item ${index + 1}`} · ${seconds}s`);
+    setPlaylistStatus(`${playlistShuffle ? "SHUFFLE" : "LOOP"} · ${item.name || prettyFx(item.fx) || `Item ${index + 1}`} · ${seconds}s`);
     playlistTimer = setTimeout(
-      () => runPlaylistDurationStep(token, index + 1),
+      () => runPlaylistDurationStep(token, playlistShuffle ? orderedIndex : orderedIndex + 1),
       Math.max(250, Math.round(seconds * 1000))
     );
+  }
+
+  function startPlaylistDurationRun() {
+    const list = ensurePlaylistDurations();
+    if (!snap().passkey) {
+      log("Playlist needs a connected target.");
+      return;
+    }
+    if (!list.length) {
+      log("Playlist is empty.");
+      return;
+    }
+    playlistRunning = true;
+    playlistRunToken++;
+    if (playlistTimer) clearTimeout(playlistTimer);
+    playlistLastIndex = -1;
+    const token = playlistRunToken;
+    const play = q("#playPlaylist");
+    if (play) play.textContent = "RESTART";
+    setPlaylistStatus(`${playlistShuffle ? "Shuffle" : "Ordered loop"} running with per-item durations`);
+    runPlaylistDurationStep(token, 0);
   }
 
   function installPlaylistDuration() {
@@ -608,26 +653,23 @@
     oldPlay.replaceWith(play);
     oldStop.replaceWith(stop);
 
-    play.textContent = "PLAY";
-    play.addEventListener("click", () => {
-      const list = ensurePlaylistDurations();
-      if (!snap().passkey) {
-        log("Playlist needs a connected target.");
-        return;
-      }
-      if (!list.length) {
-        log("Playlist is empty.");
-        return;
-      }
-      playlistRunToken++;
-      if (playlistTimer) clearTimeout(playlistTimer);
-      const token = playlistRunToken;
-      play.textContent = "RESTART";
-      setPlaylistStatus("Playlist running with per-item durations");
-      runPlaylistDurationStep(token, 0);
-    });
+    const shuffle = document.createElement("button");
+    shuffle.id = "shufflePlaylist";
+    shuffle.className = "glass-btn";
+    shuffle.type = "button";
+    stop.before(shuffle);
+    syncPlaylistShuffleButton();
 
+    play.textContent = "PLAY";
+    play.addEventListener("click", startPlaylistDurationRun);
     stop.addEventListener("click", () => stopPlaylistDurationRun());
+    shuffle.addEventListener("click", () => {
+      playlistShuffle = !playlistShuffle;
+      localStorage.setItem(PLAYLIST_SHUFFLE_KEY, playlistShuffle ? "1" : "0");
+      syncPlaylistShuffleButton();
+      if (playlistRunning) startPlaylistDurationRun();
+      else setPlaylistStatus(playlistShuffle ? "Shuffle ready" : "Ordered loop ready");
+    });
 
     const observer = new MutationObserver(() => {
       ensurePlaylistDurations();
@@ -636,7 +678,8 @@
     observer.observe(host, { childList: true });
 
     q("#clearPlaylist")?.addEventListener("click", () => stopPlaylistDurationRun("Playlist stopped"), true);
-    log("Playlist duration restored: each item has its own saved TIME SEC value.");
+    setPlaylistStatus(playlistShuffle ? "Shuffle ready" : "Ordered loop ready");
+    log("Playlist restored: ordered loop + shuffle + per-item TIME SEC; STOP holds current effect.");
   }
 
   function renderSavedAssignments() {
@@ -738,5 +781,5 @@
   renderSavedAssignments();
   syncBrightnessFromStatus(targetPrimary()?.lastStatus || {});
   syncMusicEffect(targetPrimary()?.lastStatus || {});
-  log("V5.2 controller fix loaded: BGB background slider, firmware music FX, microphone diagnostics, saved-device reconnect, playlist duration.");
+  log("V5.2 controller fix loaded: BGB background slider, firmware music FX, microphone diagnostics, saved-device reconnect, playlist duration + shuffle.");
 })();
