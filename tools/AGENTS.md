@@ -2,94 +2,85 @@
 
 These rules apply to `tools/st-ble-*` and override generic repo guidance where more specific.
 
-## Authoritative runtime
+## Canonical runtime
 
-Production/debug baseline is exactly:
+The active web controller is exactly:
 
 - `tools/st-ble-ui-preview.html`
 - `tools/st-ble-ui.css`
 - `tools/st-ble-core.js`
 - `tools/st-ble-ui.js`
-- `firmware/ST_BT_V5_2_MAIN.ino` for the BLE/firmware command contract
+- `tools/STBLE_FIRMWARE_CONTRACT.md`
+
+The exact V5.2 INO kept in the user's ESP32 Work / WebApp Debug archive is firmware ground truth when available. Do not invent firmware capabilities from UI code.
 
 Do not add runtime patch loaders, injected hotfix scripts, cloned controls, or secondary feature owners.
 
 ## Three-iteration rule
 
-For one debugging objective, use at most three controlled iterations.
+For one debugging objective, use at most three controlled iterations: Iteration 1, Iteration 2, Iteration 3. Each iteration preserves all previously accepted behavior unless the user explicitly removes it. When the user approves/STOPs an iteration, promote that exact build as the new baseline. Do not create Iteration 4; diagnose within Iteration 3 or return to the last verified baseline.
 
-1. Iteration 1
-2. Iteration 2
-3. Iteration 3
+## Current accepted baseline
 
-Each iteration must preserve all previously accepted functionality unless the user explicitly removes it. If the user says `STOP`, promote the proven iteration to the canonical baseline. Do not create Iteration 4; diagnose within Iteration 3 or return to the last verified baseline.
+- `20260908-sync1` is the proven dual-device/group-sync baseline.
+- Dual-device sync logic in `st-ble-core.js` is regression-sensitive. Do not rewrite it for presentation/effect edits.
+- When a group has two or more checked members, that group becomes the active target.
+- A group send succeeds only when every requested member is connected and every GATT write succeeds.
+- Startup Bluetooth autoconnect is disabled; Bluetooth actions remain explicit/user-driven.
 
-Temporary debugging code must be removed or folded into its canonical owner before promotion.
+## Current Iteration-2 direction
 
-## Regression contract
-
-Every web-controller change must verify all of these before reporting success:
-
-- Bluetooth picker remains user-driven; no picker/reconnect calls on `focus`, `pageshow`, or visibility changes.
-- Previously granted BLE device may reconnect only through guarded core logic or an explicit user action.
-- FX / COLORS contains non-music effects only.
-- MUSIC owns music effects, microphone capture, audio analysis, and audio status UI.
-- Selecting MUSIC stops any active playlist and selects a music effect, default `SPECTRUM`.
-- Live microphone audio uses the firmware-supported compact `A=LLBBMMHHb` packet unless the firmware contract is deliberately changed and retested.
-- A Music UI TX counter may increment only after a successful BLE write.
-- Hardware audio success may be claimed only when firmware status proves receipt (`ARX` increases; `AUDLIVE=1`).
-- Playlist preserves per-item `TIME SEC` duration.
-- Playlist preserves ordered loop and `SHUFFLE` modes.
-- `STOP` holds the current effect instead of forcing blackout unless explicitly requested.
-- Global brightness maps to `BRI`.
-- Background brightness maps to `BGB`.
-- Preset/playlist serialization must use the same command meanings as live controls.
-- SAVE/STARTUP behavior must apply the selected startup effect before saving it.
+- MUSIC UI and web microphone/music effects are removed until a native/proven audio path is implemented.
+- Do not reintroduce Music effects into FX / COLORS as substitutes.
+- SOLID and GRADIENT are intentionally excluded from the visible effect list.
+- Effect labels must describe verified color roles; never default everything to “3 COLORS” when firmware says otherwise.
+- Background brightness maps to firmware `BGB` and is shown only when the selected effect actually uses the background role.
+- Saved custom colors must be deletable.
+- Small/internal controls are borderless; animated/perimeter framing is reserved for major section containers.
+- The old live-state LED preview strip is removed.
+- Playlist preserves per-item `TIME SEC`, ordered loop, `SHUFFLE`, and STOP-holds-current-effect.
+- Browser playlist timing is a foreground feature; do not claim guaranteed hidden-tab/background execution.
 
 ## Single-owner rule
 
-A feature has one implementation owner.
-
-- BLE transport/device state: `st-ble-core.js`
-- UI state, effects, Music, presets, playlist: `st-ble-ui.js`
+- BLE transport/device/group state: `st-ble-core.js`
+- UI state/effects/colors/presets/playlist: `st-ble-ui.js`
 - Markup: `st-ble-ui-preview.html`
-- Styling: `st-ble-ui.css`
+- Styling: `st-ble-ui.css` or static styles in canonical HTML when deliberately scoped; never runtime-injected styles/scripts.
 
-Do not override one file from another to neutralize known behavior. Fix the owner.
+Fix the owning file. Do not neutralize one file from another.
 
-## Verification rule
+## Verification rule — three fingers
 
-Before changing a protocol-dependent feature, verify three fingers when available:
+For protocol/effect claims, verify when available:
 
 1. Current project code/firmware.
-2. An authoritative API/spec/manufacturer source.
-3. A second implementation, independent reference, or direct runtime observation.
+2. Authoritative API/spec/manufacturer source.
+3. Independent implementation, second reference, or direct runtime observation.
 
-If all three are not available, mark the unsupported part `UNKNOWN` instead of guessing.
+If the evidence does not establish a claim, mark it UNKNOWN instead of guessing.
 
 ## Required workflow
 
-Before editing:
-
-1. Read the relevant canonical files and this file.
-2. State the exact regression-sensitive behaviors being preserved.
-3. Compare commands/selectors against `firmware/ST_BT_V5_2_MAIN.ino` when BLE or effects are involved.
-4. Make the smallest complete change in the owning file.
-5. Run `node --check` on JavaScript.
+1. Read this file and the relevant canonical files before editing.
+2. State which accepted behaviors must survive the change.
+3. Compare BLE/effect commands against V5.2 firmware or the repo firmware contract.
+4. Make the smallest complete edit in the feature owner.
+5. Run `node --check` on changed JavaScript.
 6. Run `node tools/stble-regression-check.mjs`.
-7. Inspect the diff for duplicate owners, new patch files, and lost controls.
-8. Report `TESTED` only for tests actually run. Physical LED behavior remains unverified until device evidence confirms it.
+7. Inspect the diff for duplicate owners, patch files, lost controls, and cache-tag mistakes.
+8. Report TESTED only for checks actually run. Physical LED behavior remains unverified until device testing confirms it.
 
 ## Forbidden patterns
 
 Do not introduce:
 
-- `cloneNode()` to replace controls as a normal implementation strategy.
-- dynamically injected `<script>` tags for controller fixes.
-- `document.write()` controller boot loaders.
-- reconnect logic tied to page `focus` or `pageshow`.
-- separate Music effect lists in both MUSIC and FX / COLORS.
-- unconditional success counters after BLE send calls.
-- a new `st-ble-*-fix.js`, `hotfix.js`, `patch.js`, or similar runtime file instead of correcting the owner.
+- `cloneNode()` as a feature override strategy.
+- dynamically injected controller `<script>` tags or style patches.
+- `document.write()` controller loaders.
+- reconnect logic tied to `focus`, `pageshow`, or visibility changes.
+- a new `st-ble-*-fix.js`, `hotfix.js`, `patch.js`, or similar runtime file.
+- unconditional success when only one member of a requested group succeeded.
+- reintroduction of removed Music/SOLID/gradient behavior without explicit user direction.
 
-Historical files may exist for audit, but must not be referenced by the canonical HTML.
+Historical files may remain for audit but must not be referenced by canonical HTML.
