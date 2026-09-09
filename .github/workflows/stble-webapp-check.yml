@@ -45,9 +45,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(grep -c 'st-ble-core.js' tools/st-ble-ui-preview.html)" -eq 1
-          test "$(grep -c 'st-ble-ui.js' tools/st-ble-ui-preview.html)" -eq 1
-          ! grep -Eq 'st-ble-(live|bgfix|playlist|hotfix|uuidfix)\.js' tools/st-ble-ui-preview.html
+          test "$(grep -Ec '<script[[:space:]]+src="st-ble-core\.js\?' tools/st-ble-ui-preview.html)" -eq 1
+          test "$(grep -Ec '<script[[:space:]]+src="st-ble-ui\.js\?' tools/st-ble-ui-preview.html)" -eq 1
+          ! grep -Eq '<script[^>]+st-ble-(live|bgfix|playlist|hotfix|uuidfix)\.js' tools/st-ble-ui-preview.html
 
       - name: Build verified controller bundle
         shell: bash
