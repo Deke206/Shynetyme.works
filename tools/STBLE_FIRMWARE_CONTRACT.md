@@ -1,10 +1,14 @@
-# ShyneTyme BT V5.2 — Web Controller Contract
+# ShyneTyme BT V5.1 — Active Web Controller Contract
 
-Authoritative firmware source outside this repo:
+Current physical-controller baseline:
 
-`Google Drive / ESP32. Work / ST_BT_V5_2_MAIN.ino`
+`ST_BT_V5_1_MAIN.ino`
 
-This document contains only the protocol/state facts the web controller has verified against that source. If the `.ino` changes, update this contract before changing web-controller assumptions.
+Expected status version:
+
+`VER=51`
+
+A later `ST_BT_V5_2_MAIN.ino` exists as development work, but it is **not** the active hardware assumption unless the user explicitly flashes it and device status/serial output verifies the change.
 
 ## BLE UUIDs
 
@@ -12,7 +16,9 @@ This document contains only the protocol/state facts the web controller has veri
 - Command: `78170002-7A32-4B19-913A-5354594D4501`
 - Status: `78170003-7A32-4B19-913A-5354594D4501`
 
-## Core commands used by the web app
+V5.1 advertises the service UUID and names boards `ShyneTyme-MAIN-XXXX`.
+
+## Verified V5.1 commands
 
 | Purpose | Command |
 | --- | --- |
@@ -25,43 +31,122 @@ This document contains only the protocol/state facts the web controller has veri
 | Foreground brightness | `FGB=0..255` |
 | Main brightness | `MAINB=0..255` |
 | Speed | `SPD=1..255` |
-| Intensity | `INT=0..255` |
+| Intensity | `INT=1..255` |
 | Size | `SIZE=1..255` |
 | Density | `DENS=1..255` |
 | Trail | `TRAIL=1..255` |
 | Direction | `DIR=FWD` / `DIR=REV` |
 | Mirror | `MIRROR=0` / `MIRROR=1` |
+| Pixel order | `ORDER=<order>` |
 | Audio enable | `AUDIO=0` / `AUDIO=1` |
-| Audio mode | `AUDMODE=OFF|LEVEL|BEAT|SPECTRUM|FULL` |
+| Audio mode | `AUDMODE=<mode>` |
 | Audio amount | `AUDAMT=0..255` |
+| Compact audio | `A=LLBBMMHHb` |
 | Status | `STATUS` |
-| Save settings | `SAVE` |
+| Save settings/startup | `SAVE` / `STARTUP` |
+| Load settings | `LOAD` |
+| ESP32 preset save | `PSAVE=1..8` |
+| ESP32 preset load | `PLOAD=1..8` |
+| ESP32 preset delete | `PDEL=1..8` |
 | Reboot | `REBOOT` |
 
-## Preferred microphone packet
+## V5.1 direct effect set
 
-The firmware explicitly defines the compact packet to avoid BLE write/notify congestion:
+These are compiled directly into `ST_BT_V5_1_MAIN.ino`:
 
-```text
-A=LLBBMMHHb
-```
+- `OFF`
+- `SOLID`
+- `RAINBOW`
+- `RAINBOW_GLITTER`
+- `COMET`
+- `METEOR`
+- `SCANNER`
+- `DUAL_SCANNER`
+- `POLICE`
+- `CHASE`
+- `TRICOLOR_CHASE`
+- `RUNNING_DOTS`
+- `THEATER`
+- `WIPE`
+- `FLOW`
+- `FLOW_STRIPE`
+- `COLOR_WAVES`
+- `SPARKLE`
+- `GLITTER`
+- `TWINKLE`
+- `TWINKLEFOX`
+- `TWINKLECAT`
+- `FIREWORKS`
+- `RAIN`
+- `TETRIX`
+- `FIRE`
+- `LIGHTNING`
+- `PACIFICA`
+- `SUNRISE`
+- `DANCING_SHADOWS`
+- `PRIDE`
+- `SINELON`
+- `JUGGLE`
+- `RIPPLE`
+- `SONIC_STREAM`
+- `SONIC_BOOM`
+- `STARBURST`
+- `BOUNCING_BALLS`
+- `POPCORN`
+- `DRIPDROP`
+- `LAVA_LAMP`
+- `MAGMA`
+- `AURORA`
+- `HEARTBEAT`
+- `BREATHE`
+- `FLASH`
+- `DUAL_FLASH`
+- `VU`
+- `SPECTRUM`
+- `AUDIO_PULSE`
+- `BEAT_FLASH`
 
-Where:
+The current web UI deliberately hides/removes `SOLID` and the audio/music effects per user direction. That does not mean the firmware lacks them.
 
-- `LL` = audio level, 00–FF
-- `BB` = bass, 00–FF
-- `MM` = mid, 00–FF
-- `HH` = high, 00–FF
-- `b` = beat flag, `0` or `1`
+## Not part of V5.1
 
-When accepted, firmware increments `ARX`, synthesizes the internal 16-bin representation from bass/mid/high, and refreshes audio-live timing.
+The V5.2 WLED-style catalog layer is **not** part of the V5.1 hardware contract. Do not expose catalog-only names such as:
 
-The optional long packet `F=<32 hex chars>[beat]` exists in firmware but is **not the default Web Bluetooth transport**. Do not switch the browser controller to `F=` without an explicit transport/MTU test and physical verification.
+- `ANDROID`
+- `FIRE_2012`
+- `PACMAN`
+- `PLASMA`
+- `PS_COMET`
+- other `WLED_CATALOG` entries
 
-## Audio status fields
+unless V5.2 or later is explicitly flashed and verified.
 
-The web app may use these to verify real hardware receipt:
+## Status fields used by the web app
 
+V5.1 reports:
+
+- `VER=51`
+- `NAME`
+- `FX`
+- `BG`
+- `FG`
+- `MAIN`
+- `BGB`
+- `FGB`
+- `MAINB`
+- `BRI`
+- `SPD`
+- `INT`
+- `SIZE`
+- `DENS`
+- `TRAIL`
+- `DIR`
+- `MIRROR`
+- `ORDER`
+- `LEDS`
+- `CFGLEDS`
+- `PIN`
+- `CFGPIN`
 - `AUDIO`
 - `AUDLIVE`
 - `AUDMODE`
@@ -70,38 +155,38 @@ The web app may use these to verify real hardware receipt:
 - `BASS`
 - `MID`
 - `HIGH`
-- `ARX` — compact audio receive count
-- `FRX` — 16-bin/FFT receive count
+- `ARX`
+- `HEAP`
+- `UP`
 
-A moving browser spectrograph is not proof of LED audio. The web app may claim audio receipt only when `ARX` (or deliberately tested `FRX`) increases on the ESP32.
+V5.1 does **not** report the V5.2 `FXCOUNT` catalog capability field.
 
-## Direct music effects
+## Background brightness
 
-These belong in the MUSIC tab, not duplicated in FX / COLORS:
+`BGB` is a real independent firmware control in V5.1. The firmware stores `backgroundBase` separately, applies `backgroundBrightness`, and refreshes role colors independently from foreground/main brightness.
 
-- `SPECTRUM`
-- `VU`
-- `AUDIO_PULSE`
-- `BEAT_FLASH`
-- `SONIC_STREAM`
-- `SONIC_BOOM`
-- `RIPPLE`
-- `STARBURST`
-- `POPCORN`
-- `DRIPDROP`
-- `HEARTBEAT`
+The UI should show BGB only when the selected effect actually renders the background role.
 
-`SPECTRUM` directly renders `audioBass`, `audioMid`, and `audioHigh` across three LED regions. The browser may analyze 16 bands for visualization, but the compact firmware-direct spectrum receives bass/mid/high through `A=`.
+## Compact audio packet
 
-## Persistence rules
+V5.1 accepts:
 
-Firmware `SAVE` stores the **currently active** state. Therefore a startup-effect workflow must:
+```text
+A=LLBBMMHHb
+```
 
-1. Apply the desired startup effect/state.
-2. Send `SAVE`.
-3. Optionally restore the current live state if not rebooting.
-4. Send `REBOOT` only after saving when reboot is requested.
+where `LL`, `BB`, `MM`, and `HH` are hex bytes and `b` is the beat flag. Accepted packets increment `ARX`.
+
+The current web controller has its Music/microphone surface removed by user direction. Do not reintroduce it unless explicitly requested and separately proven.
+
+## Persistence
+
+Firmware `SAVE` stores the currently active state. Startup workflows must apply the desired startup state before `SAVE`; reboot only after saving when requested.
 
 ## Change discipline
 
-If web code expects a command/status field not documented here, first verify it against the current `.ino`. Mark it `UNKNOWN` until verified. Do not infer WLED API behavior from effect names; V5.2 contains adapted WLED-style renderers, not the WLED runtime.
+1. Treat V5.1 / `VER=51` as the active hardware baseline.
+2. Do not infer support from a newer sketch merely because that file exists.
+3. Do not expose a command/effect that is absent from V5.1 unless the user explicitly upgrades the firmware and the new version is verified.
+4. Web/CSS/mobile layout edits do not change the ESP32 firmware baseline.
+5. Physical behavior remains user-tested unless direct hardware instrumentation is available.
