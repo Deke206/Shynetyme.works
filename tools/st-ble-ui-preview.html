@@ -1,23 +1,19 @@
 <!doctype html>
 <!--
-  ShyneTyme.Works ESP32 LED controller — Iteration 2.
+  ShyneTyme.Works ESP32 LED controller — Iteration 2, current forward source.
   Baseline: 20260908-sync1 (dual-device/group sync preserved).
+  Active hardware contract: ST_BT_V5_1_MAIN.ino / VER=51.
 
-  Runtime ownership:
-    st-ble-core.js = BLE/device/group transport only.
-    st-ble-ui.js   = UI/effects/colors/presets/playlists only.
-
-  Iteration 2 edits:
-    - Music surface removed from the web controller.
-    - Live LED/effect preview strip removed.
-    - Small/internal borders removed; large context frames retain the main perimeter.
-    - Effect labels show actual firmware color roles.
-    - Saved custom colors can be deleted.
-    - BGB remains because V5.2 firmware independently scales backgroundColor.
-    - Playlist is foreground-web only; Chrome may freeze hidden tabs.
-    - Bluetooth UI reduced to ADD BLUETOOTH + FORGET.
-    - Picker is filtered to the ShyneTyme service UUID in st-ble-core.js.
-    - V5.2 catalog effects are shown only after firmware capability is verified.
+  This revision:
+    - Keeps the existing BLE/group-sync core unchanged.
+    - Uses only verified V5.1 direct effects.
+    - Restores the SOLID firmware effect.
+    - Displays WIPE as STACK (WIPE) because its V5.1 renderer fills one LED at a time.
+    - Replaces styling sliders with - / level / + step controls; one tap = one firmware unit.
+    - Keeps DENSITY, TRAIL, DIRECTION, and MIRROR visible.
+    - Restores the dark-to-live hue picker interaction and continuous finger tracking.
+    - Keeps saved-color deletion.
+    - Renames CUSTOM PLAYLIST presentation to SEQUENCE and persists browser play intent.
 -->
 <html lang="en">
 <head>
@@ -31,23 +27,163 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="st-ble-ui.css?v=20260908-sync1">
   <style>
-    /* Iteration 2: large frames keep the perimeter; internal controls do not. */
-    .glass-btn,.glass-field,.role,.tiny-btn,.fx-item,.saved-color,.preset-card,.playlist-item,.group-card,.debug-log,.sim-slider,.hue-selector,
-    .assignment-grid,.settings-grid,.group-members label,.duration-wrap { border:0!important; outline:0; }
-    .glass-btn:hover,.role:hover,.tiny-btn:hover,.fx-item:hover { border-color:transparent!important; }
+    /* Large context frames keep the perimeter. Internal controls remain borderless. */
+    .glass-btn,.glass-field,.role,.tiny-btn,.fx-item,.saved-color,.preset-card,.playlist-item,.group-card,.debug-log,
+    .assignment-grid,.settings-grid,.group-members label,.duration-wrap,.step-btn,.level-meter,.hue-selector,#colorCapability {
+      border:0!important;
+      outline:0!important;
+    }
+    .glass-btn:hover,.role:hover,.tiny-btn:hover,.fx-item:hover,.step-btn:hover { border-color:transparent!important; }
     .glass-btn.primary,.glass-btn.danger { border-color:transparent!important; }
-    .sim-slider,.hue-selector { box-shadow:none!important; }
-    .fx-item.on,.role.on { border:0!important; box-shadow:0 0 14px rgba(0,191,255,.14)!important; background:rgba(0,191,255,.10)!important; }
+    .fx-item.on,.role.on {
+      border:0!important;
+      box-shadow:0 0 14px rgba(0,191,255,.14)!important;
+      background:rgba(0,191,255,.10)!important;
+    }
     .saved-color-wrap { position:relative; display:inline-grid; place-items:center; width:30px; height:30px; }
-    .saved-color-delete { position:absolute; right:-5px; top:-6px; width:16px; height:16px; padding:0; border:0; border-radius:50%; background:rgba(2,8,23,.88); color:#ff6e8c; font:900 13px/16px Oxanium; cursor:pointer; }
-    .control-unavailable { display:none!important; }
-    .role-unavailable { display:none!important; }
-    .status-compact { max-width:1100px; margin:8px auto 0; padding:0 16px; display:flex; justify-content:space-between; gap:12px; color:#70869d; font:800 6.8pt Oxanium; letter-spacing:.04em; }
+    .saved-color-delete {
+      position:absolute; right:-5px; top:-6px; width:16px; height:16px; padding:0; border:0; border-radius:50%;
+      background:rgba(2,8,23,.88); color:#ff6e8c; font:900 13px/16px Oxanium; cursor:pointer;
+    }
+    .control-unavailable,.role-unavailable { display:none!important; }
+    .status-compact {
+      max-width:1100px; margin:8px auto 0; padding:0 16px; display:flex; justify-content:space-between; gap:12px;
+      color:#70869d; font:800 6.8pt Oxanium; letter-spacing:.04em;
+    }
     .status-compact strong { color:#dff6ff; }
     .duration-wrap { display:grid; grid-template-columns:auto 70px; gap:5px; align-items:center; margin-left:auto; }
-    #colorCapability { margin:5px 0 8px; text-align:center; }
+    #colorCapability { margin:9px 0 12px; text-align:center; box-shadow:none!important; background:transparent!important; }
     .web-limit-note { margin-top:8px; text-align:center; color:#8aa0b7; }
     .assignment-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+    /* Finger-room effect styling: no draggable sliders. */
+    .styling-frame { padding-top:15px!important; padding-bottom:15px!important; }
+    .style-sliders { display:grid!important; gap:13px!important; margin:14px 0 16px!important; }
+    .slider-row {
+      grid-template-columns:112px minmax(0,1fr)!important;
+      gap:10px!important;
+      align-items:center!important;
+      margin:3px 0!important;
+      min-height:42px;
+    }
+    .slider-row label { font-size:9px!important; line-height:1.2; }
+    .step-control {
+      display:grid;
+      grid-template-columns:40px minmax(74px,1fr) 42px 40px;
+      gap:8px;
+      align-items:center;
+      min-height:40px;
+    }
+    .step-btn {
+      width:40px;
+      height:40px;
+      padding:0;
+      border-radius:10px;
+      background:rgba(6,23,48,.42);
+      color:#dff6ff;
+      font:900 20px/1 Oxanium;
+      box-shadow:none!important;
+      touch-action:manipulation;
+    }
+    .step-btn:active { background:rgba(0,191,255,.17); color:var(--blue); transform:scale(.96); }
+    .level-meter {
+      position:relative;
+      height:12px;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(0,3,12,.72);
+      box-shadow:inset 0 0 8px rgba(0,0,0,.62)!important;
+      pointer-events:none;
+    }
+    .level-meter .fill {
+      position:absolute;
+      inset:0 auto 0 0;
+      width:0;
+      border-radius:inherit;
+      background:linear-gradient(90deg,var(--pink),var(--yellow),var(--blue));
+      box-shadow:0 0 8px rgba(0,191,255,.35);
+    }
+    .step-control output {
+      text-align:center!important;
+      color:var(--blue);
+      font:800 9px Oxanium!important;
+    }
+    .more-style {
+      display:grid;
+      gap:13px;
+      margin:9px 0 3px;
+      padding:7px 0 3px;
+    }
+    .compact-row { margin-top:5px!important; min-height:40px; align-items:center; }
+    .compact-row .glass-field,.compact-row .glass-btn { min-height:36px; }
+
+    /* Larger role/effect labels for phone use. */
+    .role { font-size:10.5px!important; }
+    .role i { width:12px!important; height:12px!important; }
+    .fx-item span { font-size:11px!important; line-height:1.25; }
+    .fx-item small { font-size:8px!important; line-height:1.15; }
+    .fx-item { min-height:36px!important; padding-top:7px!important; padding-bottom:7px!important; }
+
+    /* Hue picker: dark at rest; localized spectrum wakes under the finger and tracks continuously. */
+    .hue-selector {
+      --hx:16.7%;
+      position:relative;
+      height:42px!important;
+      margin:12px 0 0!important;
+      border-radius:9px;
+      background:#000!important;
+      overflow:hidden;
+      box-shadow:none!important;
+      touch-action:none!important;
+      user-select:none;
+    }
+    .hue-selector::before { display:none!important; }
+    .hue-spectrum {
+      position:absolute;
+      inset:3px!important;
+      border-radius:7px!important;
+      opacity:.12!important;
+      transition:opacity .12s linear;
+      background:linear-gradient(90deg,#f00 0%,#ff0 16.67%,#0f0 33.33%,#0ff 50%,#00f 66.67%,#f0f 83.33%,#f00 100%)!important;
+      -webkit-mask-image:radial-gradient(ellipse 54px 30px at var(--hx) 50%,#000 0 56%,rgba(0,0,0,.82) 72%,transparent 100%)!important;
+      mask-image:radial-gradient(ellipse 54px 30px at var(--hx) 50%,#000 0 56%,rgba(0,0,0,.82) 72%,transparent 100%)!important;
+      pointer-events:none;
+    }
+    .hue-selector.dragging .hue-spectrum {
+      opacity:1!important;
+      -webkit-mask-image:radial-gradient(ellipse 86px 36px at var(--hx) 50%,#000 0 60%,rgba(0,0,0,.82) 76%,transparent 100%)!important;
+      mask-image:radial-gradient(ellipse 86px 36px at var(--hx) 50%,#000 0 60%,rgba(0,0,0,.82) 76%,transparent 100%)!important;
+    }
+    .hue-thumb {
+      left:var(--hx)!important;
+      width:4px!important;
+      height:30px!important;
+      border:0!important;
+      border-radius:99px!important;
+      background:#fff!important;
+      opacity:.18;
+      box-shadow:0 0 8px #fff,0 0 14px rgba(0,191,255,.65)!important;
+      pointer-events:none;
+      transition:opacity .12s linear;
+    }
+    .hue-selector.dragging .hue-thumb { opacity:1; }
+    .hue-selector input {
+      position:absolute;
+      z-index:4;
+      inset:0;
+      width:100%;
+      height:100%;
+      opacity:0;
+      touch-action:none;
+      cursor:ew-resize;
+    }
+
+    @media(max-width:560px){
+      .slider-row { grid-template-columns:96px minmax(0,1fr)!important; }
+      .step-control { grid-template-columns:38px minmax(54px,1fr) 38px 38px; gap:6px; }
+      .step-btn { width:38px; height:38px; }
+      .style-sliders { gap:15px!important; }
+    }
   </style>
 </head>
 <body>
@@ -96,7 +232,7 @@
             <label class="startup-field">STARTUP EFFECT<select id="startupFx" class="glass-field"></select></label>
           </div>
           <div class="button-row"><button id="saveDeviceSettings" class="glass-btn primary">SAVE SETTINGS</button><button id="saveDeviceReboot" class="glass-btn">SAVE + REBOOT</button><button id="saveStartup" class="glass-btn">SAVE STARTUP EFFECT</button></div>
-          <div class="microcopy">FROM/TO remains app-side because V5.2 has no verified segment-bound command.</div>
+          <div class="microcopy">FROM/TO remains app-side because V5.1 has no verified segment-bound command.</div>
         </section>
 
         <section class="context-frame debug-frame matrix-debug">
@@ -121,15 +257,67 @@
           <section class="context-frame styling-frame matrix-styling">
             <div class="context-title">EFFECT STYLING</div>
             <div class="style-sliders">
-              <div class="slider-row"><label>GLOBAL BRIGHTNESS</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="bri" type="range" min="0" max="255" value="96"></div><output id="briV">38%</output></div>
-              <div class="slider-row"><label>SPEED</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="spd" type="range" min="1" max="255" value="180"></div><output id="spdV">71%</output></div>
-              <div id="bgbRow" class="slider-row"><label>BACKGROUND BRIGHTNESS</label><div class="sim-slider"><span class="fill bg-fill"></span><span class="thumb"></span><input id="int" type="range" min="0" max="255" value="64"></div><output id="intV">25%</output></div>
-              <div class="slider-row"><label>SIZE</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="size" type="range" min="1" max="255" value="96"></div><output id="sizeV">38%</output></div>
-              <details class="more-style"><summary>MORE</summary>
-                <div class="slider-row"><label>DENSITY</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="dens" type="range" min="1" max="255" value="128"></div><output id="densV">50%</output></div>
-                <div class="slider-row"><label>TRAIL</label><div class="sim-slider"><span class="fill"></span><span class="thumb"></span><input id="trail" type="range" min="1" max="255" value="170"></div><output id="trailV">67%</output></div>
-                <div class="compact-row"><select id="dir" class="glass-field"><option value="FWD">FORWARD</option><option value="REV">REVERSE</option></select><button id="mirrorBtn" class="glass-btn">MIRROR</button><input id="mirror" type="checkbox" hidden></div>
-              </details>
+              <div class="slider-row">
+                <label>GLOBAL BRIGHTNESS</label>
+                <div class="step-control">
+                  <button class="step-btn" data-step-for="bri" data-delta="-1" aria-label="Brightness down">−</button>
+                  <div class="level-meter"><span class="fill"></span><input id="bri" data-step-value type="range" min="0" max="255" value="96" hidden></div>
+                  <output id="briV">38%</output>
+                  <button class="step-btn" data-step-for="bri" data-delta="1" aria-label="Brightness up">+</button>
+                </div>
+              </div>
+              <div class="slider-row">
+                <label>SPEED</label>
+                <div class="step-control">
+                  <button class="step-btn" data-step-for="spd" data-delta="-1" aria-label="Speed down">−</button>
+                  <div class="level-meter"><span class="fill"></span><input id="spd" data-step-value type="range" min="1" max="255" value="180" hidden></div>
+                  <output id="spdV">71%</output>
+                  <button class="step-btn" data-step-for="spd" data-delta="1" aria-label="Speed up">+</button>
+                </div>
+              </div>
+              <div id="bgbRow" class="slider-row">
+                <label>BACKGROUND BRIGHTNESS</label>
+                <div class="step-control">
+                  <button class="step-btn" data-step-for="int" data-delta="-1" aria-label="Background brightness down">−</button>
+                  <div class="level-meter"><span class="fill"></span><input id="int" data-step-value type="range" min="0" max="255" value="64" hidden></div>
+                  <output id="intV">25%</output>
+                  <button class="step-btn" data-step-for="int" data-delta="1" aria-label="Background brightness up">+</button>
+                </div>
+              </div>
+              <div class="slider-row">
+                <label>SIZE</label>
+                <div class="step-control">
+                  <button class="step-btn" data-step-for="size" data-delta="-1" aria-label="Size down">−</button>
+                  <div class="level-meter"><span class="fill"></span><input id="size" data-step-value type="range" min="1" max="255" value="96" hidden></div>
+                  <output id="sizeV">38%</output>
+                  <button class="step-btn" data-step-for="size" data-delta="1" aria-label="Size up">+</button>
+                </div>
+              </div>
+
+              <div class="more-style">
+                <div class="slider-row">
+                  <label>DENSITY</label>
+                  <div class="step-control">
+                    <button class="step-btn" data-step-for="dens" data-delta="-1" aria-label="Density down">−</button>
+                    <div class="level-meter"><span class="fill"></span><input id="dens" data-step-value type="range" min="1" max="255" value="128" hidden></div>
+                    <output id="densV">50%</output>
+                    <button class="step-btn" data-step-for="dens" data-delta="1" aria-label="Density up">+</button>
+                  </div>
+                </div>
+                <div class="slider-row">
+                  <label>TRAIL</label>
+                  <div class="step-control">
+                    <button class="step-btn" data-step-for="trail" data-delta="-1" aria-label="Trail down">−</button>
+                    <div class="level-meter"><span class="fill"></span><input id="trail" data-step-value type="range" min="1" max="255" value="170" hidden></div>
+                    <output id="trailV">67%</output>
+                    <button class="step-btn" data-step-for="trail" data-delta="1" aria-label="Trail up">+</button>
+                  </div>
+                </div>
+                <div class="compact-row">
+                  <select id="dir" class="glass-field"><option value="FWD">FORWARD</option><option value="REV">REVERSE</option></select>
+                  <button id="mirrorBtn" class="glass-btn">MIRROR</button><input id="mirror" type="checkbox" hidden>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -145,13 +333,13 @@
             <div id="hueSelector" class="hue-selector"><span class="hue-spectrum"></span><span class="hue-thumb"></span><input id="hueRange" type="range" min="0" max="359" value="60"></div>
             <div class="hue-readout"><span>HUE</span><strong id="hueValue">#FFFFFF</strong></div>
             <div class="saved-colors"><div id="savedColors" class="saved-color-list"></div><button id="saveColor" class="glass-btn">+ SAVE COLOR</button></div>
-            <div class="button-row"><button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button><button id="addFxPlaylist" class="glass-btn">ADD TO PLAYLIST</button></div>
+            <div class="button-row"><button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button><button id="addFxPlaylist" class="glass-btn">ADD TO SEQUENCE</button></div>
           </section>
         </div>
 
         <section class="context-frame effects-frame matrix-effects">
           <div class="effects-head"><span class="context-title">EFFECTS</span><span id="fxCount" class="effect-count"></span></div>
-          <input id="fxSearch" class="glass-field effect-search" placeholder="Search firmware effects…">
+          <input id="fxSearch" class="glass-field effect-search" placeholder="Search V5.1 firmware effects…">
           <div id="effectList" class="effect-list"></div>
         </section>
       </div>
@@ -165,17 +353,16 @@
     <section id="custom" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content centered-content"><section class="context-frame playlist-frame matrix-playlist">
-        <div class="context-title">CUSTOM PLAYLIST</div>
-        <input id="playlistName" class="glass-field playlist-name" value="My Light Sequence">
+        <div class="context-title">SEQUENCE</div>
         <div class="button-row centered"><button id="addCurrentFx" class="glass-btn">ADD CURRENT FX</button><button id="playPlaylist" class="glass-btn primary">PLAY</button><button id="shufflePlaylist" class="glass-btn" aria-pressed="false">SHUFFLE</button><button id="stopPlaylist" class="glass-btn">STOP</button><button id="clearPlaylist" class="glass-btn danger">CLEAR</button></div>
         <span id="playlistStatus" class="microcopy" style="display:block;text-align:center;margin:7px 0">Ordered loop ready</span>
         <div id="playlistList" class="playlist-list"></div>
-        <div class="microcopy web-limit-note">WEB LIMIT: Chrome may freeze or discard hidden tabs. Keep this page visible for reliable playlist timing; guaranteed background operation belongs in the native APK.</div>
+        <div class="microcopy web-limit-note">PLAY state and position are remembered by this browser and resume after the target reconnects. V5.1 has no firmware sequence scheduler, so Chrome must remain active for timing to advance.</div>
       </section></div>
     </section>
   </main>
 </div>
 <script src="st-ble-core.js?v=20260909-iter2-connect1"></script>
-<script src="st-ble-ui.js?v=20260909-iter2-effectverify1"></script>
+<script src="st-ble-ui.js?v=20260910-iter2-controls1"></script>
 </body>
 </html>
