@@ -73,6 +73,7 @@ let connectLock = Promise.resolve();
 let autoConnectTimer = 0;
 let manualBluetoothEpoch = 0;
 let userInteracted = false;
+let manualConnectBusy = false;
 const runtimes = new Map();
 
 function runtime(id) {
@@ -205,6 +206,7 @@ function snapshot() {
       id: d.id,
       name: d.name || "Bluetooth device",
     })),
+    manualConnectBusy,
   };
 }
 
@@ -288,6 +290,7 @@ function queueWrite(id, text, fast = false) {
   return r.queue;
 }
 async function sendToIds(ids, text, { fast = false } = {}) {
+  if (manualConnectBusy) return false;
   const requested = [...new Set(ids)];
   const active = requested.filter(connected);
   if (!active.length || active.length !== requested.length) return false;
@@ -474,23 +477,31 @@ async function assignGranted(id, btId) {
   return connectAssigned(id);
 }
 async function assignNew(id) {
+  if (manualConnectBusy) throw new Error("Bluetooth connection already in progress");
   beginManualBluetooth();
   if (!navigator.bluetooth) throw new Error("Web Bluetooth is not available");
   if (!window.isSecureContext)
     throw new Error("HTTPS is required for Bluetooth");
-  const bt = await navigator.bluetooth.requestDevice({
-    acceptAllDevices: true,
-    optionalServices: [STW_SERVICE_UUID],
-  });
-  granted.set(bt.id, bt);
-  const d = deviceById(id);
-  if (!d) throw new Error("Unknown device");
-  releaseExistingAssignment(bt.id, id);
-  d.bluetoothId = bt.id;
-  d.bluetoothName = bt.name || "Bluetooth device";
-  saveDevices();
-  emit("assigned", { deviceId: id });
-  return connectAssigned(id);
+
+  manualConnectBusy = true;
+  emit("manual-connect-start", { deviceId: id });
+  try {
+    const bt = await navigator.bluetooth.requestDevice({
+      filters: [{ services: [STW_SERVICE_UUID] }],
+    });
+    granted.set(bt.id, bt);
+    const d = deviceById(id);
+    if (!d) throw new Error("Unknown device");
+    releaseExistingAssignment(bt.id, id);
+    d.bluetoothId = bt.id;
+    d.bluetoothName = bt.name || "ShyneTyme ESP32";
+    saveDevices();
+    emit("assigned", { deviceId: id });
+    return await connectAssigned(id);
+  } finally {
+    manualConnectBusy = false;
+    emit("manual-connect-end", { deviceId: id });
+  }
 }
 async function autoConnect() {
   if (userInteracted || document.visibilityState !== "visible") return false;
@@ -749,5 +760,5 @@ window.STWBLE = {
   autoConnect,
 };
 
-// Iteration 1: do not auto-connect saved assignments on page load. Manual user action wins.
+// Manual connection only. No page-load reconnect attempts.
 queueMicrotask(() => emit("ready"));
