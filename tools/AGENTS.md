@@ -59,15 +59,19 @@ Accepted behavior that must survive every edit:
 - MUSIC UI/web microphone/music effects remain removed until a separately proven/native audio path exists.
 - SOLID is restored and must remain available; GRADIENT remains excluded unless explicitly requested.
 - V5.1 direct effects are the active effect source. V5.2 catalog effects remain unavailable unless newer firmware is explicitly flashed and verified.
-- WIPE is displayed as `STACK (WIPE)` because the verified V5.1 renderer advances the fill one LED at a time; the transmitted firmware ID remains `WIPE`.
-- Do not invent DOMINO, LIGHTSABER, LIGHT TUBE, or other effect names unless an exact supported implementation is verified.
+- WIPE remains labeled `WIPE`; do not relabel it STACK. Live testing showed the current V5.1 WIPE behavior is a color wipe, not the requested stacking animation.
+- `DANCING_SHADOWS` remains removed from the visible effect list.
+- Do not invent DOMINO, LIGHTSABER, LIGHT TUBE, STACK, or other effect names unless an exact supported implementation is verified in the installed firmware.
 - Effect labels use verified V5.1 firmware color roles.
 - Background brightness maps to firmware `BGB` and is shown only for effects that actually use the background role.
 - Saved custom colors are deletable.
 - Small/internal controls remain borderless; major section containers may retain framing.
-- Effect Styling uses borderless minus/level/plus step controls, one firmware unit per tap; do not restore draggable styling sliders unless explicitly requested.
+- Navigation is five centered glass tabs: DEVICE / EFFECTS / COLORS / PRESETS / CUSTOM. No underline indicator. Each tab has a dim glass state and a brighter ShyneTyme accent when selected.
+- Effects and Colors are separate pages. Effects contains the effect list first and Effect Styling second. Colors has the hue/color controls on its own page to prevent accidental hue changes while scrolling effects.
+- Effect Styling uses borderless 0-100% numeric inputs plus display-only gradient level bars. No draggable styling sliders and no plus/minus step buttons.
+- A styling percentage commits only on blur or Enter. Blank, non-numeric, or out-of-range values restore the last valid value. The percentage is translated to the verified V5.1 firmware raw range before sending.
 - DENSITY, TRAIL, DIRECTION, and MIRROR remain visible rather than hidden under MORE.
-- Hue interaction stays dark at rest, lights under the finger, tracks continuously while dragging, and commits the selected role color.
+- Hue interaction uses a clean full-width glass spectrum with 15px side margins, stays dim at rest, brightens while touched, tracks continuously while dragging, and commits the selected role color. Do not restore the radial/prism-mask look.
 - The Custom page presents the feature as `SEQUENCE`; no `My Light Sequence` name field.
 - Sequence preserves per-item TIME SEC, ordered loop, SHUFFLE, STOP-holds-current-effect, browser-persistent play intent, and browser-persistent position.
 - V5.1 has no firmware sequence scheduler. Never claim the ESP32 itself continues sequence timing after Chrome is frozen/closed. Browser timing remains foreground-dependent until firmware or native-app scheduling is added.
