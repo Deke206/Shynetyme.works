@@ -28,7 +28,15 @@ forbid(ui, "MUSIC_EFFECTS", "web Music implementation");
 forbid(ui, '"GRADIENT"', "gradient effect");
 for (const v52Only of ["ANDROID","FIRE_2012","PACMAN","PLASMA","PS_COMET","CANDLE_MULTI","STROBE_MEGA"]) forbid(ui, `"${v52Only}"`, `V5.2-only catalog effect ${v52Only}`);
 need(ui, '"SOLID"', "SOLID firmware effect restored");
-need(ui, 'WIPE: "STACK (WIPE)"', "verified stack label mapped to WIPE");
+need(ui, '"WIPE"', "WIPE firmware effect retained");
+forbid(ui, 'STACK (WIPE)', "false stack label");
+forbid(ui, '"DANCING_SHADOWS"', "removed Dancing Shadows effect");
+
+for (const page of ["device","effects","colors","presets","custom"]) need(html, `data-page="${page}"`, `tab ${page}`);
+forbid(html, 'data-page="fxcolor"', "combined FX/COLORS tab");
+need(html, '.tab::after,.tab.locked::before { display:none!important;', "tab underline removed");
+need(html, 'grid-template-columns:repeat(5,minmax(0,1fr))', "five centered glass tabs");
+need(html, '.tab.on {', "selected glass tab state");
 
 need(html, 'id="shufflePlaylist"', "sequence shuffle");
 need(html, 'id="playlistStatus"', "sequence status");
@@ -40,8 +48,8 @@ need(ui, "PLAYLIST_RUN_KEY", "persistent sequence play intent");
 need(ui, "PLAYLIST_POS_KEY", "persistent sequence position");
 need(ui, "choosePlaylistIndex", "sequence runner");
 
-need(ui, 'bri:"BRI"', "global brightness to BRI");
-need(ui, 'int:"BGB"', "background brightness to BGB");
+need(ui, 'bri: { key: "BRI"', "global brightness to BRI");
+need(ui, 'int: { key: "BGB"', "background brightness to BGB");
 need(ui, "`BRI=${s.bri", "saved BRI");
 need(ui, "`BGB=${s.bgb", "saved BGB");
 need(ui, "saved-color-delete", "saved-color delete");
@@ -49,17 +57,22 @@ need(ui, "FX_CAPS", "effect color-role metadata");
 need(html, 'id="bgbRow"', "background-brightness row");
 
 forbid(html, "sim-slider", "old draggable styling slider");
-if (count(html, 'class="step-btn"') !== 12) errors.push(`EXPECTED 12 step buttons, found ${count(html, 'class="step-btn"')}`);
-if (count(html, 'data-step-value') !== 6) errors.push(`EXPECTED 6 styling values, found ${count(html, 'data-step-value')}`);
-need(ui, 'qa(".step-btn")', "step-button controller");
-need(ui, 'Number(button.dataset.delta', "one-unit step calculation");
+forbid(html, "step-btn", "plus/minus styling buttons");
+if (count(html, 'class="percent-input"') !== 6) errors.push(`EXPECTED 6 percentage inputs, found ${count(html, 'class="percent-input"')}`);
+need(ui, "STYLE_CONTROLS", "percentage control mapping");
+need(ui, "commitPercent", "percentage commit handler");
+need(ui, 'input.addEventListener("blur"', "commit percentage on blur");
+need(ui, 'e.key === "Enter"', "commit percentage on Enter");
+need(ui, "restorePercent", "invalid percentage restores last value");
 need(html, '<div class="more-style">', "always-visible density/trail area");
 forbid(html, '<details class="more-style">', "collapsed MORE styling controls");
 
 need(ui, 'hueSelector.setPointerCapture', "finger-captured hue interaction");
 need(ui, 'addEventListener("pointermove"', "continuous hue pointer tracking");
 need(ui, 'style.setProperty("--hx"', "visible hue position tracking");
-need(html, '.hue-selector.dragging .hue-spectrum', "dark-to-live hue illumination");
+need(html, 'width:calc(100% - 30px)!important;', "hue side margins");
+need(html, '-webkit-mask-image:none!important;', "no radial prism mask");
+need(html, '.hue-selector.dragging .hue-spectrum', "dim-to-live glass hue interaction");
 
 need(core, "active.length !== requested.length", "all requested group devices must be connected");
 need(core, "result.every(Boolean)", "all group writes must succeed");
@@ -70,4 +83,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log("STBLE regression gate PASS");
-console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + STACK(WIPE), factual color roles, BGB, borderless step controls, finger-tracked hue, saved-color delete, sequence duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
+console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, five glass tabs, numeric 0-100 styling inputs, display-only level bars, finger-tracked glass hue, saved-color delete, sequence duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
