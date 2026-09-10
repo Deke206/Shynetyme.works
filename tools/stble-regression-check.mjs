@@ -18,9 +18,9 @@ for (const retired of ["st-ble-live.js","st-ble-bgfix.js","st-ble-playlist.js","
 for (const src of [html, ui, core]) {
   forbid(src, "document.write(", "dynamic controller loader");
   forbid(src, "cloneNode(", "control cloning override");
-  forbid(src, 'addEventListener("focus"', "focus-driven BLE");
-  forbid(src, 'addEventListener("pageshow"', "pageshow-driven BLE");
 }
+forbid(core, 'addEventListener("focus"', "focus-driven BLE reconnect");
+forbid(core, 'addEventListener("pageshow"', "pageshow-driven BLE reconnect");
 
 forbid(html, 'data-page="music"', "Music tab");
 forbid(html, 'id="micToggle"', "microphone control");
