@@ -55,21 +55,27 @@ Accepted behavior that must survive every edit:
 - Bluetooth actions are explicit/user-driven; no startup auto-connect.
 - Bluetooth picker is restricted to devices advertising the ShyneTyme service UUID.
 - Visible Bluetooth controls are ADD BLUETOOTH and FORGET only; do not restore ASSIGN or RECONNECT.
-- While a manual Bluetooth chooser/GATT connection is in progress, ordinary effect/slider sends are paused.
+- While a manual Bluetooth chooser/GATT connection is in progress, ordinary effect/control sends are paused.
 - MUSIC UI/web microphone/music effects remain removed until a separately proven/native audio path exists.
-- SOLID and GRADIENT remain excluded from the visible effect list unless the user explicitly restores them.
+- SOLID is restored and must remain available; GRADIENT remains excluded unless explicitly requested.
 - V5.1 direct effects are the active effect source. V5.2 catalog effects remain unavailable unless newer firmware is explicitly flashed and verified.
-- Effect labels use verified firmware color roles.
+- WIPE is displayed as `STACK (WIPE)` because the verified V5.1 renderer advances the fill one LED at a time; the transmitted firmware ID remains `WIPE`.
+- Do not invent DOMINO, LIGHTSABER, LIGHT TUBE, or other effect names unless an exact supported implementation is verified.
+- Effect labels use verified V5.1 firmware color roles.
 - Background brightness maps to firmware `BGB` and is shown only for effects that actually use the background role.
 - Saved custom colors are deletable.
 - Small/internal controls remain borderless; major section containers may retain framing.
-- Playlist preserves per-item TIME SEC, ordered loop, SHUFFLE, and STOP-holds-current-effect.
-- Browser playlist timing is foreground-only; never claim guaranteed hidden-tab/background execution.
+- Effect Styling uses borderless minus/level/plus step controls, one firmware unit per tap; do not restore draggable styling sliders unless explicitly requested.
+- DENSITY, TRAIL, DIRECTION, and MIRROR remain visible rather than hidden under MORE.
+- Hue interaction stays dark at rest, lights under the finger, tracks continuously while dragging, and commits the selected role color.
+- The Custom page presents the feature as `SEQUENCE`; no `My Light Sequence` name field.
+- Sequence preserves per-item TIME SEC, ordered loop, SHUFFLE, STOP-holds-current-effect, browser-persistent play intent, and browser-persistent position.
+- V5.1 has no firmware sequence scheduler. Never claim the ESP32 itself continues sequence timing after Chrome is frozen/closed. Browser timing remains foreground-dependent until firmware or native-app scheduling is added.
 
 ## Single-owner rule
 
 - BLE transport/device/group state: `st-ble-core.js`
-- UI/effects/colors/presets/playlist: `st-ble-ui.js`
+- UI/effects/colors/presets/sequence: `st-ble-ui.js`
 - Markup: `st-ble-ui-preview.html`
 - Styling: `st-ble-ui.css` or deliberately scoped static CSS in the canonical HTML
 
@@ -113,6 +119,7 @@ Do not introduce:
 - ASSIGN/RECONNECT UI in the current Bluetooth workflow unless explicitly requested.
 - `acceptAllDevices: true` for the ShyneTyme picker while the firmware advertises the verified service UUID.
 - unconditional success when only one requested group member succeeds.
-- reintroduction of removed Music/SOLID/gradient behavior without explicit user direction.
+- reintroduction of removed Music/gradient behavior without explicit user direction.
 - V5.2-only catalog effects on the V5.1 hardware baseline.
+- invented effect names that do not map to a verified V5.1 firmware ID.
 - use of any non-main branch as a source for current work without explicit user rollback instruction.
