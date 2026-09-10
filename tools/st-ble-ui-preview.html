@@ -15,6 +15,8 @@
     - Saved custom colors can be deleted.
     - BGB remains because V5.2 firmware independently scales backgroundColor.
     - Playlist is foreground-web only; Chrome may freeze hidden tabs.
+    - Bluetooth UI reduced to ADD BLUETOOTH + FORGET.
+    - Picker is filtered to the ShyneTyme service UUID in st-ble-core.js.
 -->
 <html lang="en">
 <head>
@@ -44,6 +46,7 @@
     .duration-wrap { display:grid; grid-template-columns:auto 70px; gap:5px; align-items:center; margin-left:auto; }
     #colorCapability { margin:5px 0 8px; text-align:center; }
     .web-limit-note { margin-top:8px; text-align:center; color:#8aa0b7; }
+    .assignment-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   </style>
 </head>
 <body>
@@ -72,15 +75,12 @@
 
       <div id="deviceTools" class="device-tools locked-panel">
         <section class="context-frame assignment-frame matrix-bluetooth">
-          <div class="context-title">BLUETOOTH ASSIGNMENT</div>
+          <div class="context-title">BLUETOOTH</div>
           <div class="assignment-grid">
-            <select id="grantedBluetooth" class="glass-field"><option value="">Previously granted Bluetooth devices</option></select>
-            <button id="assignGranted" class="glass-btn primary">ASSIGN</button>
-            <button id="addBluetooth" class="glass-btn">ADD BLUETOOTH — ONE TIME</button>
-            <button id="reconnectSelected" class="glass-btn">RECONNECT</button>
-            <button id="unassignBluetooth" class="glass-btn danger">UNASSIGN</button>
+            <button id="addBluetooth" class="glass-btn primary">ADD BLUETOOTH</button>
+            <button id="unassignBluetooth" class="glass-btn danger">FORGET</button>
           </div>
-          <div class="microcopy">Saved browser device IDs are used only when you explicitly ASSIGN or RECONNECT. Sync1 automatic group targeting is preserved.</div>
+          <div class="microcopy">Select a logical ESP32 card, then ADD BLUETOOTH. The picker is restricted to devices advertising the ShyneTyme service. FORGET clears that card's saved browser-device binding.</div>
         </section>
 
         <section class="context-frame settings-frame matrix-settings">
@@ -174,7 +174,7 @@
     </section>
   </main>
 </div>
-<script src="st-ble-core.js?v=20260908-sync1"></script>
+<script src="st-ble-core.js?v=20260909-iter2-connect1"></script>
 <script src="st-ble-ui.js?v=20260908-iter2"></script>
 </body>
 </html>
