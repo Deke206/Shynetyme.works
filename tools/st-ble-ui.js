@@ -6,16 +6,15 @@
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   // Active hardware baseline: ST_BT_V5_1_MAIN.ino / VER=51.
-  // Only direct V5.1 firmware effect IDs belong here.
+  // Only verified direct V5.1 firmware effect IDs belong here.
   const DIRECT_FX = [
     "SOLID","RAINBOW","RAINBOW_GLITTER","COMET","METEOR","SCANNER","DUAL_SCANNER","POLICE",
     "CHASE","TRICOLOR_CHASE","RUNNING_DOTS","THEATER","WIPE","FLOW","FLOW_STRIPE","COLOR_WAVES",
     "SPARKLE","GLITTER","TWINKLE","TWINKLEFOX","TWINKLECAT","FIREWORKS","RAIN","TETRIX","FIRE",
-    "LIGHTNING","PACIFICA","SUNRISE","DANCING_SHADOWS","PRIDE","SINELON","JUGGLE","BOUNCING_BALLS",
+    "LIGHTNING","PACIFICA","SUNRISE","PRIDE","SINELON","JUGGLE","BOUNCING_BALLS",
     "LAVA_LAMP","MAGMA","AURORA","BREATHE","FLASH","DUAL_FLASH"
   ];
   const FX_EFFECTS = DIRECT_FX;
-  const FX_LABELS = Object.freeze({ WIPE: "STACK (WIPE)" });
 
   const THREE = ["bg", "fg", "main"];
   const TWO_FG_MAIN = ["fg", "main"];
@@ -24,7 +23,16 @@
     SOLID: { roles: ["fg"], label: "FOREGROUND" },
     RAINBOW: { roles: [], label: "BUILT-IN COLOR" },
     RAINBOW_GLITTER: { roles: ["main"], label: "MAIN + BUILT-IN" },
+    COMET: { roles: TWO_FG_MAIN },
+    METEOR: { roles: TWO_FG_MAIN },
     POLICE: { roles: TWO_FG_MAIN },
+    GLITTER: { roles: TWO_FG_MAIN },
+    FIREWORKS: { roles: TWO_FG_MAIN },
+    RAIN: { roles: TWO_FG_MAIN },
+    LIGHTNING: { roles: TWO_FG_MAIN },
+    SINELON: { roles: TWO_FG_MAIN },
+    JUGGLE: { roles: TWO_FG_MAIN },
+    BOUNCING_BALLS: { roles: TWO_FG_MAIN },
     FLASH: { roles: ["bg", "main"] }
   });
 
@@ -37,6 +45,14 @@
   const PLAYLIST_POS_KEY = "stw-esp32-sequence-position-v1";
   const DEFAULT_PLAYLIST_SECONDS = 5;
   const BUILTIN_COLORS = ["#DFFF00", "#FF00AA", "#0080FF", "#FFFFFF", "#000000"];
+  const STYLE_CONTROLS = Object.freeze({
+    bri: { key: "BRI", min: 0, max: 255 },
+    spd: { key: "SPD", min: 1, max: 255 },
+    int: { key: "BGB", min: 0, max: 255 },
+    size: { key: "SIZE", min: 1, max: 255 },
+    dens: { key: "DENS", min: 1, max: 255 },
+    trail: { key: "TRAIL", min: 1, max: 255 }
+  });
 
   let snap = window.STWBLE?.snapshot?.() || { devices: [], groups: [], target: null, passkey: false, granted: [] };
   let activePage = "device", activeFx = "RAINBOW", activeRole = "main", formDirty = false;
@@ -46,7 +62,7 @@
 
   const loadJSON = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
   const saveJSON = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} };
-  const prettyFx = (fx) => FX_LABELS[fx] || String(fx || "").replace(/^PS_/, "PS ").replaceAll("_", " ");
+  const prettyFx = (fx) => String(fx || "").replace(/^PS_/, "PS ").replaceAll("_", " ");
   const rolesFor = (fx) => FX_CAPS[fx]?.roles || THREE;
   const metaFor = (fx) => FX_CAPS[fx]?.label || rolesFor(fx).map((r) => r.toUpperCase()).join(" · ");
   const visibleEffects = () => DIRECT_FX;
@@ -84,7 +100,7 @@
       b.classList.toggle("locked", !snap.passkey);
       b.setAttribute("aria-disabled", snap.passkey ? "false" : "true");
     });
-    ["fxcolor", "presets", "custom"].forEach((id) => q(`#${id}`)?.classList.toggle("locked-page", !snap.passkey));
+    ["effects", "colors", "presets", "custom"].forEach((id) => q(`#${id}`)?.classList.toggle("locked-page", !snap.passkey));
     if (!snap.passkey && activePage !== "device") showPage("device");
   }
   function showPage(id) {
@@ -119,20 +135,33 @@
   }
 
   function loadDeviceForm(force = false) {
-    const d = selectedDevice(); q("#deviceTools")?.classList.toggle("locked-panel", !d); if (!d || (formDirty && !force)) return;
-    q("#settingsDeviceName").textContent = d.name; q("#deviceName").value = d.name;
-    q("#leds").value = d.config?.leds ?? 300; q("#gpio").value = d.config?.gpio ?? 13; q("#order").value = d.config?.order || "GRB";
-    q("#segFrom").value = d.config?.segFrom ?? 0; q("#segTo").value = d.config?.segTo ?? Math.max(0, (d.config?.leds ?? 300) - 1);
+    const d = selectedDevice();
+    q("#deviceTools")?.classList.toggle("locked-panel", !d);
+    if (!d || (formDirty && !force)) return;
+    q("#settingsDeviceName").textContent = d.name;
+    q("#deviceName").value = d.name;
+    q("#leds").value = d.config?.leds ?? 300;
+    q("#gpio").value = d.config?.gpio ?? 13;
+    q("#order").value = d.config?.order || "GRB";
+    q("#segFrom").value = d.config?.segFrom ?? 0;
+    q("#segTo").value = d.config?.segTo ?? Math.max(0, (d.config?.leds ?? 300) - 1);
     const allowed = visibleEffects();
-    q("#startupFx").value = allowed.includes(d.config?.startupFx) ? d.config.startupFx : "RAINBOW"; formDirty = false;
+    q("#startupFx").value = allowed.includes(d.config?.startupFx) ? d.config.startupFx : "RAINBOW";
+    formDirty = false;
   }
   ["deviceName","leds","gpio","order","segFrom","segTo","startupFx"].forEach((id) => q(`#${id}`)?.addEventListener("input", () => { formDirty = true; }));
   q("#addLogicalDevice")?.addEventListener("click", () => window.STWBLE.addLogicalDevice());
   q("#addBluetooth")?.addEventListener("click", async () => {
     let d = selectedDevice();
-    if (!d && snap.devices[0]) { window.STWBLE.selectDevice(snap.devices[0].id); await sleep(0); snap = window.STWBLE.snapshot(); d = selectedDevice(); }
+    if (!d && snap.devices[0]) {
+      window.STWBLE.selectDevice(snap.devices[0].id);
+      await sleep(0);
+      snap = window.STWBLE.snapshot();
+      d = selectedDevice();
+    }
     if (!d) return;
-    try { await window.STWBLE.assignNew(d.id); } catch (e) { log(e.name === "NotFoundError" ? "Bluetooth selection cancelled." : e.message); }
+    try { await window.STWBLE.assignNew(d.id); }
+    catch (e) { log(e.name === "NotFoundError" ? "Bluetooth selection cancelled." : e.message); }
   });
   q("#unassignBluetooth")?.addEventListener("click", () => { const d = selectedDevice(); if (d) window.STWBLE.unassignBluetooth(d.id); });
 
@@ -140,12 +169,15 @@
   async function saveSettings(reboot) {
     const d = selectedDevice(); if (!d) return;
     try {
-      const cfg = deviceFormConfig(); await window.STWBLE.saveDeviceConfig(d.id, cfg, { reboot:false }); window.STWBLE.renameDevice(d.id, q("#deviceName").value);
+      const cfg = deviceFormConfig();
+      await window.STWBLE.saveDeviceConfig(d.id, cfg, { reboot:false });
+      window.STWBLE.renameDevice(d.id, q("#deviceName").value);
       if (reboot) {
         const fx = cfg.startupFx || "RAINBOW";
         if (!(await sendDevice(d.id, `FX=${fx}`)) || !(await sendDevice(d.id, "SAVE")) || !(await sendDevice(d.id, "REBOOT"))) throw Error("Save/reboot failed");
       }
-      formDirty = false; log(reboot ? "Settings saved; startup saved; reboot sent." : "Device settings saved.");
+      formDirty = false;
+      log(reboot ? "Settings saved; startup saved; reboot sent." : "Device settings saved.");
     } catch (e) { log(`Settings: ${e.message}`); }
   }
   q("#saveDeviceSettings")?.addEventListener("click", () => saveSettings(false));
@@ -172,7 +204,8 @@
   });
 
   function renderGroups() {
-    const host = q("#groupList"); if (!host) return; host.innerHTML = "";
+    const host = q("#groupList"); if (!host) return;
+    host.innerHTML = "";
     for (const g of snap.groups) {
       const card = document.createElement("article"), selected = snap.target?.type === "group" && snap.target.id === g.id;
       card.className = "group-card";
@@ -195,26 +228,74 @@
     catch (e) { log(e.message); }
   });
 
-  // Step controls: no draggable styling sliders. One button tap = one firmware unit.
+  // Numeric Effect Styling controls. User enters 0-100%; blur or Enter commits to firmware.
+  const rawToPercent = (id, raw) => {
+    const c = STYLE_CONTROLS[id];
+    if (!c) return 0;
+    return clamp(Math.round(((Number(raw) - c.min) / Math.max(1, c.max - c.min)) * 100), 0, 100);
+  };
+  const percentToRaw = (id, pct) => {
+    const c = STYLE_CONTROLS[id];
+    if (!c) return 0;
+    return Math.round(c.min + (clamp(Number(pct), 0, 100) / 100) * (c.max - c.min));
+  };
+  function paintPercent(id, pct) {
+    const input = q(`[data-percent-for="${id}"]`);
+    input?.closest(".percent-control")?.querySelector(".fill")?.style.setProperty("width", `${clamp(Number(pct),0,100)}%`);
+  }
   function updateSlider(x) {
     if (!x) return;
-    const min = Number(x.min || 0), max = Number(x.max || 255);
-    const pct = clamp(((Number(x.value) - min) / (max - min)) * 100, 0, 100);
-    const control = x.closest(".step-control");
-    control?.querySelector(".fill")?.style.setProperty("width", `${pct}%`);
-    const out = q(`#${x.id}V`);
-    if (out) out.textContent = `${Math.round(pct)}%`;
+    const pct = rawToPercent(x.id, x.value);
+    const input = q(`[data-percent-for="${x.id}"]`);
+    if (input) {
+      input.value = String(pct);
+      input.dataset.lastValid = String(pct);
+    }
+    paintPercent(x.id, pct);
   }
-  const updateAllSliders = () => qa(".step-control input[data-step-value]").forEach(updateSlider);
-  const SLIDERS = { bri:"BRI", spd:"SPD", int:"BGB", size:"SIZE", dens:"DENS", trail:"TRAIL" };
-  qa(".step-btn").forEach((button) => button.addEventListener("click", async () => {
-    const id = button.dataset.stepFor, x = q(`#${id}`), key = SLIDERS[id];
-    if (!x || !key) return;
-    const next = clamp(Number(x.value) + Number(button.dataset.delta || 0), Number(x.min || 0), Number(x.max || 255));
-    x.value = String(next);
-    updateSlider(x);
-    await send(`${key}=${x.value}`, { fast:true });
-  }));
+  const updateAllSliders = () => Object.keys(STYLE_CONTROLS).forEach((id) => updateSlider(q(`#${id}`)));
+  function restorePercent(input) {
+    const id = input?.dataset.percentFor;
+    if (!id) return;
+    updateSlider(q(`#${id}`));
+  }
+  async function commitPercent(input) {
+    const id = input?.dataset.percentFor, cfg = STYLE_CONTROLS[id];
+    if (!id || !cfg) return false;
+    const text = String(input.value ?? "").trim();
+    const pct = Number(text);
+    if (!text || !Number.isFinite(pct) || pct < 0 || pct > 100) {
+      restorePercent(input);
+      return false;
+    }
+    const normalized = Math.round(pct);
+    const rawInput = q(`#${id}`);
+    const oldRaw = rawInput.value;
+    const raw = percentToRaw(id, normalized);
+    const ok = await send(`${cfg.key}=${raw}`, { fast:true });
+    if (!ok) {
+      rawInput.value = oldRaw;
+      restorePercent(input);
+      return false;
+    }
+    rawInput.value = String(raw);
+    input.value = String(normalized);
+    input.dataset.lastValid = String(normalized);
+    paintPercent(id, normalized);
+    return true;
+  }
+  qa(".percent-input").forEach((input) => {
+    input.addEventListener("focus", () => input.select());
+    input.addEventListener("input", () => {
+      const pct = Number(input.value);
+      if (String(input.value).trim() && Number.isFinite(pct) && pct >= 0 && pct <= 100) paintPercent(input.dataset.percentFor, pct);
+    });
+    input.addEventListener("blur", () => { void commitPercent(input); });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); input.blur(); }
+      if (e.key === "Escape") { e.preventDefault(); restorePercent(input); input.blur(); }
+    });
+  });
   q("#dir")?.addEventListener("change", () => send(`DIR=${q("#dir").value}`, { fast:true }));
   q("#mirrorBtn")?.addEventListener("click", () => {
     q("#mirror").checked = !q("#mirror").checked;
@@ -289,9 +370,7 @@
     try { hueSelector.setPointerCapture(e.pointerId); } catch {}
     liveHue(hueFromPointer(e));
   });
-  hueSelector?.addEventListener("pointermove", (e) => {
-    if (hueDragging) liveHue(hueFromPointer(e));
-  });
+  hueSelector?.addEventListener("pointermove", (e) => { if (hueDragging) liveHue(hueFromPointer(e)); });
   const finishHue = async (e) => {
     if (!hueDragging) return;
     hueDragging = false;
@@ -315,7 +394,8 @@
     return list.map((c) => String(c).toUpperCase()).filter((c) => /^#[0-9A-F]{6}$/.test(c));
   }
   function renderSavedColors() {
-    const host=q("#savedColors"); if(!host)return; host.innerHTML="";
+    const host=q("#savedColors"); if(!host)return;
+    host.innerHTML="";
     const items=[...BUILTIN_COLORS.map((color)=>({color,builtin:true})),...customColors().map((color)=>({color,builtin:false}))];
     for(const {color,builtin} of items){
       const wrap=document.createElement("span"); wrap.className="saved-color-wrap";
@@ -477,9 +557,7 @@
     return x;
   }
   const savePlaylist=(x)=>saveJSON(PLAYLIST_KEY,x.slice(0,100));
-  function addPlaylist(state){
-    const list=playlist();list.push({...state,durationSec:Number(state.durationSec)||DEFAULT_PLAYLIST_SECONDS});savePlaylist(list);renderPlaylist();
-  }
+  function addPlaylist(state){const list=playlist();list.push({...state,durationSec:Number(state.durationSec)||DEFAULT_PLAYLIST_SECONDS});savePlaylist(list);renderPlaylist();}
   q("#addFxPlaylist")?.addEventListener("click",()=>addPlaylist(captureState(prettyFx(activeFx))));
   q("#addCurrentFx")?.addEventListener("click",()=>addPlaylist(captureState(prettyFx(activeFx))));
 
@@ -590,5 +668,5 @@
   loadDeviceForm(true);
   q("#playlistStatus").textContent=localStorage.getItem(PLAYLIST_RUN_KEY)==="1"?"Resume pending · connect target":"Ordered loop ready";
   if(localStorage.getItem(PLAYLIST_RUN_KEY)==="1"&&snap.passkey)startPlaylist(true);
-  log("Iteration 2 current: V5.1 effects · SOLID restored · STACK (WIPE) alias · step controls · restored live hue interaction · Sequence state persists in browser.");
+  log("Iteration 2 current: V5.1 direct effects · SOLID restored · WIPE kept factual · percentage-entry styling · separate glass Effects/Colors tabs · Sequence state persists in browser.");
 })();
