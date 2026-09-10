@@ -17,6 +17,18 @@ Do not use, copy from, merge from, or restore any old branch, recovery page, pic
 
 Historical builds belong in the user's Google Drive archive `ESP32. Work/WebApp Debug`, not in the active runtime tree.
 
+## Hardware / firmware baseline
+
+Current physical-controller baseline: `ST_BT_V5_1_MAIN.ino`, status `VER=51`.
+
+Treat V5.1 as the firmware actually in use unless the user explicitly flashes a newer sketch and that new version is verified from device status or serial output.
+
+V5.1 has the direct effect engine and the verified BLE/state commands documented in `STBLE_FIRMWARE_CONTRACT.md`. It does **not** have the later V5.2 WLED-style catalog layer.
+
+`ST_BT_V5_2_MAIN.ino` is a later development artifact. Its catalog-only effects (for example `ANDROID`, `FIRE_2012`, `PACMAN`, `PLASMA`, `PS_COMET`) must not be exposed as normal active effects on the V5.1 hardware baseline. Do not promote V5.2 assumptions merely because the source file exists.
+
+Web/mobile CSS or HTML fixes do not change the ESP32 firmware baseline.
+
 ## Iteration lifecycle
 
 Use exactly this lifecycle for one debugging objective:
@@ -46,6 +58,7 @@ Accepted behavior that must survive every edit:
 - While a manual Bluetooth chooser/GATT connection is in progress, ordinary effect/slider sends are paused.
 - MUSIC UI/web microphone/music effects remain removed until a separately proven/native audio path exists.
 - SOLID and GRADIENT remain excluded from the visible effect list unless the user explicitly restores them.
+- V5.1 direct effects are the active effect source. V5.2 catalog effects remain unavailable unless newer firmware is explicitly flashed and verified.
 - Effect labels use verified firmware color roles.
 - Background brightness maps to firmware `BGB` and is shown only for effects that actually use the background role.
 - Saved custom colors are deletable.
@@ -79,13 +92,14 @@ If evidence does not establish the claim, mark it UNKNOWN. Never convert code re
 1. Read this file and the current canonical files before editing.
 2. Confirm the current iteration and do not source code from any older iteration.
 3. State the accepted behaviors that must survive.
-4. Compare BLE/effect commands with V5.2 firmware/firmware contract.
-5. Make the smallest complete change in the owning canonical file.
-6. Run JavaScript syntax checking on changed JS.
-7. Run `node tools/stble-regression-check.mjs`.
-8. Inspect the diff for duplicate owners, injected patches, lost controls, stale script references, and cache-tag mistakes.
-9. Verify the GitHub Actions result when available.
-10. Report TESTED/VERIFIED only for checks actually run. Physical device behavior remains user-tested until direct hardware instrumentation exists.
+4. Compare BLE/effect commands with `ST_BT_V5_1_MAIN.ino` / the V5.1 firmware contract.
+5. Do not use V5.2-only catalog behavior unless the user has explicitly flashed V5.2 and device status verifies it.
+6. Make the smallest complete change in the owning canonical file.
+7. Run JavaScript syntax checking on changed JS.
+8. Run `node tools/stble-regression-check.mjs`.
+9. Inspect the diff for duplicate owners, injected patches, lost controls, stale script references, and cache-tag mistakes.
+10. Verify the GitHub Actions result when available.
+11. Report TESTED/VERIFIED only for checks actually run. Physical device behavior remains user-tested until direct hardware instrumentation exists.
 
 ## Forbidden patterns
 
@@ -100,4 +114,5 @@ Do not introduce:
 - `acceptAllDevices: true` for the ShyneTyme picker while the firmware advertises the verified service UUID.
 - unconditional success when only one requested group member succeeds.
 - reintroduction of removed Music/SOLID/gradient behavior without explicit user direction.
+- V5.2-only catalog effects on the V5.1 hardware baseline.
 - use of any non-main branch as a source for current work without explicit user rollback instruction.
