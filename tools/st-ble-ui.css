@@ -1,14 +1,36 @@
 /*
- * ShyneTyme.Works ESP32 controller presentation layer.
- * Maintenance snapshot: 2026-09-05.
+ * ShyneTyme.Works STBLE controller — shared/base presentation layer.
  *
- * Presentation only: Bluetooth/device/effect behavior lives in JavaScript.
- * Preserve the midnight-blue foundation, ShyneTyme pink/yellow/blue accents,
- * compact glass controls, and continuous motion language unless intentionally
- * redesigning the product.
+ * FILE ROLE
+ * ---------
+ * This file owns reusable presentation primitives and responsive layout for the
+ * current STBLE page. It must not contain Bluetooth logic, effect commands,
+ * persistence logic, or runtime patch behavior.
+ *
+ * Current Iteration-2 visual changes that must override this base layer live in
+ * the scoped <style> block inside st-ble-ui-preview.html. That override layer is
+ * intentional because it represents the reviewed current UI contract.
+ *
+ * ACTIVE OWNERSHIP MAP
+ * --------------------
+ * - Header / brand / navigation base chrome
+ * - Page locking and major context frames
+ * - Device cards, BLE status dots, device settings/debug/group layout
+ * - Shared glass buttons/fields
+ * - Effect list and effect-role controls
+ * - Color selector structural styling
+ * - Preset and Sequence cards/rows
+ * - Responsive reductions and shared animations
+ *
+ * Retired CSS for the removed Music page, old live-preview strip, draggable
+ * sim-slider, obsolete preset editor/modal, and other no-owner experiments has
+ * been intentionally removed from this active stylesheet.
  */
 
-/* Design tokens: midnight-blue surfaces and ShyneTyme accent colors. */
+/* ========================================================================== */
+/* 1. DESIGN TOKENS / DOCUMENT FOUNDATION                                     */
+/* ========================================================================== */
+
 :root {
   --midnight: #020817;
   --midnight2: #061126;
@@ -25,10 +47,11 @@
   --glass2: rgba(7, 24, 51, 0.36);
   --line: rgba(105, 196, 255, 0.16);
 }
+
 * {
   box-sizing: border-box;
 }
-/* Document foundation and monochrome midnight-blue page background. */
+
 html,
 body {
   margin: 0;
@@ -40,30 +63,40 @@ body {
     system-ui,
     sans-serif;
 }
+
 button,
 input,
 select {
   font: inherit;
 }
+
 button {
   cursor: pointer;
 }
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.35;
 }
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
+
 .app {
   min-height: 100vh;
   background: linear-gradient(180deg, #020817 0%, #03102a 54%, #020817 100%);
   overflow-x: hidden;
 }
-/* Sticky brand/header chrome. */
+
+/* ========================================================================== */
+/* 2. HEADER / BRAND / NAVIGATION BASE                                        */
+/* ========================================================================== */
+
+/* Sticky header. The current target/effect summary is rendered below nav. */
 .topbar {
   height: 44px;
   display: flex;
@@ -77,6 +110,7 @@ select:focus-visible {
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(0, 191, 255, 0.12);
 }
+
 .brand {
   position: absolute;
   left: 50%;
@@ -85,18 +119,23 @@ select:focus-visible {
   letter-spacing: 0.045em;
   white-space: nowrap;
 }
+
 .brand-pink {
   color: var(--pink);
   text-shadow: 0 0 11px rgba(255, 44, 168, 0.55);
 }
+
 .brand-yellow {
   color: var(--yellow);
   text-shadow: 0 0 11px rgba(255, 242, 0, 0.45);
 }
+
 .brand-blue {
   color: var(--blue);
   text-shadow: 0 0 11px rgba(0, 191, 255, 0.55);
 }
+
+/* Decorative brand light only; it has no controller state meaning. */
 .brand-led {
   display: inline-block;
   width: 7px;
@@ -109,26 +148,17 @@ select:focus-visible {
     0 0 14px rgba(0, 191, 255, 0.9);
   animation: brandBlink 1.05s ease-in-out infinite;
 }
-/* Continuous ShyneTyme motion system. */
-@keyframes brandBlink {
-  0%,
-  100% {
-    opacity: 0.25;
-  }
-  45% {
-    opacity: 1;
-    box-shadow:
-      0 0 6px var(--blue),
-      0 0 18px var(--blue),
-      0 0 28px rgba(0, 191, 255, 0.55);
-  }
-}
+
 .ble-summary {
   color: var(--blue);
   font: 800 7pt Oxanium;
   letter-spacing: 0.07em;
 }
-/* Five-tab navigation and selected/locked states. */
+
+/*
+ * Base navigation geometry. The accepted Iteration-2 glass appearance and the
+ * no-underline rule are applied later by st-ble-ui-preview.html.
+ */
 .tabs {
   height: 40px;
   display: flex;
@@ -143,6 +173,7 @@ select:focus-visible {
   border-bottom: 1px solid rgba(0, 191, 255, 0.1);
   overflow-x: auto;
 }
+
 .tab {
   height: 38px;
   padding: 0 2px;
@@ -154,6 +185,8 @@ select:focus-visible {
   position: relative;
   white-space: nowrap;
 }
+
+/* Historical base underline. Current Iteration-2 explicitly disables it. */
 .tab::after {
   content: "";
   position: absolute;
@@ -174,39 +207,92 @@ select:focus-visible {
   transition: 0.18s;
   animation: edgeFlow 3.4s linear infinite;
 }
+
 .tab.on {
   color: #fff;
   text-shadow: 0 0 9px rgba(0, 191, 255, 0.42);
 }
+
 .tab.on::after {
   left: 0;
   right: 0;
   opacity: 1;
 }
+
 .tab.locked {
   color: #40566b;
 }
+
 .tab.locked::before {
   content: "•";
   color: var(--red);
   margin-right: 4px;
 }
-/* Persistent selected-device/effect viewer. */
-.live-state {
-  width: min(920px, calc(100% - 24px));
-  margin: 10px auto 0;
-  padding: 7px 11px 8px;
-  border-radius: 11px;
-  position: sticky;
-  top: 84px;
-  z-index: 40;
+
+/* ========================================================================== */
+/* 3. PAGE SHELL / LOCKING / MAJOR CONTEXT FRAMES                             */
+/* ========================================================================== */
+
+.workspace {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 16px 28px;
+}
+
+.page {
+  display: none;
+  min-height: calc(100vh - 160px);
+  position: relative;
+}
+
+.page.on {
+  display: block;
+}
+
+.page-content {
+  position: relative;
+}
+
+/*
+ * Gated pages remain visible enough to explain why they are unavailable, while
+ * all interactive content is blurred and made non-interactive until connected.
+ */
+.locked-page .page-content {
+  filter: blur(4px);
+  pointer-events: none;
+  opacity: 0.18;
+}
+
+.lock-message {
+  display: none;
+}
+
+.locked-page .lock-message {
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+  color: #8aa0b7;
+  font: 800 8pt Oxanium;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Shared animated glass frame used by every major functional section. */
+.context-frame {
+  position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: rgba(4, 16, 35, 0.32);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+  border-radius: 12px;
+  padding: 13px;
+  background: rgba(5, 18, 40, 0.22);
+  backdrop-filter: blur(11px) saturate(1.12);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
-.live-state::before,
+
+/* Animated edge only; pointer-events remain off so it never blocks controls. */
 .context-frame::before {
   content: "";
   position: absolute;
@@ -215,7 +301,8 @@ select:focus-visible {
   padding: 3px;
   border-radius: inherit;
   pointer-events: none;
-  background: radial-gradient(circle at 8% 20%, var(--pink), transparent 22%),
+  background:
+    radial-gradient(circle at 8% 20%, var(--pink), transparent 22%),
     radial-gradient(circle at 55% 5%, var(--yellow), transparent 22%),
     radial-gradient(circle at 92% 72%, var(--blue), transparent 23%),
     linear-gradient(
@@ -236,145 +323,19 @@ select:focus-visible {
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  filter: drop-shadow(0 0 4px rgba(255, 44, 168, 0.55))
+  filter:
+    drop-shadow(0 0 4px rgba(255, 44, 168, 0.55))
     drop-shadow(0 0 5px rgba(255, 242, 0, 0.38))
     drop-shadow(0 0 6px rgba(0, 191, 255, 0.52));
   animation: liquidEdge 10s ease-in-out infinite alternate;
 }
-.state-copy {
-  display: grid;
-  gap: 2px;
-  margin-bottom: 6px;
-  font: 800 7.4pt Oxanium;
-  letter-spacing: 0.04em;
-}
-.descriptor {
-  color: var(--yellow);
-  text-shadow: 0 0 8px rgba(255, 242, 0, 0.32);
-}
-#stateDevice {
-  color: var(--blue);
-  text-shadow: 0 0 9px rgba(0, 191, 255, 0.46);
-}
-#stateFx {
-  color: var(--pink);
-  text-shadow: 0 0 9px rgba(255, 44, 168, 0.46);
-}
-.state-strip {
-  display: grid;
-  grid-template-columns: repeat(24, 1fr);
-  gap: 3px;
-  height: 18px;
-  padding: 4px 6px;
-  border-radius: 999px;
-  background: rgba(0, 4, 15, 0.48);
-  box-shadow: inset 0 0 9px rgba(0, 0, 0, 0.55);
-}
-.state-strip i {
-  border-radius: 50%;
-  background: #111;
-  box-shadow: 0 0 6px currentColor;
-}
-/* Main application workspace and page visibility. */
-.workspace {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 10px 16px 28px;
-}
-.page {
-  display: none;
-  min-height: calc(100vh - 160px);
-  position: relative;
-}
-.page.on {
-  display: block;
-}
-.page-content {
-  position: relative;
-}
-.locked-page .page-content {
-  filter: blur(4px);
-  pointer-events: none;
-  opacity: 0.18;
-}
-.lock-message {
-  display: none;
-}
-.locked-page .lock-message {
-  display: grid;
-  place-items: center;
-  min-height: 260px;
-  color: #8aa0b7;
-  font: 800 8pt Oxanium;
-  letter-spacing: 0.08em;
-  text-align: center;
-  padding: 20px;
-}
-/* Reusable animated glass frame for functional areas. */
-.context-frame {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: 12px;
-  padding: 13px;
-  background: rgba(5, 18, 40, 0.22);
-  backdrop-filter: blur(11px) saturate(1.12);
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-}
-.context-frame > /* Decorative matrix lanes; pointer events stay disabled. */
-.matrix-lanes {
-  position: absolute;
-  inset: 3px;
-  z-index: 0;
-  overflow: hidden;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0.78;
-}
-.matrix-lanes::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-    circle,
-    rgba(91, 183, 255, 0.16) 0 1px,
-    transparent 1.25px
-  );
-  background-size: 11px 11px;
-  opacity: 0.25;
-  animation: dotDrift 13s linear infinite;
-}
-.matrix-lane {
-  position: absolute;
-  left: -12%;
-  width: max-content;
-  min-width: 230%;
-  white-space: nowrap;
-  font: 800 7px/1 Oxanium;
-  color: rgba(0, 191, 255, 0.26);
-  letter-spacing: 0.14em;
-  text-shadow: 0 0 8px currentColor;
-}
-.matrix-lane:nth-child(1) {
-  top: 18%;
-  animation: matrixRTL 32s linear infinite;
-}
-.matrix-lane:nth-child(2) {
-  top: 50%;
-  color: rgba(255, 44, 168, 0.24);
-  animation: matrixLTR 37s linear infinite;
-}
-.matrix-lane:nth-child(3) {
-  top: 78%;
-  color: rgba(255, 242, 0, 0.22);
-  animation: matrixRTL 41s linear infinite;
-}
-.context-frame > *:not(.matrix-lanes) {
+
+/* Keep real content in a predictable stacking context relative to frame effects. */
+.context-frame > * {
   position: relative;
   z-index: 2;
 }
+
 .context-title {
   font: 900 8pt Oxanium;
   letter-spacing: 0.09em;
@@ -383,6 +344,7 @@ select:focus-visible {
   text-shadow: 0 0 8px rgba(0, 191, 255, 0.18);
   margin-bottom: 9px;
 }
+
 .context-title::after {
   content: "";
   display: block;
@@ -394,7 +356,11 @@ select:focus-visible {
   background-size: 190% 100%;
   animation: edgeFlow 4.5s linear infinite;
 }
-/* Shared tactile buttons, fields, role buttons, and compact controls. */
+
+/* ========================================================================== */
+/* 4. SHARED CONTROLS                                                         */
+/* ========================================================================== */
+
 .glass-btn,
 .glass-field,
 .role,
@@ -406,6 +372,7 @@ select:focus-visible {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
   transition: 0.14s ease;
 }
+
 .glass-btn {
   height: 29px;
   padding: 0 9px;
@@ -413,6 +380,7 @@ select:focus-visible {
   font: 800 6.9pt Oxanium;
   letter-spacing: 0.03em;
 }
+
 .glass-btn:hover,
 .role:hover,
 .tiny-btn:hover {
@@ -421,15 +389,18 @@ select:focus-visible {
     0 0 10px rgba(0, 191, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.09);
 }
+
 .glass-btn.primary {
   color: var(--blue);
   border-color: rgba(0, 191, 255, 0.55);
   text-shadow: 0 0 7px rgba(0, 191, 255, 0.36);
 }
+
 .glass-btn.danger {
   color: #ff6e8c;
   border-color: rgba(255, 51, 93, 0.38);
 }
+
 .glass-field {
   height: 30px;
   border-radius: 7px;
@@ -437,30 +408,46 @@ select:focus-visible {
   min-width: 0;
   outline: 0;
 }
+
 .button-row {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
 }
+
 .button-row.centered {
   justify-content: center;
 }
+
 .microcopy {
   color: #70869d;
   font-size: 6.5pt;
 }
-/* Device-area framing and logical ESP32 layout. */
+
+.tiny-btn {
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 5px;
+  font: 800 5.9pt Oxanium;
+}
+
+/* ========================================================================== */
+/* 5. DEVICE CARDS / BLE STATE / SETTINGS / DEBUG                             */
+/* ========================================================================== */
+
 .device-zone {
   padding: 13px 13px 11px;
 }
+
 .device-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 14px;
 }
-/* Logical ESP32 card; JS drives selection/power/Bluetooth state. */
+
+/* Logical ESP32 card. JavaScript supplies selection, BLE, and power classes. */
 .device-card {
   width: 190px;
   height: 116px;
@@ -474,17 +461,18 @@ select:focus-visible {
   transition: 0.15s ease;
   user-select: none;
 }
+
 .device-card:hover {
   background: rgba(8, 28, 58, 0.28);
   transform: translateY(-1px);
 }
+
 .device-card.selected {
   background: rgba(8, 28, 58, 0.34);
   box-shadow: 0 0 18px rgba(0, 191, 255, 0.08) !important;
 }
-.device-card .matrix-lanes {
-  display: none !important;
-}
+
+/* Decorative board silhouette; it does not represent pin-level state. */
 .esp32-art {
   position: absolute;
   left: 50%;
@@ -504,6 +492,7 @@ select:focus-visible {
     inset 0 0 22px rgba(0, 0, 0, 0.38);
   pointer-events: none;
 }
+
 .esp32-art::before,
 .esp32-art::after {
   content: "";
@@ -518,12 +507,15 @@ select:focus-visible {
   );
   opacity: 0.58;
 }
+
 .esp32-art::before {
   left: -5px;
 }
+
 .esp32-art::after {
   right: -5px;
 }
+
 .esp32-chip {
   position: absolute;
   left: 31px;
@@ -540,6 +532,7 @@ select:focus-visible {
   display: grid;
   place-items: center;
 }
+
 .esp32-usb {
   position: absolute;
   left: 38px;
@@ -550,6 +543,7 @@ select:focus-visible {
   background: rgba(180, 190, 196, 0.62);
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
 }
+
 .device-info {
   position: absolute;
   left: 10px;
@@ -557,11 +551,13 @@ select:focus-visible {
   top: 8px;
   z-index: 3;
 }
+
 .device-name {
   font: 900 8.5pt Oxanium;
   color: #dff6ff;
   text-shadow: 0 0 8px rgba(0, 191, 255, 0.2);
 }
+
 .device-bt {
   font: 650 6.2pt Oxanium;
   color: #6e879d;
@@ -570,7 +566,8 @@ select:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* Bluetooth state indicator: unassigned/assigned/connecting/connected. */
+
+/* Bluetooth state classes come directly from st-ble-core.js snapshot(). */
 .ble-dot {
   position: absolute;
   right: 9px;
@@ -582,21 +579,25 @@ select:focus-visible {
   background: var(--red);
   box-shadow: 0 0 7px var(--red);
 }
+
 .ble-dot.unassigned,
 .ble-dot.assigned {
   animation: pairBlink 1s steps(1, end) infinite;
 }
+
 .ble-dot.connecting {
   background: var(--blue);
   box-shadow: 0 0 9px var(--blue);
   animation: bluePulse 0.55s ease-in-out infinite;
 }
+
 .ble-dot.connected {
   background: var(--blue);
   box-shadow:
     0 0 6px var(--blue),
     0 0 14px rgba(0, 191, 255, 0.75);
 }
+
 .power-ring {
   position: absolute;
   right: 10px;
@@ -612,6 +613,7 @@ select:focus-visible {
   display: grid;
   place-items: center;
 }
+
 .device-card.selected .power-ring {
   border-color: var(--blue);
   color: var(--blue);
@@ -619,9 +621,11 @@ select:focus-visible {
     0 0 9px rgba(0, 191, 255, 0.65),
     inset 0 0 7px rgba(0, 191, 255, 0.12);
 }
+
 .power-ring.on {
   color: var(--yellow);
 }
+
 .device-add-row {
   display: flex;
   justify-content: center;
@@ -630,55 +634,58 @@ select:focus-visible {
   margin-top: 10px;
   flex-wrap: wrap;
 }
+
 .device-tools {
   display: grid;
   grid-template-columns: 1fr 1.3fr;
   gap: 10px;
   margin-top: 10px;
 }
+
 .device-tools.locked-panel {
   opacity: 0.35;
   pointer-events: none;
 }
-.settings-frame.unpaired,
-.debug-frame.unpaired {
-  opacity: 0.34;
-  pointer-events: none;
-  filter: saturate(0.55);
-}
+
 .debug-frame {
   grid-column: 1/-1;
 }
+
 .assignment-grid {
   display: grid;
   grid-template-columns: minmax(170px, 1fr) auto;
   gap: 6px;
 }
+
 .assignment-grid #addBluetooth,
-.assignment-grid #reconnectSelected,
 .assignment-grid #unassignBluetooth {
   grid-column: auto;
 }
+
 .settings-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(100px, 1fr));
   gap: 7px;
 }
+
 .settings-grid label {
   display: grid;
   gap: 3px;
   color: #839ab0;
   font: 800 6.3pt Oxanium;
 }
+
 .startup-field {
   grid-column: span 2;
 }
+
 .raw-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 6px;
   margin-top: 7px;
 }
+
 .debug-log {
   min-height: 64px;
   max-height: 150px;
@@ -693,25 +700,34 @@ select:focus-visible {
     monospace;
   white-space: pre-wrap;
 }
-/* Device grouping and explicit simulcast selection. */
+
+/* ========================================================================== */
+/* 6. GROUPS                                                                  */
+/* ========================================================================== */
+
 .group-frame {
   margin-top: 10px;
 }
+
 .group-create {
   display: flex;
   gap: 6px;
   max-width: 420px;
   margin: 0 auto 9px;
 }
+
 .group-create input {
   flex: 1;
 }
+
 .group-list {
   display: grid;
   gap: 7px;
   max-width: 760px;
   margin: 0 auto;
 }
+
+/* Current JS renders .group-title and .group-members as the two direct children. */
 .group-card {
   display: grid;
   grid-template-columns: minmax(110px, 0.6fr) minmax(180px, 1.4fr) auto;
@@ -721,161 +737,59 @@ select:focus-visible {
   border-radius: 8px;
   background: rgba(6, 23, 48, 0.24);
 }
-.group-card.selected {
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 191, 255, 0.38),
-    0 0 12px rgba(0, 191, 255, 0.08);
-}
-.group-name {
-  font: 900 7.5pt Oxanium;
-  color: #dff6ff;
-}
-.group-chain {
-  font: 700 6.5pt Oxanium;
-  color: #8aa2b8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+
 .group-members {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
-.member-toggle {
-  height: 23px;
-  padding: 0 6px;
-  border: 1px solid rgba(117, 190, 230, 0.16);
-  border-radius: 5px;
-  color: #6f879d;
-  background: rgba(4, 16, 35, 0.25);
-  font: 800 6pt Oxanium;
-}
-.member-toggle.on {
-  color: var(--blue);
-  border-color: rgba(0, 191, 255, 0.45);
-  box-shadow: 0 0 7px rgba(0, 191, 255, 0.1);
-}
-/* FX / COLORS two-column layout. */
-.fx-layout {
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  gap: 10px;
-  align-items: start;
-}
-.fx-left {
-  display: grid;
-  gap: 10px;
-}
+
+/* ========================================================================== */
+/* 7. EFFECT STYLING / COLOR ROLES / HUE STRUCTURE                            */
+/* ========================================================================== */
+
 .styling-frame,
 .colors-frame {
   padding: 11px;
 }
+
 .style-sliders {
   display: grid;
   gap: 8px;
 }
-/* Firmware styling controls. MAINB and BGB are independent role brightness values. */
+
+/*
+ * Structural grid only. Current Iteration-2 percentage-control dimensions are
+ * applied by the HTML override layer.
+ */
 .slider-row {
   display: grid;
   grid-template-columns: 72px minmax(100px, 1fr) 38px;
   gap: 7px;
   align-items: center;
 }
+
 .slider-row label {
   font: 800 6.5pt Oxanium;
   color: #d6e8f5;
 }
-.slider-row output {
-  text-align: right;
-  color: var(--blue);
-  font: 800 6.4pt Oxanium;
-}
-.sim-slider {
-  position: relative;
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(1, 8, 20, 0.48);
-  box-shadow: inset 0 0 9px rgba(0, 0, 0, 0.7);
-  overflow: visible;
-}
-.sim-slider::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    var(--pink),
-    var(--yellow),
-    var(--blue),
-    var(--pink)
-  );
-  background-size: 260% 100%;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: edgeFlow 5s linear infinite;
-  filter: drop-shadow(0 0 3px rgba(0, 191, 255, 0.35));
-}
-.sim-slider .fill {
-  position: absolute;
-  left: 4px;
-  top: 6px;
-  bottom: 6px;
-  width: 50%;
-  border-radius: 99px;
-  background: var(--blue);
-  box-shadow: 0 0 7px currentColor;
-}
-.sim-slider .bg-fill {
-  background: var(--blue);
-}
-.sim-slider .thumb {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  transform: translate(-50%, -50%);
-  border: 2px solid var(--blue);
-  border-radius: 50%;
-  background: rgba(2, 8, 23, 0.42);
-  box-shadow: 0 0 8px rgba(0, 191, 255, 0.75);
-  pointer-events: none;
-}
-.sim-slider input {
-  position: absolute;
-  z-index: 3;
-  inset: -7px 0;
-  width: 100%;
-  opacity: 0;
-  cursor: pointer;
-}
-.more-style summary {
-  font: 800 6.3pt Oxanium;
-  color: #718aa2;
-  cursor: pointer;
-}
-.more-style[open] summary {
-  margin-bottom: 7px;
-}
+
 .compact-row {
   display: flex;
   gap: 6px;
   margin-top: 7px;
 }
+
 .compact-row .glass-field {
   flex: 1;
 }
+
 .rolebar {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
 }
+
 .role {
   height: 28px;
   padding: 0 7px;
@@ -883,6 +797,7 @@ select:focus-visible {
   color: #7891a7;
   font: 800 6.3pt Oxanium;
 }
+
 .role i {
   display: inline-block;
   width: 10px;
@@ -892,14 +807,19 @@ select:focus-visible {
   vertical-align: -1px;
   box-shadow: 0 0 6px currentColor;
 }
+
 .role.on {
   color: #fff;
-  bwrder-color: rgba(0, 191, 255, 0.48);
+  border-color: rgba(0, 191, 255, 0.48);
   box-shadow:
     inset 0 -2px 0 var(--blue),
     0 0 8px rgba(0, 191, 255, 0.1);
 }
-/* User color selector; effect selection must not restore canned palettes. */
+
+/*
+ * Base hue structure. The exact accepted Iteration-2 appearance (15px side
+ * margins, no prism mask, dim-to-live glass) is defined in the HTML override.
+ */
 .hue-selector {
   --hx: 16.7%;
   position: relative;
@@ -910,27 +830,14 @@ select:focus-visible {
   overflow: hidden;
   touch-action: none;
 }
+
 .hue-selector::before {
   content: "";
   position: absolute;
   inset: 0;
-  padding: 2px;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    var(--pink),
-    var(--yellow),
-    var(--blue),
-    var(--pink)
-  );
-  background-size: 230% 100%;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: edgeFlow 6s linear infinite;
+  pointer-events: none;
 }
+
 .hue-spectrum {
   position: absolute;
   inset: 4px;
@@ -945,34 +852,8 @@ select:focus-visible {
     #ff00ff 83.33%,
     #ff0000 100%
   );
-  opacity: 0.94;
-  -webkit-mask-image: radial-gradient(
-    ellipse 60px 28px at var(--hx) 50%,
-    #000 0 58%,
-    rgba(0, 0, 0, 0.78) 72%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellippse 60px 28px at var(--hx) 50%,
-    #000 0 58%,
-    rgba(0, 0, 0, 0.78) 72%,
-    transparent 100%
-  );
 }
-.hue-selector.dragging .hue-spectrum {
-  -webkit-mask-image: radial-gradient(
-    ellipse 82px 30px at var(--hx) 50%,
-    #000 0 60%,
-    rgba(0, 0, 0, 0.78) 76%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 82px 30px at var(--hx) 50%,
-    #000 0 60%,
-    rgba(0, 0, 0, 0.78) 76%,
-    transparent 100%
-  );
-}
+
 .hue-thumb {
   position: absolute;
   z-index: 2;
@@ -987,6 +868,7 @@ select:focus-visible {
   box-shadow: 0 0 8px rgba(0, 191, 255, 0.28);
   backdrop-filter: blur(4px);
 }
+
 .hue-selector input {
   position: absolute;
   z-index: 4;
@@ -994,6 +876,7 @@ select:focus-visible {
   width: 100%;
   opacity: 0;
 }
+
 .hue-readout {
   display: flex;
   justify-content: space-between;
@@ -1001,9 +884,11 @@ select:focus-visible {
   color: #6f879e;
   font: 800 6.1pt Oxanium;
 }
+
 .saved-colors {
   margin-top: 8px;
 }
+
 .saved-color-list {
   display: flex;
   flex-wrap: wrap;
@@ -1011,6 +896,7 @@ select:focus-visible {
   min-height: 26px;
   margin-bottom: 6px;
 }
+
 .saved-color {
   width: 24px;
   height: 24px;
@@ -1019,23 +905,31 @@ select:focus-visible {
   background: var(--c);
   box-shadow: 0 0 6px color-mix(in srgb, var(--c) 55%, transparent);
 }
+
+/* ========================================================================== */
+/* 8. EFFECT LIST                                                             */
+/* ========================================================================== */
+
 .effects-frame {
   min-height: 520px;
 }
+
 .effects-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .effect-count {
   font: 800 6.2pt Oxanium;
   color: #6f879e;
 }
+
 .effect-search {
   width: 100%;
   margin-bottom: 7px;
 }
-/* Direct firmware effect selectors. Individual effect buttons intentionally have no border. */
+
 .effect-list {
   max-height: 590px;
   overflow: auto;
@@ -1044,10 +938,12 @@ select:focus-visible {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px 12px;
 }
+
+/* Effect buttons are intentionally borderless; active state is a light accent. */
 .fx-item {
   position: relative;
   min-height: 30px;
-  padding: 6px 6px;
+  padding: 6px;
   border: 0 !important;
   background: transparent !important;
   color: #8ca2b7;
@@ -1059,14 +955,17 @@ select:focus-visible {
   justify-content: space-between;
   gap: 6px;
 }
+
 .fx-item:hover {
   color: #d9f1ff;
   background: rgba(0, 191, 255, 0.035) !important;
 }
+
 .fx-item.on {
   color: #fff;
   text-shadow: 0 0 7px rgba(255, 44, 168, 0.42);
 }
+
 .fx-item.on::before {
   content: "";
   position: absolute;
@@ -1077,103 +976,21 @@ select:focus-visible {
   background: var(--pink);
   box-shadow: 0 0 7px var(--pink);
 }
-.fx-dots {
-  display: flex;
-  gap: 2px;
-}
-.fx-dots i {
-  width: 6px;
-  height: 11px;
-  border-radius: 2px;
-  background: var(--c);
-}
-/* Microphone controls and 16-channel spectrograph. */
-.music-layout {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
-  gap: 10px;
-}
-.music-control {
-  min-height: 160px;
-}
-.mic-state {
-  font: 900 7pt Oxanium;
-  color: #6e879c;
-}
-.mic-state.live {
-  color: var(--blue);
-  text-shadow: 0 0 8px var(--blue);
-}
-.sensitivity {
-  margin-top: 12px;
-}
-.spectrograph {
-  height: 240px;
-  display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  align-items: end;
-  gap: 5px;
-  padding: 10px;
-  border-radius: 9px;
-  background: rgba(0, 5, 15, 0.48);
-  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.58);
-}
-.spectrum-bar {
-  height: 4%;
-  border-radius: 5px 5px 1px 1px;
-  background: var(--blue);
-  box-shadow: 0 0 6px currentColor;
-  transform-origin: bottom;
-  transition: height 0.055s linear;
-}
-.spectrum-bar:nth-child(3n + 1) {
-  color: var(--pink);
-  background: var(--pink);
-}
-.spectrum-bar:nth-child(3n + 2) {
-  color: var(--yellow);
-  background: var(--yellow);
-}
-.spectrum-bar:nth-child(3n) {
-  color: var(--blue);
-  background: var(--blue);
-}
-.band-labels {
-  display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  gap: 5px;
-  margin-top: 4px;
-  color: #506c85;
-  font: 700 5.2pt Oxanium;
-  text-align: center;
-}
-.music-control .music-note {
-  position: absolute;
-  z-index: 1;
-  font-size: 18px;
-  opacity: 0.22;
-  text-shadow: 0 0 8px currentColor;
-  pointer-events: none;
-  animation: noteFloat 6s ease-in-out infinite;
-}
-.music-note.pink {
-  color: var(--pink);
-}
-.music-note.yellow {
-  color: var(--yellow);
-}
-.music-note.blue {
-  color: var(--blue);
-}
+
+/* ========================================================================== */
+/* 9. PRESETS / SEQUENCE                                                      */
+/* ========================================================================== */
+
 .centered-content {
   max-width: 900px;
   margin: 0 auto;
 }
+
 .presets-frame,
 .playlist-frame {
   min-height: 250px;
 }
-/* Local preset cards and mini editors. */
+
 .preset-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 260px));
@@ -1181,83 +998,44 @@ select:focus-visible {
   gap: 9px;
   margin-top: 10px;
 }
+
 .preset-card {
   padding: 8px;
   border-radius: 9px;
   background: rgba(5, 20, 43, 0.28);
   box-shadow: inset 0 0 0 1px rgba(0, 191, 255, 0.1);
 }
+
 .preset-title {
   font: 900 7.5pt Oxanium;
   color: #e7f6ff;
 }
+
 .preset-meta {
   color: #718aa0;
   font-size: 6.2pt;
   margin: 3px 0 6px;
 }
+
 .preset-colors {
   display: flex;
   gap: 3px;
   margin-bottom: 6px;
 }
+
 .preset-colors i {
   width: 18px;
   height: 8px;
   border-radius: 3px;
 }
-.preset-editor {
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid rgba(0, 191, 255, 0.08);
-  display: grid;
-  gap: 5px;
-}
-.preset-editor .mini-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
-.preset-editor input[type="color"] {
-  width: 100%;
-  height: 25px;
-  border: 0;
-  background: transparent;
-}
-.preset-editor select {
-  width: 100%;
-  height: 27px;
-}
-.preset-mini-slider {
-  display: grid;
-  grid-template-columns: 52px 1fr 28px;
-  gap: 4px;
-  align-items: center;
-  color: #718aa0;
-  font: 700 5.8pt Oxanium;
-}
-.preset-mini-slider input {
-  width: 100%;
-}
-.tiny-btn {
-  height: 24px;
-  padding: 0 6px;
-  border-radius: 5px;
-  font: 800 5.9pt Oxanium;
-}
-.playlist-name {
-  display: block;
-  width: min(330px, 100%);
-  margin: 0 auto 8px;
-  text-align: center;
-}
-/* Local ordered playlist rows. */
+
 .playlist-list {
   display: grid;
   gap: 6px;
   max-width: 720px;
   margin: 10px auto 0;
 }
+
 .playlist-item {
   display: grid;
   grid-template-columns: 28px 1fr auto;
@@ -1267,6 +1045,7 @@ select:focus-visible {
   border-radius: 8px;
   background: rgba(5, 20, 43, 0.26);
 }
+
 .playlist-num {
   width: 24px;
   height: 24px;
@@ -1277,44 +1056,41 @@ select:focus-visible {
   box-shadow: inset 0 0 0 1px rgba(0, 191, 255, 0.3);
   font: 800 6pt Oxanium;
 }
+
 .playlist-item b {
   font: 800 6.9pt Oxanium;
 }
+
 .playlist-item small {
   display: block;
   color: #6d849b;
   font-size: 5.9pt;
 }
-/* Shared blocking confirmation/name dialog. */
-.modal {
-  position: fixed;
-  z-index: 100;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 4, 14, 0.72);
-  backdrop-filter: blur(6px);
+
+/* ========================================================================== */
+/* 10. ANIMATIONS                                                             */
+/* ========================================================================== */
+
+@keyframes brandBlink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  45% {
+    opacity: 1;
+    box-shadow:
+      0 0 6px var(--blue),
+      0 0 18px var(--blue),
+      0 0 28px rgba(0, 191, 255, 0.55);
+  }
 }
-.modal[hidden] {
-  display: none;
-}
-.modal-card {
-  width: min(360px, calc(100% - 28px));
-  padding: 13px;
-}
-.modal-text {
-  color: #93a8bb;
-  margin-bottom: 8px;
-}
-.modal-card .glass-field {
-  width: 100%;
-  margin-bottom: 8px;
-}
+
 @keyframes edgeFlow {
   to {
     background-position: 240% 0;
   }
 }
+
 @keyframes liquidEdge {
   0% {
     background-position:
@@ -1338,27 +1114,7 @@ select:focus-visible {
       300% 0;
   }
 }
-@keyframes matrixRTL {
-  from {
-    transform: translateX(6%);
-  }
-  to {
-    transform: translateX(-55%);
-  }
-}
-@keyframes matrixLTR {
-  from {
-    transform: translateX(-55%);
-  }
-  to {
-    transform: translateX(6%);
-  }
-}
-@keyframes dotDrift {
-  to {
-    background-position: 22px 11px;
-  }
-}
+
 @keyframes pairBlink {
   0%,
   49% {
@@ -1371,123 +1127,103 @@ select:focus-visible {
     box-shadow: 0 0 8px var(--blue);
   }
 }
+
 @keyframes bluePulse {
   50% {
     opacity: 0.28;
   }
 }
-@keyframes noteFloat {
-  0%,
-  100% {
-    transform: translate3d(-5px, 10px, 0) scale(0.8);
-    opacity: 0.08;
-  }
-  45% {
-    transform: translate3d(7px, -10px, 0) scale(1.05);
-    opacity: 0.45;
-  }
-}
-/* Responsive reductions for tablet/phone layouts. */
+
+/* ========================================================================== */
+/* 11. RESPONSIVE REDUCTIONS                                                  */
+/* ========================================================================== */
+
 @media (max-width: 820px) {
   .workspace {
     padding: 8px 10px 24px;
   }
-  .fx-layout,
-  .music-layout {
-    grid-template-columns: 1fr;
-  }
-  .fx-left {
-    grid-template-columns: 1fr 1fr;
-  }
+
   .effects-frame {
     min-height: 420px;
   }
+
   .effect-list {
     max-height: 430px;
   }
+
   .device-tools {
     grid-template-columns: 1fr;
   }
+
   .debug-frame {
     grid-column: auto;
   }
+
   .settings-grid {
     grid-template-columns: repeat(2, minmax(100px, 1fr));
   }
+
   .group-card {
     grid-template-columns: 1fr auto;
   }
+
   .group-members {
     grid-column: 1/-1;
   }
-  .live-state {
-    top: 84px;
-  }
 }
+
 @media (max-width: 560px) {
   .topbar {
     height: 42px;
   }
+
+  /* Iteration-2 HTML overrides the tab grid/gaps; this preserves sticky offset. */
   .tabs {
     top: 42px;
-    justify-content: flex-start;
-    gap: 15px;
-    padding: 0 10px;
   }
-  .live-state {
-    top: 82px;
-    width: calc(100% - 14px);
-    margin-top: 7px;
-  }
+
   .workspace {
     padding: 7px;
   }
-  .fx-left {
-    grid-template-columns: 1fr;
-  }
+
   .device-card {
     width: 170px;
     height: 108px;
   }
+
   .device-list {
     gap: 7px;
   }
+
   .assignment-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .assignment-grid select {
-    grid-column: 1/-1;
-  }
+
   .settings-grid {
     grid-template-columns: 1fr 1fr;
   }
+
   .startup-field {
     grid-column: 1/-1;
   }
-  .slider-row {
-    grid-template-columns: 68px minmax(80px, 1fr) 34px;
-  }
+
   .effect-list {
     grid-template-columns: 1fr 1fr;
     gap: 0 6px;
   }
-  .spectrograph {
-    height: 190px;
-    gap: 3px;
-  }
-  .band-labels {
-    gap: 2px;
-    font-size: 4.8pt;
-  }
+
   .context-frame {
     padding: 10px;
   }
+
   .group-create {
     flex-direction: column;
   }
+
   .group-card {
     grid-template-columns: 1fr auto;
   }
+
   .preset-grid {
     grid-template-columns: minmax(0, 1fr);
   }
