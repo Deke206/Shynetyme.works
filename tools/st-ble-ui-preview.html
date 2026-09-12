@@ -1,16 +1,35 @@
 <!doctype html>
 <!--
   ShyneTyme.Works ESP32 LED controller — Iteration 2, current forward source.
+
+  FILE ROLE
+  ---------
+  This file owns markup and the current Iteration-2 presentation overrides only.
+  It does not own Bluetooth behavior, effect logic, storage, or playlist timing.
+
+  Runtime dependency order:
+    1. st-ble-ui.css  -> shared/base presentation layer.
+    2. st-ble-core.js -> BLE transport, logical devices/groups, connection state.
+    3. st-ble-ui.js   -> DOM rendering, effects/colors/presets/sequence behavior.
+
   Baseline: 20260908-sync1 (dual-device/group sync preserved).
   Active hardware contract: ST_BT_V5_1_MAIN.ino / VER=51.
 
-  Current UI contract:
+  CURRENT UI CONTRACT — preserve unless explicitly changed:
     - Five centered glass tabs: Device / Effects / Colors / Presets / Custom.
-    - Effects page: effects first, styling second.
-    - Colors live on their own page to avoid accidental hue changes while scrolling effects.
-    - Effect styling uses 0-100% numeric entry; visual bars are display-only.
+    - Effects page: effects first, Effect Styling second.
+    - Colors live on their own page to avoid accidental hue changes while scrolling.
+    - Effect Styling uses 0-100% numeric entry; gradient bars are display-only.
     - Hue control is a clean glass spectrum, dim at rest and bright while touched.
-    - SOLID restored; WIPE remains WIPE; DANCING_SHADOWS removed from the visible list.
+    - SOLID is present; WIPE remains WIPE; DANCING_SHADOWS stays removed.
+    - Music remains absent from the web build.
+
+  NOTE ABOUT THE INLINE STYLE BLOCK
+  ---------------------------------
+  These selectors are the accepted Iteration-2 override layer. They intentionally
+  sit after st-ble-ui.css so current reviewed behavior wins over older base rules.
+  Keep the selectors scoped; do not use this block as a patch-loader or duplicate
+  feature owner. The regression checker also verifies several exact rules here.
 -->
 <html lang="en">
 <head>
@@ -19,12 +38,20 @@
   <meta name="theme-color" content="#020817">
   <meta name="robots" content="noindex,nofollow">
   <title>ShyneTyme.Works — ESP32 LED Control</title>
+
+  <!-- Typography is visual-only; the controller still works if the web font fails. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Shared/base stylesheet. The inline block below contains current Iteration-2 overrides. -->
   <link rel="stylesheet" href="st-ble-ui.css?v=20260908-sync1">
+
   <style>
-    /* Keep only major section framing. */
+    /* -----------------------------------------------------------------------
+       ITERATION-2 OVERRIDES: internal controls stay borderless.
+       Major .context-frame containers keep the outer visual framing from CSS.
+       ----------------------------------------------------------------------- */
     .glass-btn,.glass-field,.role,.tiny-btn,.fx-item,.saved-color,.preset-card,.playlist-item,.group-card,.debug-log,
     .assignment-grid,.settings-grid,.group-members label,.duration-wrap,.level-meter,.percent-box,.hue-selector,#colorCapability {
       border:0!important;
@@ -37,23 +64,34 @@
       box-shadow:0 0 14px rgba(0,191,255,.14)!important;
       background:rgba(0,191,255,.10)!important;
     }
+
+    /* Saved custom-color chips keep a small delete affordance; built-ins do not. */
     .saved-color-wrap { position:relative; display:inline-grid; place-items:center; width:30px; height:30px; }
     .saved-color-delete {
       position:absolute; right:-5px; top:-6px; width:16px; height:16px; padding:0; border:0; border-radius:50%;
       background:rgba(2,8,23,.88); color:#ff6e8c; font:900 13px/16px Oxanium; cursor:pointer;
     }
+
+    /* JS toggles these classes from the verified V5.1 effect-role map. */
     .control-unavailable,.role-unavailable { display:none!important; }
+
+    /* Small current target/effect summary beneath navigation. */
     .status-compact {
       max-width:1100px; margin:8px auto 0; padding:0 16px; display:flex; justify-content:space-between; gap:12px;
       color:#70869d; font:800 6.8pt Oxanium; letter-spacing:.04em;
     }
     .status-compact strong { color:#dff6ff; }
+
+    /* Sequence duration field layout and generic small helper text. */
     .duration-wrap { display:grid; grid-template-columns:auto 70px; gap:5px; align-items:center; margin-left:auto; }
     #colorCapability { margin:9px 0 12px; text-align:center; box-shadow:none!important; background:transparent!important; }
     .web-limit-note { margin-top:8px; text-align:center; color:#8aa0b7; }
     .assignment-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 
-    /* Five centered glass tabs. No underline. */
+    /* -----------------------------------------------------------------------
+       NAVIGATION: five equal glass tabs, centered, no underline indicator.
+       nth-child assigns a different ShyneTyme accent to each tab.
+       ----------------------------------------------------------------------- */
     .tabs {
       height:auto!important;
       min-height:48px;
@@ -99,7 +137,9 @@
     }
     .tab.locked:not(.on) { opacity:.48!important; }
 
-    /* Effects page order and spacing. */
+    /* -----------------------------------------------------------------------
+       EFFECTS PAGE: effect list is first; styling controls follow below it.
+       ----------------------------------------------------------------------- */
     .effects-stack { width:min(930px,100%); margin:0 auto; display:grid; gap:12px; }
     .effects-frame,.styling-frame,.colors-frame { width:100%; }
     .effects-frame { order:1; }
@@ -113,6 +153,8 @@
       margin:4px 0!important;
     }
     .slider-row label { font-size:9px!important; line-height:1.2; }
+
+    /* Each numeric control maps 0-100% to the firmware raw range in st-ble-ui.js. */
     .percent-control {
       display:grid;
       grid-template-columns:minmax(82px,1fr) 78px;
@@ -179,7 +221,10 @@
     .fx-item small { font-size:8px!important; line-height:1.15; }
     .fx-item { min-height:36px!important; padding-top:7px!important; padding-bottom:7px!important; }
 
-    /* Clean glass hue bar: dim at rest, bright while touched. No radial prism mask. */
+    /* -----------------------------------------------------------------------
+       COLORS PAGE: clean glass hue bar; dim at rest and bright while touched.
+       There is deliberately no radial/prism mask in the accepted version.
+       ----------------------------------------------------------------------- */
     .colors-page-wrap { width:min(760px,100%); margin:0 auto; }
     .hue-selector {
       --hx:16.7%;
@@ -243,6 +288,7 @@
       cursor:ew-resize;
     }
 
+    /* Phone reductions only change spacing; behavior and control ownership stay the same. */
     @media(max-width:560px){
       .tabs { gap:4px!important; padding-left:5px!important; padding-right:5px!important; }
       .tab { font-size:6.5pt!important; letter-spacing:.025em!important; }
@@ -254,11 +300,15 @@
 </head>
 <body>
 <div class="app">
+  <!-- Sticky brand header. BLE summary is updated from the transport snapshot. -->
   <header class="topbar">
-    <div class="brand"><span class="brand-pink">SHYNE</span><span class="brand-yellow">TYME</span><i class="brand-led" aria-hidden="true"></i><span class="brand-blue">WORKS</span></div>
+    <div class="brand">
+      <span class="brand-pink">SHYNE</span><span class="brand-yellow">TYME</span><i class="brand-led" aria-hidden="true"></i><span class="brand-blue">WORKS</span>
+    </div>
     <div id="bleSummary" class="ble-summary">LOCAL BLE</div>
   </header>
 
+  <!-- Top-level pages. Gated tabs remain locked until the active target is fully connected. -->
   <nav class="tabs" aria-label="ESP32 LED controller">
     <button class="tab on" data-page="device">DEVICE</button>
     <button class="tab gated" data-page="effects">EFFECTS</button>
@@ -267,21 +317,39 @@
     <button class="tab gated" data-page="custom">CUSTOM</button>
   </nav>
 
-  <div class="status-compact"><span>TARGET: <strong id="targetSummary">NONE</strong></span><span>FX: <strong id="effectSummary">RAINBOW</strong></span></div>
+  <!-- Lightweight global status; UI JS owns the current target/effect text. -->
+  <div class="status-compact">
+    <span>TARGET: <strong id="targetSummary">NONE</strong></span>
+    <span>FX: <strong id="effectSummary">RAINBOW</strong></span>
+  </div>
 
   <main class="workspace">
+    <!-- =====================================================================
+         DEVICE PAGE
+         Logical cards/groups are browser metadata. Actual BLE identity/state is
+         read through st-ble-core.js; firmware settings are sent only when saved.
+         ===================================================================== -->
     <section id="device" class="page on">
       <div class="context-frame device-zone matrix-device">
         <div class="context-title">DEVICES</div>
         <div id="deviceList" class="device-list"></div>
-        <div class="device-add-row"><button id="addLogicalDevice" class="glass-btn">+ DEVICE</button><span class="microcopy">Tap a device to focus it. Bluetooth assignment is local to this browser.</span></div>
+        <div class="device-add-row">
+          <button id="addLogicalDevice" class="glass-btn">+ DEVICE</button>
+          <span class="microcopy">Tap a device to focus it. Bluetooth assignment is local to this browser.</span>
+        </div>
       </div>
 
+      <!-- Disabled until a logical device is selected. -->
       <div id="deviceTools" class="device-tools locked-panel">
         <section class="context-frame assignment-frame matrix-bluetooth">
           <div class="context-title">BLUETOOTH</div>
-          <div class="assignment-grid"><button id="addBluetooth" class="glass-btn primary">ADD BLUETOOTH</button><button id="unassignBluetooth" class="glass-btn danger">FORGET</button></div>
-          <div class="microcopy">Select a logical ESP32 card, then ADD BLUETOOTH. The picker is restricted to devices advertising the ShyneTyme service. FORGET clears that card's saved browser-device binding.</div>
+          <div class="assignment-grid">
+            <button id="addBluetooth" class="glass-btn primary">ADD BLUETOOTH</button>
+            <button id="unassignBluetooth" class="glass-btn danger">FORGET</button>
+          </div>
+          <div class="microcopy">
+            Select a logical ESP32 card, then ADD BLUETOOTH. The picker is restricted to devices advertising the ShyneTyme service. FORGET clears that card's saved browser-device binding.
+          </div>
         </section>
 
         <section class="context-frame settings-frame matrix-settings">
@@ -290,35 +358,68 @@
             <label>NAME<input id="deviceName" class="glass-field" type="text"></label>
             <label>LED COUNT<input id="leds" class="glass-field" type="number" min="1" max="600" value="300"></label>
             <label>GPIO<input id="gpio" class="glass-field" type="number" min="0" max="39" value="13"></label>
-            <label>PIXEL ORDER<select id="order" class="glass-field"><option>RGB</option><option selected>GRB</option><option>BRG</option><option>GBR</option><option>RBG</option><option>BGR</option></select></label>
+            <label>
+              PIXEL ORDER
+              <select id="order" class="glass-field">
+                <option>RGB</option>
+                <option selected>GRB</option>
+                <option>BRG</option>
+                <option>GBR</option>
+                <option>RBG</option>
+                <option>BGR</option>
+              </select>
+            </label>
             <label>FROM LED<input id="segFrom" class="glass-field" type="number" min="0" value="0"></label>
             <label>TO LED<input id="segTo" class="glass-field" type="number" min="0" value="299"></label>
             <label class="startup-field">STARTUP EFFECT<select id="startupFx" class="glass-field"></select></label>
           </div>
-          <div class="button-row"><button id="saveDeviceSettings" class="glass-btn primary">SAVE SETTINGS</button><button id="saveDeviceReboot" class="glass-btn">SAVE + REBOOT</button><button id="saveStartup" class="glass-btn">SAVE STARTUP EFFECT</button></div>
+          <div class="button-row">
+            <button id="saveDeviceSettings" class="glass-btn primary">SAVE SETTINGS</button>
+            <button id="saveDeviceReboot" class="glass-btn">SAVE + REBOOT</button>
+            <button id="saveStartup" class="glass-btn">SAVE STARTUP EFFECT</button>
+          </div>
           <div class="microcopy">FROM/TO remains app-side because V5.1 has no verified segment-bound command.</div>
         </section>
 
+        <!-- Developer diagnostics; raw command is intentionally explicit/manual. -->
         <section class="context-frame debug-frame matrix-debug">
           <div class="context-title">DEBUG</div>
-          <div class="button-row"><button id="readStatus" class="glass-btn">READ STATUS</button><button id="blackout" class="glass-btn danger">BLACKOUT</button></div>
-          <div class="raw-row"><input id="rawCommand" class="glass-field" placeholder="RAW COMMAND"><button id="sendRaw" class="glass-btn">SEND</button></div>
+          <div class="button-row">
+            <button id="readStatus" class="glass-btn">READ STATUS</button>
+            <button id="blackout" class="glass-btn danger">BLACKOUT</button>
+          </div>
+          <div class="raw-row">
+            <input id="rawCommand" class="glass-field" placeholder="RAW COMMAND">
+            <button id="sendRaw" class="glass-btn">SEND</button>
+          </div>
           <pre id="debugLog" class="debug-log">Ready.</pre>
         </section>
       </div>
 
+      <!-- Group membership is browser-side; transport fan-out is enforced by BLE core. -->
       <section class="context-frame group-frame matrix-group">
         <div class="context-title">GROUPS</div>
-        <div class="group-create"><input id="groupName" class="glass-field" placeholder="Living Room"><button id="createGroup" class="glass-btn primary">CREATE GROUP</button></div>
+        <div class="group-create">
+          <input id="groupName" class="glass-field" placeholder="Living Room">
+          <button id="createGroup" class="glass-btn primary">CREATE GROUP</button>
+        </div>
         <div id="groupList" class="group-list"></div>
       </section>
     </section>
 
+    <!-- =====================================================================
+         EFFECTS PAGE
+         Effect buttons are generated from the verified V5.1 list in st-ble-ui.js.
+         Styling percentages are presentation values mapped back to firmware bytes.
+         ===================================================================== -->
     <section id="effects" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content effects-stack">
         <section class="context-frame effects-frame matrix-effects">
-          <div class="effects-head"><span class="context-title">EFFECTS</span><span id="fxCount" class="effect-count"></span></div>
+          <div class="effects-head">
+            <span class="context-title">EFFECTS</span>
+            <span id="fxCount" class="effect-count"></span>
+          </div>
           <input id="fxSearch" class="glass-field effect-search" placeholder="Search V5.1 firmware effects…">
           <div id="effectList" class="effect-list"></div>
         </section>
@@ -326,57 +427,168 @@
         <section class="context-frame styling-frame matrix-styling">
           <div class="context-title">EFFECT STYLING</div>
           <div class="style-sliders">
-            <div class="slider-row"><label>GLOBAL BRIGHTNESS</label><div class="percent-control"><div class="level-meter"><span class="fill"></span></div><label class="percent-box"><input id="briPct" class="percent-input" data-percent-for="bri" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label><input id="bri" type="hidden" value="96"></div></div>
-            <div class="slider-row"><label>SPEED</label><div class="percent-control"><div class="level-meter"><span class="fill"></span></div><label class="percent-box"><input id="spdPct" class="percent-input" data-percent-for="spd" type="number" inputmode="decimal" min="0" max="100" step="1" value="71"><span>%</span></label><input id="spd" type="hidden" value="180"></div></div>
-            <div id="bgbRow" class="slider-row"><label>BACKGROUND BRIGHTNESS</label><div class="percent-control"><div class="level-meter"><span class="fill bg-fill"></span></div><label class="percent-box"><input id="intPct" class="percent-input" data-percent-for="int" type="number" inputmode="decimal" min="0" max="100" step="1" value="25"><span>%</span></label><input id="int" type="hidden" value="64"></div></div>
-            <div class="slider-row"><label>SIZE</label><div class="percent-control"><div class="level-meter"><span class="fill"></span></div><label class="percent-box"><input id="sizePct" class="percent-input" data-percent-for="size" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label><input id="size" type="hidden" value="96"></div></div>
+            <!-- Hidden raw inputs hold the exact firmware-domain value; visible boxes show 0-100%. -->
+            <div class="slider-row">
+              <label>GLOBAL BRIGHTNESS</label>
+              <div class="percent-control">
+                <div class="level-meter"><span class="fill"></span></div>
+                <label class="percent-box"><input id="briPct" class="percent-input" data-percent-for="bri" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
+                <input id="bri" type="hidden" value="96">
+              </div>
+            </div>
+
+            <div class="slider-row">
+              <label>SPEED</label>
+              <div class="percent-control">
+                <div class="level-meter"><span class="fill"></span></div>
+                <label class="percent-box"><input id="spdPct" class="percent-input" data-percent-for="spd" type="number" inputmode="decimal" min="0" max="100" step="1" value="71"><span>%</span></label>
+                <input id="spd" type="hidden" value="180">
+              </div>
+            </div>
+
+            <!-- This entire row is hidden for effects that do not render BG. -->
+            <div id="bgbRow" class="slider-row">
+              <label>BACKGROUND BRIGHTNESS</label>
+              <div class="percent-control">
+                <div class="level-meter"><span class="fill bg-fill"></span></div>
+                <label class="percent-box"><input id="intPct" class="percent-input" data-percent-for="int" type="number" inputmode="decimal" min="0" max="100" step="1" value="25"><span>%</span></label>
+                <input id="int" type="hidden" value="64">
+              </div>
+            </div>
+
+            <div class="slider-row">
+              <label>SIZE</label>
+              <div class="percent-control">
+                <div class="level-meter"><span class="fill"></span></div>
+                <label class="percent-box"><input id="sizePct" class="percent-input" data-percent-for="size" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
+                <input id="size" type="hidden" value="96">
+              </div>
+            </div>
+
+            <!-- Always visible: intentionally not collapsed behind a MORE/details element. -->
             <div class="more-style">
-              <div class="slider-row"><label>DENSITY</label><div class="percent-control"><div class="level-meter"><span class="fill"></span></div><label class="percent-box"><input id="densPct" class="percent-input" data-percent-for="dens" type="number" inputmode="decimal" min="0" max="100" step="1" value="50"><span>%</span></label><input id="dens" type="hidden" value="128"></div></div>
-              <div class="slider-row"><label>TRAIL</label><div class="percent-control"><div class="level-meter"><span class="fill"></span></div><label class="percent-box"><input id="trailPct" class="percent-input" data-percent-for="trail" type="number" inputmode="decimal" min="0" max="100" step="1" value="67"><span>%</span></label><input id="trail" type="hidden" value="170"></div></div>
-              <div class="compact-row"><select id="dir" class="glass-field"><option value="FWD">FORWARD</option><option value="REV">REVERSE</option></select><button id="mirrorBtn" class="glass-btn">MIRROR</button><input id="mirror" type="checkbox" hidden></div>
+              <div class="slider-row">
+                <label>DENSITY</label>
+                <div class="percent-control">
+                  <div class="level-meter"><span class="fill"></span></div>
+                  <label class="percent-box"><input id="densPct" class="percent-input" data-percent-for="dens" type="number" inputmode="decimal" min="0" max="100" step="1" value="50"><span>%</span></label>
+                  <input id="dens" type="hidden" value="128">
+                </div>
+              </div>
+
+              <div class="slider-row">
+                <label>TRAIL</label>
+                <div class="percent-control">
+                  <div class="level-meter"><span class="fill"></span></div>
+                  <label class="percent-box"><input id="trailPct" class="percent-input" data-percent-for="trail" type="number" inputmode="decimal" min="0" max="100" step="1" value="67"><span>%</span></label>
+                  <input id="trail" type="hidden" value="170">
+                </div>
+              </div>
+
+              <div class="compact-row">
+                <select id="dir" class="glass-field">
+                  <option value="FWD">FORWARD</option>
+                  <option value="REV">REVERSE</option>
+                </select>
+                <button id="mirrorBtn" class="glass-btn">MIRROR</button>
+                <input id="mirror" type="checkbox" hidden>
+              </div>
             </div>
           </div>
         </section>
       </div>
     </section>
 
+    <!-- =====================================================================
+         COLORS PAGE
+         Hidden color inputs are authoritative values. The glass hue bar edits the
+         currently selected BG/FG/MAIN role, and JS sends all three colors together.
+         ===================================================================== -->
     <section id="colors" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content colors-page-wrap">
         <section class="context-frame colors-frame matrix-colors">
           <div class="context-title">COLORS</div>
-          <input id="main" type="color" value="#FFFFFF" hidden><input id="bg" type="color" value="#000000" hidden><input id="fg" type="color" value="#8000FF" hidden>
+
+          <input id="main" type="color" value="#FFFFFF" hidden>
+          <input id="bg" type="color" value="#000000" hidden>
+          <input id="fg" type="color" value="#8000FF" hidden>
+
+          <!-- JS hides roles that the selected effect does not use. -->
           <div class="rolebar">
             <button class="role on" data-role="main"><i id="mainSwatch" style="background:#FFFFFF"></i>MAIN</button>
             <button class="role" data-role="bg"><i id="bgSwatch" style="background:#000000"></i>BACKGROUND</button>
             <button class="role" data-role="fg"><i id="fgSwatch" style="background:#8000FF"></i>FOREGROUND</button>
           </div>
           <div id="colorCapability" class="microcopy"></div>
-          <div id="hueSelector" class="hue-selector"><span class="hue-spectrum"></span><span class="hue-thumb"></span><input id="hueRange" type="range" min="0" max="359" value="60"></div>
-          <div class="hue-readout"><span>HUE</span><strong id="hueValue">#FFFFFF</strong></div>
-          <div class="saved-colors"><div id="savedColors" class="saved-color-list"></div><button id="saveColor" class="glass-btn">+ SAVE COLOR</button></div>
-          <div class="button-row"><button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button><button id="addFxPlaylist" class="glass-btn">ADD TO SEQUENCE</button></div>
+
+          <!-- Pointer capture in st-ble-ui.js keeps drag tracking stable on touch devices. -->
+          <div id="hueSelector" class="hue-selector">
+            <span class="hue-spectrum"></span>
+            <span class="hue-thumb"></span>
+            <input id="hueRange" type="range" min="0" max="359" value="60">
+          </div>
+          <div class="hue-readout">
+            <span>HUE</span>
+            <strong id="hueValue">#FFFFFF</strong>
+          </div>
+
+          <div class="saved-colors">
+            <div id="savedColors" class="saved-color-list"></div>
+            <button id="saveColor" class="glass-btn">+ SAVE COLOR</button>
+          </div>
+          <div class="button-row">
+            <button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button>
+            <button id="addFxPlaylist" class="glass-btn">ADD TO SEQUENCE</button>
+          </div>
         </section>
       </div>
     </section>
 
+    <!-- Browser-local preset metadata/state. Device-side V5.1 preset slots are a separate firmware capability. -->
     <section id="presets" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
-      <div class="page-content centered-content"><section class="context-frame presets-frame matrix-presets"><div class="context-title">PRESETS</div><div class="button-row centered"><button id="saveCurrentPreset" class="glass-btn primary">SAVE CURRENT PRESET</button><span id="presetCount" class="microcopy"></span></div><div id="presetGrid" class="preset-grid"></div></section></div>
+      <div class="page-content centered-content">
+        <section class="context-frame presets-frame matrix-presets">
+          <div class="context-title">PRESETS</div>
+          <div class="button-row centered">
+            <button id="saveCurrentPreset" class="glass-btn primary">SAVE CURRENT PRESET</button>
+            <span id="presetCount" class="microcopy"></span>
+          </div>
+          <div id="presetGrid" class="preset-grid"></div>
+        </section>
+      </div>
     </section>
 
+    <!-- =====================================================================
+         CUSTOM / SEQUENCE PAGE
+         Sequence timing is browser-owned in V5.1; it cannot continue while the
+         browser is fully suspended/closed because firmware has no scheduler.
+         ===================================================================== -->
     <section id="custom" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
-      <div class="page-content centered-content"><section class="context-frame playlist-frame matrix-playlist">
-        <div class="context-title">SEQUENCE</div>
-        <div class="button-row centered"><button id="addCurrentFx" class="glass-btn">ADD CURRENT FX</button><button id="playPlaylist" class="glass-btn primary">PLAY</button><button id="shufflePlaylist" class="glass-btn" aria-pressed="false">SHUFFLE</button><button id="stopPlaylist" class="glass-btn">STOP</button><button id="clearPlaylist" class="glass-btn danger">CLEAR</button></div>
-        <span id="playlistStatus" class="microcopy" style="display:block;text-align:center;margin:7px 0">Ordered loop ready</span>
-        <div id="playlistList" class="playlist-list"></div>
-        <div class="microcopy web-limit-note">PLAY state and position are remembered by this browser and resume after the target reconnects. V5.1 has no firmware sequence scheduler, so Chrome must remain active for timing to advance.</div>
-      </section></div>
+      <div class="page-content centered-content">
+        <section class="context-frame playlist-frame matrix-playlist">
+          <div class="context-title">SEQUENCE</div>
+          <div class="button-row centered">
+            <button id="addCurrentFx" class="glass-btn">ADD CURRENT FX</button>
+            <button id="playPlaylist" class="glass-btn primary">PLAY</button>
+            <button id="shufflePlaylist" class="glass-btn" aria-pressed="false">SHUFFLE</button>
+            <button id="stopPlaylist" class="glass-btn">STOP</button>
+            <button id="clearPlaylist" class="glass-btn danger">CLEAR</button>
+          </div>
+          <span id="playlistStatus" class="microcopy" style="display:block;text-align:center;margin:7px 0">Ordered loop ready</span>
+          <div id="playlistList" class="playlist-list"></div>
+          <div class="microcopy web-limit-note">
+            PLAY state and position are remembered by this browser and resume after the target reconnects. V5.1 has no firmware sequence scheduler, so Chrome must remain active for timing to advance.
+          </div>
+        </section>
+      </div>
     </section>
   </main>
 </div>
+
+<!-- Transport must load first because the UI reads window.STWBLE during initialization. -->
 <script src="st-ble-core.js?v=20260909-iter2-connect1"></script>
 <script src="st-ble-ui.js?v=20260910-iter2-percent1"></script>
 </body>
