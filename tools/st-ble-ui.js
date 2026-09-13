@@ -1352,45 +1352,75 @@
 
   function bindPlaylistDrag(row, handle, host) {
     let dragging = false;
+    let activePointerId = null;
+
+    const moveRowForY = (clientY) => {
+      const rows = [...host.querySelectorAll(".playlist-item")].filter(
+        (candidate) => candidate !== row,
+      );
+      if (!rows.length) return;
+
+      for (const target of rows) {
+        const rect = target.getBoundingClientRect();
+        if (clientY < rect.top + rect.height / 2) {
+          if (row.nextElementSibling !== target) host.insertBefore(row, target);
+          return;
+        }
+      }
+
+      if (host.lastElementChild !== row) host.append(row);
+    };
 
     handle.addEventListener("pointerdown", (event) => {
-      if (event.button != null && event.button !== 0) return;
+      if (event.pointerType === "mouse" && event.button !== 0) return;
       dragging = true;
+      activePointerId = event.pointerId;
       row.classList.add("dragging");
+      handle.classList.add("dragging");
+      document.documentElement.classList.add("sequence-reordering");
+
       try {
-        handle.setPointerCapture(event.pointerId);
+        handle.setPointerCapture(activePointerId);
       } catch (_) {}
+
       event.preventDefault();
+      event.stopPropagation();
     });
 
     handle.addEventListener("pointermove", (event) => {
-      if (!dragging) return;
+      if (!dragging || event.pointerId !== activePointerId) return;
+
+      const edge = 56;
+      if (event.clientY < edge) window.scrollBy(0, -12);
+      else if (event.clientY > window.innerHeight - edge) window.scrollBy(0, 12);
+
+      moveRowForY(event.clientY);
       event.preventDefault();
-
-      const target = document
-        .elementFromPoint(event.clientX, event.clientY)
-        ?.closest(".playlist-item");
-      if (!target || target === row || target.parentElement !== host) return;
-
-      const rect = target.getBoundingClientRect();
-      const before = event.clientY < rect.top + rect.height / 2;
-      if (before) host.insertBefore(row, target);
-      else host.insertBefore(row, target.nextSibling);
     });
 
     const finish = (event) => {
       if (!dragging) return;
+      if (event?.pointerId != null && event.pointerId !== activePointerId) return;
+
       dragging = false;
       row.classList.remove("dragging");
+      handle.classList.remove("dragging");
+      document.documentElement.classList.remove("sequence-reordering");
+
       try {
-        if (event?.pointerId != null) handle.releasePointerCapture(event.pointerId);
+        if (activePointerId != null && handle.hasPointerCapture(activePointerId)) {
+          handle.releasePointerCapture(activePointerId);
+        }
       } catch (_) {}
+
+      activePointerId = null;
       savePlaylistDomOrder(host);
       renderPlaylist();
     };
 
     handle.addEventListener("pointerup", finish);
     handle.addEventListener("pointercancel", finish);
+    handle.addEventListener("lostpointercapture", finish);
   }
 
   function renderPlaylist() {
