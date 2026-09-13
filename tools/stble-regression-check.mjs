@@ -36,6 +36,7 @@ for (const page of ["device","effects","colors","presets","custom"]) need(html, 
 forbid(html, 'data-page="fxcolor"', "combined FX/COLORS tab");
 need(html, '.tab::after,.tab.locked::before { display:none!important;', "tab underline removed");
 need(html, 'grid-template-columns:repeat(5,minmax(0,1fr))', "five centered glass tabs");
+need(html, 'clip-path:polygon(', "angled glass tabs");
 need(html, '.tab.on {', "selected glass tab state");
 
 need(html, 'id="shufflePlaylist"', "sequence shuffle");
@@ -47,6 +48,14 @@ need(ui, "SHUFFLE_KEY", "persistent shuffle mode");
 need(ui, "PLAYLIST_RUN_KEY", "persistent sequence play intent");
 need(ui, "PLAYLIST_POS_KEY", "persistent sequence position");
 need(ui, "choosePlaylistIndex", "sequence runner");
+need(ui, "playablePlaylist", "checked-only sequence playback");
+need(ui, 'item.enabled = true', "sequence enabled migration");
+need(ui, 'enabled: true', "new sequence items enabled");
+need(ui, 'class="sequence-check"', "sequence selector checkbox");
+need(ui, 'class="drag-handle"', "sequence drag handle");
+need(ui, "bindPlaylistDrag", "sequence drag binding");
+need(ui, "savePlaylistDomOrder", "sequence order persistence");
+need(ui, "elementFromPoint", "pointer-based touch reorder");
 
 need(ui, 'bri: { key: "BRI"', "global brightness to BRI");
 need(ui, 'int: { key: "BGB"', "background brightness to BGB");
@@ -57,13 +66,15 @@ need(ui, "FX_CAPS", "effect color-role metadata");
 need(html, 'id="bgbRow"', "background-brightness row");
 
 forbid(html, "sim-slider", "old draggable styling slider");
-forbid(html, "step-btn", "plus/minus styling buttons");
 if (count(html, 'class="percent-input"') !== 6) errors.push(`EXPECTED 6 percentage inputs, found ${count(html, 'class="percent-input"')}`);
+if (count(html, 'class="percent-step"') !== 12) errors.push(`EXPECTED 12 percent step buttons, found ${count(html, 'class="percent-step"')}`);
 need(ui, "STYLE_CONTROLS", "percentage control mapping");
 need(ui, "commitPercent", "percentage commit handler");
 need(ui, 'input.addEventListener("blur"', "commit percentage on blur");
 need(ui, 'e.key === "Enter"', "commit percentage on Enter");
 need(ui, "restorePercent", "invalid percentage restores last value");
+need(ui, 'qa(".percent-step")', "plus/minus percentage controls");
+need(ui, 'Number(button.dataset.delta', "one-percent step calculation");
 need(html, '<div class="more-style">', "always-visible density/trail area");
 forbid(html, '<details class="more-style">', "collapsed MORE styling controls");
 
@@ -83,4 +94,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log("STBLE regression gate PASS");
-console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, five glass tabs, numeric 0-100 styling inputs, display-only level bars, finger-tracked glass hue, saved-color delete, sequence duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
+console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, five angled glass tabs, numeric 0-100 styling inputs plus one-percent +/- steps, display-only level bars, finger-tracked glass hue, saved-color delete, checked-only drag-reorder Sequence with duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
