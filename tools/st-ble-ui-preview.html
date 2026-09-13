@@ -244,6 +244,13 @@
        ----------------------------------------------------------------------- */
     .playlist-item {
       position:relative;
+      display:grid!important;
+      grid-template-columns:28px 34px 28px minmax(0,1fr)!important;
+      grid-template-areas:
+        "check drag num copy"
+        "check drag duration actions";
+      gap:7px!important;
+      align-items:center!important;
       transition:opacity .14s ease,transform .14s ease,box-shadow .14s ease;
     }
     .playlist-item.sequence-disabled { opacity:.48; }
@@ -254,9 +261,11 @@
       box-shadow:0 0 18px rgba(0,191,255,.24)!important;
     }
     .sequence-select {
+      grid-area:check;
       display:grid;
       place-items:center;
       min-width:28px;
+      align-self:stretch;
     }
     .sequence-check {
       appearance:none;
@@ -282,9 +291,12 @@
       font:900 13px/1 Oxanium;
     }
     .drag-handle {
+      grid-area:drag;
       width:34px;
       min-width:34px;
-      height:40px;
+      height:auto;
+      min-height:52px;
+      align-self:stretch;
       padding:0;
       border-radius:9px;
       background:linear-gradient(145deg,rgba(7,25,52,.46),rgba(2,8,23,.72));
@@ -297,7 +309,10 @@
       box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 8px rgba(0,191,255,.06)!important;
     }
     .drag-handle:active { cursor:grabbing; color:var(--blue); background:rgba(0,191,255,.13); }
-    .sequence-copy { min-width:0; }
+    .playlist-num { grid-area:num; }
+    .sequence-copy { grid-area:copy; min-width:0; }
+    .playlist-item .duration-wrap { grid-area:duration; margin-left:0; justify-self:start; }
+    .playlist-item > .button-row { grid-area:actions; justify-self:end; }
 
     /* -----------------------------------------------------------------------
        COLORS PAGE: clean glass hue bar; dim at rest and bright while touched.
@@ -375,6 +390,8 @@
       .percent-step { width:38px; height:38px; }
       .style-sliders { gap:15px!important; }
       .duration-wrap { grid-template-columns:auto 62px; }
+      .playlist-item { grid-template-columns:26px 32px 26px minmax(0,1fr)!important; gap:6px!important; padding:7px 5px!important; }
+      .drag-handle { width:32px; min-width:32px; }
     }
   </style>
 </head>
@@ -404,11 +421,6 @@
   </div>
 
   <main class="workspace">
-    <!-- =====================================================================
-         DEVICE PAGE
-         Logical cards/groups are browser metadata. Actual BLE identity/state is
-         read through st-ble-core.js; firmware settings are sent only when saved.
-         ===================================================================== -->
     <section id="device" class="page on">
       <div class="context-frame device-zone matrix-device">
         <div class="context-title">DEVICES</div>
@@ -419,7 +431,6 @@
         </div>
       </div>
 
-      <!-- Disabled until a logical device is selected. -->
       <div id="deviceTools" class="device-tools locked-panel">
         <section class="context-frame assignment-frame matrix-bluetooth">
           <div class="context-title">BLUETOOTH</div>
@@ -461,7 +472,6 @@
           <div class="microcopy">FROM/TO remains app-side because V5.1 has no verified segment-bound command.</div>
         </section>
 
-        <!-- Developer diagnostics; raw command is intentionally explicit/manual. -->
         <section class="context-frame debug-frame matrix-debug">
           <div class="context-title">DEBUG</div>
           <div class="button-row">
@@ -476,7 +486,6 @@
         </section>
       </div>
 
-      <!-- Group membership is browser-side; transport fan-out is enforced by BLE core. -->
       <section class="context-frame group-frame matrix-group">
         <div class="context-title">GROUPS</div>
         <div class="group-create">
@@ -487,11 +496,6 @@
       </section>
     </section>
 
-    <!-- =====================================================================
-         EFFECTS PAGE
-         Effect buttons are generated from the verified V5.1 list in st-ble-ui.js.
-         Styling percentages are presentation values mapped back to firmware bytes.
-         ===================================================================== -->
     <section id="effects" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content effects-stack">
@@ -507,7 +511,6 @@
         <section class="context-frame styling-frame matrix-styling">
           <div class="context-title">EFFECT STYLING</div>
           <div class="style-sliders">
-            <!-- Hidden raw inputs hold the exact firmware-domain value; visible boxes show 0-100%. -->
             <div class="slider-row">
               <label>GLOBAL BRIGHTNESS</label>
               <div class="percent-control">
@@ -530,7 +533,6 @@
               </div>
             </div>
 
-            <!-- This entire row is hidden for effects that do not render BG. -->
             <div id="bgbRow" class="slider-row">
               <label>BACKGROUND BRIGHTNESS</label>
               <div class="percent-control">
@@ -553,7 +555,6 @@
               </div>
             </div>
 
-            <!-- Always visible: intentionally not collapsed behind a MORE/details element. -->
             <div class="more-style">
               <div class="slider-row">
                 <label>DENSITY</label>
@@ -591,11 +592,6 @@
       </div>
     </section>
 
-    <!-- =====================================================================
-         COLORS PAGE
-         Hidden color inputs are authoritative values. The glass hue bar edits the
-         currently selected BG/FG/MAIN role, and JS sends all three colors together.
-         ===================================================================== -->
     <section id="colors" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content colors-page-wrap">
@@ -606,7 +602,6 @@
           <input id="bg" type="color" value="#000000" hidden>
           <input id="fg" type="color" value="#8000FF" hidden>
 
-          <!-- JS hides roles that the selected effect does not use. -->
           <div class="rolebar">
             <button class="role on" data-role="main"><i id="mainSwatch" style="background:#FFFFFF"></i>MAIN</button>
             <button class="role" data-role="bg"><i id="bgSwatch" style="background:#000000"></i>BACKGROUND</button>
@@ -614,7 +609,6 @@
           </div>
           <div id="colorCapability" class="microcopy"></div>
 
-          <!-- Pointer capture in st-ble-ui.js keeps drag tracking stable on touch devices. -->
           <div id="hueSelector" class="hue-selector">
             <span class="hue-spectrum"></span>
             <span class="hue-thumb"></span>
@@ -637,7 +631,6 @@
       </div>
     </section>
 
-    <!-- Browser-local preset metadata/state. Device-side V5.1 preset slots are a separate firmware capability. -->
     <section id="presets" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content centered-content">
@@ -652,11 +645,6 @@
       </div>
     </section>
 
-    <!-- =====================================================================
-         CUSTOM / SEQUENCE PAGE
-         Sequence timing is browser-owned in V5.1; it cannot continue while the
-         browser is fully suspended/closed because firmware has no scheduler.
-         ===================================================================== -->
     <section id="custom" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content centered-content">
@@ -681,7 +669,6 @@
   </main>
 </div>
 
-<!-- Transport must load first because the UI reads window.STWBLE during initialization. -->
 <script src="st-ble-core.js?v=20260909-iter2-connect1"></script>
 <script src="st-ble-ui.js?v=20260912-iter2-sequenceedit1"></script>
 </body>
