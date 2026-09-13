@@ -10,10 +10,11 @@
    *   - Rendering logical device/group state supplied by st-ble-core.js.
    *   - Page gating/navigation state.
    *   - The verified V5.1 effect list and per-effect color-role metadata.
-   *   - Effect Styling percentage-to-firmware mapping.
+   *   - Effect Styling percentage-to-firmware mapping and +/- percentage steps.
    *   - BG / FG / MAIN color selection and hue interaction.
    *   - Browser-local saved colors, presets, and Sequence definitions.
-   *   - Sequence timing while the browser JavaScript environment is active.
+   *   - Sequence enable/disable selection, drag ordering, and timing while the
+   *     browser JavaScript environment is active.
    *
    * This file DOES NOT own:
    *   - BluetoothDevice/GATT objects or write serialization.
@@ -329,10 +330,6 @@
       const card = document.createElement("article");
       card.className = `device-card${selected ? " selected" : ""}`;
 
-      /*
-       * Card HTML is generated here because device count is dynamic. The power
-       * glyph is presentation-only; click behavior is attached below.
-       */
       card.innerHTML = `
         <div class="esp32-art">
           <span class="esp32-chip">ESP32</span>
@@ -365,10 +362,6 @@
     }
   }
 
-  /*
-   * The dirty flag prevents asynchronous BLE events from overwriting text/number
-   * fields while the user is in the middle of editing them.
-   */
   function loadDeviceForm(force = false) {
     const device = selectedDevice();
     q("#deviceTools")?.classList.toggle("locked-panel", !device);
@@ -416,7 +409,6 @@
 
     if (!device && snap.devices[0]) {
       window.STWBLE.selectDevice(snap.devices[0].id);
-      // Allow the synchronous target event to propagate before reading snapshot.
       await sleep(0);
       snap = window.STWBLE.snapshot();
       device = selectedDevice();
@@ -457,11 +449,7 @@
 
     try {
       const config = deviceFormConfig();
-
-      // Core sends LEDS/PIN/ORDER/SAVE and stores browser-only fields separately.
       await window.STWBLE.saveDeviceConfig(device.id, config, { reboot: false });
-
-      // V5.1 has no persistent NAME command; this is a browser logical alias.
       window.STWBLE.renameDevice(device.id, q("#deviceName").value);
 
       if (reboot) {
@@ -486,7 +474,6 @@
   q("#saveDeviceSettings")?.addEventListener("click", () => saveSettings(false));
   q("#saveDeviceReboot")?.addEventListener("click", () => saveSettings(true));
 
-  /* Save startup effect in ESP32 NVS, then restore the current live effect. */
   q("#saveStartup")?.addEventListener("click", async () => {
     const device = selectedDevice();
     if (!device) return;
@@ -630,7 +617,6 @@
     );
   };
 
-  /* Display-only meter; it never sends commands and does not accept pointer input. */
   function paintPercent(id, pct) {
     const input = q(`[data-percent-for="${id}"]`);
     input
@@ -639,7 +625,6 @@
       ?.style.setProperty("width", `${clamp(Number(pct), 0, 100)}%`);
   }
 
-  /* Raw hidden value -> visible percentage box + visual meter. */
   function updateSlider(rawInput) {
     if (!rawInput) return;
 
@@ -658,17 +643,12 @@
     Object.keys(STYLE_CONTROLS).forEach((id) => updateSlider(q(`#${id}`)));
   };
 
-  /* Invalid text restores from the last successfully committed raw value. */
   function restorePercent(input) {
     const id = input?.dataset.percentFor;
     if (!id) return;
     updateSlider(q(`#${id}`));
   }
 
-  /*
-   * Commit happens only on blur/Enter. Valid visible percent is converted to the
-   * exact firmware domain, sent, then copied into the hidden raw input.
-   */
   async function commitPercent(input) {
     const id = input?.dataset.percentFor;
     const config = STYLE_CONTROLS[id];
@@ -704,7 +684,6 @@
   qa(".percent-input").forEach((input) => {
     input.addEventListener("focus", () => input.select());
 
-    // While typing a valid number, preview only the meter; do not send yet.
     input.addEventListener("input", () => {
       const pct = Number(input.value);
       if (
@@ -734,6 +713,30 @@
     });
   });
 
+  // +/- is one percentage point per tap; the percentage input remains authoritative.
+  qa(".percent-step").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const id = button.dataset.stepFor;
+      const input = q(`[data-percent-for="${id}"]`);
+      if (!input || !STYLE_CONTROLS[id]) return;
+
+      const typed = Number(input.value);
+      const fallback = Number(input.dataset.lastValid || 0);
+      const current = Number.isFinite(typed) && typed >= 0 && typed <= 100
+        ? typed
+        : fallback;
+      const next = clamp(
+        Math.round(current) + Number(button.dataset.delta || 0),
+        0,
+        100,
+      );
+
+      input.value = String(next);
+      paintPercent(id, next);
+      await commitPercent(input);
+    });
+  });
+
   q("#dir")?.addEventListener("change", () => {
     send(`DIR=${q("#dir").value}`, { fast: true });
   });
@@ -756,7 +759,6 @@
     };
   }
 
-  /* Set hidden color inputs + role swatches without writing to firmware. */
   function setPaletteUI(palette) {
     for (const role of ["main", "bg", "fg"]) {
       const value = (palette[role] || currentPalette()[role]).toUpperCase();
@@ -787,7 +789,6 @@
     return hue < 0 ? hue + 360 : hue;
   }
 
-  /* Full-saturation HSV hue -> RGB hex. Existing UI intentionally edits hue only. */
   function hueHex(hue) {
     const chroma = 1;
     const x = 1 - Math.abs(((hue / 60) % 2) - 1);
@@ -821,7 +822,6 @@
     return `#${byteHex(r)}${byteHex(g)}${byteHex(b)}`;
   }
 
-  /* Existing role color -> hue track/thumb position. */
   function syncHue() {
     const value = currentPalette()[activeRole];
     const hue = rgbToHue(value);
@@ -832,7 +832,6 @@
     q("#hueValue").style.color = value;
   }
 
-  /* Pointer movement updates only the active role in local UI until release. */
   function liveHue(hue) {
     const hex = hueHex(hue);
 
@@ -854,7 +853,6 @@
     );
   }
 
-  /* Commit all role colors together so firmware state stays internally coherent. */
   async function commitHue() {
     if (!hueDirty) return;
     hueDirty = false;
@@ -912,7 +910,6 @@
   hueSelector?.addEventListener("pointerup", finishHue);
   hueSelector?.addEventListener("pointercancel", finishHue);
 
-  // Keyboard/range-input fallback uses the same live/commit path as pointer drag.
   q("#hueRange")?.addEventListener("input", () => {
     liveHue(Number(q("#hueRange").value));
   });
@@ -925,7 +922,6 @@
   function customColors() {
     let list = loadJSON(SAVED_KEY, null);
 
-    // One-time migration removes built-ins from the old custom list.
     if (!Array.isArray(list)) {
       const old = loadJSON(OLD_SAVED_KEY, []);
       list = Array.isArray(old)
@@ -1025,7 +1021,6 @@
       button.disabled = !available;
     });
 
-    // Keep activeRole on a role that the current effect can actually use.
     if (!roles.includes(activeRole)) {
       activeRole = roles.includes("main")
         ? "main"
@@ -1075,7 +1070,6 @@
   q("#fxSearch")?.addEventListener("input", renderEffects);
 
   async function selectEffect(fx) {
-    // Manual effect selection exits browser Sequence playback but holds LEDs live.
     stopPlaylist("Sequence stopped", true);
 
     if (!(await send(`FX=${fx}`))) return false;
@@ -1139,10 +1133,6 @@
   /* 14. GENERIC LIGHTING-STATE CAPTURE/APPLY                                 */
   /* ======================================================================== */
 
-  /*
-   * Shared state shape is used by browser presets and Sequence items. It stores
-   * raw firmware values so reapplying a state does not accumulate rounding error.
-   */
   function captureState(name = activeFx) {
     const palette = currentPalette();
 
@@ -1162,7 +1152,6 @@
     };
   }
 
-  /* Build one semicolon command; BLE core safely re-chunks it for transport. */
   function buildStateCommand(s) {
     return [
       `FX=${s.fx || activeFx}`,
@@ -1278,8 +1267,15 @@
   q("#saveCurrentPreset")?.addEventListener("click", saveCurrentPreset);
 
   /* ======================================================================== */
-  /* 16. BROWSER SEQUENCE STORAGE / MIGRATION                                 */
+  /* 16. BROWSER SEQUENCE STORAGE / MIGRATION / ORDERING                      */
   /* ======================================================================== */
+
+  function makeSequenceId() {
+    try {
+      if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+    } catch (_) {}
+    return `seq-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+  }
 
   function playlist() {
     const list = loadJSON(PLAYLIST_KEY, []);
@@ -1287,7 +1283,6 @@
 
     let changed = false;
 
-    // Migrate the old `duration` field to durationSec without losing items.
     list.forEach((item) => {
       const number = Number(
         item.durationSec ?? item.duration ?? DEFAULT_PLAYLIST_SECONDS,
@@ -1304,6 +1299,14 @@
         delete item.duration;
         changed = true;
       }
+      if (typeof item.enabled !== "boolean") {
+        item.enabled = true;
+        changed = true;
+      }
+      if (!item.seqId) {
+        item.seqId = makeSequenceId();
+        changed = true;
+      }
     });
 
     if (changed) saveJSON(PLAYLIST_KEY, list);
@@ -1311,11 +1314,14 @@
   }
 
   const savePlaylist = (list) => saveJSON(PLAYLIST_KEY, list.slice(0, 100));
+  const playablePlaylist = () => playlist().filter((item) => item.enabled !== false);
 
   function addPlaylist(state) {
     const list = playlist();
     list.push({
       ...state,
+      enabled: true,
+      seqId: makeSequenceId(),
       durationSec: Number(state.durationSec) || DEFAULT_PLAYLIST_SECONDS,
     });
     savePlaylist(list);
@@ -1329,6 +1335,63 @@
   q("#addCurrentFx")?.addEventListener("click", () => {
     addPlaylist(captureState(prettyFx(activeFx)));
   });
+
+  function savePlaylistDomOrder(host) {
+    const list = playlist();
+    const byId = new Map(list.map((item) => [item.seqId, item]));
+    const order = [...host.querySelectorAll(".playlist-item")]
+      .map((row) => row.dataset.seqId)
+      .filter(Boolean);
+    const next = order.map((id) => byId.get(id)).filter(Boolean);
+
+    if (next.length === list.length) {
+      savePlaylist(next);
+      if (playlistRunning) startPlaylist(true);
+    }
+  }
+
+  function bindPlaylistDrag(row, handle, host) {
+    let dragging = false;
+
+    handle.addEventListener("pointerdown", (event) => {
+      if (event.button != null && event.button !== 0) return;
+      dragging = true;
+      row.classList.add("dragging");
+      try {
+        handle.setPointerCapture(event.pointerId);
+      } catch (_) {}
+      event.preventDefault();
+    });
+
+    handle.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      event.preventDefault();
+
+      const target = document
+        .elementFromPoint(event.clientX, event.clientY)
+        ?.closest(".playlist-item");
+      if (!target || target === row || target.parentElement !== host) return;
+
+      const rect = target.getBoundingClientRect();
+      const before = event.clientY < rect.top + rect.height / 2;
+      if (before) host.insertBefore(row, target);
+      else host.insertBefore(row, target.nextSibling);
+    });
+
+    const finish = (event) => {
+      if (!dragging) return;
+      dragging = false;
+      row.classList.remove("dragging");
+      try {
+        if (event?.pointerId != null) handle.releasePointerCapture(event.pointerId);
+      } catch (_) {}
+      savePlaylistDomOrder(host);
+      renderPlaylist();
+    };
+
+    handle.addEventListener("pointerup", finish);
+    handle.addEventListener("pointercancel", finish);
+  }
 
   function renderPlaylist() {
     const host = q("#playlistList");
@@ -1345,10 +1408,15 @@
 
     list.forEach((item, index) => {
       const row = document.createElement("article");
-      row.className = "playlist-item";
+      row.className = `playlist-item${item.enabled === false ? " sequence-disabled" : ""}`;
+      row.dataset.seqId = item.seqId;
       row.innerHTML = `
+        <label class="sequence-select" title="Include this effect in playback">
+          <input class="sequence-check" type="checkbox" aria-label="Include effect in Sequence">
+        </label>
+        <button type="button" class="drag-handle" aria-label="Drag effect to reorder" title="Drag to reorder">⋮</button>
         <span class="playlist-num"></span>
-        <span><b></b><small></small></span>
+        <span class="sequence-copy"><b></b><small></small></span>
         <label class="duration-wrap">
           <small>TIME SEC</small>
           <input class="glass-field duration" type="number" min="0.25" max="3600" step="0.25">
@@ -1360,32 +1428,47 @@
       `;
 
       row.querySelector(".playlist-num").textContent = index + 1;
-      row.querySelector("b").textContent = item.name || prettyFx(item.fx);
-      row.querySelector("small").textContent = prettyFx(item.fx);
+      row.querySelector(".sequence-copy b").textContent =
+        item.name || prettyFx(item.fx);
+      row.querySelector(".sequence-copy small").textContent = prettyFx(item.fx);
+
+      const enabled = row.querySelector(".sequence-check");
+      enabled.checked = item.enabled !== false;
+      enabled.onchange = () => {
+        const next = playlist();
+        const current = next.find((candidate) => candidate.seqId === item.seqId);
+        if (!current) return;
+        current.enabled = enabled.checked;
+        savePlaylist(next);
+        row.classList.toggle("sequence-disabled", !enabled.checked);
+        if (playlistRunning) startPlaylist(true);
+      };
 
       const duration = row.querySelector(".duration");
       duration.value = item.durationSec || DEFAULT_PLAYLIST_SECONDS;
       duration.onchange = () => {
         const next = playlist();
-        if (!next[index]) return;
+        const current = next.find((candidate) => candidate.seqId === item.seqId);
+        if (!current) return;
 
-        next[index].durationSec = clamp(
+        current.durationSec = clamp(
           +duration.value || DEFAULT_PLAYLIST_SECONDS,
           0.25,
           3600,
         );
-        duration.value = next[index].durationSec;
+        duration.value = current.durationSec;
         savePlaylist(next);
       };
 
       row.querySelector(".load").onclick = () => applyState(item);
       row.querySelector(".del").onclick = () => {
-        const next = playlist();
-        next.splice(index, 1);
+        const next = playlist().filter((candidate) => candidate.seqId !== item.seqId);
         savePlaylist(next);
+        if (playlistRunning) startPlaylist(true);
         renderPlaylist();
       };
 
+      bindPlaylistDrag(row, row.querySelector(".drag-handle"), host);
       host.append(row);
     });
   }
@@ -1403,10 +1486,6 @@
     button.setAttribute("aria-pressed", playlistShuffle ? "true" : "false");
   }
 
-  /*
-   * Default stop semantics intentionally HOLD the current LEDs. keepEffect=false
-   * remains available internally, but normal STOP never sends FX=OFF.
-   */
   function stopPlaylist(reason = "Stopped · current effect held", keepEffect = true) {
     playlistRunning = false;
     playlistRunToken++;
@@ -1432,16 +1511,12 @@
     return next;
   }
 
-  /*
-   * Token invalidation prevents an old timeout from continuing after STOP or a
-   * restart. Timing remains browser-owned because V5.1 has no Sequence scheduler.
-   */
   async function runPlaylistStep(token, ordered = 0) {
     if (!playlistRunning || token !== playlistRunToken) return;
 
-    const list = playlist();
+    const list = playablePlaylist();
     if (!list.length) {
-      stopPlaylist("Sequence is empty");
+      stopPlaylist("Sequence has no checked effects");
       return;
     }
 
@@ -1471,14 +1546,15 @@
   }
 
   function startPlaylist(resume = false) {
-    const list = playlist();
+    const list = playablePlaylist();
 
     if (!snap.passkey) {
       log("Sequence needs a connected target.");
       return;
     }
     if (!list.length) {
-      log("Sequence is empty.");
+      q("#playlistStatus").textContent = "Sequence has no checked effects";
+      log("Sequence has no checked effects.");
       return;
     }
 
@@ -1551,7 +1627,6 @@
     renderGroups();
     updateHeader();
 
-    /* Target changes may replace all form/status context, so force a fresh load. */
     if (JSON.stringify(snap.target) !== oldTarget) {
       formDirty = false;
       fillStartupEffects();
@@ -1561,7 +1636,6 @@
       loadDeviceForm(false);
     }
 
-    /* STATUS events are the device-truth path for effects/colors/parameters. */
     if (e.detail?.type === "status" && e.detail?.deviceId) {
       const device = snap.devices.find(
         (item) => item.id === e.detail.deviceId,
@@ -1577,11 +1651,6 @@
       }
     }
 
-    /*
-     * On connect, read firmware status before attempting browser Sequence resume.
-     * The 150ms delay gives the freshly established GATT characteristics a short
-     * settle window without creating a continuous reconnect loop.
-     */
     if (e.detail?.type === "connected" && e.detail?.deviceId) {
       setTimeout(async () => {
         const status = await window.STWBLE.readStatus(e.detail.deviceId);
@@ -1614,10 +1683,6 @@
   /* 20. INITIAL RENDER                                                       */
   /* ======================================================================== */
 
-  /*
-   * Initialization is deliberately synchronous and side-effect-light. It does
-   * not open Bluetooth. BLE core emits `ready`; user connection remains manual.
-   */
   fillStartupEffects();
   renderDevices();
   renderGroups();
@@ -1642,6 +1707,6 @@
   }
 
   log(
-    "Iteration 2 current: V5.1 direct effects · SOLID restored · WIPE kept factual · percentage-entry styling · separate glass Effects/Colors tabs · Sequence state persists in browser.",
+    "Iteration 2 current: V5.1 direct effects · SOLID restored · WIPE kept factual · percentage entry plus +/- steps · angled glass tabs · checked/reorderable Sequence · browser-persistent Sequence state.",
   );
 })();
