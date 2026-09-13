@@ -16,11 +16,12 @@
   Active hardware contract: ST_BT_V5_1_MAIN.ino / VER=51.
 
   CURRENT UI CONTRACT — preserve unless explicitly changed:
-    - Five centered glass tabs: Device / Effects / Colors / Presets / Custom.
+    - Five centered angled glass tabs: Device / Effects / Colors / Presets / Custom.
     - Effects page: effects first, Effect Styling second.
     - Colors live on their own page to avoid accidental hue changes while scrolling.
-    - Effect Styling uses 0-100% numeric entry; gradient bars are display-only.
+    - Effect Styling uses - / 0-100% numeric entry / +; gradient bars are display-only.
     - Hue control is a clean glass spectrum, dim at rest and bright while touched.
+    - Sequence items have enabled checkboxes and a three-dot drag handle for ordering.
     - SOLID is present; WIPE remains WIPE; DANCING_SHADOWS stays removed.
     - Music remains absent from the web build.
 
@@ -53,11 +54,11 @@
        Major .context-frame containers keep the outer visual framing from CSS.
        ----------------------------------------------------------------------- */
     .glass-btn,.glass-field,.role,.tiny-btn,.fx-item,.saved-color,.preset-card,.playlist-item,.group-card,.debug-log,
-    .assignment-grid,.settings-grid,.group-members label,.duration-wrap,.level-meter,.percent-box,.hue-selector,#colorCapability {
+    .assignment-grid,.settings-grid,.group-members label,.duration-wrap,.level-meter,.percent-box,.percent-step,.drag-handle,.hue-selector,#colorCapability {
       border:0!important;
       outline:0!important;
     }
-    .glass-btn:hover,.role:hover,.tiny-btn:hover,.fx-item:hover { border-color:transparent!important; }
+    .glass-btn:hover,.role:hover,.tiny-btn:hover,.fx-item:hover,.percent-step:hover,.drag-handle:hover { border-color:transparent!important; }
     .glass-btn.primary,.glass-btn.danger { border-color:transparent!important; }
     .fx-item.on,.role.on {
       border:0!important;
@@ -89,7 +90,7 @@
     .assignment-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 
     /* -----------------------------------------------------------------------
-       NAVIGATION: five equal glass tabs, centered, no underline indicator.
+       NAVIGATION: five centered angled glass tabs, no underline indicator.
        nth-child assigns a different ShyneTyme accent to each tab.
        ----------------------------------------------------------------------- */
     .tabs {
@@ -99,8 +100,8 @@
       grid-template-columns:repeat(5,minmax(0,1fr));
       align-items:center!important;
       justify-content:center!important;
-      gap:6px!important;
-      padding:6px 8px 7px!important;
+      gap:5px!important;
+      padding:7px 8px 8px!important;
       border-bottom:0!important;
       overflow:visible!important;
       background:rgba(2,8,23,.72)!important;
@@ -111,17 +112,18 @@
       --tab-color:#00bfff;
       height:34px!important;
       min-width:0;
-      padding:0 4px!important;
+      padding:0 9px!important;
       border:0!important;
-      border-radius:10px!important;
+      border-radius:0!important;
+      clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%);
       text-align:center;
-      color:rgba(var(--tab-rgb),.55)!important;
-      background:linear-gradient(145deg,rgba(var(--tab-rgb),.08),rgba(255,255,255,.025) 46%,rgba(2,8,23,.46))!important;
-      backdrop-filter:blur(13px) saturate(1.28)!important;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -1px 0 rgba(var(--tab-rgb),.08),0 5px 14px rgba(0,0,0,.16)!important;
+      color:rgba(var(--tab-rgb),.58)!important;
+      background:linear-gradient(145deg,rgba(var(--tab-rgb),.10),rgba(255,255,255,.04) 44%,rgba(2,8,23,.52))!important;
+      backdrop-filter:blur(13px) saturate(1.30)!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.13),inset 0 -1px 0 rgba(var(--tab-rgb),.11),0 5px 14px rgba(0,0,0,.16)!important;
       font:800 7.2pt Oxanium!important;
       letter-spacing:.045em!important;
-      text-shadow:0 0 7px rgba(var(--tab-rgb),.18)!important;
+      text-shadow:0 0 8px rgba(var(--tab-rgb),.24)!important;
     }
     .tab:nth-child(1){--tab-rgb:255,44,168;--tab-color:#ff2ca8}
     .tab:nth-child(2){--tab-rgb:255,242,0;--tab-color:#fff200}
@@ -131,9 +133,9 @@
     .tab::after,.tab.locked::before { display:none!important; content:none!important; }
     .tab.on {
       color:var(--tab-color)!important;
-      background:linear-gradient(145deg,rgba(var(--tab-rgb),.28),rgba(255,255,255,.10) 45%,rgba(var(--tab-rgb),.12))!important;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -1px 0 rgba(var(--tab-rgb),.22),0 0 13px rgba(var(--tab-rgb),.34),0 7px 18px rgba(0,0,0,.20)!important;
-      text-shadow:0 0 9px rgba(var(--tab-rgb),.76)!important;
+      background:linear-gradient(145deg,rgba(var(--tab-rgb),.32),rgba(255,255,255,.13) 44%,rgba(var(--tab-rgb),.14))!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(var(--tab-rgb),.28),0 0 15px rgba(var(--tab-rgb),.42),0 7px 18px rgba(0,0,0,.20)!important;
+      text-shadow:0 0 10px rgba(var(--tab-rgb),.82)!important;
     }
     .tab.locked:not(.on) { opacity:.48!important; }
 
@@ -157,10 +159,26 @@
     /* Each numeric control maps 0-100% to the firmware raw range in st-ble-ui.js. */
     .percent-control {
       display:grid;
-      grid-template-columns:minmax(82px,1fr) 78px;
-      gap:10px;
+      grid-template-columns:40px minmax(82px,1fr) 78px 40px;
+      gap:8px;
       align-items:center;
       min-height:42px;
+    }
+    .percent-step {
+      width:40px;
+      height:40px;
+      padding:0;
+      border-radius:10px;
+      background:linear-gradient(145deg,rgba(7,25,52,.58),rgba(2,8,23,.78));
+      color:#dff6ff;
+      font:900 19px/1 Oxanium;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 0 10px rgba(0,191,255,.08)!important;
+      touch-action:manipulation;
+    }
+    .percent-step:active {
+      background:linear-gradient(145deg,rgba(0,191,255,.20),rgba(7,25,52,.68));
+      color:var(--blue);
+      transform:scale(.96);
     }
     .level-meter {
       position:relative;
@@ -220,6 +238,66 @@
     .fx-item span { font-size:11px!important; line-height:1.25; }
     .fx-item small { font-size:8px!important; line-height:1.15; }
     .fx-item { min-height:36px!important; padding-top:7px!important; padding-bottom:7px!important; }
+
+    /* -----------------------------------------------------------------------
+       CUSTOM / SEQUENCE: checkbox controls inclusion; three-dot handle owns drag.
+       ----------------------------------------------------------------------- */
+    .playlist-item {
+      position:relative;
+      transition:opacity .14s ease,transform .14s ease,box-shadow .14s ease;
+    }
+    .playlist-item.sequence-disabled { opacity:.48; }
+    .playlist-item.dragging {
+      z-index:8;
+      opacity:.90;
+      transform:scale(1.015);
+      box-shadow:0 0 18px rgba(0,191,255,.24)!important;
+    }
+    .sequence-select {
+      display:grid;
+      place-items:center;
+      min-width:28px;
+    }
+    .sequence-check {
+      appearance:none;
+      width:20px;
+      height:20px;
+      margin:0;
+      border:1px solid rgba(0,191,255,.30);
+      border-radius:5px;
+      background:rgba(2,8,23,.74);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .sequence-check:checked {
+      background:linear-gradient(145deg,rgba(255,44,168,.88),rgba(153,92,255,.88) 48%,rgba(0,191,255,.88));
+      box-shadow:0 0 10px rgba(0,191,255,.30),inset 0 1px 0 rgba(255,255,255,.34);
+    }
+    .sequence-check:checked::after {
+      content:"✓";
+      display:grid;
+      place-items:center;
+      width:100%;
+      height:100%;
+      color:#fff;
+      font:900 13px/1 Oxanium;
+    }
+    .drag-handle {
+      width:34px;
+      min-width:34px;
+      height:40px;
+      padding:0;
+      border-radius:9px;
+      background:linear-gradient(145deg,rgba(7,25,52,.46),rgba(2,8,23,.72));
+      color:#8fb8d8;
+      font:900 21px/1 Oxanium;
+      letter-spacing:-2px;
+      cursor:grab;
+      touch-action:none;
+      user-select:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 8px rgba(0,191,255,.06)!important;
+    }
+    .drag-handle:active { cursor:grabbing; color:var(--blue); background:rgba(0,191,255,.13); }
+    .sequence-copy { min-width:0; }
 
     /* -----------------------------------------------------------------------
        COLORS PAGE: clean glass hue bar; dim at rest and bright while touched.
@@ -290,11 +368,13 @@
 
     /* Phone reductions only change spacing; behavior and control ownership stay the same. */
     @media(max-width:560px){
-      .tabs { gap:4px!important; padding-left:5px!important; padding-right:5px!important; }
-      .tab { font-size:6.5pt!important; letter-spacing:.025em!important; }
+      .tabs { gap:3px!important; padding-left:4px!important; padding-right:4px!important; }
+      .tab { font-size:6.4pt!important; letter-spacing:.018em!important; padding-left:6px!important; padding-right:6px!important; }
       .slider-row { grid-template-columns:96px minmax(0,1fr)!important; }
-      .percent-control { grid-template-columns:minmax(64px,1fr) 76px; gap:8px; }
+      .percent-control { grid-template-columns:38px minmax(56px,1fr) 70px 38px; gap:6px; }
+      .percent-step { width:38px; height:38px; }
       .style-sliders { gap:15px!important; }
+      .duration-wrap { grid-template-columns:auto 62px; }
     }
   </style>
 </head>
@@ -431,8 +511,10 @@
             <div class="slider-row">
               <label>GLOBAL BRIGHTNESS</label>
               <div class="percent-control">
+                <button type="button" class="percent-step" data-step-for="bri" data-delta="-1" aria-label="Decrease global brightness">−</button>
                 <div class="level-meter"><span class="fill"></span></div>
                 <label class="percent-box"><input id="briPct" class="percent-input" data-percent-for="bri" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
+                <button type="button" class="percent-step" data-step-for="bri" data-delta="1" aria-label="Increase global brightness">+</button>
                 <input id="bri" type="hidden" value="96">
               </div>
             </div>
@@ -440,8 +522,10 @@
             <div class="slider-row">
               <label>SPEED</label>
               <div class="percent-control">
+                <button type="button" class="percent-step" data-step-for="spd" data-delta="-1" aria-label="Decrease speed">−</button>
                 <div class="level-meter"><span class="fill"></span></div>
                 <label class="percent-box"><input id="spdPct" class="percent-input" data-percent-for="spd" type="number" inputmode="decimal" min="0" max="100" step="1" value="71"><span>%</span></label>
+                <button type="button" class="percent-step" data-step-for="spd" data-delta="1" aria-label="Increase speed">+</button>
                 <input id="spd" type="hidden" value="180">
               </div>
             </div>
@@ -450,8 +534,10 @@
             <div id="bgbRow" class="slider-row">
               <label>BACKGROUND BRIGHTNESS</label>
               <div class="percent-control">
+                <button type="button" class="percent-step" data-step-for="int" data-delta="-1" aria-label="Decrease background brightness">−</button>
                 <div class="level-meter"><span class="fill bg-fill"></span></div>
                 <label class="percent-box"><input id="intPct" class="percent-input" data-percent-for="int" type="number" inputmode="decimal" min="0" max="100" step="1" value="25"><span>%</span></label>
+                <button type="button" class="percent-step" data-step-for="int" data-delta="1" aria-label="Increase background brightness">+</button>
                 <input id="int" type="hidden" value="64">
               </div>
             </div>
@@ -459,8 +545,10 @@
             <div class="slider-row">
               <label>SIZE</label>
               <div class="percent-control">
+                <button type="button" class="percent-step" data-step-for="size" data-delta="-1" aria-label="Decrease size">−</button>
                 <div class="level-meter"><span class="fill"></span></div>
                 <label class="percent-box"><input id="sizePct" class="percent-input" data-percent-for="size" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
+                <button type="button" class="percent-step" data-step-for="size" data-delta="1" aria-label="Increase size">+</button>
                 <input id="size" type="hidden" value="96">
               </div>
             </div>
@@ -470,8 +558,10 @@
               <div class="slider-row">
                 <label>DENSITY</label>
                 <div class="percent-control">
+                  <button type="button" class="percent-step" data-step-for="dens" data-delta="-1" aria-label="Decrease density">−</button>
                   <div class="level-meter"><span class="fill"></span></div>
                   <label class="percent-box"><input id="densPct" class="percent-input" data-percent-for="dens" type="number" inputmode="decimal" min="0" max="100" step="1" value="50"><span>%</span></label>
+                  <button type="button" class="percent-step" data-step-for="dens" data-delta="1" aria-label="Increase density">+</button>
                   <input id="dens" type="hidden" value="128">
                 </div>
               </div>
@@ -479,8 +569,10 @@
               <div class="slider-row">
                 <label>TRAIL</label>
                 <div class="percent-control">
+                  <button type="button" class="percent-step" data-step-for="trail" data-delta="-1" aria-label="Decrease trail">−</button>
                   <div class="level-meter"><span class="fill"></span></div>
                   <label class="percent-box"><input id="trailPct" class="percent-input" data-percent-for="trail" type="number" inputmode="decimal" min="0" max="100" step="1" value="67"><span>%</span></label>
+                  <button type="button" class="percent-step" data-step-for="trail" data-delta="1" aria-label="Increase trail">+</button>
                   <input id="trail" type="hidden" value="170">
                 </div>
               </div>
@@ -578,6 +670,7 @@
             <button id="clearPlaylist" class="glass-btn danger">CLEAR</button>
           </div>
           <span id="playlistStatus" class="microcopy" style="display:block;text-align:center;margin:7px 0">Ordered loop ready</span>
+          <div class="microcopy" style="display:block;text-align:center;margin:0 0 8px">Checked effects play. Use the three-dot handle to drag blocks into order.</div>
           <div id="playlistList" class="playlist-list"></div>
           <div class="microcopy web-limit-note">
             PLAY state and position are remembered by this browser and resume after the target reconnects. V5.1 has no firmware sequence scheduler, so Chrome must remain active for timing to advance.
@@ -590,6 +683,6 @@
 
 <!-- Transport must load first because the UI reads window.STWBLE during initialization. -->
 <script src="st-ble-core.js?v=20260909-iter2-connect1"></script>
-<script src="st-ble-ui.js?v=20260910-iter2-percent1"></script>
+<script src="st-ble-ui.js?v=20260912-iter2-sequenceedit1"></script>
 </body>
 </html>
