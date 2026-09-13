@@ -55,7 +55,10 @@ need(ui, 'class="sequence-check"', "sequence selector checkbox");
 need(ui, 'class="drag-handle"', "sequence drag handle");
 need(ui, "bindPlaylistDrag", "sequence drag binding");
 need(ui, "savePlaylistDomOrder", "sequence order persistence");
-need(ui, "elementFromPoint", "pointer-based touch reorder");
+need(ui, "moveRowForY", "row-midpoint touch reorder");
+need(ui, "getBoundingClientRect", "drag row midpoint measurement");
+forbid(ui, "elementFromPoint", "old elementFromPoint drag targeting");
+need(html, '"check num copy copy drag"', "right-side drag handle grid");
 
 need(ui, 'bri: { key: "BRI"', "global brightness to BRI");
 need(ui, 'int: { key: "BGB"', "background brightness to BGB");
@@ -94,4 +97,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log("STBLE regression gate PASS");
-console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, five angled glass tabs, numeric 0-100 styling inputs plus one-percent +/- steps, display-only level bars, finger-tracked glass hue, saved-color delete, checked-only drag-reorder Sequence with duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
+console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, five angled glass tabs, numeric 0-100 styling inputs plus one-percent +/- steps, display-only level bars, finger-tracked glass hue, saved-color delete, checked-only right-handle row-midpoint drag-reorder Sequence with duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
