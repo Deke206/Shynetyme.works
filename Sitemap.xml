@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://shynetyme.works/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://shynetyme.works/assets/images/shynetyme-works-hero.webp</image:loc>
+      <image:title>Custom LED Installations Los Angeles | ShyneTyme.Works</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shynetyme.works/ledexpo.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://shynetyme.works/assets/images/shynetyme-works-hero.webp</image:loc>
+      <image:title>LED Project Gallery Los Angeles | ShyneTyme.Works</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shynetyme.works/aboutme.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://shynetyme.works/assets/images/shynetyme-works-hero.webp</image:loc>
+      <image:title>About Deke Alexander | Web, LED &amp; Electronics Work | ShyneTyme.Works</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shynetyme.works/simulator.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://shynetyme.works/assets/images/shynetyme-works-hero.webp</image:loc>
+      <image:title>Interactive LED SIM Stage | ShyneTyme.Works</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shynetyme.works/project-power.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://shynetyme.works/assets/images/shynetyme-works-hero.webp</image:loc>
+      <image:title>LED Project Power &amp; Hardware Specifications | ShyneTyme.Works</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shynetyme.works/contact.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://shynetyme.works/assets/images/shynetyme-works-hero.webp</image:loc>
+      <image:title>Request a Custom LED Installation in Los Angeles | ShyneTyme.Works</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shynetyme.works/privacy.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://shynetyme.works/terms.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>
