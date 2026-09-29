@@ -341,6 +341,7 @@
         </div>
         <i class="ble-dot ${device.bleStatus}"></i>
         <button class="power-ring ${device.powered ? "on" : ""}" aria-label="Power">⏻</button>
+        <button class="glass-btn danger device-delete" style="position:absolute;left:9px;bottom:9px;z-index:5" aria-label="Remove controller">REMOVE</button>
       `;
 
       card.querySelector(".device-name").textContent = device.name;
@@ -348,8 +349,15 @@
         device.bluetoothName || "Bluetooth not assigned";
 
       card.addEventListener("click", (event) => {
-        if (!event.target.closest(".power-ring")) {
+        if (!event.target.closest(".power-ring, .device-delete")) {
           window.STWBLE.selectDevice(device.id);
+        }
+      });
+
+      card.querySelector(".device-delete").addEventListener("click", (event) => {
+        event.stopPropagation();
+        if (window.confirm(`Remove ${device.name}?`)) {
+          window.STWBLE.removeLogicalDevice(device.id);
         }
       });
 
