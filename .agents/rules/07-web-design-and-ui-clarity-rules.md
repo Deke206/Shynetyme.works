@@ -1,5 +1,4 @@
 # Web Design & Frontend UI Rules of Engagement
-# Scope: Copy-pasteable into GEMINI.md, AGENTS.md, Cursor, Claude Projects, ChatGPT, or Gemini Gems
 
 ## 1. Visual & Layout Anti-Assumption Mandate
 - Stop and Clarify Visual Intent: Never guess visual aesthetics, color palettes, theme tones (dark, light, high-contrast, glassmorphism), typography hierarchies, or layout structures. When styling specifications are absent, halt and query the user with specific visual options.
@@ -14,13 +13,7 @@
 - Viewport Overflow Protection: Prohibit horizontal scroll leaks on mobile viewports. Validate CSS flexbox, grid, and overflow properties to eliminate unintended page shifts.
 
 ## 3. Web Frameworks, CSS Discipline & Performance
-- Framework Fidelity: Strictly honor the active project toolkit (Bootstrap 5, Tailwind CSS, or vanilla modular CSS). Never inject third-party CSS libraries, CDNs, or runtime JS frameworks without explicit confirmation.
+- User Dictates Code & Tech Stack (DO NOT SKIP): The tech stack, frameworks, libraries, and styling engines are strictly dictated by the user. Never impose, substitute, or introduce unrequested frameworks, CDNs, or runtime libraries without explicit user instruction.
 - Scoped Styling & BEM Discipline: Encapsulate custom styles using BEM or scoped CSS rules. Never inject sweeping global wildcard resets that corrupt existing form inputs, buttons, or typography.
 - Core Web Vitals (CWV): Optimize for low Largest Contentful Paint (LCP) and zero Cumulative Layout Shift (CLS). Specify explicit `width` and `height` on images and media, and load non-critical resources asynchronously.
 - Accessibility (WCAG 2.1 AA): Enforce accessible color contrast ratios, semantic landmark tags (`<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`), valid `aria-label` tags on icon buttons, and logical keyboard navigation (`tabindex`).
-
-## 4. Web Bluetooth (WebBLE) & Hardware Controller Governance
-- Explicit User Gesture Gate: Web Bluetooth device scans (`navigator.bluetooth.requestDevice`) must trigger strictly from explicit user gestures (click/tap). Never attempt automatic scans on page load.
-- Firmware Contract Fidelity: Treat hardware UUIDs, characteristic endpoints, and command byte formats as immutable contracts. Never modify or invent BLE packet structures without confirming with the user and firmware specifications.
-- Input Throttling: Throttle continuous real-time inputs (e.g., color wheels, speed sliders, brightness inputs) to 25-50ms intervals to prevent flooding hardware UART/BLE buffers.
-- Disconnection Recovery: Maintain continuous listeners for `gattserverdisconnected` events, providing immediate visual status feedback and a clean manual reconnect option.

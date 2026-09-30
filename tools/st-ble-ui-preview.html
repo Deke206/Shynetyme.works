@@ -842,19 +842,21 @@
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content centered-content">
         <section class="context-frame playlist-frame matrix-playlist">
-          <div class="context-title">SEQUENCE</div>
-          <div class="button-row centered">
-            <button id="addCurrentFx" class="glass-btn">ADD CURRENT FX</button>
-            <button id="playPlaylist" class="glass-btn primary">PLAY</button>
-            <button id="shufflePlaylist" class="glass-btn" aria-pressed="false">SHUFFLE</button>
-            <button id="stopPlaylist" class="glass-btn">STOP</button>
-            <button id="clearPlaylist" class="glass-btn danger">CLEAR</button>
+          <div class="context-title">PLAYLISTS</div>
+
+          <!-- Create new playlist bar -->
+          <div class="playlist-create-bar">
+            <input id="newPlaylistName" class="glass-field" placeholder="Playlist name…" maxlength="40" autocomplete="off">
+            <button id="createNamedPlaylist" class="glass-btn primary">+ NEW PLAYLIST</button>
           </div>
-          <span id="playlistStatus" class="microcopy" style="display:block;text-align:center;margin:7px 0">Ordered loop ready</span>
-          <div class="microcopy" style="display:block;text-align:center;margin:0 0 8px">Checked effects play. Drag from the three-dot handle on the right to reorder.</div>
-          <div id="playlistList" class="playlist-list"></div>
+
+          <!-- Accordion list — rendered by JS -->
+          <div id="namedPlaylistsContainer" class="playlists-accordion-list">
+            <div class="microcopy" style="text-align:center;padding:16px 0">No playlists yet. Create one above or save an effect from COLOR FX.</div>
+          </div>
+
           <div class="microcopy web-limit-note">
-            PLAY state and position are remembered by this browser and resume after the target reconnects. V5.1 has no firmware sequence scheduler, so Chrome must remain active for timing to advance.
+            Each playlist holds up to 20 effects. Play state resumes after reconnect. V5.1 has no firmware scheduler — Chrome must remain active for timing to advance.
           </div>
         </section>
       </div>
@@ -862,7 +864,120 @@
   </main>
 </div>
 
+<!-- =====================================================================
+     EFFECT EDIT MODAL — opened by EDIT button on any sequence item.
+     Hidden by default. JS shows/hides via .hidden class on backdrop.
+====================================================================== -->
+<div id="fxEditBackdrop" class="fx-edit-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="fxEditTitle">
+  <div class="fx-edit-modal">
+    <!-- Header -->
+    <div class="fx-edit-topbar">
+      <span id="fxEditTitle" class="fx-edit-title">EDIT EFFECT</span>
+      <button id="fxEditClose" class="fx-edit-close" aria-label="Close editor">✕</button>
+    </div>
+
+    <!-- Color selectors -->
+    <div class="fx-edit-section">
+      <div class="fx-edit-section-title">COLORS</div>
+      <div class="fx-edit-palette">
+        <button class="fx-edit-color-btn active" data-role="main">
+          <span class="fx-edit-color-swatch" id="editMainSwatch" style="background:#ffffff"></span>
+          <span class="fx-edit-color-label">MAIN</span>
+        </button>
+        <button class="fx-edit-color-btn" data-role="bg">
+          <span class="fx-edit-color-swatch" id="editBgSwatch" style="background:#000000"></span>
+          <span class="fx-edit-color-label">BG</span>
+        </button>
+        <button class="fx-edit-color-btn" data-role="fg">
+          <span class="fx-edit-color-swatch" id="editFgSwatch" style="background:#8000ff"></span>
+          <span class="fx-edit-color-label">FG</span>
+        </button>
+      </div>
+      <!-- Interactive hue strip -->
+      <div class="fx-edit-hue-strip" id="fxEditHueStrip" title="Drag to pick hue">
+        <span class="fx-edit-hue-thumb" id="fxEditHueThumb"></span>
+      </div>
+      <div style="text-align:center;font:600 6pt Oxanium;color:var(--muted);letter-spacing:.05em;margin-top:2px">DRAG HUE — TAP A SWATCH TO SELECT WHICH COLOR TO CHANGE</div>
+    </div>
+
+    <!-- Effect parameters — direct number entry, 0–100% -->
+    <div class="fx-edit-section">
+      <div class="fx-edit-section-title">EFFECT PARAMETERS (0–100%)</div>
+      <div class="fx-edit-params">
+        <div class="fx-edit-param-row">
+          <span class="fx-edit-param-label">BRIGHTNESS</span>
+          <input class="fx-edit-param-input" id="editBri" type="number" min="0" max="100" step="1" value="38">
+        </div>
+        <div class="fx-edit-param-row">
+          <span class="fx-edit-param-label">SPEED</span>
+          <input class="fx-edit-param-input" id="editSpd" type="number" min="0" max="100" step="1" value="70">
+        </div>
+        <div class="fx-edit-param-row">
+          <span class="fx-edit-param-label">BG BRIGHTNESS</span>
+          <input class="fx-edit-param-input" id="editBgb" type="number" min="0" max="100" step="1" value="25">
+        </div>
+        <div class="fx-edit-param-row">
+          <span class="fx-edit-param-label">SIZE</span>
+          <input class="fx-edit-param-input" id="editSize" type="number" min="0" max="100" step="1" value="38">
+        </div>
+        <div class="fx-edit-param-row">
+          <span class="fx-edit-param-label">DENSITY</span>
+          <input class="fx-edit-param-input" id="editDens" type="number" min="0" max="100" step="1" value="50">
+        </div>
+        <div class="fx-edit-param-row">
+          <span class="fx-edit-param-label">TRAIL</span>
+          <input class="fx-edit-param-input" id="editTrail" type="number" min="0" max="100" step="1" value="67">
+        </div>
+      </div>
+
+      <!-- Direction + Mirror -->
+      <div class="fx-edit-dir-row" style="margin-top:10px">
+        <button class="fx-edit-dir-btn is-active" id="editDirFwd" type="button">▶ FORWARD</button>
+        <button class="fx-edit-dir-btn" id="editDirRev" type="button">◀ REVERSE</button>
+        <button class="fx-edit-mirror-btn" id="editMirrorBtn" type="button">⇌ MIRROR</button>
+      </div>
+    </div>
+
+    <!-- Duration -->
+    <div class="fx-edit-section">
+      <div class="fx-edit-section-title">HOLD DURATION</div>
+      <div class="fx-edit-duration-row">
+        <input id="editDuration" type="number" min="0.25" max="3600" step="0.25" value="5">
+        <label for="editDuration">SECONDS ON STRIP</label>
+      </div>
+    </div>
+
+    <!-- Save row -->
+    <div class="fx-edit-save-row">
+      <button id="fxEditSave" class="glass-btn primary" style="flex:1">SAVE CHANGES</button>
+      <button id="fxEditDiscard" class="glass-btn">DISCARD</button>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     PLAYLIST PICKER SHEET — appears when user taps ADD TO SEQUENCE
+     from the COLOR FX page.
+====================================================================== -->
+<div id="playlistPickerBackdrop" class="fx-edit-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="playlistPickerTitle">
+  <div class="fx-edit-modal" style="max-width:380px">
+    <div class="fx-edit-topbar">
+      <span id="playlistPickerTitle" class="fx-edit-title">ADD TO PLAYLIST</span>
+      <button id="playlistPickerClose" class="fx-edit-close" aria-label="Close">✕</button>
+    </div>
+    <div class="fx-edit-section">
+      <div class="fx-edit-section-title">CHOOSE A PLAYLIST</div>
+      <div id="playlistPickerList" style="display:grid;gap:6px;margin-bottom:10px"></div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:12px">
+        <input id="quickPlaylistName" class="glass-field" placeholder="New playlist name…" maxlength="40" style="flex:1">
+        <button id="quickCreateAndAdd" class="glass-btn primary">CREATE &amp; ADD</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="st-ble-core.js?v=20260909-iter2-connect1"></script>
-<script src="st-ble-ui.js?v=20260912-iter2-sequenceedit2"></script>
+<script src="st-ble-ui.js?v=20260930-multi-playlist1"></script>
 </body>
 </html>
+

@@ -39,22 +39,39 @@ need(html, 'grid-template-columns:repeat(4,minmax(0,1fr))', "four centered glass
 need(html, 'clip-path:polygon(', "angled glass tabs");
 need(html, '.tab.on {', "selected glass tab state");
 
-need(html, 'id="shufflePlaylist"', "sequence shuffle");
-need(html, 'id="playlistStatus"', "sequence status");
-need(html, '<div class="context-title">SEQUENCE</div>', "Sequence title");
-forbid(html, 'id="playlistName"', "obsolete playlist name field");
+// Multi-playlist system assertions
+need(html, 'id="namedPlaylistsContainer"', "multi-playlist accordion container");
+need(html, 'id="createNamedPlaylist"', "create named playlist button");
+need(html, 'id="fxEditBackdrop"', "effect edit modal backdrop");
+need(html, 'id="playlistPickerBackdrop"', "playlist picker modal");
+need(ui, "loadPlaylists", "multi-playlist loader");
+need(ui, "savePlaylists", "multi-playlist saver");
+need(ui, "renderNamedPlaylists", "multi-playlist renderer");
+need(ui, "addItemToPlaylist", "add item to named playlist");
+need(ui, "openFxEditModal", "effect edit modal opener");
+need(ui, "openPlaylistPicker", "playlist picker opener");
+need(ui, "MAX_PL_ITEMS", "20-item playlist limit");
+need(ui, "MULTIPLAYLIST_KEY", "multi-playlist storage key");
+need(ui, "normalizeItem", "sequence item normalization");
+need(ui, "makePlId", "playlist ID generator");
+need(ui, "is-active-step", "active step twinkle class");
+need(ui, "is-playing", "playing playlist glow class");
+need(ui, "seq-color-dots", "effect color dot preview");
+
+need(ui, "SHUFFLE_KEY_MP", "sequence shuffle key");
+need(html, 'class="context-title">PLAYLISTS</div>', "Playlists title");
 need(ui, "durationSec", "per-item sequence duration");
 need(ui, "SHUFFLE_KEY", "persistent shuffle mode");
 need(ui, "PLAYLIST_RUN_KEY", "persistent sequence play intent");
 need(ui, "PLAYLIST_POS_KEY", "persistent sequence position");
 need(ui, "choosePlaylistIndex", "sequence runner");
 need(ui, "playablePlaylist", "checked-only sequence playback");
-need(ui, 'item.enabled = true', "sequence enabled migration");
+need(ui, "enabled: raw.enabled !== false", "sequence enabled normalization");
 need(ui, 'enabled: true', "new sequence items enabled");
 need(ui, 'class="sequence-check"', "sequence selector checkbox");
 need(ui, 'class="drag-handle"', "sequence drag handle");
 need(ui, "bindPlaylistDrag", "sequence drag binding");
-need(ui, "savePlaylistDomOrder", "sequence order persistence");
+need(ui, "saveDomOrder", "sequence order persistence");
 need(ui, "moveRowForY", "row-midpoint touch reorder");
 need(ui, "getBoundingClientRect", "drag row midpoint measurement");
 forbid(ui, "elementFromPoint", "old elementFromPoint drag targeting");
@@ -62,8 +79,8 @@ need(html, '"check num copy copy drag"', "right-side drag handle grid");
 
 need(ui, 'bri: { key: "BRI"', "global brightness to BRI");
 need(ui, 'int: { key: "BGB"', "background brightness to BGB");
-need(ui, "`BRI=${s.bri", "saved BRI");
-need(ui, "`BGB=${s.bgb", "saved BGB");
+need(ui, '`BRI=${s.bri', "saved BRI");
+need(ui, '`BGB=${s.bgb', "saved BGB");
 need(ui, "saved-color-delete", "saved-color delete");
 need(ui, "FX_CAPS", "effect color-role metadata");
 need(html, 'id="bgbRow"', "background-brightness row");
@@ -97,4 +114,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log("STBLE regression gate PASS");
-console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, four angled glass tabs with Color FX, numeric 0-100 styling inputs plus +/- steps, interactive 3D glassmorphic level meters, Primary & 2nd FX accordions, direction radio toggles, finger-tracked glass hue, saved-color delete, checked-only right-handle row-midpoint drag-reorder Sequence with duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
+console.log("Verified: multi-playlist accordions + effect-edit modal + playlist picker + tricolor glow + active-step twinkle, canonical two-script runtime, V5.1 direct effects, SOLID+WIPE, four angled glass tabs with Color FX, numeric styling inputs, glassmorphic level meters, hue strip, saved-color delete, BLE group fan-out.");

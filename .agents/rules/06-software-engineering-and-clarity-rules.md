@@ -1,8 +1,11 @@
 # Software Engineering & User Clarity Rules of Engagement
-# Scope: Copy-pasteable into GEMINI.md, AGENTS.md, Cursor, Claude Projects, ChatGPT, or Gemini Gems
 
-## 1. The Anti-Assumption Mandate (Zero Guesswork Protocol)
-- Stop and Query: Never assume ambiguous, missing, or underspecified requirements. If a task description leaves room for multiple architectural interpretations, halt immediately and query the user for factual clarification before writing code.
+## 1. <span style="color:red">PRIORITY DIRECTIVE: The Anti-Assumption Mandate (Zero Guesswork Protocol)</span>
+> [!IMPORTANT]
+> **<span style="color:red">MANDATORY PRIORITY DIRECTIVE FOR ALL AGENTS AND MCP TOOLS — DO NOT SKIP THIS ENTIRE SECTION.</span>**
+> Assumptions are strictly prohibited. You must query the user for factual clarification rather than guessing.
+
+- **<span style="color:red">STOP AND QUERY (DO NOT SKIP — PRIORITY DIRECTIVE):</span>** Never assume ambiguous, missing, or underspecified requirements. If a task description leaves room for multiple architectural interpretations, halt immediately and query the user for factual clarification before writing code.
 - Prevent Assumption Traps: Making silent assumptions leads to wasted work, broken builds, architectural divergence, and frustration. When in doubt, formulate 2-3 concise, specific questions with concrete options for the user to choose from.
 - Factual Alignment First: Distinguish between verified repository facts and assumptions. If a file path, database field, API contract, or library version is not directly verifiable in the repository, ask the user rather than guessing.
 - Explicit Decision Gates: Obtain user confirmation before selecting third-party libraries, changing database schemas, modifying public API contracts, or replacing existing algorithms.

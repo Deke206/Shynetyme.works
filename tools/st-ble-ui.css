@@ -1161,7 +1161,487 @@ select:focus-visible {
 }
 
 /* ========================================================================== */
-/* 10. ANIMATIONS                                                             */
+/* 10. MULTI-PLAYLIST ACCORDION SYSTEM                                        */
+/* ========================================================================== */
+
+/* Outer playlist container — vertical stack of named playlist accordions */
+.playlists-accordion-list {
+  display: grid;
+  gap: 10px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* "New Playlist" control bar sits above the accordion list */
+.playlist-create-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  max-width: 720px;
+  margin: 0 auto 14px;
+}
+
+.playlist-create-bar .glass-field {
+  flex: 1;
+  min-width: 0;
+}
+
+/* One named playlist — accordion wrapper */
+.named-playlist {
+  border-radius: 12px;
+  background: rgba(5, 18, 40, 0.42);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
+  position: relative;
+}
+
+/* Animated tricolor underglow — plays when this playlist is running */
+.named-playlist::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--glow-angle, 0deg),
+    #fff200 0deg 90deg,
+    #ff2ca8 120deg 210deg,
+    #00bfff 240deg 330deg,
+    #fff200 360deg
+  );
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.4s ease;
+  filter: blur(4px);
+  animation: playlistGlowSpin 3s linear infinite paused;
+}
+
+.named-playlist.is-playing::before {
+  opacity: 0.55;
+  animation-play-state: running;
+}
+
+/* Keep inner content above the glow layer */
+.named-playlist > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Playlist accordion header row */
+.playlist-accordion-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 6px;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(10, 24, 50, 0.38);
+  border-bottom: 1px solid rgba(0, 191, 255, 0.08);
+  transition: background 0.15s ease;
+}
+
+.playlist-accordion-header:hover {
+  background: rgba(16, 36, 72, 0.55);
+}
+
+.playlist-name-display {
+  font: 800 7.5pt Oxanium;
+  color: #dff6ff;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.playlist-count-pill {
+  background: rgba(0, 191, 255, 0.15);
+  color: var(--blue);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font: 700 6pt Oxanium;
+  letter-spacing: 0.03em;
+}
+
+.playlist-count-pill.full {
+  background: rgba(255, 44, 168, 0.15);
+  color: var(--pink);
+}
+
+.playlist-chevron {
+  font-size: 13px;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+  user-select: none;
+  line-height: 1;
+}
+
+.named-playlist.is-open .playlist-chevron {
+  transform: rotate(180deg);
+}
+
+/* Collapsible body */
+.playlist-accordion-body {
+  display: none;
+  padding: 8px 0 10px;
+}
+
+.named-playlist.is-open .playlist-accordion-body {
+  display: block;
+}
+
+/* Controls row inside each playlist */
+.playlist-controls-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 0 12px 8px;
+  flex-wrap: wrap;
+}
+
+.playlist-status-text {
+  font-size: 6.2pt;
+  color: var(--muted);
+  flex: 1;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Sequence items inside an accordion body — same row grid as before */
+.playlist-accordion-body .playlist-list {
+  margin: 0;
+  padding: 0 8px;
+}
+
+/* Active-step twinkle glow: CSS animation on the currently playing item */
+.playlist-item.is-active-step {
+  animation: sequenceItemTwinkle 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes sequenceItemTwinkle {
+  0% {
+    box-shadow:
+      0 0 8px rgba(255, 242, 0, 0.35),
+      0 0 2px rgba(255, 242, 0, 0.20);
+    background: rgba(255, 242, 0, 0.09);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(255, 44, 168, 0.40),
+      0 0 4px rgba(255, 44, 168, 0.22);
+    background: rgba(255, 44, 168, 0.09);
+  }
+  100% {
+    box-shadow:
+      0 0 12px rgba(0, 191, 255, 0.45),
+      0 0 4px rgba(0, 191, 255, 0.25);
+    background: rgba(0, 191, 255, 0.09);
+  }
+}
+
+/* Color swatches inside active step row — show the actual effect colors */
+.playlist-item.is-active-step .seq-color-dots {
+  opacity: 1;
+  animation: colorDotsPulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes colorDotsPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.2); }
+}
+
+/* Color dots inside sequence items */
+.seq-color-dots {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.seq-color-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ========================================================================== */
+/* 10B. EFFECT EDIT MODAL DIALOG                                               */
+/* ========================================================================== */
+
+/* Glassmorphic overlay backdrop */
+.fx-edit-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 8, 23, 0.82);
+  backdrop-filter: blur(8px);
+  z-index: 9000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px 12px 40px;
+  overflow-y: auto;
+}
+
+.fx-edit-backdrop.hidden {
+  display: none;
+}
+
+/* The modal card itself */
+.fx-edit-modal {
+  width: min(480px, 100%);
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(12, 28, 58, 0.96), rgba(4, 12, 32, 0.98));
+  box-shadow:
+    0 0 0 1px rgba(0, 191, 255, 0.18),
+    0 12px 48px rgba(0, 0, 0, 0.90),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  padding: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fx-edit-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(0, 191, 255, 0.12);
+}
+
+.fx-edit-title {
+  font: 800 8.5pt Oxanium;
+  color: var(--blue);
+  letter-spacing: 0.06em;
+}
+
+.fx-edit-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  font: 700 16px/30px Oxanium;
+  text-align: center;
+  cursor: pointer;
+  border: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.fx-edit-close:hover {
+  background: rgba(255, 51, 93, 0.25);
+  color: var(--red);
+}
+
+/* Sections inside the modal */
+.fx-edit-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 191, 255, 0.06);
+}
+
+.fx-edit-section:last-child {
+  border-bottom: 0;
+}
+
+.fx-edit-section-title {
+  font: 700 6.2pt Oxanium;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+/* Color role swatches in modal */
+.fx-edit-palette {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fx-edit-color-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.fx-edit-color-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.60),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  transition: transform 0.15s ease;
+  border: 2px solid transparent;
+}
+
+.fx-edit-color-btn.active .fx-edit-color-swatch {
+  border-color: var(--blue);
+  transform: scale(1.1);
+}
+
+.fx-edit-color-label {
+  font: 700 5.5pt Oxanium;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* Hue strip in the modal */
+.fx-edit-hue-strip {
+  height: 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg,
+    hsl(0,100%,50%), hsl(30,100%,50%), hsl(60,100%,50%),
+    hsl(90,100%,50%), hsl(120,100%,50%), hsl(150,100%,50%),
+    hsl(180,100%,50%), hsl(210,100%,50%), hsl(240,100%,50%),
+    hsl(270,100%,50%), hsl(300,100%,50%), hsl(330,100%,50%),
+    hsl(360,100%,50%));
+  cursor: pointer;
+  margin: 8px 0 4px;
+  position: relative;
+  touch-action: none;
+  user-select: none;
+}
+
+.fx-edit-hue-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.80);
+  pointer-events: none;
+  left: 0;
+}
+
+/* Parameter number grid inside modal */
+.fx-edit-params {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fx-edit-param-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fx-edit-param-label {
+  font: 700 5.5pt Oxanium;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.fx-edit-param-input {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(7, 20, 44, 0.70);
+  color: #dff6ff;
+  font: 700 10pt Oxanium;
+  text-align: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.60), inset 0 0 1px rgba(0, 191, 255, 0.20);
+  border: 0;
+  outline: 0;
+}
+
+.fx-edit-param-input:focus {
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.60), 0 0 0 2px rgba(0, 191, 255, 0.50);
+}
+
+/* Direction and mirror in modal — full-width row */
+.fx-edit-dir-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.fx-edit-dir-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 8px;
+  border-radius: 8px;
+  font: 700 6.5pt Oxanium;
+  letter-spacing: 0.05em;
+  background: rgba(7, 20, 44, 0.70);
+  color: var(--muted);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.60);
+  border: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fx-edit-dir-btn.is-active {
+  background: rgba(0, 191, 255, 0.20);
+  color: var(--blue);
+  box-shadow: 0 0 12px rgba(0, 191, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
+
+.fx-edit-mirror-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font: 700 6.5pt Oxanium;
+  letter-spacing: 0.05em;
+  background: rgba(7, 20, 44, 0.70);
+  color: var(--muted);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.60);
+  border: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fx-edit-mirror-btn.is-on {
+  background: rgba(255, 242, 0, 0.15);
+  color: var(--yellow);
+  box-shadow: 0 0 10px rgba(255, 242, 0, 0.20);
+}
+
+/* Duration inside the modal */
+.fx-edit-duration-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fx-edit-duration-row input {
+  width: 80px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(7, 20, 44, 0.70);
+  color: #dff6ff;
+  font: 700 10pt Oxanium;
+  text-align: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.60);
+  border: 0;
+  outline: 0;
+}
+
+.fx-edit-duration-row label {
+  font: 700 6pt Oxanium;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* Save button at bottom of modal */
+.fx-edit-save-row {
+  padding: 12px 16px 4px;
+  display: flex;
+  gap: 8px;
+}
+
+/* ========================================================================== */
+/* 10C. ANIMATIONS                                                             */
 /* ========================================================================== */
 
 @keyframes brandBlink {
@@ -1182,6 +1662,18 @@ select:focus-visible {
   to {
     background-position: 240% 0;
   }
+}
+
+@keyframes playlistGlowSpin {
+  to {
+    --glow-angle: 360deg;
+  }
+}
+
+@property --glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 @keyframes liquidEdge {
