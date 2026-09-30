@@ -106,7 +106,7 @@ function newLogicalDevice(name) {
 function normalizeDevice(device, index) {
   return {
     id: device?.id || uid("dev"),
-    name: device?.name || `ESP32 ${index + 1}`,
+    name: device?.name || (index === 0 ? "ESP32" : `ESP32 ${index + 1}`),
     bluetoothId: device?.bluetoothId || null,
     bluetoothName: device?.bluetoothName || "",
     config: { ...clone(DEFAULT_CONFIG), ...(device?.config || {}) },
@@ -117,7 +117,7 @@ function normalizeDevice(device, index) {
 
 let devices = (loadJSON(STW_DEVICE_KEY, []) || []).map(normalizeDevice);
 if (!devices.length) {
-  devices = [newLogicalDevice("ESP32 1"), newLogicalDevice("ESP32 2")];
+  devices = [newLogicalDevice("ESP32"), newLogicalDevice("ESP32 2")];
 }
 
 let groups = (loadJSON(STW_GROUP_KEY, []) || []).map((group) => ({

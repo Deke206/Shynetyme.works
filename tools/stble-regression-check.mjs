@@ -32,10 +32,10 @@ need(ui, '"WIPE"', "WIPE firmware effect retained");
 forbid(ui, 'STACK (WIPE)', "false stack label");
 forbid(ui, '"DANCING_SHADOWS"', "removed Dancing Shadows effect");
 
-for (const page of ["device","effects","colors","presets","custom"]) need(html, `data-page="${page}"`, `tab ${page}`);
-forbid(html, 'data-page="fxcolor"', "combined FX/COLORS tab");
+for (const page of ["device","effects","presets","custom"]) need(html, `data-page="${page}"`, `tab ${page}`);
+need(html, '>COLOR FX</button>', "COLOR FX tab label");
 need(html, '.tab::after,.tab.locked::before { display:none!important;', "tab underline removed");
-need(html, 'grid-template-columns:repeat(5,minmax(0,1fr))', "five centered glass tabs");
+need(html, 'grid-template-columns:repeat(4,minmax(0,1fr))', "four centered glass tabs");
 need(html, 'clip-path:polygon(', "angled glass tabs");
 need(html, '.tab.on {', "selected glass tab state");
 
@@ -97,4 +97,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log("STBLE regression gate PASS");
-console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, five angled glass tabs, numeric 0-100 styling inputs plus one-percent +/- steps, display-only level bars, finger-tracked glass hue, saved-color delete, checked-only right-handle row-midpoint drag-reorder Sequence with duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");
+console.log("Verified: canonical two-script runtime, sync1 group fan-out, V5.1 direct effects, SOLID + WIPE, Dancing Shadows/catalog effects absent, four angled glass tabs with Color FX, numeric 0-100 styling inputs plus +/- steps, interactive 3D glassmorphic level meters, Primary & 2nd FX accordions, direction radio toggles, finger-tracked glass hue, saved-color delete, checked-only right-handle row-midpoint drag-reorder Sequence with duration + shuffle + persistent play intent, Music/gradient absent, no injected override patterns.");

@@ -278,7 +278,7 @@
       button.setAttribute("aria-disabled", snap.passkey ? "false" : "true");
     });
 
-    ["effects", "colors", "presets", "custom"].forEach((id) => {
+    ["effects", "presets", "custom"].forEach((id) => {
       q(`#${id}`)?.classList.toggle("locked-page", !snap.passkey);
     });
 
@@ -338,30 +338,33 @@
               <div class="device-name"></div>
               <div class="device-bt"></div>
             </div>
-            <i class="ble-dot ${device.bleStatus}" title="Bluetooth status"></i>
+            <i class="ble-dot ${device.bleStatus}" title="Bluetooth: ${device.bleStatus}"></i>
           </div>
           <div class="device-module-body">
             <div class="device-chip-badge">
-              <span class="chip-label">ESP32 MODULE</span>
+              <span class="chip-label">MODULE</span>
               <span class="chip-status ${device.bleStatus}">${device.bleStatus.toUpperCase()}</span>
             </div>
           </div>
           <div class="device-footer-row">
             <button class="device-power-btn power-ring ${device.powered ? "is-on on" : "is-off"}" aria-label="Toggle Power" title="${device.powered ? 'Power: ON (Click to turn OFF)' : 'Power: OFF (Click to turn ON)'}">
               <span class="power-glyph">⏻</span>
-              <span class="power-text">${device.powered ? "POWER ON" : "POWER OFF"}</span>
             </button>
           </div>
         </div>
       `;
 
-      card.querySelector(".device-name").textContent = device.name;
-      card.querySelector(".device-bt").textContent =
-        device.bluetoothName || "Bluetooth not assigned";
+      card.querySelector(".device-name").textContent = device.name || "ESP32";
+      card.querySelector(".device-bt").textContent = device.bluetoothName || "";
 
-      card.addEventListener("click", (event) => {
+      card.addEventListener("click", async (event) => {
         if (!event.target.closest(".device-power-btn, .power-ring")) {
           window.STWBLE.selectDevice(device.id);
+          if (device.bluetoothId && device.bleStatus !== "connected") {
+            try {
+              await window.STWBLE.connectAssigned(device.id);
+            } catch (_) {}
+          }
         }
       });
 
@@ -639,10 +642,11 @@
 
   function paintPercent(id, pct) {
     const input = q(`[data-percent-for="${id}"]`);
-    input
-      ?.closest(".percent-control")
-      ?.querySelector(".fill")
-      ?.style.setProperty("width", `${clamp(Number(pct), 0, 100)}%`);
+    const control = input?.closest(".percent-control");
+    const meter = control?.querySelector(".level-meter");
+    const clamped = clamp(Number(pct), 0, 100);
+    meter?.querySelector(".fill")?.style.setProperty("width", `${clamped}%`);
+    meter?.style.setProperty("--pct", `${clamped}%`);
   }
 
   function updateSlider(rawInput) {
@@ -701,6 +705,53 @@
     return true;
   }
 
+  /* Interactive touch/drag slider track with 3D glassmorphic thumb */
+  function bindLevelMeterDrag() {
+    qa(".level-meter").forEach((meter) => {
+      const control = meter.closest(".percent-control");
+      const input = control?.querySelector(".percent-input");
+      if (!input) return;
+      const id = input.dataset.percentFor;
+
+      function updateFromPointer(e) {
+        const rect = meter.getBoundingClientRect();
+        const clientX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const ratio = (clientX - rect.left) / Math.max(1, rect.width);
+        const pct = clamp(Math.round(ratio * 100), 0, 100);
+        input.value = String(pct);
+        paintPercent(id, pct);
+        return pct;
+      }
+
+      let isDragging = false;
+
+      meter.addEventListener("pointerdown", (e) => {
+        try {
+          meter.setPointerCapture(e.pointerId);
+        } catch (_) {}
+        isDragging = true;
+        meter.classList.add("dragging");
+        updateFromPointer(e);
+      });
+
+      meter.addEventListener("pointermove", (e) => {
+        if (!isDragging) return;
+        updateFromPointer(e);
+      });
+
+      const finish = async (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        meter.classList.remove("dragging");
+        updateFromPointer(e);
+        await commitPercent(input);
+      };
+
+      meter.addEventListener("pointerup", finish);
+      meter.addEventListener("pointercancel", finish);
+    });
+  }
+
   qa(".percent-input").forEach((input) => {
     input.addEventListener("focus", () => input.select());
 
@@ -757,8 +808,24 @@
     });
   });
 
+  /* Direction Radio Button Toggle (Forward / Reverse) */
+  function setDirection(dir) {
+    const isFwd = dir === "FWD";
+    q("#dirFwdBtn")?.classList.toggle("is-active", isFwd);
+    q("#dirFwdBtn")?.setAttribute("aria-checked", isFwd ? "true" : "false");
+    q("#dirRevBtn")?.classList.toggle("is-active", !isFwd);
+    q("#dirRevBtn")?.setAttribute("aria-checked", !isFwd ? "true" : "false");
+
+    const dirSelect = q("#dir");
+    if (dirSelect) dirSelect.value = dir;
+    send(`DIR=${dir}`, { fast: true });
+  }
+
+  q("#dirFwdBtn")?.addEventListener("click", () => setDirection("FWD"));
+  q("#dirRevBtn")?.addEventListener("click", () => setDirection("REV"));
+
   q("#dir")?.addEventListener("change", () => {
-    send(`DIR=${q("#dir").value}`, { fast: true });
+    setDirection(q("#dir").value);
   });
 
   q("#mirrorBtn")?.addEventListener("click", () => {
@@ -1742,6 +1809,7 @@
   renderPlaylist();
   syncShuffleButton();
   updateAllSliders();
+  bindLevelMeterDrag();
   syncHue();
   applyEffectCapabilities(activeFx);
   updateHeader();

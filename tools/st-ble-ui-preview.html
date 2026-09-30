@@ -118,10 +118,10 @@
       height:auto!important;
       min-height:48px;
       display:grid!important;
-      grid-template-columns:repeat(5,minmax(0,1fr));
+      grid-template-columns:repeat(4,minmax(0,1fr));
       align-items:center!important;
       justify-content:center!important;
-      gap:5px!important;
+      gap:6px!important;
       padding:7px 8px 8px!important;
       border-bottom:0!important;
       overflow:visible!important;
@@ -156,7 +156,6 @@
     .tab:nth-child(2){--tab-rgb:255,242,0;--tab-color:#fff200}
     .tab:nth-child(3){--tab-rgb:0,191,255;--tab-color:#00bfff}
     .tab:nth-child(4){--tab-rgb:153,92,255;--tab-color:#995cff}
-    .tab:nth-child(5){--tab-rgb:24,233,255;--tab-color:#18e9ff}
     .tab::after,.tab.locked::before { display:none!important; content:none!important; }
     .tab.on {
       color:var(--tab-color)!important;
@@ -167,10 +166,31 @@
     }
     .tab.locked:not(.on) { opacity:.48!important; }
 
-    .effects-stack { width:min(930px,100%); margin:0 auto; display:grid; gap:12px; }
-    .effects-frame,.styling-frame,.colors-frame { width:100%; }
-    .effects-frame { order:1; }
-    .styling-frame { order:2; padding-top:16px!important; padding-bottom:16px!important; }
+    .effects-stack { width:min(930px,100%); margin:0 auto; display:grid; gap:14px; }
+    .effects-frame,.colors-frame,.styling-frame { width:100%; }
+    .effects-frame {
+      order:1;
+      max-height:230px;
+      display:flex;
+      flex-direction:column;
+    }
+    .effects-frame .effect-list {
+      max-height:140px;
+      overflow-y:auto;
+      padding-right:4px;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(0,191,255,.35) transparent;
+    }
+    .colors-frame {
+      order:2;
+      padding-top:14px!important;
+      padding-bottom:14px!important;
+    }
+    .styling-frame {
+      order:3;
+      padding-top:16px!important;
+      padding-bottom:16px!important;
+    }
     .style-sliders { display:grid!important; gap:14px!important; margin:14px 0 16px!important; }
     .slider-row {
       grid-template-columns:112px minmax(0,1fr)!important;
@@ -206,21 +226,56 @@
     }
     .level-meter {
       position:relative;
-      height:13px;
+      height:22px;
       border-radius:999px;
-      overflow:hidden;
-      background:rgba(0,3,12,.76);
-      box-shadow:inset 0 0 8px rgba(0,0,0,.64)!important;
-      pointer-events:none;
+      overflow:visible;
+      background:rgba(0,3,12,.85);
+      box-shadow:inset 0 2px 6px rgba(0,0,0,.85),inset 0 0 1px rgba(0,191,255,.25)!important;
+      cursor:ew-resize;
+      touch-action:none;
+      user-select:none;
+      display:flex;
+      align-items:center;
     }
     .level-meter .fill {
       position:absolute;
       inset:0 auto 0 0;
       width:0;
       border-radius:inherit;
-      background:linear-gradient(90deg,var(--pink),var(--yellow),var(--blue));
-      box-shadow:0 0 8px rgba(0,191,255,.32);
+      background:linear-gradient(90deg,var(--blue),var(--pink) 50%,var(--yellow));
+      box-shadow:0 0 10px rgba(0,191,255,.45);
       pointer-events:none;
+    }
+    .level-meter .fill.bg-fill {
+      background:linear-gradient(90deg,rgba(0,191,255,.6),var(--yellow) 55%,var(--pink));
+    }
+    .level-meter .level-thumb {
+      position:absolute;
+      left:calc(var(--pct, 38%) - 16px);
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.95) 0%, rgba(200,230,255,.75) 28%, #1a2c42 32%, #081424 100%);
+      border:2px solid rgba(140,180,215,.65);
+      box-shadow:0 0 14px rgba(0,191,255,.75),0 4px 10px rgba(0,0,0,.80),inset 0 1px 3px rgba(255,255,255,.8),inset 0 -1px 3px rgba(0,0,0,.8);
+      pointer-events:none;
+      transition:transform .12s ease;
+      z-index:10;
+      display:grid;
+      place-items:center;
+    }
+    .level-meter .level-thumb::after {
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--cyan);
+      box-shadow:0 0 8px var(--cyan),inset 0 1px 1px #fff;
+    }
+    .level-meter:hover .level-thumb,.level-meter.dragging .level-thumb {
+      transform:scale(1.15);
+      border-color:var(--cyan);
+      box-shadow:0 0 20px rgba(0,191,255,.95),0 6px 14px rgba(0,0,0,.85);
     }
     .percent-box {
       height:40px;
@@ -252,7 +307,101 @@
       background:linear-gradient(145deg,rgba(0,191,255,.13),rgba(7,25,52,.64));
       box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 13px rgba(0,191,255,.22)!important;
     }
-    .more-style { display:grid; gap:14px; margin:10px 0 3px; padding:8px 0 3px; }
+
+    /* Accordion Styling */
+    .fx-accordion {
+      border-radius:10px;
+      background:rgba(4,16,36,.42);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 10px rgba(0,0,0,.35);
+      margin-bottom:12px;
+      overflow:hidden;
+    }
+    .fx-accordion[open] {
+      background:rgba(6,20,44,.58);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 6px 14px rgba(0,0,0,.45);
+    }
+    .accordion-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:9px 12px;
+      cursor:pointer;
+      user-select:none;
+      font:800 7.8pt Oxanium;
+      letter-spacing:.06em;
+      color:#c5e4ff;
+      background:linear-gradient(180deg,rgba(16,38,70,.65) 0%,rgba(6,18,38,.85) 100%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 4px rgba(0,0,0,.30);
+    }
+    .accordion-header:hover {
+      color:#fff;
+      background:linear-gradient(180deg,rgba(24,52,94,.80) 0%,rgba(8,24,48,.95) 100%);
+    }
+    .accordion-arrow { font-size:10px; color:var(--blue); transition:transform .2s ease; }
+    .fx-accordion[open] .accordion-arrow { transform:rotate(180deg); }
+    .accordion-body { padding:10px 10px 12px; }
+
+    /* Direction Radio Buttons */
+    .direction-mirror-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .dir-radio-group {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+    }
+    .dir-group-label {
+      font:800 7.2pt Oxanium;
+      color:#7a94ad;
+      letter-spacing:.06em;
+    }
+    .dir-radio-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 11px;
+      border-radius:7px;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg,rgba(16,36,64,.70) 0%,rgba(5,14,28,.85) 100%);
+      color:#7f9bb5;
+      font:800 7.2pt Oxanium;
+      letter-spacing:.05em;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 3px 6px rgba(0,0,0,.35);
+      transition:all .15s ease;
+    }
+    .dir-radio-btn:hover {
+      color:#dff6ff;
+      border-color:rgba(0,191,255,.40);
+      background:linear-gradient(180deg,rgba(22,50,88,.80) 0%,rgba(8,20,42,.90) 100%);
+    }
+    .dir-radio-btn .radio-dot {
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      border:1.5px solid rgba(120,155,185,.50);
+      background:rgba(2,8,20,.80);
+      box-shadow:inset 0 1px 2px rgba(0,0,0,.60);
+      transition:all .15s ease;
+    }
+    .dir-radio-btn.is-active {
+      color:#fff;
+      border-color:rgba(0,191,255,.60);
+      background:linear-gradient(180deg,rgba(0,150,220,.40) 0%,rgba(4,28,60,.90) 100%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.40),0 0 12px rgba(0,191,255,.30),0 4px 8px rgba(0,0,0,.45);
+    }
+    .dir-radio-btn.is-active .radio-dot {
+      border-color:var(--cyan);
+      background:var(--cyan);
+      box-shadow:0 0 8px var(--cyan),inset 0 1px 1px #fff;
+    }
+
+    .more-style { display:grid; gap:14px; margin:0; padding:0; }
     .compact-row { margin-top:7px!important; min-height:40px; align-items:center; }
     .compact-row .glass-field,.compact-row .glass-btn { min-height:36px; }
 
@@ -424,8 +573,7 @@
 
   <nav class="tabs" aria-label="ESP32 LED controller">
     <button class="tab on" data-page="device">DEVICE</button>
-    <button class="tab gated" data-page="effects">EFFECTS</button>
-    <button class="tab gated" data-page="colors">COLORS</button>
+    <button class="tab gated" data-page="effects">COLOR FX</button>
     <button class="tab gated" data-page="presets">PRESETS</button>
     <button class="tab gated" data-page="custom">CUSTOM</button>
   </nav>
@@ -515,6 +663,7 @@
     <section id="effects" class="page locked-page">
       <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
       <div class="page-content effects-stack">
+        <!-- 1. EFFECT PICKER (Lowered height) -->
         <section class="context-frame effects-frame matrix-effects">
           <div class="effects-head">
             <span class="context-title">EFFECTS</span>
@@ -524,93 +673,7 @@
           <div id="effectList" class="effect-list"></div>
         </section>
 
-        <section class="context-frame styling-frame matrix-styling">
-          <div class="context-title">EFFECT STYLING</div>
-          <div class="style-sliders">
-            <div class="slider-row">
-              <label>GLOBAL BRIGHTNESS</label>
-              <div class="percent-control">
-                <button type="button" class="percent-step" data-step-for="bri" data-delta="-1" aria-label="Decrease global brightness">−</button>
-                <div class="level-meter"><span class="fill"></span></div>
-                <label class="percent-box"><input id="briPct" class="percent-input" data-percent-for="bri" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
-                <button type="button" class="percent-step" data-step-for="bri" data-delta="1" aria-label="Increase global brightness">+</button>
-                <input id="bri" type="hidden" value="96">
-              </div>
-            </div>
-
-            <div class="slider-row">
-              <label>SPEED</label>
-              <div class="percent-control">
-                <button type="button" class="percent-step" data-step-for="spd" data-delta="-1" aria-label="Decrease speed">−</button>
-                <div class="level-meter"><span class="fill"></span></div>
-                <label class="percent-box"><input id="spdPct" class="percent-input" data-percent-for="spd" type="number" inputmode="decimal" min="0" max="100" step="1" value="71"><span>%</span></label>
-                <button type="button" class="percent-step" data-step-for="spd" data-delta="1" aria-label="Increase speed">+</button>
-                <input id="spd" type="hidden" value="180">
-              </div>
-            </div>
-
-            <div id="bgbRow" class="slider-row">
-              <label>BACKGROUND BRIGHTNESS</label>
-              <div class="percent-control">
-                <button type="button" class="percent-step" data-step-for="int" data-delta="-1" aria-label="Decrease background brightness">−</button>
-                <div class="level-meter"><span class="fill bg-fill"></span></div>
-                <label class="percent-box"><input id="intPct" class="percent-input" data-percent-for="int" type="number" inputmode="decimal" min="0" max="100" step="1" value="25"><span>%</span></label>
-                <button type="button" class="percent-step" data-step-for="int" data-delta="1" aria-label="Increase background brightness">+</button>
-                <input id="int" type="hidden" value="64">
-              </div>
-            </div>
-
-            <div class="slider-row">
-              <label>SIZE</label>
-              <div class="percent-control">
-                <button type="button" class="percent-step" data-step-for="size" data-delta="-1" aria-label="Decrease size">−</button>
-                <div class="level-meter"><span class="fill"></span></div>
-                <label class="percent-box"><input id="sizePct" class="percent-input" data-percent-for="size" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
-                <button type="button" class="percent-step" data-step-for="size" data-delta="1" aria-label="Increase size">+</button>
-                <input id="size" type="hidden" value="96">
-              </div>
-            </div>
-
-            <div class="more-style">
-              <div class="slider-row">
-                <label>DENSITY</label>
-                <div class="percent-control">
-                  <button type="button" class="percent-step" data-step-for="dens" data-delta="-1" aria-label="Decrease density">−</button>
-                  <div class="level-meter"><span class="fill"></span></div>
-                  <label class="percent-box"><input id="densPct" class="percent-input" data-percent-for="dens" type="number" inputmode="decimal" min="0" max="100" step="1" value="50"><span>%</span></label>
-                  <button type="button" class="percent-step" data-step-for="dens" data-delta="1" aria-label="Increase density">+</button>
-                  <input id="dens" type="hidden" value="128">
-                </div>
-              </div>
-
-              <div class="slider-row">
-                <label>TRAIL</label>
-                <div class="percent-control">
-                  <button type="button" class="percent-step" data-step-for="trail" data-delta="-1" aria-label="Decrease trail">−</button>
-                  <div class="level-meter"><span class="fill"></span></div>
-                  <label class="percent-box"><input id="trailPct" class="percent-input" data-percent-for="trail" type="number" inputmode="decimal" min="0" max="100" step="1" value="67"><span>%</span></label>
-                  <button type="button" class="percent-step" data-step-for="trail" data-delta="1" aria-label="Increase trail">+</button>
-                  <input id="trail" type="hidden" value="170">
-                </div>
-              </div>
-
-              <div class="compact-row">
-                <select id="dir" class="glass-field">
-                  <option value="FWD">FORWARD</option>
-                  <option value="REV">REVERSE</option>
-                </select>
-                <button id="mirrorBtn" class="glass-btn">MIRROR</button>
-                <input id="mirror" type="checkbox" hidden>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </section>
-
-    <section id="colors" class="page locked-page">
-      <div class="lock-message">SELECT A CONNECTED DEVICE OR COMPLETE GROUP IN DEVICE</div>
-      <div class="page-content colors-page-wrap">
+        <!-- 2. COLOR SELECTOR (In between) -->
         <section class="context-frame colors-frame matrix-colors">
           <div class="context-title">COLORS</div>
 
@@ -643,6 +706,120 @@
             <button id="saveFxPreset" class="glass-btn primary">SAVE PRESET</button>
             <button id="addFxPlaylist" class="glass-btn">ADD TO SEQUENCE</button>
           </div>
+        </section>
+
+        <!-- 3. EFFECTS AREA / STYLING (Two Accordions) -->
+        <section class="context-frame styling-frame matrix-styling">
+          <div class="context-title">EFFECT STYLING</div>
+
+          <!-- ACCORDION 1: Primary Effect Controls (Brightness, Speed, Background Brightness) -->
+          <details class="fx-accordion primary-accordion" open>
+            <summary class="accordion-header">
+              <span class="accordion-title">1. PRIMARY FX STYLING</span>
+              <span class="accordion-arrow">▾</span>
+            </summary>
+            <div class="style-sliders accordion-body">
+              <div class="slider-row">
+                <label>GLOBAL BRIGHTNESS</label>
+                <div class="percent-control">
+                  <button type="button" class="percent-step" data-step-for="bri" data-delta="-2" aria-label="Decrease global brightness">−</button>
+                  <div class="level-meter" title="Drag to adjust brightness"><span class="fill"></span><span class="level-thumb"></span></div>
+                  <label class="percent-box"><input id="briPct" class="percent-input" data-percent-for="bri" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
+                  <button type="button" class="percent-step" data-step-for="bri" data-delta="2" aria-label="Increase global brightness">+</button>
+                  <input id="bri" type="hidden" value="96">
+                </div>
+              </div>
+
+              <div class="slider-row">
+                <label>SPEED</label>
+                <div class="percent-control">
+                  <button type="button" class="percent-step" data-step-for="spd" data-delta="-2" aria-label="Decrease speed">−</button>
+                  <div class="level-meter" title="Drag to adjust speed"><span class="fill"></span><span class="level-thumb"></span></div>
+                  <label class="percent-box"><input id="spdPct" class="percent-input" data-percent-for="spd" type="number" inputmode="decimal" min="0" max="100" step="1" value="71"><span>%</span></label>
+                  <button type="button" class="percent-step" data-step-for="spd" data-delta="2" aria-label="Increase speed">+</button>
+                  <input id="spd" type="hidden" value="180">
+                </div>
+              </div>
+
+              <div id="bgbRow" class="slider-row">
+                <label>BACKGROUND BRIGHTNESS</label>
+                <div class="percent-control">
+                  <button type="button" class="percent-step" data-step-for="int" data-delta="-2" aria-label="Decrease background brightness">−</button>
+                  <div class="level-meter" title="Drag to adjust background brightness"><span class="fill bg-fill"></span><span class="level-thumb"></span></div>
+                  <label class="percent-box"><input id="intPct" class="percent-input" data-percent-for="int" type="number" inputmode="decimal" min="0" max="100" step="1" value="25"><span>%</span></label>
+                  <button type="button" class="percent-step" data-step-for="int" data-delta="2" aria-label="Increase background brightness">+</button>
+                  <input id="int" type="hidden" value="64">
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- ACCORDION 2: 2nd FX Styling (Size, Density, Trail, Direction Radio, Mirror) -->
+          <details class="fx-accordion secondary-accordion" open>
+            <summary class="accordion-header">
+              <span class="accordion-title">2ND FX STYLING</span>
+              <span class="accordion-arrow">▾</span>
+            </summary>
+            <div class="style-sliders accordion-body">
+              <div class="slider-row">
+                <label>SIZE</label>
+                <div class="percent-control">
+                  <button type="button" class="percent-step" data-step-for="size" data-delta="-2" aria-label="Decrease size">−</button>
+                  <div class="level-meter" title="Drag to adjust size"><span class="fill"></span><span class="level-thumb"></span></div>
+                  <label class="percent-box"><input id="sizePct" class="percent-input" data-percent-for="size" type="number" inputmode="decimal" min="0" max="100" step="1" value="38"><span>%</span></label>
+                  <button type="button" class="percent-step" data-step-for="size" data-delta="2" aria-label="Increase size">+</button>
+                  <input id="size" type="hidden" value="96">
+                </div>
+              </div>
+
+              <div class="more-style">
+                <div class="slider-row">
+                  <label>DENSITY</label>
+                  <div class="percent-control">
+                    <button type="button" class="percent-step" data-step-for="dens" data-delta="-2" aria-label="Decrease density">−</button>
+                    <div class="level-meter" title="Drag to adjust density"><span class="fill"></span><span class="level-thumb"></span></div>
+                    <label class="percent-box"><input id="densPct" class="percent-input" data-percent-for="dens" type="number" inputmode="decimal" min="0" max="100" step="1" value="50"><span>%</span></label>
+                    <button type="button" class="percent-step" data-step-for="dens" data-delta="2" aria-label="Increase density">+</button>
+                    <input id="dens" type="hidden" value="128">
+                  </div>
+                </div>
+
+                <div class="slider-row">
+                  <label>TRAIL</label>
+                  <div class="percent-control">
+                    <button type="button" class="percent-step" data-step-for="trail" data-delta="-2" aria-label="Decrease trail">−</button>
+                    <div class="level-meter" title="Drag to adjust trail"><span class="fill"></span><span class="level-thumb"></span></div>
+                    <label class="percent-box"><input id="trailPct" class="percent-input" data-percent-for="trail" type="number" inputmode="decimal" min="0" max="100" step="1" value="67"><span>%</span></label>
+                    <button type="button" class="percent-step" data-step-for="trail" data-delta="2" aria-label="Increase trail">+</button>
+                    <input id="trail" type="hidden" value="170">
+                  </div>
+                </div>
+
+                <div class="compact-row direction-mirror-row">
+                  <!-- DIRECTION RADIO BUTTONS -->
+                  <div class="dir-radio-group" role="radiogroup" aria-label="Direction">
+                    <span class="dir-group-label">DIRECTION:</span>
+                    <button type="button" id="dirFwdBtn" class="dir-radio-btn is-active" role="radio" aria-checked="true" data-dir="FWD">
+                      <span class="radio-dot"></span>
+                      <span class="radio-text">FORWARD</span>
+                    </button>
+                    <button type="button" id="dirRevBtn" class="dir-radio-btn" role="radio" aria-checked="false" data-dir="REV">
+                      <span class="radio-dot"></span>
+                      <span class="radio-text">REVERSE</span>
+                    </button>
+                  </div>
+                  <select id="dir" class="glass-field" hidden>
+                    <option value="FWD" selected>FORWARD</option>
+                    <option value="REV">REVERSE</option>
+                  </select>
+
+                  <!-- MIRROR BUTTON -->
+                  <button id="mirrorBtn" class="glass-btn">MIRROR</button>
+                  <input id="mirror" type="checkbox" hidden>
+                </div>
+              </div>
+            </div>
+          </details>
         </section>
       </div>
     </section>

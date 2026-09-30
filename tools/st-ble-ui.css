@@ -1004,7 +1004,7 @@ select:focus-visible {
 /* ========================================================================== */
 
 .effects-frame {
-  min-height: 520px;
+  min-height: auto;
 }
 
 .effects-head {
@@ -1237,11 +1237,11 @@ select:focus-visible {
   }
 
   .effects-frame {
-    min-height: 420px;
+    min-height: auto;
   }
 
   .effect-list {
-    max-height: 430px;
+    max-height: 140px;
   }
 
   .device-tools {
