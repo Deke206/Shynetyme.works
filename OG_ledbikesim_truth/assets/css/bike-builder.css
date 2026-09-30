@@ -1,0 +1,851 @@
+:root {
+  --builder-green: #20c997;
+  --builder-red: #dc3545;
+  --builder-orange: #ff8a00;
+  --builder-ink: #14171c;
+  --builder-panel: #f5f7fb;
+}
+
+.builder-hero {
+  color: #fff;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(49,230,255,.24), transparent 28%),
+    linear-gradient(135deg, #030918, #0b3167 58%, #5f3fbd);
+}
+
+.builder-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(340px, .95fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.builder-form .accordion-item {
+  border: 0;
+  border-radius: 1rem !important;
+  overflow: hidden;
+  box-shadow: 0 .45rem 1.25rem rgba(20, 23, 28, .08);
+  margin-bottom: 1rem;
+}
+
+.builder-form .accordion-button {
+  font-weight: 800;
+  background: #fff;
+}
+
+.builder-form .accordion-button:not(.collapsed) {
+  color: #075b72;
+  background: #e3faff;
+  box-shadow: none;
+}
+
+.question-row {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e8ebf1;
+}
+
+.question-row:last-child { border-bottom: 0; }
+.question-label { font-weight: 750; margin-bottom: .55rem; }
+.question-note { color: #69717d; font-size: .9rem; }
+
+.yes-no {
+  display: inline-flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.yes-no .btn {
+  min-width: 76px;
+  font-weight: 750;
+}
+
+.conditional-options {
+  margin-top: .85rem;
+  padding: .85rem;
+  border-radius: .8rem;
+  background: #f7f8fb;
+  border: 1px solid #e1e5eb;
+}
+
+.preview-card {
+  position: sticky;
+  top: 5.25rem;
+  border: 0;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: 0 .75rem 2rem rgba(20, 23, 28, .13);
+}
+
+.preview-toolbar {
+  background: #11141a;
+  color: #fff;
+}
+
+.bike-stage {
+  min-height: 520px;
+  padding: .75rem;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #06152f url('../images/bike-planner-street.webp') center center / cover no-repeat;
+}
+
+.bike-stage svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 520px;
+  display: block;
+  filter: drop-shadow(0 .25rem .3rem rgba(0, 0, 0, .48));
+}
+
+.svg-bike-group {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transition: transform .35s ease;
+}
+
+#helmetSvg {
+  transform-box: fill-box;
+  transform-origin: center;
+  translate: -10.5mm -4mm;
+}
+
+/* Final requested position: 10 mm right and 3.5 mm up. */
+#rearBasketSvg {
+  transform-box: fill-box;
+  transform-origin: center;
+  translate: 10mm -3.5mm;
+}
+
+#rearBrakeSvg {
+  transform-box: fill-box;
+  transform-origin: center;
+  translate: -6mm -4mm;
+  cursor: help;
+}
+
+/* Keep both signals beside the tail light and level with its bottom edge. */
+#turnSignalsSvg {
+  transform-box: fill-box;
+  transform-origin: center;
+  translate: -6mm -4mm;
+}
+
+.signal-arrow {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+#turnSignalsSvg .signal-left { transform: translate(-17px, -11px); }
+#turnSignalsSvg .signal-right { transform: translate(17px, -11px); }
+#turnSignalsRearSvg .signal-left { transform: translate(-6px, -13px); }
+#turnSignalsRearSvg .signal-right { transform: translate(6px, -13px); }
+
+.zone {
+  transition: stroke .25s ease, fill .25s ease, opacity .25s ease, filter .25s ease;
+}
+
+.zone-on {
+  stroke: url(#rgbGradient) !important;
+  fill: rgba(255, 255, 255, .09) !important;
+  opacity: 1 !important;
+  stroke-dasharray: 1 13;
+  stroke-linecap: round;
+  animation: rgbTwinkle 1.35s linear infinite;
+  filter:
+    drop-shadow(0 0 3px rgba(255, 0, 140, .95))
+    drop-shadow(0 0 7px rgba(0, 220, 255, .7));
+}
+
+.zone-on:nth-of-type(2n) { animation-delay: -.35s; animation-duration: 1.05s; }
+.zone-on:nth-of-type(3n) { animation-delay: -.7s; animation-duration: 1.65s; }
+
+@keyframes rgbTwinkle {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: .72;
+    filter: drop-shadow(0 0 2px rgba(255, 0, 140, .75)) drop-shadow(0 0 5px rgba(0, 220, 255, .55));
+  }
+  22% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(255, 225, 0, 1)) drop-shadow(0 0 11px rgba(255, 75, 0, .85));
+  }
+  48% {
+    opacity: .8;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 170, .95)) drop-shadow(0 0 9px rgba(0, 110, 255, .72));
+  }
+  76% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(170, 45, 255, 1)) drop-shadow(0 0 12px rgba(255, 0, 140, .82));
+  }
+  100% {
+    stroke-dashoffset: -56;
+    opacity: .72;
+    filter: drop-shadow(0 0 2px rgba(255, 0, 140, .75)) drop-shadow(0 0 5px rgba(0, 220, 255, .55));
+  }
+}
+
+.zone-off {
+  /* Visible over the street scene, but clearly quieter than an active LED zone. */
+  stroke: #ff7189 !important;
+  fill: rgba(255, 113, 137, .12) !important;
+  opacity: .52 !important;
+  stroke-dasharray: 8 6;
+  filter: drop-shadow(0 0 2px rgba(255, 113, 137, .26));
+  animation: none;
+}
+
+.solid-green-zone.zone-on {
+  fill: rgba(32, 201, 151, .2) !important;
+  stroke: var(--builder-green) !important;
+  stroke-dasharray: none !important;
+  animation: none !important;
+  filter: drop-shadow(0 0 6px rgba(32, 201, 151, .72));
+}
+
+.bike-metal { stroke: #2d333b; fill: none; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+.bike-tire { stroke: #25282d; fill: #fff; stroke-width: 12; }
+.bike-rim { stroke: #9aa2ad; fill: none; stroke-width: 3; }
+.bike-spoke { stroke: #c8ced6; stroke-width: 2; }
+
+.legend-dot {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: .8rem;
+  height: .8rem;
+  border-radius: 50%;
+}
+
+.legend-on {
+  background:
+    linear-gradient(
+      135deg,
+      #ff004c,
+      #ff9500,
+      #ffe100,
+      #00d084,
+      #00b7ff,
+      #6f42c1
+    );
+  box-shadow: 0 0 8px rgba(255, 0, 140, .9);
+  animation: legendTwinkle .9s infinite alternate;
+}
+
+@keyframes legendTwinkle {
+  from {
+    opacity: .55;
+    transform: scale(.82);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.legend-off { background: #ff7189; }
+#rearViewPanel[hidden], #kidBikeGroup[hidden] { display: none !important; }
+
+/* The pole is illuminated; the flag remains neutral. */
+.flag-pole.zone-on,
+.flag-pole.zone-off {
+  animation: none;
+  filter: none;
+  stroke-dasharray: none;
+}
+
+.flag-pole.zone-on #flagPoleLight,
+.flag-pole.zone-off #flagPoleLight {
+  fill: none !important;
+  stroke-dasharray: none !important;
+}
+
+.flag-solid-red #flagPoleLight {
+  stroke: #dc3545 !important;
+  filter: drop-shadow(0 0 8px rgba(220,53,69,.95));
+}
+
+.flag-flash-red #flagPoleLight {
+  stroke: #dc3545 !important;
+  animation: flagCautionFlash .82s steps(1, end) infinite;
+}
+
+.flag-flash-orange #flagPoleLight {
+  stroke: var(--builder-orange) !important;
+  animation: flagCautionFlash .82s steps(1, end) infinite;
+}
+
+@keyframes flagCautionFlash {
+  0%, 42% { opacity: 1; filter: drop-shadow(0 0 10px currentColor); }
+  43%, 100% { opacity: .16; filter: none; }
+}
+
+/* Tail-light assembly: solid red or center-out pixel sequence. */
+.tail-light.zone-on,
+.tail-light.zone-off {
+  stroke-dasharray: none;
+  animation: none;
+}
+
+.tail-light .tail-housing {
+  fill: #24171a;
+  stroke: #5c242b;
+}
+
+.tail-light .tail-pixel {
+  fill: var(--builder-red);
+  stroke: #ff6978;
+  opacity: .3;
+}
+
+.tail-light.zone-off .tail-pixel {
+  fill: var(--builder-red) !important;
+  stroke: var(--builder-red) !important;
+  opacity: .22;
+  animation: none;
+}
+
+.tail-solid.zone-on .tail-pixel {
+  fill: #ff1738 !important;
+  stroke: #ff8b98 !important;
+  opacity: 1;
+  animation: none;
+  filter: drop-shadow(0 0 5px rgba(255,23,56,.95));
+}
+
+.tail-animated.zone-on .tail-pixel {
+  fill: #ff1738 !important;
+  stroke: #ff8b98 !important;
+  opacity: 0;
+  animation: tailCenterOut 8s linear infinite;
+  filter: drop-shadow(0 0 5px rgba(255,23,56,.95));
+}
+
+.tail-animated .tail-center { animation-delay: 0s !important; }
+.tail-animated .tail-inner { animation-delay: .25s !important; }
+.tail-animated .tail-outer { animation-delay: .5s !important; }
+
+@keyframes tailCenterOut {
+  0%, 10% { opacity: 0; }
+  12%, 88% { opacity: 1; }
+  90%, 100% { opacity: 0; }
+}
+
+/* Turn signals: solid orange or directional orange-to-red sequence. */
+.turn-signal.zone-on,
+.turn-signal.zone-off {
+  stroke-dasharray: none;
+  animation: none;
+}
+
+.turn-signal .signal-segment {
+  stroke-linejoin: round;
+}
+
+.turn-signal.zone-off .signal-segment {
+  fill: var(--builder-red) !important;
+  stroke: var(--builder-red) !important;
+  opacity: .25;
+  animation: none;
+}
+
+.signal-solid-orange.zone-on .signal-segment {
+  fill: var(--builder-orange) !important;
+  stroke: #ffbf66 !important;
+  opacity: 1;
+  animation: none;
+  filter: drop-shadow(0 0 5px rgba(255,138,0,.9));
+}
+
+.signal-animated.zone-on .signal-left .signal-segment {
+  fill: url(#signalGradientLeft) !important;
+  stroke: #ff9f28 !important;
+}
+
+.signal-animated.zone-on .signal-right .signal-segment {
+  fill: url(#signalGradientRight) !important;
+  stroke: #ff9f28 !important;
+}
+
+.signal-animated.zone-on .signal-segment {
+  opacity: .18;
+  animation: directionalSignal 1.2s linear infinite;
+}
+
+.signal-animated .signal-step-1 { animation-delay: 0s !important; }
+.signal-animated .signal-step-2 { animation-delay: .16s !important; }
+.signal-animated .signal-step-3 { animation-delay: .32s !important; }
+
+@keyframes directionalSignal {
+  0%, 20% { opacity: .18; filter: none; }
+  35%, 62% { opacity: 1; filter: drop-shadow(0 0 7px rgba(255,75,0,.95)); }
+  80%, 100% { opacity: .18; filter: none; }
+}
+
+/* App-control icons sit between the wheels and follow the selected frame size. */
+.app-control-icons {
+  opacity: 0;
+  transition: opacity .25s ease, transform .35s ease;
+  pointer-events: none;
+}
+
+.app-control-icons.has-selection { opacity: 1; }
+
+.control-icon {
+  opacity: .12;
+  transition: opacity .25s ease, filter .25s ease;
+}
+
+.control-icon > circle,
+.control-icon > rect {
+  fill: #11141a;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.control-icon path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.control-icon .icon-dot,
+.control-icon .remote-button {
+  fill: #fff;
+  stroke: none;
+}
+
+.control-icon-on {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(70,22,168,.55));
+}
+
+.summary-box {
+  background: #101318;
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.summary-box ul { margin-bottom: 0; padding-left: 1.15rem; }
+
+.budget-badge {
+  background: rgba(155, 131, 255, .18);
+  color: #e8e1ff;
+  border: 1px solid rgba(155, 131, 255, .48);
+  font-weight: 800;
+}
+
+/* ShyneTyme night skin: shared typography and controls come from site.css. */
+.builder-page main {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(49, 230, 255, .08), transparent 28rem),
+    radial-gradient(circle at 88% 34%, rgba(255, 90, 185, .07), transparent 28rem),
+    linear-gradient(180deg, #030918, #07162c);
+}
+
+.builder-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 25%, rgba(49, 230, 255, .28), transparent 24rem),
+    radial-gradient(circle at 86% 30%, rgba(255, 90, 185, .18), transparent 25rem),
+    linear-gradient(135deg, #030918, #0b3167 58%, #391f72);
+  border-bottom: 1px solid rgba(49, 230, 255, .22);
+}
+
+.builder-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(223, 250, 255, .45) 0 1px, transparent 1.6px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(90deg, #000, transparent 80%);
+  opacity: .3;
+}
+
+.builder-hero .container { position: relative; z-index: 1; }
+.builder-hero h1 { font-size: clamp(2.7rem, 7vw, 5rem); text-shadow: 0 1px 0 #fff, 0 0 18px rgba(49, 230, 255, .52), 0 12px 30px rgba(0, 0, 0, .46); }
+.builder-hero p { color: #dffaff; }
+.demo-panel { color: #eef8ff; background: rgba(3, 9, 24, .7); border: 1px solid rgba(49, 230, 255, .38); box-shadow: 0 18px 40px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .08); backdrop-filter: blur(10px); }
+
+.builder-form .accordion-item {
+  color: var(--text);
+  background: linear-gradient(145deg, rgba(15, 38, 70, .97), rgba(5, 17, 37, .98));
+  border: 1px solid rgba(138, 220, 255, .17);
+  box-shadow: 0 .75rem 1.7rem rgba(0, 0, 0, .24);
+}
+
+.builder-form .accordion-button {
+  color: #ecf7ff;
+  background: linear-gradient(180deg, #122c4d, #0a1e38);
+  text-shadow: 0 0 10px rgba(49, 230, 255, .22);
+}
+
+.builder-form .accordion-button::after { filter: invert(1) brightness(1.8) hue-rotate(155deg); }
+.builder-form .accordion-button:not(.collapsed) { color: #fff; background: linear-gradient(100deg, rgba(49, 230, 255, .18), rgba(155, 131, 255, .23)); box-shadow: inset 4px 0 0 var(--cyan); }
+.builder-form .accordion-button:focus { z-index: 2; border-color: var(--cyan); box-shadow: 0 0 0 .22rem rgba(49, 230, 255, .2); }
+.builder-form .accordion-body { color: var(--text); background: rgba(3, 12, 28, .45); }
+.question-row { border-color: rgba(138, 220, 255, .13); }
+.question-label { color: #f3f9ff; font-family: var(--heading-font); }
+.question-note { color: #aebed5; }
+
+.conditional-options {
+  color: var(--text);
+  background: rgba(7, 23, 44, .9);
+  border-color: rgba(155, 131, 255, .28);
+  box-shadow: inset 0 1px 9px rgba(0, 0, 0, .26);
+}
+
+.form-check-input { background-color: #07172c; border-color: rgba(49, 230, 255, .42); }
+.form-check-input:checked { background-color: #6e57d9; border-color: #b2a4ff; box-shadow: 0 0 10px rgba(155, 131, 255, .36); }
+.form-check-label { color: #d9e7f7; }
+
+.preview-card {
+  border: 1px solid rgba(49, 230, 255, .28);
+  box-shadow: 0 .9rem 2.4rem rgba(0, 0, 0, .38), 0 0 24px rgba(49, 230, 255, .08);
+}
+
+.preview-toolbar { background: linear-gradient(100deg, #07172c, #171440); }
+.preview-card .card-body { background: #07172c; }
+.preview-card .card-body .text-secondary { color: #b8c6dc !important; }
+
+.preview-rules {
+  margin-top: 1rem;
+  padding: 1rem;
+  color: #eef8ff;
+  background: rgba(3, 9, 24, .7);
+  border: 1px solid rgba(49, 230, 255, .38);
+  border-radius: 1rem;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+  backdrop-filter: blur(10px);
+}
+
+.preview-rules__title {
+  display: block;
+  margin-bottom: .65rem;
+  color: #fff;
+  font-family: var(--heading-font);
+  font-size: 1rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(49, 230, 255, .58);
+}
+
+.preview-rules__item {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .35rem;
+  color: #eef8ff;
+}
+
+.preview-rules__note {
+  margin: .75rem 0 0;
+  color: #b8c6dc;
+  font-size: .85rem;
+  line-height: 1.5;
+}
+
+.summary-box {
+  color: var(--text);
+  background: linear-gradient(135deg, #0a1d38, #141337);
+  border: 1px solid rgba(155, 131, 255, .34);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, .3), 0 0 24px rgba(155, 131, 255, .08);
+}
+
+/* Hover explanation for the tail-light object in the live bicycle guide. */
+.bike-stage:has(#rearBrakeSvg:hover)::after {
+  content: "Rear tail light assembly — choose solid red or a center-out red pixel sequence that fills, holds for five seconds, switches off and repeats.";
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 20;
+  max-width: min(92%, 390px);
+  padding: .7rem .85rem;
+  border-radius: .7rem;
+  color: #fff;
+  background: rgba(17, 20, 26, .95);
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 .65rem 1.5rem rgba(20,23,28,.24);
+  font-size: .86rem;
+  font-weight: 650;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zone-on,
+  .legend-on,
+  .flag-flash-red #flagPoleLight,
+  .flag-flash-orange #flagPoleLight,
+  .tail-animated.zone-on .tail-pixel,
+  .signal-animated.zone-on .signal-segment {
+    animation: none !important;
+  }
+
+  .tail-animated.zone-on .tail-pixel,
+  .signal-animated.zone-on .signal-segment { opacity: 1; }
+}
+
+@media (max-width: 991.98px) {
+  .builder-shell { grid-template-columns: 1fr; }
+  .preview-card { position: relative; top: auto; order: -1; }
+  .bike-stage { min-height: 400px; }
+  .bike-stage svg { height: 400px; }
+}
+
+@media (max-width: 575.98px) {
+  .bike-stage { padding: .25rem; min-height: 330px; }
+  .bike-stage svg { height: 330px; }
+  .builder-form .accordion-body { padding: .9rem; }
+}
+
+/* Consolidated live-view upgrade rules from former css/bike-builder-upgrade.css. */
+/* Build My Bike live-view upgrade: selectable bicycle bodies, automatic rear-safety view and equipment layers. */
+.builder-shell {
+  display: grid;
+  grid-template-columns: minmax(285px, .7fr) minmax(520px, 1.3fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.builder-form {
+  min-width: 0;
+  max-width: 455px;
+}
+
+.builder-form .accordion-button {
+  padding: .78rem .9rem;
+  font-size: .93rem;
+}
+
+.builder-form .accordion-body {
+  padding: .85rem .95rem;
+}
+
+.builder-form .question-row {
+  padding: .72rem 0;
+}
+
+.builder-form .form-select {
+  padding: .38rem 2rem .38rem .65rem;
+  border-radius: .65rem;
+  font-size: .9rem;
+}
+
+.builder-form .yes-no {
+  gap: .35rem;
+}
+
+.builder-form .btn {
+  padding: .34rem .68rem;
+  border-radius: 999px;
+  font-size: .82rem;
+  line-height: 1.15;
+}
+
+.builder-form .yes-no .btn {
+  min-width: 56px;
+}
+
+.summary-box,
+.preview-card {
+  border: 1px solid rgba(49, 230, 255, .38) !important;
+  box-shadow:
+    0 .9rem 2.4rem rgba(0, 0, 0, .38),
+    0 0 24px rgba(49, 230, 255, .1) !important;
+}
+
+.preview-card {
+  min-width: 0;
+}
+
+.bike-stage,
+.bike-stage svg {
+  min-height: 560px;
+  height: 560px;
+}
+
+/* Defensive cleanup for the superseded manual view controls. */
+#frontViewPanel,
+#previewViewButtons,
+.preview-view-buttons {
+  display: none !important;
+}
+
+#mainBikeGroup[hidden],
+#kidBikeGroup[hidden],
+#rearViewPanel[hidden],
+#appControlIcons[hidden] {
+  display: none !important;
+}
+
+.equipment-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .55rem;
+}
+
+.equipment-option {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 42px;
+  padding: .55rem .62rem;
+  border: 1px solid rgba(138, 220, 255, .22);
+  border-radius: .7rem;
+  color: #eef8ff;
+  background: rgba(7, 23, 44, .9);
+  font-size: .84rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.equipment-option:hover {
+  border-color: #68d8ff;
+  box-shadow: 0 0 0 3px rgba(49, 230, 255, .12);
+}
+
+.equipment-option input {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  accent-color: #0b7ca0;
+}
+
+.equipment-layer {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity .25s ease, stroke .25s ease, fill .25s ease, filter .25s ease;
+  stroke: #2d333b;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: rgba(255, 255, 255, .88);
+}
+
+.equipment-layer.equipment-off {
+  opacity: 0;
+  pointer-events: none;
+  filter: none;
+}
+
+.equipment-layer.equipment-on {
+  opacity: 1;
+  stroke: #20c997;
+  fill: rgba(32, 201, 151, .2);
+  filter: drop-shadow(0 0 5px rgba(32, 201, 151, .82));
+}
+
+.equipment-layer.equipment-on text {
+  fill: #fff;
+  stroke: none;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, .85));
+}
+
+#headlightSvg.equipment-on {
+  stroke: #fff7b2;
+  fill: #fffde8;
+  filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 14px rgba(255, 235, 104, .95));
+}
+
+#underglowSvg.equipment-on {
+  fill: none;
+  stroke: url(#rgbGradient);
+  animation: underglowPulse 1.4s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 7px rgba(0, 220, 255, .95)) drop-shadow(0 0 13px rgba(255, 0, 140, .72));
+}
+
+#ledSignSvg.equipment-on,
+#rearLedSignView.equipment-on {
+  stroke: #31e6ff;
+  fill: rgba(5, 12, 28, .94);
+  filter: drop-shadow(0 0 8px rgba(49, 230, 255, .85));
+}
+
+#batteryBoxSvg.equipment-on,
+#controllerBoxSvg.equipment-on {
+  stroke: #31e6ff;
+  fill: rgba(6, 21, 47, .9);
+}
+
+#cargoTrailerSvg.equipment-on circle {
+  fill: #fff;
+  stroke: #25282d;
+}
+
+.flag-pole.zone-on,
+.flag-pole.zone-off {
+  animation: none;
+  filter: none;
+  stroke-dasharray: none;
+}
+
+.flag-pole .flag-pole-light {
+  fill: none !important;
+  stroke-dasharray: none !important;
+}
+
+.flag-solid-red .flag-pole-light {
+  stroke: #dc3545 !important;
+  filter: drop-shadow(0 0 8px rgba(220, 53, 69, .95));
+}
+
+.flag-flash-red .flag-pole-light {
+  stroke: #dc3545 !important;
+  animation: flagCautionFlash .82s steps(1, end) infinite;
+}
+
+.flag-flash-orange .flag-pole-light {
+  stroke: var(--builder-orange) !important;
+  animation: flagCautionFlash .82s steps(1, end) infinite;
+}
+
+@keyframes underglowPulse {
+  from { opacity: .64; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 991.98px) {
+  .builder-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .builder-form {
+    max-width: none;
+  }
+
+  .preview-card {
+    position: relative;
+    top: auto;
+  }
+
+  .bike-stage,
+  .bike-stage svg {
+    min-height: 500px;
+    height: 500px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .equipment-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1400px) {
+  .builder-shell {
+    grid-template-columns: minmax(320px, .64fr) minmax(680px, 1.36fr);
+  }
+
+  .builder-form {
+    max-width: 470px;
+  }
+}

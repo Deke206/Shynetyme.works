@@ -1,0 +1,426 @@
+(() => {
+  "use strict";
+
+  if (window.ShynetymeHomeSim?.initialized) {
+    return;
+  }
+
+  const presetApi = window.ShynetymeSimPresets;
+
+  if (!presetApi) {
+    console.error("ShyneTyme preset registry did not load.");
+    return;
+  }
+
+  // BEGIN OBJECT: Home SIM application constants and DOM references.
+  const GEOMETRY_PATH = "assets/data/home-sim-approved-geometry.json";
+  const STORAGE_KEY = "shynetymeHomeSimBuild";
+  const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+  const LED_SIZE_MULTIPLIER = 2.45;
+  const APPROVED_IMAGE_PATHS = Object.freeze({
+    front: "assets/images/home-sim-front-1.b64",
+    rear: "assets/images/home-sim-rear-1.b64"
+  });
+
+  const scriptUrl = document.currentScript?.src
+    ? new URL(document.currentScript.src, window.location.href)
+    : new URL("assets/js/home-sim.js", window.location.href);
+  const siteRoot = new URL(
+  window.ShynetymeHomeSimLoader?.siteRoot || window.location.href
+);
+
+  const byId = (id) => document.getElementById(id);
+
+  const elements = {
+    app: byId("homeSimApp"),
+    renderStatus: byId("homeRenderStatus"),
+    surface: byId("homeSurface"),
+    sourceImage: byId("homeSourceImage"),
+    ledCanvas: byId("homeLedCanvas"),
+    traceSvg: byId("homeTraceSvg"),
+    sceneLabel: byId("homeSceneLabel"),
+    visibleCount: byId("homeVisibleCount"),
+    totalCount: byId("homeTotalCount"),
+    pixelMetric: byId("homePixelMetric"),
+    zoneGrid: byId("homeZoneGrid"),
+    summaryStatus: byId("homeSummaryStatus"),
+    summaryEmpty: byId("homeSummaryEmpty"),
+    buildSummary: byId("homeBuildSummary"),
+    resetBuild: byId("resetBuild"),
+    copyBuild: byId("copyBuild"),
+    dialog: byId("homeZoneDialog"),
+    dialogForm: byId("homeZoneDialogForm"),
+    dialogTitle: byId("homeZoneDialogTitle"),
+    dialogMount: byId("homeZoneDialogMount"),
+    dialogClose: byId("homeZoneDialogClose"),
+    dialogCancel: byId("homeZoneCancel"),
+    dialogDisable: byId("homeZoneDisable"),
+    zoneEnabled: byId("homeZoneEnabled"),
+    zoneEffect: byId("homeZoneEffect"),
+    directionWrap: byId("homeZoneDirectionWrap"),
+    zoneDirection: byId("homeZoneDirection"),
+    zoneBrightness: byId("homeZoneBrightness"),
+    brightnessOutput: byId("homeZoneBrightnessOut"),
+    speedWrap: byId("homeZoneSpeedWrap"),
+    zoneSpeed: byId("homeZoneSpeed"),
+    speedOutput: byId("homeZoneSpeedOut"),
+    presetNote: byId("homeZonePresetNote"),
+    paletteMode: byId("homeZonePaletteMode"),
+    color1: byId("homeZoneColor1"),
+    color2Wrap: byId("homeZoneColor2Wrap"),
+    color2: byId("homeZoneColor2"),
+    color3Wrap: byId("homeZoneColor3Wrap"),
+    color3: byId("homeZoneColor3"),
+    gradientPreview: byId("homeZoneGradientPreview"),
+    mirrorTarget: byId("homeZoneMirrorTarget"),
+    mirrorDetails: byId("homeZoneMirrorDetails"),
+    mirrorDirectionWrap: byId("homeZoneMirrorDirectionWrap"),
+    mirrorDirection: byId("homeZoneMirrorDirection"),
+    mirrorNote: byId("homeZoneMirrorNote"),
+    dialogStatus: byId("homeZoneDialogStatus"),
+    toast: byId("homeToast")
+  };
+  // END OBJECT: Home SIM application constants and DOM references.
+
+  if (!elements.app || !elements.surface || !elements.ledCanvas) {
+    return;
+  }
+
+  // BEGIN OBJECT: Mutable Home SIM state.
+  const selectedZones = new Set();
+  const zoneSettings = new Map();
+  const sceneImageCache = new Map();
+
+  let geometry = null;
+  let scenes = {};
+  let currentSceneName = "front";
+  let currentLight = "dusk";
+  let dialogZoneId = null;
+  let dialogSnapshot = null;
+  let ledParticles = [];
+  let toastTimer = 0;
+  // END OBJECT: Mutable Home SIM state.
+
+  // BEGIN OBJECT: General data helpers.
+  function currentScene() {
+    return scenes[currentSceneName];
+  }
+
+  function allZones() {
+    return Object.values(scenes).flatMap((scene) => scene.zones || []);
+  }
+
+  function zoneById(zoneId) {
+    return allZones().find((zone) => zone.id === zoneId) || null;
+  }
+
+  function sceneNameForZone(zoneId) {
+    return zoneId.startsWith("rear-") ? "rear" : "front";
+  }
+
+  function settingsFor(zoneId) {
+    if (!zoneSettings.has(zoneId)) {
+      zoneSettings.set(zoneId, presetApi.defaultSettings());
+    }
+
+    return zoneSettings.get(zoneId);
+  }
+
+  function presetFor(effectName) {
+    return presetApi.getPreset(effectName);
+  }
+
+  function linkedTargets(sourceId) {
+    return allZones().filter((zone) => {
+      const settings = settingsFor(zone.id);
+
+      return settings.mirror && settings.syncTarget === sourceId;
+    });
+  }
+
+  function effectiveSettings(zoneId, visited = new Set()) {
+    const ownSettings = settingsFor(zoneId);
+
+    if (
+      !ownSettings.mirror ||
+      !ownSettings.syncTarget ||
+      visited.has(zoneId)
+    ) {
+      return {
+        ...presetApi.clone(ownSettings),
+        colors: presetApi.normalizeColors(ownSettings)
+      };
+    }
+
+    visited.add(zoneId);
+
+    const sourceSettings = effectiveSettings(
+      ownSettings.syncTarget,
+      visited
+    );
+    const sourcePreset = presetFor(sourceSettings.effect);
+    const direction = (
+      sourcePreset.directional &&
+      ownSettings.mirrorDirection === "reverse"
+    )
+      ? -Number(sourceSettings.direction || 1)
+      : Number(sourceSettings.direction || 1);
+
+    return {
+      ...sourceSettings,
+      direction,
+      syncTarget: ownSettings.syncTarget,
+      mirror: true,
+      mirrorDirection: ownSettings.mirrorDirection
+    };
+  }
+
+  function breakIncomingLink(zoneId) {
+    const ownSettings = settingsFor(zoneId);
+
+    if (ownSettings.mirror && ownSettings.syncTarget) {
+      const preservedSettings = effectiveSettings(zoneId);
+
+      zoneSettings.set(zoneId, {
+        ...presetApi.clone(preservedSettings),
+        syncTarget: "",
+        mirror: false,
+        mirrorDirection: "same"
+      });
+
+      return;
+    }
+
+    zoneSettings.set(zoneId, {
+      ...presetApi.clone(ownSettings),
+      syncTarget: "",
+      mirror: false,
+      mirrorDirection: "same"
+    });
+  }
+
+  function zoneSeed(zoneId) {
+    let hash = 2166136261;
+
+    for (const character of zoneId) {
+      hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+    }
+
+    return (hash >>> 0) % 997;
+  }
+
+  function mixColors(colorA, colorB, amount) {
+    return colorA.map((value, index) => (
+      value + ((colorB[index] - value) * amount)
+    ));
+  }
+
+  function colorForPosition(settings, position) {
+    const colors = presetApi
+      .normalizeColors(settings)
+      .map(presetApi.hexToRgb);
+    const normalizedPosition = ((position % 1) + 1) % 1;
+    const scaledPosition = normalizedPosition * (colors.length - 1);
+    const startIndex = Math.floor(scaledPosition);
+    const amount = scaledPosition - startIndex;
+    const endIndex = Math.min(startIndex + 1, colors.length - 1);
+
+    return mixColors(
+      colors[startIndex],
+      colors[endIndex],
+      amount
+    );
+  }
+
+  function effectLabel(effectName) {
+    return presetFor(effectName).label;
+  }
+  // END OBJECT: General data helpers.
+
+  // BEGIN OBJECT: Shared preset menu creation.
+  function populatePresetMenu() {
+    elements.zoneEffect.innerHTML = presetApi.order
+      .map((effectName) => (
+        `<option value="${effectName}">${presetApi.optionLabel(effectName)}</option>`
+      ))
+      .join("");
+  }
+  // END OBJECT: Shared preset menu creation.
+
+  // BEGIN OBJECT: Approved geometry validation.
+  function validateGeometry(payload) {
+    if (!payload || payload.locked !== true) {
+      throw new Error("Home geometry is not marked as locked.");
+    }
+
+    if (
+      payload.coordinateSystem?.width !== 1448 ||
+      payload.coordinateSystem?.height !== 1086
+    ) {
+      throw new Error("Home geometry coordinate system is invalid.");
+    }
+
+    for (const sceneName of ["front", "rear"]) {
+      const scene = (payload.scenes || payload.views)?.[sceneName];
+
+      if (!scene || !Array.isArray(scene.zones) || !scene.zones.length) {
+        throw new Error(`Home ${sceneName} geometry is missing.`);
+      }
+
+      if (scene.width !== 1448 || scene.height !== 1086) {
+        throw new Error(`Home ${sceneName} image dimensions are invalid.`);
+      }
+    }
+
+    return payload;
+  }
+  // END OBJECT: Approved geometry validation.
+
+  // BEGIN API CALL: Load locked Home SIM geometry.
+  async function loadGeometry() {
+    const geometryUrl = new URL(GEOMETRY_PATH, siteRoot);
+    geometryUrl.searchParams.set("v", "20260805-production-home-v1");
+
+    const response = await fetch(geometryUrl, {
+      cache: "no-store",
+      credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Geometry request failed with ${response.status}.`);
+    }
+
+    return validateGeometry(await response.json());
+  }
+  // END API CALL: Load locked Home SIM geometry.
+
+  // BEGIN API CALL: Load an approved Home SIM image from the assets tree.
+  async function loadSceneImage(sceneName) {
+    if (sceneImageCache.has(sceneName)) {
+      return sceneImageCache.get(sceneName);
+    }
+
+    const scene = scenes[sceneName];
+    const imagePath = scene.image || APPROVED_IMAGE_PATHS[sceneName];
+    const assetUrl = new URL(imagePath, siteRoot);
+    assetUrl.searchParams.set("v", "20260805-approved-home-image-v1");
+
+    const response = await fetch(assetUrl, {
+      cache: "force-cache",
+      credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Approved ${sceneName} image failed with ${response.status}.`);
+    }
+
+    const base64Image = (await response.text()).trim();
+
+    if (!base64Image.startsWith("UklG")) {
+      throw new Error(`Approved ${sceneName} image data is invalid.`);
+    }
+
+    const imageSource = `data:image/webp;base64,${base64Image}`;
+
+    sceneImageCache.set(sceneName, imageSource);
+
+    return imageSource;
+  }
+  // END API CALL: Load an approved Home SIM image from the assets tree.
+
+  // BEGIN OBJECT: Zone path and LED particle generation.
+  function pathData(run) {
+    const points = run.points || [];
+
+    if (!points.length) {
+      return "";
+    }
+
+    let data = `M ${points[0][0]} ${points[0][1]}`;
+
+    for (let index = 1; index < points.length; index += 1) {
+      data += ` L ${points[index][0]} ${points[index][1]}`;
+    }
+
+    if (run.kind === "closed") {
+      data += " Z";
+    }
+
+    return data;
+  }
+
+  function samplePolyline(points, spacing, closed = false) {
+    if (!Array.isArray(points) || points.length < 2) {
+      return points || [];
+    }
+
+    const sourcePoints = closed
+      ? [...points, points[0]]
+      : [...points];
+    const segments = [];
+    let totalLength = 0;
+
+    for (let index = 1; index < sourcePoints.length; index += 1) {
+      const start = sourcePoints[index - 1];
+      const end = sourcePoints[index];
+      const length = Math.hypot(
+        end[0] - start[0],
+        end[1] - start[1]
+      );
+
+      segments.push({
+        start,
+        end,
+        length,
+        distanceStart: totalLength
+      });
+      totalLength += length;
+    }
+
+    if (!totalLength) {
+      return [sourcePoints[0]];
+    }
+
+    const count = Math.max(
+      2,
+      Math.floor(totalLength / Math.max(1, spacing)) + 1
+    );
+    const sampledPoints = [];
+
+    for (let index = 0; index < count; index += 1) {
+      const distance = closed
+        ? (index / count) * totalLength
+        : (index / (count - 1)) * totalLength;
+      const segment = segments.find((item) => (
+        distance <= item.distanceStart + item.length
+      )) || segments[segments.length - 1];
+      const segmentProgress = segment.length
+        ? (distance - segment.distanceStart) / segment.length
+        : 0;
+
+      sampledPoints.push([
+        segment.start[0] + (
+          (segment.end[0] - segment.start[0]) * segmentProgress
+        ),
+        segment.start[1] + (
+          (segment.end[1] - segment.start[1]) * segmentProgress
+        )
+      ]);
+    }
+
+    return sampledPoints;
+  }
+
+  function rebuildLedParticles() {
+    ledParticles = [];
+    let globalIndex = 0;
+
+    for (const zone of currentScene().zones) {
+      if (!selectedZones.has(zone.id)) {
+        continue;
+      }
+
+      let zoneIndex = 0;
+
+      for (const run of zone.runs) {
+        if (run.kind =

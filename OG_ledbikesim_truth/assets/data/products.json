@@ -1,0 +1,86 @@
+[
+  {
+    "name": "WS2812B 5V IP65 RGB Strip",
+    "category": "LED Lighting",
+    "voltage": "5V",
+    "details": "Individually programmable colored LEDs with silicone weather-resistant coating.",
+    "uses": ["Bicycle", "Helmet", "Van", "Boat"]
+  },
+  {
+    "name": "ESP32 WLED Controller",
+    "category": "Controllers",
+    "voltage": "5V",
+    "details": "Programmable Wi-Fi controller for effects, presets, segments and phone control.",
+    "uses": ["Bicycle", "Helmet", "Automotive"]
+  },
+  {
+    "name": "Water-Resistant Controller Enclosure",
+    "category": "Controllers",
+    "voltage": "N/A",
+    "details": "IP65-style enclosure with cable glands for an ESP32 controller and wiring connections.",
+    "uses": ["Outdoor", "Mobile"]
+  },
+  {
+    "name": "Three-Wire LED Cable Roll",
+    "category": "Connectors and Wiring",
+    "voltage": "5V system",
+    "details": "Power, ground and data wiring for WS2812B installations.",
+    "uses": ["All installations"]
+  },
+  {
+    "name": "Waterproof Three-Pin Quick Disconnect",
+    "category": "Connectors and Wiring",
+    "voltage": "5V system",
+    "details": "Robust male/female connector for removable frames, racks, helmets and battery bags.",
+    "uses": ["Bicycle", "Helmet", "Boat"]
+  },
+  {
+    "name": "Two-, Three- and Four-Way Signal Splitters",
+    "category": "Splitters and Boosters",
+    "voltage": "5V system",
+    "details": "Distributes controller data and power to multiple lighting sections.",
+    "uses": ["Multi-zone builds"]
+  },
+  {
+    "name": "SPI Signal Booster",
+    "category": "Splitters and Boosters",
+    "voltage": "5V system",
+    "details": "Strengthens the LED data signal across longer mobile installations.",
+    "uses": ["Van", "Boat", "Large bicycle build"]
+  },
+  {
+    "name": "Portable 5V Battery Bank",
+    "category": "Mobile Power",
+    "voltage": "5V output",
+    "details": "Rechargeable power source selected by verified 5V amperage and configured controller current limit.",
+    "uses": ["Bicycle", "Helmet"]
+  },
+  {
+    "name": "Inline Fuse and Power Switch",
+    "category": "Mobile Power",
+    "voltage": "5V system",
+    "details": "Basic circuit protection and accessible master power control.",
+    "uses": ["All installations"]
+  },
+  {
+    "name": "Heat-Shrink, End Caps and Sealant",
+    "category": "Installation Supplies",
+    "voltage": "N/A",
+    "details": "Finishing materials for strain relief, exposed strip ends and weather resistance.",
+    "uses": ["All installations"]
+  },
+  {
+    "name": "WS2812B Neon Rope or Diffuser",
+    "category": "LED Lighting",
+    "voltage": "5V system",
+    "details": "Diffused colored lighting for smoother lines on boats, cars and larger installations.",
+    "uses": ["Boat", "Automobile", "Motorcycle"]
+  },
+  {
+    "name": "16×64 RGB LED Banner",
+    "category": "LED Lighting",
+    "voltage": "5V",
+    "details": "Programmable matrix for helmet, rack or stationary display projects.",
+    "uses": ["Helmet", "Bicycle", "Display"]
+  }
+]

@@ -1,0 +1,390 @@
+/*
+  BEGIN OBJECT: Shared ShyneTyme simulator design tokens.
+  Scope: LED Bike SIM, LED Home SIM, and LED Auto SIM.
+  Purpose: Keep headers, controls, selected states, and attention borders aligned.
+*/
+:root {
+  --sim-cyan: #31e6ff;
+  --sim-pink: #ff5ab9;
+  --sim-violet: #9b7cff;
+  --sim-amber: #ffe76a;
+  --sim-green: #55e6b5;
+  --sim-danger: #ff7189;
+  --sim-deep: #030918;
+  --sim-panel: #07172c;
+  --sim-panel-strong: #102845;
+  --sim-text: #eef8ff;
+  --sim-muted: #aebed5;
+  --sim-line: rgba(49, 230, 255, 0.32);
+  --sim-line-strong: rgba(49, 230, 255, 0.72);
+  --sim-shadow: 0 0.8rem 2.2rem rgba(0, 0, 0, 0.32);
+  --sim-attention-border:
+    linear-gradient(135deg, var(--sim-cyan), var(--sim-violet), var(--sim-pink));
+}
+/* END OBJECT: Shared ShyneTyme simulator design tokens. */
+
+/*
+  BEGIN OBJECT: Shared simulator page background and typography.
+  This block changes presentation only. It does not change simulator state,
+  geometry, animations, or click behavior.
+*/
+.builder-page main,
+.home-builder-page main,
+.sim-auto-page main,
+.sim-page main {
+  color: var(--sim-text);
+  background:
+    radial-gradient(
+      circle at 12% 8%,
+      rgba(49, 230, 255, 0.08),
+      transparent 28rem
+    ),
+    radial-gradient(
+      circle at 88% 28%,
+      rgba(255, 90, 185, 0.07),
+      transparent 28rem
+    ),
+    linear-gradient(180deg, #030918, #07162c);
+}
+
+.builder-page h1,
+.builder-page h2,
+.builder-page h3,
+.home-builder-page h1,
+.home-builder-page h2,
+.home-builder-page h3,
+.sim-auto-page h1,
+.sim-auto-page h2,
+.sim-auto-page h3,
+.sim-page h1,
+.sim-page h2,
+.sim-page h3 {
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+}
+/* END OBJECT: Shared simulator page background and typography. */
+
+/*
+  BEGIN OBJECT: Shared compact simulator header.
+  Used directly by Home SIM and available to Bike and Auto whenever their
+  page headers use the same semantic classes.
+*/
+.sim-page-header {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(49, 230, 255, 0.34);
+  color: var(--sim-text);
+  background:
+    radial-gradient(
+      circle at 8% 22%,
+      rgba(49, 230, 255, 0.16),
+      transparent 22rem
+    ),
+    radial-gradient(
+      circle at 90% 18%,
+      rgba(255, 90, 185, 0.13),
+      transparent 20rem
+    ),
+    linear-gradient(145deg, #06152f, #100c30 68%, #06152f);
+  box-shadow:
+    0 1rem 2rem rgba(0, 0, 0, 0.24),
+    inset 0 -1px rgba(255, 255, 255, 0.04);
+}
+
+.sim-page-header::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 2px 2px,
+      var(--sim-cyan) 0 1.4px,
+      transparent 1.8px
+    ) 0 0 / 16px 4px repeat-x,
+    radial-gradient(
+      circle at 2px 2px,
+      var(--sim-pink) 0 1.4px,
+      transparent 1.8px
+    ) 8px 0 / 16px 4px repeat-x;
+  filter: drop-shadow(0 0 4px rgba(49, 230, 255, 0.7));
+  animation: sim-header-led-chase 5.8s linear infinite;
+}
+
+.sim-page-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 8.5rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
+.sim-page-header__kicker {
+  margin: 0 0 0.35rem;
+  color: var(--sim-cyan);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sim-page-header h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.55rem);
+}
+
+.sim-page-header p:not(.sim-page-header__kicker) {
+  max-width: 60rem;
+  margin: 0.45rem 0 0;
+  color: #c8d9ed;
+}
+
+.sim-page-header__status {
+  flex: 0 0 auto;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(49, 230, 255, 0.5);
+  border-radius: 0.78rem;
+  color: #dffaff;
+  background: rgba(3, 9, 24, 0.72);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.06),
+    0 0 1rem rgba(49, 230, 255, 0.12);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+@keyframes sim-header-led-chase {
+  to {
+    background-position: 96px 0, 104px 0;
+  }
+}
+/* END OBJECT: Shared compact simulator header. */
+
+/*
+  BEGIN OBJECT: Shared attention-border theme.
+  Apply this class to viewports, control groups, summaries, dialogs, and
+  action areas that need the customer's eye.
+*/
+.sim-attention-frame {
+  position: relative;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 40, 69, 0.98),
+      rgba(4, 13, 30, 0.98)
+    ) padding-box,
+    var(--sim-attention-border) border-box !important;
+  box-shadow:
+    var(--sim-shadow),
+    0 0 1.2rem rgba(49, 230, 255, 0.09) !important;
+}
+
+.builder-page .accordion-item,
+.builder-page .preview-card,
+.builder-page .summary-box,
+.home-builder-page .accordion-item,
+.home-builder-page .preview-card,
+.home-builder-page .home-builder-card,
+.sim-auto-page .auto-card,
+.sim-auto-page .build-summary {
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 40, 69, 0.98),
+      rgba(4, 13, 30, 0.98)
+    ) padding-box,
+    var(--sim-attention-border) border-box !important;
+  box-shadow: var(--sim-shadow) !important;
+}
+/* END OBJECT: Shared attention-border theme. */
+
+/*
+  BEGIN OBJECT: Shared simulator buttons, segmented controls, and selected states.
+*/
+.builder-page .btn,
+.home-builder-page .btn,
+.home-builder-page button,
+.sim-auto-page button,
+.sim-auto-page .sim-zone-option,
+.sim-page .sim-action-button,
+.sim-page .sim-segmented-control button {
+  min-height: 2.45rem;
+  border: 1px solid rgba(49, 230, 255, 0.3) !important;
+  border-radius: 0.72rem !important;
+  color: var(--sim-text) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 45, 78, 0.98),
+      rgba(7, 22, 42, 0.98)
+    ) !important;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.06),
+    0 0.3rem 0.9rem rgba(0, 0, 0, 0.18);
+  font-weight: 760;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.builder-page .btn:hover,
+.home-builder-page .btn:hover,
+.home-builder-page button:hover,
+.sim-auto-page button:hover,
+.sim-auto-page .sim-zone-option:hover,
+.sim-page .sim-action-button:hover,
+.sim-page .sim-segmented-control button:hover {
+  border-color: var(--sim-line-strong) !important;
+  box-shadow:
+    0 0 1rem rgba(49, 230, 255, 0.18),
+    inset 0 1px rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+.builder-page .btn-check:checked + .btn,
+.home-builder-page .btn-check:checked + .btn,
+.home-builder-page button.active,
+.home-builder-page button.is-active,
+.home-builder-page button[aria-pressed="true"],
+.sim-auto-page .sim-zone-option.is-selected,
+.sim-auto-page button.is-active,
+.sim-page .sim-action-button--primary,
+.sim-page .sim-segmented-control button.is-active,
+.sim-page .sim-segmented-control button[aria-pressed="true"] {
+  border-color: transparent !important;
+  color: #04111f !important;
+  background:
+    linear-gradient(
+      135deg,
+      var(--sim-cyan),
+      #7aa7ff 52%,
+      var(--sim-violet)
+    ) !important;
+  box-shadow:
+    0 0 1.05rem rgba(49, 230, 255, 0.26),
+    0 0.45rem 1rem rgba(0, 0, 0, 0.22) !important;
+}
+
+.sim-page .sim-action-button--contact {
+  border-color: rgba(255, 90, 185, 0.55) !important;
+  text-decoration: none;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 90, 185, 0.24),
+      rgba(155, 124, 255, 0.22)
+    ) !important;
+}
+
+.sim-page .sim-action-button--danger {
+  border-color: rgba(255, 113, 137, 0.6) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(104, 28, 48, 0.98),
+      rgba(53, 13, 28, 0.98)
+    ) !important;
+}
+
+.builder-page button:disabled,
+.home-builder-page button:disabled,
+.sim-auto-page button:disabled,
+.sim-page .sim-action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+/* END OBJECT: Shared simulator buttons, segmented controls, and selected states. */
+
+/*
+  BEGIN OBJECT: Shared simulator form controls.
+*/
+.builder-page select,
+.builder-page input,
+.builder-page textarea,
+.home-builder-page select,
+.home-builder-page input,
+.home-builder-page textarea,
+.sim-auto-page select,
+.sim-auto-page input,
+.sim-auto-page textarea,
+.sim-page select,
+.sim-page input,
+.sim-page textarea {
+  border-color: rgba(49, 230, 255, 0.32);
+  color: var(--sim-text);
+  background-color: #06152b;
+  accent-color: var(--sim-cyan);
+}
+
+.builder-page .accordion-button,
+.home-builder-page .accordion-button {
+  border-radius: 0.72rem !important;
+  color: var(--sim-text) !important;
+  background: linear-gradient(180deg, #122c4d, #0a1e38) !important;
+}
+
+.builder-page .accordion-button:not(.collapsed),
+.home-builder-page .accordion-button:not(.collapsed) {
+  color: #04111f !important;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(49, 230, 255, 0.96),
+      rgba(155, 124, 255, 0.94)
+    ) !important;
+}
+
+.builder-page .question-note,
+.builder-page .text-muted,
+.home-builder-page .question-note,
+.home-builder-page .text-muted,
+.sim-auto-page .muted,
+.sim-page .sim-muted {
+  color: var(--sim-muted) !important;
+}
+/* END OBJECT: Shared simulator form controls. */
+
+@media (max-width: 760px) {
+  .sim-page-header__inner {
+    align-items: flex-start;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .builder-page .btn,
+  .home-builder-page .btn,
+  .home-builder-page button,
+  .sim-auto-page button,
+  .sim-auto-page .sim-zone-option,
+  .sim-page .sim-action-button,
+  .sim-page .sim-segmented-control button {
+    min-height: 2.35rem;
+    padding: 0.48rem 0.65rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim-page-header::after {
+    animation: none;
+  }
+
+  .builder-page .btn,
+  .home-builder-page .btn,
+  .home-builder-page button,
+  .sim-auto-page button,
+  .sim-page .sim-action-button,
+  .sim-page .sim-segmented-control button {
+    transition: none;
+  }
+}

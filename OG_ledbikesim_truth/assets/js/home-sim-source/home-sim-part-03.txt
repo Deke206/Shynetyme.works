@@ -1,0 +1,389 @@
+xtureGroup(zone, point));
+          }
+
+          continue;
+        }
+
+        elements.traceSvg.append(createPathGroup(zone, run));
+      }
+    }
+  }
+  // END OBJECT: Fixed SVG hotspot rendering.
+
+  // BEGIN OBJECT: Zone button rendering.
+  function mirrorOptionsFor(sourceId) {
+    return allZones()
+      .filter((zone) => zone.id !== sourceId)
+      .map((zone) => {
+        const viewLabel = sceneNameForZone(zone.id) === "front"
+          ? "Front View"
+          : "Back View";
+
+        return `<option value="${zone.id}">${zone.label} · ${viewLabel}</option>`;
+      })
+      .join("");
+  }
+
+  function renderZoneButtons() {
+    elements.zoneGrid.innerHTML = currentScene().zones
+      .map((zone) => {
+        const ownSettings = settingsFor(zone.id);
+        const incomingSource = (
+          ownSettings.mirror && ownSettings.syncTarget
+        )
+          ? zoneById(ownSettings.syncTarget)?.label || ownSettings.syncTarget
+          : "";
+        const outgoingTargets = linkedTargets(zone.id)
+          .map((target) => target.label)
+          .join(", ");
+        const isSelected = selectedZones.has(zone.id);
+        const effective = effectiveSettings(zone.id);
+        const linkClass = incomingSource
+          ? "is-link-target"
+          : outgoingTargets
+            ? "is-link-source"
+            : "";
+        let status = "Open preset";
+
+        if (isSelected) {
+          status = effectLabel(effective.effect);
+
+          if (incomingSource) {
+            status += ` · Mirrors ${incomingSource}`;
+          } else if (outgoingTargets) {
+            status += ` · Linked to ${outgoingTargets}`;
+          }
+        }
+
+        return `
+          <button
+            class="home-zone-button ${linkClass}"
+            type="button"
+            data-zone="${zone.id}"
+            aria-pressed="${isSelected}"
+          >
+            <strong>${zone.label}</strong>
+            <small>${zone.mount}</small>
+            <em>${status}</em>
+          </button>`;
+      })
+      .join("");
+  }
+  // END OBJECT: Zone button rendering.
+
+  // BEGIN OBJECT: Customer summary and stored build payload.
+  function buildPayload() {
+    return {
+      version: 4,
+      simulator: "home",
+      geometry: "approved-locked",
+      geometrySha256: geometry?.geometrySha256 || "",
+      activeView: currentSceneName === "front" ? "front" : "back",
+      lightMode: currentLight,
+      updatedAt: new Date().toISOString(),
+      zones: [...selectedZones].map((zoneId) => {
+        const zone = zoneById(zoneId);
+        const ownSettings = settingsFor(zoneId);
+        const effective = effectiveSettings(zoneId);
+        const preset = presetFor(effective.effect);
+
+        return {
+          id: zoneId,
+          label: zone?.label || zoneId,
+          mount: zone?.mount || "",
+          view: sceneNameForZone(zoneId),
+          preset: effective.effect,
+          presetLabel: preset.label,
+          wledEffectId: preset.wledId,
+          paletteMode: effective.paletteMode,
+          colors: presetApi.normalizeColors(effective),
+          brightness: effective.brightness,
+          speed: preset.hasSpeed ? effective.speed : null,
+          direction: preset.directional
+            ? (Number(effective.direction) < 0 ? "reverse" : "forward")
+            : null,
+          mirroredFrom: (
+            ownSettings.mirror && ownSettings.syncTarget
+          )
+            ? ownSettings.syncTarget
+            : null,
+          mirrorOrientation: ownSettings.mirror
+            ? ownSettings.mirrorDirection
+            : null
+        };
+      })
+    };
+  }
+
+  function buildCopyText(payload) {
+    const lines = [
+      "ShyneTyme LED Home SIM",
+      `Geometry: ${payload.geometry}`,
+      `Selected areas: ${payload.zones.length}`,
+      ""
+    ];
+
+    payload.zones.forEach((zone, index) => {
+      lines.push(`${index + 1}. ${zone.label}`);
+      lines.push(`   View: ${zone.view === "front" ? "Front" : "Back View"}`);
+      lines.push(`   Mount: ${zone.mount}`);
+      lines.push(`   Preset: ${zone.presetLabel}`);
+      lines.push(`   Colors: ${zone.colors.join(", ")}`);
+      lines.push(`   Brightness: ${zone.brightness}%`);
+
+      if (zone.speed !== null) {
+        lines.push(`   Speed: ${zone.speed}`);
+      }
+
+      if (zone.direction) {
+        lines.push(`   Direction: ${zone.direction}`);
+      }
+
+      if (zone.mirroredFrom) {
+        lines.push(`   Linked from: ${zone.mirroredFrom}`);
+        lines.push(`   Link orientation: ${zone.mirrorOrientation}`);
+      }
+
+      lines.push("");
+    });
+
+    return lines.join("\n").trim();
+  }
+
+  function saveBuild() {
+    const payload = buildPayload();
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+
+    document.dispatchEvent(new CustomEvent("shynetyme:sim-change", {
+      detail: {
+        simulator: "home",
+        payload
+      }
+    }));
+
+    return payload;
+  }
+
+  function updateSummary() {
+    const totalSelected = selectedZones.size;
+    const visibleSelected = [...selectedZones].filter((zoneId) => (
+      sceneNameForZone(zoneId) === currentSceneName
+    )).length;
+
+    elements.visibleCount.textContent = String(visibleSelected);
+    elements.totalCount.textContent = String(totalSelected);
+    elements.resetBuild.disabled = totalSelected === 0;
+    elements.copyBuild.disabled = totalSelected === 0;
+    elements.summaryStatus.textContent = totalSelected
+      ? `${totalSelected} selected area${totalSelected === 1 ? "" : "s"}`
+      : "Nothing selected";
+    elements.summaryEmpty.hidden = totalSelected > 0;
+
+    if (!totalSelected) {
+      elements.buildSummary.replaceChildren();
+      localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+
+    elements.buildSummary.innerHTML = [...selectedZones]
+      .map((zoneId) => {
+        const zone = zoneById(zoneId);
+        const ownSettings = settingsFor(zoneId);
+        const effective = effectiveSettings(zoneId);
+        const sourceLabel = (
+          ownSettings.mirror && ownSettings.syncTarget
+        )
+          ? zoneById(ownSettings.syncTarget)?.label || ownSettings.syncTarget
+          : "";
+        const detail = sourceLabel
+          ? `Mirrors ${sourceLabel}`
+          : `${effective.brightness}% brightness`;
+
+        return `
+          <div class="home-summary-item">
+            <span>
+              <strong>${zone?.label || zoneId}</strong>
+              <small>${zone?.mount || ""}</small>
+            </span>
+            <span>
+              ${effectLabel(effective.effect)}
+              <small>${detail}</small>
+            </span>
+          </div>`;
+      })
+      .join("");
+
+    saveBuild();
+  }
+  // END OBJECT: Customer summary and stored build payload.
+
+  // BEGIN OBJECT: Dialog value reading and dynamic option visibility.
+  function readDialogSettings() {
+    const effect = elements.zoneEffect.value;
+    const preset = presetFor(effect);
+
+    return {
+      effect,
+      direction: preset.directional
+        ? Number(elements.zoneDirection.value)
+        : 1,
+      brightness: Number(elements.zoneBrightness.value),
+      speed: preset.hasSpeed
+        ? Number(elements.zoneSpeed.value)
+        : 55,
+      intensity: preset.intensity,
+      paletteMode: elements.paletteMode.value,
+      colors: [
+        elements.color1.value,
+        elements.color2.value,
+        elements.color3.value
+      ],
+      syncTarget: "",
+      mirror: false,
+      mirrorDirection: "same"
+    };
+  }
+
+  function updateGradientPreview() {
+    const colorMode = elements.paletteMode.value;
+    const primary = elements.color1.value;
+    const secondary = colorMode === "single"
+      ? primary
+      : elements.color2.value;
+    const accent = colorMode === "gradient"
+      ? elements.color3.value
+      : primary;
+
+    elements.gradientPreview.style.setProperty("--gradient-a", primary);
+    elements.gradientPreview.style.setProperty("--gradient-b", secondary);
+    elements.gradientPreview.style.setProperty("--gradient-c", accent);
+    elements.brightnessOutput.textContent = (
+      `${elements.zoneBrightness.value}%`
+    );
+    elements.speedOutput.textContent = elements.zoneSpeed.value;
+  }
+
+  function updateDialogVisibility() {
+    const preset = presetFor(elements.zoneEffect.value);
+    const colorMode = elements.paletteMode.value;
+    const mirrorTarget = elements.mirrorTarget.value;
+
+    if (mirrorTarget) {
+      elements.zoneEnabled.checked = true;
+    }
+
+    elements.directionWrap.hidden = !preset.directional;
+    elements.speedWrap.hidden = !preset.hasSpeed;
+    elements.color2Wrap.hidden = colorMode === "single";
+    elements.color3Wrap.hidden = colorMode !== "gradient";
+    elements.mirrorDetails.hidden = !mirrorTarget;
+    elements.mirrorDirectionWrap.hidden = (
+      !mirrorTarget || !preset.directional
+    );
+    elements.presetNote.textContent = preset.note;
+
+    if (!mirrorTarget) {
+      elements.mirrorNote.textContent = (
+        "Applying affects this approved area only."
+      );
+    } else if (preset.directional) {
+      elements.mirrorNote.textContent = (
+        "Applying turns on both areas, keeps the target linked, and uses the selected same or opposite playback orientation."
+      );
+    } else {
+      elements.mirrorNote.textContent = (
+        "Applying turns on both areas and keeps the target linked. This preset has no directional playback."
+      );
+    }
+  }
+
+  function previewDialogChanges() {
+    updateDialogVisibility();
+    updateGradientPreview();
+
+    if (!dialogZoneId) {
+      return;
+    }
+
+    zoneSettings.set(dialogZoneId, readDialogSettings());
+
+    if (elements.zoneEnabled.checked) {
+      selectedZones.add(dialogZoneId);
+    } else {
+      selectedZones.delete(dialogZoneId);
+    }
+
+    renderZoneButtons();
+    renderTrace();
+    rebuildLedParticles();
+    updateSummary();
+  }
+  // END OBJECT: Dialog value reading and dynamic option visibility.
+
+  // BEGIN OBJECT: Dialog open, cancel, apply, and disable actions.
+  function openDialog(zoneId) {
+    const zone = zoneById(zoneId);
+
+    if (!zone) {
+      return;
+    }
+
+    dialogZoneId = zoneId;
+
+    const ownSettings = settingsFor(zoneId);
+    const effective = effectiveSettings(zoneId);
+
+    dialogSnapshot = {
+      selected: [...selectedZones],
+      settings: new Map(
+        [...zoneSettings].map(([key, value]) => [
+          key,
+          presetApi.clone(value)
+        ])
+      )
+    };
+
+    elements.dialogTitle.textContent = zone.label;
+    elements.dialogMount.textContent = ownSettings.mirror && ownSettings.syncTarget
+      ? `${zone.mount} · currently linked from ${zoneById(ownSettings.syncTarget)?.label || ownSettings.syncTarget}`
+      : zone.mount;
+    elements.zoneEnabled.checked = selectedZones.has(zoneId);
+    elements.zoneEffect.value = effective.effect;
+    elements.zoneDirection.value = String(effective.direction || 1);
+    elements.zoneBrightness.value = String(effective.brightness);
+    elements.zoneSpeed.value = String(effective.speed);
+    elements.paletteMode.value = (
+      effective.paletteMode || presetFor(effective.effect).colorMode
+    );
+    elements.color1.value = effective.colors[0];
+    elements.color2.value = effective.colors[1];
+    elements.color3.value = effective.colors[2];
+    elements.mirrorTarget.innerHTML = (
+      '<option value="">This area only</option>' +
+      mirrorOptionsFor(zoneId)
+    );
+
+    const existingTarget = linkedTargets(zoneId)[0];
+
+    elements.mirrorTarget.value = existingTarget?.id || "";
+    elements.mirrorDirection.value = existingTarget
+      ? settingsFor(existingTarget.id).mirrorDirection
+      : "same";
+    elements.dialogDisable.disabled = !selectedZones.has(zoneId);
+    elements.dialogStatus.textContent = (
+      "Changes preview live. Apply Preset keeps them."
+    );
+
+    updateDialogVisibility();
+    updateGradientPreview();
+
+    if (typeof elements.dialog.showModal === "function") {
+      elements.dialog.showModal();
+    } else {
+      elements.dialog.setAttribute("open", "");
+    }
+  }
+
+  function restoreDialogSnapshot() {
+    if (!dialogSnapshot) {

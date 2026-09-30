@@ -1,0 +1,207 @@
+/* BEGIN OBJECT: Home-style Auto zone buttons. */
+.auto-zone-button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .45rem;
+}
+
+.auto-home-zone-button {
+  display: grid;
+  grid-template-columns: 1.55rem 1fr;
+  align-items: center;
+  gap: .45rem;
+  min-height: 3rem;
+  padding: .42rem .5rem;
+  border: 1px solid rgba(49, 230, 255, .27);
+  border-radius: .72rem;
+  color: #eef8ff;
+  background: linear-gradient(180deg, #122d4e, #07162a);
+  text-align: left;
+  cursor: pointer;
+}
+
+.auto-home-zone-button b {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(3, 9, 24, .55);
+  font: 800 .68rem Oxanium, sans-serif;
+}
+
+.auto-home-zone-button strong,
+.auto-home-zone-button small {
+  display: block;
+}
+
+.auto-home-zone-button strong {
+  font-size: .75rem;
+  line-height: 1.1;
+}
+
+.auto-home-zone-button small {
+  margin-top: .15rem;
+  color: #aebed5;
+  font-size: .61rem;
+}
+
+.auto-home-zone-button[aria-pressed="true"] {
+  color: #04111f;
+  border-color: transparent;
+  background: linear-gradient(135deg, #31e6ff, #7aa7ff 52%, #9b7cff);
+  box-shadow: 0 0 1rem rgba(49, 230, 255, .25);
+}
+
+.auto-home-zone-button[aria-pressed="true"] small {
+  color: #18324a;
+}
+/* END OBJECT: Home-style Auto zone buttons. */
+
+/* BEGIN OBJECT: Independent SVG LED effects. */
+.auto-logical-led {
+  fill: none !important;
+  vector-effect: non-scaling-stroke;
+  stroke: var(--za, #35e7ff) !important;
+  opacity: calc(var(--zbright, .92) * var(--zon, 0)) !important;
+  filter: drop-shadow(0 0 3px var(--za, #35e7ff)) drop-shadow(0 0 8px var(--zb, #9b7cff)) !important;
+  animation-duration: var(--zspeed, 1.8s) !important;
+  animation-direction: var(--zdir, normal) !important;
+  animation-iteration-count: infinite !important;
+  animation-timing-function: linear !important;
+}
+
+.auto-zone.is-on .auto-logical-led[data-effect="solid"] { stroke-dasharray: none !important; animation-name: none !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="breathe"] { stroke-dasharray: none !important; animation: autoZoneBreathe var(--zspeed) ease-in-out infinite !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="wipe"] { stroke-dasharray: 35 210 !important; animation-name: autoZoneTravel !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="chase"] { stroke-dasharray: 9 22 !important; animation-name: autoZoneTravel !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="theater"] { stroke-dasharray: 3 17 !important; animation-name: autoZoneTravel !important; animation-timing-function: steps(8, end) !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="scanner"] { stroke-dasharray: 38 250 !important; animation-name: autoZoneScanner !important; animation-direction: alternate !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="twinkle"] { stroke-dasharray: 2 13 !important; animation: autoZoneTwinkle var(--zspeed) steps(5, end) infinite !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="starlight"] { stroke-dasharray: 1.7 18 !important; animation: autoZoneStar var(--zspeed) ease-in-out infinite !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="sections"] { stroke-dasharray: 24 12 5 14 !important; animation: autoZoneSections var(--zspeed) steps(6, end) infinite !important; }
+.auto-zone.is-on .auto-logical-led[data-effect="rainbow"] { stroke: url(#rgbGradient) !important; stroke-dasharray: 2.2 8 !important; animation-name: autoZoneTravel !important; }
+
+@keyframes autoZoneTravel { to { stroke-dashoffset: -180; } }
+@keyframes autoZoneScanner { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -270; } }
+@keyframes autoZoneBreathe { 0%,100% { opacity: calc(var(--zbright) * .2 * var(--zon)); } 50% { opacity: calc(var(--zbright) * var(--zon)); } }
+@keyframes autoZoneTwinkle { 0%,20%,65%,100% { opacity: calc(var(--zbright) * .16 * var(--zon)); } 21%,40%,66%,78% { opacity: calc(var(--zbright) * var(--zon)); } }
+@keyframes autoZoneStar { 0%,100% { opacity: calc(var(--zbright) * .08 * var(--zon)); } 45%,58% { opacity: calc(var(--zbright) * var(--zon)); } }
+@keyframes autoZoneSections { 0%,100% { stroke: var(--za); stroke-dashoffset: 0; } 50% { stroke: var(--zb); stroke-dashoffset: -80; } }
+/* END OBJECT: Independent SVG LED effects. */
+
+/* BEGIN OBJECT: Ten-step sequence panel. */
+.auto-sequence-panel {
+  margin-top: .8rem;
+  padding-top: .8rem;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+.auto-sequence-panel > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: .5rem;
+}
+
+.auto-sequence-panel header h2,
+.auto-sequence-panel header small {
+  display: block;
+  margin: 0;
+}
+
+.auto-sequence-panel header small {
+  color: #31e6ff;
+  font: 800 .63rem Oxanium, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.auto-sequence-panel header em {
+  color: #aebed5;
+  font-size: .68rem;
+}
+
+.sequence-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .3rem;
+  margin: .65rem 0;
+}
+
+.sequence-steps button,
+.sequence-edit button,
+.sequence-play button,
+.auto-sequence-panel .request,
+.sequence-options input {
+  min-height: 2.2rem;
+  border: 1px solid rgba(49, 230, 255, .24);
+  border-radius: .55rem;
+  color: #eef8ff;
+  background: #07152b;
+  font-size: .67rem;
+  font-weight: 750;
+}
+
+.sequence-steps b,
+.sequence-steps small {
+  display: block;
+}
+
+.sequence-steps small {
+  color: #8fa2ba;
+  font-size: .52rem;
+}
+
+.sequence-steps .saved { border-color: rgba(49, 230, 255, .55); }
+.sequence-steps .active { color: #04111f; background: linear-gradient(135deg, #31e6ff, #9b7cff); }
+.sequence-steps .active small { color: #18324a; }
+.sequence-edit { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; }
+.sequence-play { display: grid; grid-template-columns: 1fr auto; gap: .35rem; margin-top: .55rem; }
+.sequence-play .primary,
+.auto-sequence-panel .request { color: #04111f; background: linear-gradient(135deg, #31e6ff, #9b7cff); }
+.auto-sequence-panel .request { width: 100%; margin-top: .55rem; }
+.sequence-options { display: grid; grid-template-columns: 1fr 1fr; gap: .38rem; margin-top: .55rem; }
+.sequence-options label { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .3rem; color: #aebed5; font-size: .65rem; }
+.sequence-options label:first-child { grid-template-columns: 1fr; }
+.sequence-options input[type="number"] { width: 100%; padding-inline: .4rem; }
+.sequence-options input[type="checkbox"] { min-height: auto; accent-color: #31e6ff; }
+.compact-reset { width: auto !important; padding: .42rem .7rem !important; font-size: .72rem; }
+/* END OBJECT: Ten-step sequence panel. */
+
+/* BEGIN OBJECT: Per-zone dialog. */
+.auto-zone-dialog {
+  width: min(390px, calc(100vw - 1rem));
+  max-height: min(92vh, 650px);
+  padding: 0;
+  border: 1px solid rgba(49, 230, 255, .42);
+  border-radius: 1rem;
+  color: #eef8ff;
+  background: #07152b;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, .55);
+}
+
+.auto-zone-dialog::backdrop { background: rgba(0, 0, 0, .42); }
+.auto-zone-dialog header,
+.auto-zone-dialog footer { display: flex; align-items: center; justify-content: space-between; gap: .45rem; padding: .7rem; }
+.auto-zone-dialog header { border-bottom: 1px solid rgba(255,255,255,.12); }
+.auto-zone-dialog header h2 { margin: 0; font-size: 1rem; }
+.auto-zone-dialog header small { color: #31e6ff; font: 800 .62rem Oxanium, sans-serif; text-transform: uppercase; }
+.auto-zone-dialog header button { width: 2rem; height: 2rem; border: 0; border-radius: .45rem; color: #fff; background: #d92f4d; font-size: 1.35rem; }
+.auto-zone-dialog main { display: grid; gap: .55rem; max-height: calc(92vh - 9rem); overflow: auto; padding: .7rem; }
+.auto-zone-dialog main label { display: grid; gap: .25rem; color: #b9c7da; font-size: .7rem; }
+.auto-zone-dialog .check { grid-template-columns: auto 1fr; align-items: center; }
+.auto-zone-dialog select,
+.auto-zone-dialog input:not([type="range"]),
+.auto-zone-dialog footer button { min-height: 2.35rem; border: 1px solid rgba(49,230,255,.25); border-radius: .55rem; color: #eef8ff; background: #0b203c; }
+.auto-zone-dialog select { padding-inline: .5rem; }
+.auto-zone-dialog .colors { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.auto-zone-dialog footer { border-top: 1px solid rgba(255,255,255,.12); }
+.auto-zone-dialog footer button { padding-inline: .65rem; font-size: .68rem; font-weight: 750; }
+.auto-zone-dialog footer .primary { color: #04111f; background: linear-gradient(135deg, #31e6ff, #9b7cff); }
+/* END OBJECT: Per-zone dialog. */
+
+@media (max-width: 620px) {
+  .auto-home-zone-button { min-height: 2.75rem; padding: .34rem .4rem; }
+  .sequence-edit { grid-template-columns: 1fr; }
+}

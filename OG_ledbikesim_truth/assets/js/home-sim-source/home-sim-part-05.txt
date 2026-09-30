@@ -1,0 +1,160 @@
+(() => {
+  "use strict";
+
+  // BEGIN OBJECT: Approved Home SIM production image recovery.
+  // This compatibility layer preserves the approved fixed geometry and only
+  // repairs the photograph source when a cached or MIME-specific request fails.
+  const IMAGE_PATHS = Object.freeze({
+    front: "assets/images/home-sim-front-1.b64",
+    rear: "assets/images/home-sim-rear-1.b64"
+  });
+
+  const imageCache = new Map();
+  let requestToken = 0;
+
+  const scriptUrl = document.currentScript?.src
+    ? new URL(document.currentScript.src, window.location.href)
+    : new URL("assets/js/home-sim.js", window.location.href);
+  const siteRoot = new URL(
+  window.ShynetymeHomeSimLoader?.siteRoot || window.location.href
+);
+  // END OBJECT: Approved Home SIM production image recovery.
+
+  // BEGIN OBJECT: Base64 image format detection.
+  function detectMimeType(base64Data) {
+    if (base64Data.startsWith("UklG")) {
+      return "image/webp";
+    }
+
+    if (base64Data.startsWith("/9j/")) {
+      return "image/jpeg";
+    }
+
+    if (base64Data.startsWith("iVBOR")) {
+      return "image/png";
+    }
+
+    throw new Error("Approved Home SIM image format is not recognized.");
+  }
+  // END OBJECT: Base64 image format detection.
+
+  // BEGIN API CALL: Load an approved Home SIM photograph.
+  async function loadApprovedImage(sceneName) {
+    if (imageCache.has(sceneName)) {
+      return imageCache.get(sceneName);
+    }
+
+    const imagePath = IMAGE_PATHS[sceneName];
+
+    if (!imagePath) {
+      throw new Error(`Unknown Home SIM scene: ${sceneName}`);
+    }
+
+    const imageUrl = new URL(imagePath, siteRoot);
+    imageUrl.searchParams.set("v", "20260806-approved-home-final-v3");
+
+    const response = await fetch(imageUrl, {
+      cache: "no-store",
+      credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Approved ${sceneName} image request failed with ${response.status}.`
+      );
+    }
+
+    const base64Data = (await response.text()).trim();
+    const mimeType = detectMimeType(base64Data);
+    const imageSource = `data:${mimeType};base64,${base64Data}`;
+
+    imageCache.set(sceneName, imageSource);
+
+    return imageSource;
+  }
+  // END API CALL: Load an approved Home SIM photograph.
+
+  // BEGIN OBJECT: Live-view image application.
+  function currentSceneName() {
+    const activeButton = document.querySelector(
+      "[data-scene].is-active, [data-scene][aria-pressed='true']"
+    );
+
+    return activeButton?.dataset.scene === "rear" ? "rear" : "front";
+  }
+
+  async function applyApprovedImage(sceneName = currentSceneName()) {
+    const sourceImage = document.getElementById("homeSourceImage");
+    const renderStatus = document.getElementById("homeRenderStatus");
+
+    if (!sourceImage) {
+      return;
+    }
+
+    const token = requestToken += 1;
+
+    try {
+      const imageSource = await loadApprovedImage(sceneName);
+
+      if (token !== requestToken || currentSceneName() !== sceneName) {
+        return;
+      }
+
+      sourceImage.src = imageSource;
+      sourceImage.alt = sceneName === "front"
+        ? "Approved front view of the sample property"
+        : "Approved back view of the sample property";
+
+      if (renderStatus) {
+        renderStatus.textContent = (
+          "Approved geometry loaded · Canvas LED renderer active"
+        );
+      }
+    } catch (error) {
+      console.error(error);
+
+      if (renderStatus) {
+        renderStatus.textContent = (
+          `Approved ${sceneName} image failed to load`
+        );
+      }
+    }
+  }
+  // END OBJECT: Live-view image application.
+
+  // BEGIN OBJECT: Production image recovery event bindings.
+  function initializeImageRecovery() {
+    void applyApprovedImage("front");
+
+    document.addEventListener("click", (event) => {
+      const sceneButton = event.target.closest("[data-scene]");
+
+      if (!sceneButton) {
+        return;
+      }
+
+      const sceneName = sceneButton.dataset.scene === "rear"
+        ? "rear"
+        : "front";
+
+      window.requestAnimationFrame(() => {
+        void applyApprovedImage(sceneName);
+      });
+    }, true);
+
+    window.addEventListener("pageshow", () => {
+      void applyApprovedImage(currentSceneName());
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      initializeImageRecovery,
+      { once: true }
+    );
+  } else {
+    initializeImageRecovery();
+  }
+  // END OBJECT: Production image recovery event bindings.
+})();

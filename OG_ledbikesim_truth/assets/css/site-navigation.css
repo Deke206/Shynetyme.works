@@ -1,0 +1,211 @@
+@import url("sim-controls-shared.css?v=20260805-unified-sim-v2");
+
+/*
+  BEGIN OBJECT: Shared simulator stylesheet loader.
+  Loading site-navigation.css now also loads the shared Bike, Home, and Auto
+  simulator control theme. This keeps all three production routes aligned.
+  END OBJECT: Shared simulator stylesheet loader.
+*/
+
+/* Canonical site-wide navigation styling. */
+.skip-link {
+  position: fixed;
+  top: .5rem;
+  left: .5rem;
+  z-index: 2000;
+  padding: .7rem 1rem;
+  border: 2px solid #fff;
+  border-radius: .65rem;
+  color: #06111f;
+  background: var(--cyan, #31e6ff);
+  font-family: var(--heading-font, sans-serif);
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 0 0 4px rgba(3, 9, 24, .9), 0 0 22px rgba(49, 230, 255, .65);
+  transform: translateY(-160%);
+  transition: transform .18s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  color: #06111f;
+  outline: none;
+  transform: translateY(0);
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--cyan, #31e6ff);
+  outline-offset: 3px;
+}
+
+#main-content:focus { outline: none; }
+
+.navbar {
+  background: rgba(3, 9, 24, .92) !important;
+  border-bottom: 1px solid rgba(49, 230, 255, .26);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .32), 0 0 24px rgba(49, 230, 255, .07);
+  backdrop-filter: blur(14px);
+}
+
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: .48rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.brand-lockup img { filter: drop-shadow(0 0 7px rgba(49, 230, 255, .8)); }
+.brand-lockup em { color: var(--cyan); font-style: normal; text-shadow: 0 0 11px rgba(49, 230, 255, .72); }
+
+.navbar .nav-link {
+  position: relative;
+  overflow: hidden;
+  border-radius: .72rem;
+  color: #d9e8fb;
+  font-family: var(--heading-font);
+  font-weight: 650;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus-visible {
+  color: #d9e8fb;
+}
+
+.navbar .nav-link.active {
+  color: #fff3d2;
+  background-image: linear-gradient(180deg, #fff, #fff2bd 34%, #ffc562 58%, #ff7c82 78%, #ff9bd2);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 7px rgba(255, 138, 0, .38), 0 0 13px rgba(255, 90, 185, .28);
+}
+
+.navbar .nav-link::after {
+  content: "";
+  position: absolute;
+  right: .5rem;
+  bottom: .2rem;
+  left: .5rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  transform: scaleX(0);
+  transition: transform .2s ease;
+}
+
+.navbar .nav-link:hover::after,
+.navbar .nav-link:focus-visible::after,
+.navbar .nav-link.active::after { transform: scaleX(1); }
+
+.navbar-toggler {
+  border-color: rgba(49, 230, 255, .55);
+  box-shadow: 0 5px 0 rgba(0, 83, 111, .75), 0 0 14px rgba(49, 230, 255, .2);
+}
+.navbar-toggler:focus { box-shadow: 0 0 0 .2rem rgba(49, 230, 255, .28); }
+
+.shynetyme-build-menu,
+.shynetyme-language-menu { position: relative; }
+
+.shynetyme-build-menu > .nav-link,
+.shynetyme-language-menu > .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  border: 0;
+  background-color: transparent;
+}
+
+.shynetyme-build-menu .dropdown-menu,
+.shynetyme-language-menu .dropdown-menu {
+  min-width: 13.5rem;
+  margin-top: .55rem;
+  padding: .48rem;
+  overflow: hidden;
+  border: 1px solid rgba(49, 230, 255, .46);
+  border-radius: .85rem;
+  background: radial-gradient(circle at 15% 10%, rgba(49, 230, 255, .12), transparent 9rem), linear-gradient(155deg, rgba(6, 21, 47, .99), rgba(18, 12, 48, .99));
+  box-shadow: 0 18px 38px rgba(0, 0, 0, .48), 0 0 20px rgba(49, 230, 255, .14), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+.shynetyme-language-menu .dropdown-menu { min-width: 10.5rem; }
+
+.shynetyme-build-menu .dropdown-item,
+.shynetyme-language-menu .dropdown-item {
+  position: relative;
+  padding: .72rem .82rem;
+  border-radius: .62rem;
+  color: #dcecff;
+  font-family: var(--heading-font);
+  font-weight: 750;
+  letter-spacing: .015em;
+  transition: color .18s ease, background-color .18s ease;
+}
+
+.shynetyme-build-menu li + li .dropdown-item,
+.shynetyme-language-menu li + li .dropdown-item { margin-top: .18rem; }
+
+.shynetyme-build-menu .dropdown-item:hover,
+.shynetyme-build-menu .dropdown-item:focus,
+.shynetyme-build-menu .dropdown-item.active,
+.shynetyme-language-menu .dropdown-item:hover,
+.shynetyme-language-menu .dropdown-item:focus,
+.shynetyme-language-menu .dropdown-item.active {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(49, 230, 255, .2), rgba(155, 131, 255, .24));
+}
+
+.shynetyme-build-menu .dropdown-item.active,
+.shynetyme-language-menu .dropdown-item.active { box-shadow: inset 3px 0 0 var(--cyan); }
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link,
+  .navbar .nav-link::after,
+  .dropdown-item {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .navbar-collapse { padding: .7rem 0 1rem; }
+  .navbar .nav-link { padding: .68rem .5rem; }
+  .shynetyme-build-menu > .nav-link,
+  .shynetyme-language-menu > .nav-link { width: 100%; justify-content: space-between; text-align: left; }
+  .shynetyme-build-menu .dropdown-menu,
+  .shynetyme-language-menu .dropdown-menu { margin: .25rem 0 .45rem .55rem; border-radius: .72rem; box-shadow: inset 0 0 18px rgba(49, 230, 255, .06); }
+}
+
+/* Shared navbar LED edge strip. */
+.navbar { position: sticky; top: 0; isolation: isolate; z-index: 1030; }
+.navbar::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  z-index: 2;
+  height: 4px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 2px 2px, var(--hero-led-a, #31e6ff) 0 1.45px, transparent 1.8px) 0 0 / 16px 4px repeat-x,
+    radial-gradient(circle at 2px 2px, var(--hero-led-b, #9b83ff) 0 1.45px, transparent 1.8px) 8px 0 / 16px 4px repeat-x;
+  filter: drop-shadow(0 0 3px var(--hero-led-a, #31e6ff));
+  animation: navbar-led-chase var(--hero-led-speed, 5.8s) linear infinite var(--hero-led-direction, normal);
+}
+
+@keyframes navbar-led-chase { to { background-position: 96px 0, 104px 0; } }
+html.site-led-mode--stack .navbar::after { animation-timing-function: steps(16, end); }
+html.site-led-mode--pulse .navbar::after { animation-name: navbar-led-chase, navbar-led-soft-pulse; animation-duration: var(--hero-led-speed, 5.8s), 2.8s; }
+@keyframes navbar-led-soft-pulse { 0%, 100% { opacity: .68; } 50% { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar::after { animation: none !important; opacity: .82; }
+}
+
+/* Canonical typography for every primary-nav destination and LED SIMS child link. */
+.navbar .navbar-nav > .nav-link,
+.navbar .navbar-nav > .nav-item > .nav-link,
+.navbar .navbar-nav .dropdown-item {
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-weight: 750;
+  letter-spacing: .02em;
+}

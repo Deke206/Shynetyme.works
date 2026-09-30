@@ -51,12 +51,50 @@
       border:0!important;
       outline:0!important;
     }
-    .glass-btn:hover,.role:hover,.tiny-btn:hover,.fx-item:hover,.percent-step:hover,.drag-handle:hover { border-color:transparent!important; }
-    .glass-btn.primary,.glass-btn.danger { border-color:transparent!important; }
+    .glass-btn {
+      background:linear-gradient(180deg,rgba(18,42,76,.65) 0%,rgba(6,18,38,.80) 100%)!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 4px 8px rgba(0,0,0,.45)!important;
+      transition:all .15s ease!important;
+    }
+    .glass-btn:hover {
+      border-color:transparent!important;
+      background:linear-gradient(180deg,rgba(26,56,98,.78) 0%,rgba(8,24,48,.90) 100%)!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.36),0 6px 14px rgba(0,0,0,.55)!important;
+      transform:translateY(-1px);
+    }
+    .glass-btn:active {
+      transform:translateY(1px);
+      box-shadow:inset 0 2px 5px rgba(0,0,0,.75)!important;
+    }
+    .glass-btn.primary {
+      border-color:transparent!important;
+      background:linear-gradient(180deg,rgba(0,191,255,.45) 0%,rgba(0,110,180,.60) 100%)!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.50),0 4px 14px rgba(0,191,255,.30),0 6px 16px rgba(0,0,0,.50)!important;
+    }
+    .glass-btn.danger {
+      border-color:transparent!important;
+      background:linear-gradient(180deg,rgba(255,51,93,.45) 0%,rgba(160,20,50,.60) 100%)!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 14px rgba(255,51,93,.28),0 6px 16px rgba(0,0,0,.50)!important;
+    }
+    .role:hover,.tiny-btn:hover,.fx-item:hover,.percent-step:hover,.drag-handle:hover { border-color:transparent!important; }
+    .fx-item {
+      min-height:38px!important;
+      padding:7px 8px!important;
+      border-radius:9px!important;
+      background:linear-gradient(170deg,rgba(16,36,66,.58) 0%,rgba(5,16,34,.80) 100%)!important;
+      box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.60)!important;
+      transition:all .15s cubic-bezier(0.2,0.8,0.2,1)!important;
+    }
+    .fx-item:hover {
+      background:linear-gradient(170deg,rgba(26,54,96,.78) 0%,rgba(8,24,50,.90) 100%)!important;
+      box-shadow:0 10px 20px rgba(0,0,0,.60),inset 0 1px 0 rgba(255,255,255,.30)!important;
+      transform:translateY(-2px)!important;
+    }
     .fx-item.on,.role.on {
       border:0!important;
-      box-shadow:0 0 14px rgba(0,191,255,.14)!important;
-      background:rgba(0,191,255,.10)!important;
+      box-shadow:0 0 18px rgba(0,191,255,.30),0 8px 18px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.45)!important;
+      background:linear-gradient(170deg,rgba(0,191,255,.26) 0%,rgba(6,32,68,.92) 100%)!important;
+      transform:translateY(-1px)!important;
     }
 
     .saved-color-wrap { position:relative; display:inline-grid; place-items:center; width:30px; height:30px; }
@@ -87,26 +125,32 @@
       padding:7px 8px 8px!important;
       border-bottom:0!important;
       overflow:visible!important;
-      background:rgba(2,8,23,.72)!important;
-      backdrop-filter:blur(16px) saturate(1.15)!important;
+      background:rgba(2,8,23,.78)!important;
+      backdrop-filter:blur(16px) saturate(1.20)!important;
+      box-shadow:0 6px 18px rgba(0,0,0,.55),inset 0 -1px 0 rgba(0,191,255,.14)!important;
     }
     .tab {
       --tab-rgb:0,191,255;
       --tab-color:#00bfff;
-      height:34px!important;
+      height:35px!important;
       min-width:0;
       padding:0 9px!important;
       border:0!important;
       border-radius:0!important;
       clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%);
       text-align:center;
-      color:rgba(var(--tab-rgb),.58)!important;
-      background:linear-gradient(145deg,rgba(var(--tab-rgb),.10),rgba(255,255,255,.04) 44%,rgba(2,8,23,.52))!important;
+      color:rgba(var(--tab-rgb),.68)!important;
+      background:linear-gradient(145deg,rgba(var(--tab-rgb),.14),rgba(255,255,255,.07) 44%,rgba(2,8,23,.65))!important;
       backdrop-filter:blur(13px) saturate(1.30)!important;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.13),inset 0 -1px 0 rgba(var(--tab-rgb),.11),0 5px 14px rgba(0,0,0,.16)!important;
-      font:800 7.2pt Oxanium!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(var(--tab-rgb),.15),0 6px 14px rgba(0,0,0,.35)!important;
+      font:800 7.4pt Oxanium!important;
       letter-spacing:.045em!important;
-      text-shadow:0 0 8px rgba(var(--tab-rgb),.24)!important;
+      text-shadow:0 0 8px rgba(var(--tab-rgb),.28)!important;
+      transition:all .15s ease!important;
+    }
+    .tab:hover {
+      transform:translateY(-1px);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.40),0 8px 18px rgba(0,0,0,.50)!important;
     }
     .tab:nth-child(1){--tab-rgb:255,44,168;--tab-color:#ff2ca8}
     .tab:nth-child(2){--tab-rgb:255,242,0;--tab-color:#fff200}
@@ -116,9 +160,10 @@
     .tab::after,.tab.locked::before { display:none!important; content:none!important; }
     .tab.on {
       color:var(--tab-color)!important;
-      background:linear-gradient(145deg,rgba(var(--tab-rgb),.32),rgba(255,255,255,.13) 44%,rgba(var(--tab-rgb),.14))!important;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(var(--tab-rgb),.28),0 0 15px rgba(var(--tab-rgb),.42),0 7px 18px rgba(0,0,0,.20)!important;
-      text-shadow:0 0 10px rgba(var(--tab-rgb),.82)!important;
+      background:linear-gradient(145deg,rgba(var(--tab-rgb),.42),rgba(255,255,255,.22) 44%,rgba(var(--tab-rgb),.20))!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.50),inset 0 -1px 0 rgba(var(--tab-rgb),.35),0 0 18px rgba(var(--tab-rgb),.50),0 8px 20px rgba(0,0,0,.45)!important;
+      text-shadow:0 0 12px rgba(var(--tab-rgb),.90)!important;
+      transform:translateY(-1px);
     }
     .tab.locked:not(.on) { opacity:.48!important; }
 
@@ -438,6 +483,7 @@
             <button id="saveDeviceSettings" class="glass-btn primary">SAVE SETTINGS</button>
             <button id="saveDeviceReboot" class="glass-btn">SAVE + REBOOT</button>
             <button id="saveStartup" class="glass-btn">SAVE STARTUP EFFECT</button>
+            <button id="deleteLogicalDevice" class="glass-btn danger">DELETE DEVICE</button>
           </div>
           <div class="microcopy">FROM/TO remains app-side because V5.1 has no verified segment-bound command.</div>
         </section>

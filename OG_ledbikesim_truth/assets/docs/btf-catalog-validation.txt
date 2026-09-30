@@ -1,0 +1,3 @@
+Validated by GitHub Actions on 2026-08-05:
+231 unique records = 131 addressable quotation rows + 66 FCOB quotation rows + 34 selected systems.
+JavaScript syntax checks passed for catalog loader, recommendation sets, catalog UI, customer design chain, and project recommendations.

@@ -437,147 +437,268 @@ select:focus-visible {
 /* ========================================================================== */
 
 .device-zone {
-  padding: 13px 13px 11px;
+  padding: 16px 14px 14px;
+}
+
+/* 3D Workbench / Table Surface */
+.device-zone {
+  background: radial-gradient(ellipse at 50% 15%, rgba(12, 34, 68, 0.48) 0%, rgba(3, 10, 24, 0.88) 100%), #040d1e;
+  box-shadow:
+    inset 0 3px 22px rgba(0, 0, 0, 0.85),
+    inset 0 0 2px rgba(0, 191, 255, 0.25),
+    0 16px 36px rgba(0, 0, 0, 0.5);
+  border-radius: 14px;
+  padding: 18px 14px 14px;
 }
 
 .device-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
+  gap: 24px;
+  padding: 14px 10px 18px;
 }
 
-/* Logical ESP32 card. JavaScript supplies selection, BLE, and power classes. */
+@keyframes underglowSwirl {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 3D Physical Hardware Module Card */
 .device-card {
-  width: 190px;
-  height: 116px;
+  width: 220px;
+  min-height: 126px;
   position: relative;
-  border: 0 !important;
-  border-radius: 11px;
-  background: rgba(6, 20, 43, 0.18);
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: none !important;
-  transition: 0.15s ease;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 191, 255, 0.22);
+  background: linear-gradient(165deg, rgba(20, 38, 64, 0.95) 0%, rgba(6, 16, 32, 0.98) 100%);
+  box-shadow:
+    0 18px 36px -6px rgba(0, 0, 0, 0.9),
+    0 6px 14px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.85);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease;
   user-select: none;
+  cursor: pointer;
+  overflow: visible;
 }
 
 .device-card:hover {
-  background: rgba(8, 28, 58, 0.28);
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  border-color: rgba(0, 191, 255, 0.45);
+  box-shadow:
+    0 24px 44px -6px rgba(0, 0, 0, 0.95),
+    0 8px 18px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.85);
 }
 
 .device-card.selected {
-  background: rgba(8, 28, 58, 0.34);
-  box-shadow: 0 0 18px rgba(0, 191, 255, 0.08) !important;
+  border-color: rgba(0, 191, 255, 0.75);
+  box-shadow:
+    0 22px 40px -4px rgba(0, 0, 0, 0.95),
+    0 0 20px rgba(0, 191, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 0 14px rgba(0, 191, 255, 0.18);
 }
 
-/* Decorative board silhouette; it does not represent pin-level state. */
-.esp32-art {
+/* Swirling 3-Color Underglow: Yellow (#fff200), Pink (#ff2ca8), Blue (#00bfff) */
+.device-underglow {
   position: absolute;
-  left: 50%;
-  top: 51%;
-  width: 104px;
-  height: 74px;
-  transform: translate(-50%, -50%) rotate(-1deg);
-  border-radius: 7px;
-  background: linear-gradient(
-    145deg,
-    rgba(9, 83, 82, 0.72),
-    rgba(3, 41, 49, 0.55)
+  inset: -18px;
+  border-radius: 28px;
+  background: conic-gradient(
+    from 0deg,
+    #fff200 0deg 90deg,
+    transparent 110deg,
+    #ff2ca8 130deg 210deg,
+    transparent 230deg,
+    #00bfff 250deg 330deg,
+    transparent 350deg,
+    #fff200 360deg
   );
-  opacity: 0.52;
-  box-shadow:
-    inset 0 0 0 2px rgba(86, 255, 216, 0.18),
-    inset 0 0 22px rgba(0, 0, 0, 0.38);
+  filter: blur(18px);
+  opacity: 0.55;
+  z-index: 0;
   pointer-events: none;
+  animation: underglowSwirl 9s linear infinite;
+  transform-origin: center center;
 }
 
-.esp32-art::before,
-.esp32-art::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  width: 8px;
-  background: repeating-linear-gradient(
-    180deg,
-    #c9b983 0 3px,
-    transparent 3px 7px
-  );
-  opacity: 0.58;
+.device-card:hover .device-underglow {
+  opacity: 0.82;
+  filter: blur(22px);
+  animation-duration: 6s;
 }
 
-.esp32-art::before {
-  left: -5px;
+.device-card.selected .device-underglow {
+  opacity: 0.95;
+  filter: blur(24px);
 }
 
-.esp32-art::after {
-  right: -5px;
+.device-card-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 12px 14px;
+  border-radius: 13px;
+  background: linear-gradient(165deg, rgba(16, 34, 60, 0.92) 0%, rgba(5, 14, 28, 0.96) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-.esp32-chip {
-  position: absolute;
-  left: 31px;
-  top: 19px;
-  width: 42px;
-  height: 34px;
-  border-radius: 3px;
-  background: rgba(8, 12, 20, 0.82);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12),
-    inset 0 0 8px rgba(0, 0, 0, 0.7);
-  font: 800 7px Oxanium;
-  color: #7f98a5;
-  display: grid;
-  place-items: center;
+.device-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
 }
 
-.esp32-usb {
-  position: absolute;
-  left: 38px;
-  bottom: -5px;
-  width: 28px;
-  height: 13px;
-  border-radius: 2px;
-  background: rgba(180, 190, 196, 0.62);
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-.device-info {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: 8px;
-  z-index: 3;
+.device-title-wrap {
+  min-width: 0;
+  flex: 1;
 }
 
 .device-name {
-  font: 900 8.5pt Oxanium;
-  color: #dff6ff;
-  text-shadow: 0 0 8px rgba(0, 191, 255, 0.2);
+  font: 800 11pt/1.2 Oxanium;
+  color: #e6f7ff;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
 }
 
 .device-bt {
-  font: 650 6.2pt Oxanium;
-  color: #6e879d;
-  max-width: 145px;
+  font: 700 7pt/1.3 Oxanium;
+  color: #7d9cb8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.device-module-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(3, 10, 22, 0.65);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8), inset 0 0 1px rgba(0, 191, 255, 0.15);
+}
+
+.device-chip-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.chip-label {
+  font: 800 7pt Oxanium;
+  color: #6584a2;
+  letter-spacing: 0.08em;
+}
+
+.chip-status {
+  font: 900 6.5pt Oxanium;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.06em;
+  background: rgba(2, 8, 20, 0.85);
+  color: #8aa0b7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chip-status.connected {
+  color: var(--cyan);
+  border-color: rgba(24, 233, 255, 0.35);
+  box-shadow: 0 0 8px rgba(24, 233, 255, 0.3);
+}
+
+.chip-status.connecting {
+  color: var(--yellow);
+  border-color: rgba(255, 242, 0, 0.35);
+  box-shadow: 0 0 8px rgba(255, 242, 0, 0.25);
+}
+
+.chip-status.unassigned {
+  color: #ff6e8c;
+  border-color: rgba(255, 110, 140, 0.25);
+}
+
+.device-footer-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 2px;
+}
+
+/* 3D Tactile Power ON/OFF Button */
+.device-power-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, rgba(20, 36, 62, 0.8) 0%, rgba(6, 14, 28, 0.9) 100%);
+  color: #8da4bc;
+  font: 800 7.5pt Oxanium;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.15s ease;
+}
+
+.device-power-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.device-power-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.device-power-btn.is-on {
+  border-color: rgba(24, 233, 255, 0.45);
+  color: #dff8ff;
+  background: linear-gradient(180deg, rgba(0, 140, 200, 0.35) 0%, rgba(5, 24, 50, 0.9) 100%);
+  box-shadow: 0 0 12px rgba(0, 191, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.device-power-btn.is-on .power-glyph {
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan);
+}
+
+.device-power-btn.is-off {
+  border-color: rgba(255, 51, 93, 0.3);
+  color: #7991aa;
+}
+
+.device-power-btn.is-off .power-glyph {
+  color: var(--red);
+  text-shadow: 0 0 6px rgba(255, 51, 93, 0.4);
+}
+
+.power-glyph {
+  font: 900 10pt Oxanium;
+  line-height: 1;
 }
 
 /* Bluetooth state classes come directly from st-ble-core.js snapshot(). */
 .ble-dot {
-  position: absolute;
-  right: 9px;
-  top: 9px;
-  width: 10px;
-  height: 10px;
+  position: relative;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   z-index: 4;
   background: var(--red);
   box-shadow: 0 0 7px var(--red);
+  flex-shrink: 0;
 }
 
 .ble-dot.unassigned,
@@ -596,34 +717,6 @@ select:focus-visible {
   box-shadow:
     0 0 6px var(--blue),
     0 0 14px rgba(0, 191, 255, 0.75);
-}
-
-.power-ring {
-  position: absolute;
-  right: 10px;
-  bottom: 9px;
-  z-index: 4;
-  width: 28px;
-  height: 28px;
-  border: 2px solid rgba(115, 145, 170, 0.28);
-  border-radius: 50%;
-  background: rgba(2, 8, 23, 0.5);
-  color: #7890a6;
-  font-size: 13px;
-  display: grid;
-  place-items: center;
-}
-
-.device-card.selected .power-ring {
-  border-color: var(--blue);
-  color: var(--blue);
-  box-shadow:
-    0 0 9px rgba(0, 191, 255, 0.65),
-    inset 0 0 7px rgba(0, 191, 255, 0.12);
-}
-
-.power-ring.on {
-  color: var(--yellow);
 }
 
 .device-add-row {

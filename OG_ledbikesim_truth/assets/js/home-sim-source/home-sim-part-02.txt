@@ -1,0 +1,418 @@
+== "fixture") {
+          for (const point of run.points) {
+            ledParticles.push({
+              x: point[0],
+              y: point[1],
+              size: 72,
+              alpha: 0.2,
+              zoneId: zone.id,
+              zoneIndex: zoneIndex += 1,
+              globalIndex: globalIndex += 1,
+              glowOnly: true
+            });
+            ledParticles.push({
+              x: point[0],
+              y: point[1],
+              size: 15,
+              alpha: 1,
+              zoneId: zone.id,
+              zoneIndex: zoneIndex += 1,
+              globalIndex: globalIndex += 1
+            });
+          }
+
+          continue;
+        }
+
+        const isClosed = run.kind === "closed";
+        const sampledPoints = samplePolyline(
+          run.points,
+          zone.spacing,
+          isClosed
+        );
+
+        for (const point of sampledPoints) {
+          const visibleSize = Math.max(
+            11,
+            zone.size * LED_SIZE_MULTIPLIER
+          );
+
+          ledParticles.push({
+            x: point[0],
+            y: point[1],
+            size: visibleSize,
+            alpha: 1,
+            zoneId: zone.id,
+            zoneIndex: zoneIndex += 1,
+            globalIndex: globalIndex += 1
+          });
+
+          if (run.kind === "wash") {
+            ledParticles.push({
+              x: point[0],
+              y: point[1] + 7,
+              size: visibleSize * 4.8,
+              alpha: 0.15,
+              zoneId: zone.id,
+              zoneIndex,
+              globalIndex: globalIndex += 1,
+              glowOnly: true
+            });
+          }
+        }
+      }
+    }
+
+    elements.pixelMetric.textContent = (
+      `${ledParticles.length} virtual LED render particles`
+    );
+  }
+  // END OBJECT: Zone path and LED particle generation.
+
+  // BEGIN OBJECT: Canvas LED renderer and effect animation engine.
+  class CanvasLedRenderer {
+    constructor(canvas, surface) {
+      this.canvas = canvas;
+      this.surface = surface;
+      this.context = canvas.getContext("2d", {
+        alpha: true
+      });
+      this.animationFrame = 0;
+      this.resizeObserver = null;
+
+      if (!this.context) {
+        throw new Error("Canvas renderer is unavailable.");
+      }
+
+      if ("ResizeObserver" in window) {
+        this.resizeObserver = new ResizeObserver(() => this.resize());
+        this.resizeObserver.observe(surface);
+      } else {
+        window.addEventListener("resize", () => this.resize());
+      }
+
+      this.resize();
+      this.loop = this.loop.bind(this);
+      this.animationFrame = window.requestAnimationFrame(this.loop);
+    }
+
+    resize() {
+      const rectangle = this.surface.getBoundingClientRect();
+      const deviceScale = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.round(rectangle.width * deviceScale));
+      const height = Math.max(1, Math.round(rectangle.height * deviceScale));
+
+      if (this.canvas.width !== width || this.canvas.height !== height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+      }
+    }
+
+    loop(time) {
+      this.draw(time);
+      this.animationFrame = window.requestAnimationFrame(this.loop);
+    }
+
+    calculateParticle(particle, time) {
+      const ownSettings = settingsFor(particle.zoneId);
+      const settings = effectiveSettings(particle.zoneId);
+      const preset = presetFor(settings.effect);
+      const speed = settings.speed / 100;
+      const intensity = settings.intensity / 100;
+      const direction = Number(settings.direction) || 1;
+      const seed = zoneSeed(ownSettings.syncTarget || particle.zoneId);
+      const timePhase = (
+        time * 0.001 * (0.35 + (speed * 2.4)) * direction
+      );
+      const localBase = (particle.zoneIndex % 96) / 96;
+      const base = ownSettings.syncTarget
+        ? (particle.globalIndex % 96) / 96
+        : localBase;
+      const phase = (
+        (ownSettings.syncTarget
+          ? particle.globalIndex
+          : particle.zoneIndex) * 0.055
+      ) + (seed * 0.013);
+      const brightnessMultiplier = currentLight === "night"
+        ? 1.38
+        : currentLight === "dusk"
+          ? 1.17
+          : 1;
+      const lightSize = currentLight === "night"
+        ? 1.22
+        : currentLight === "dusk"
+          ? 1.1
+          : 1;
+
+      let luminosity = 1;
+      let colorPosition = base;
+
+      switch (settings.effect) {
+        case "breathe":
+          luminosity = 0.15 + (
+            0.85 * (0.5 + (0.5 * Math.sin((timePhase * 2) + phase)))
+          );
+          colorPosition = 0.5 + (0.5 * Math.sin(timePhase + phase));
+          break;
+
+        case "wipe":
+          luminosity = ((base + (timePhase * 0.25)) % 1) < intensity
+            ? 1
+            : 0.035;
+          colorPosition = (timePhase * 0.08) % 1;
+          break;
+
+        case "chase": {
+          const value = (base + (timePhase * 0.23)) % 1;
+          const headWidth = 0.12 + (intensity * 0.2);
+
+          luminosity = value < headWidth
+            ? 1
+            : Math.max(
+              0.1,
+              0.44 * (1 - ((value - headWidth) / 0.24))
+            );
+          colorPosition = value;
+          break;
+        }
+
+        case "theater":
+          luminosity = (
+            (particle.zoneIndex + Math.floor(timePhase * 12) + seed) % 3 === 0
+          )
+            ? 1
+            : 0.08;
+          colorPosition = particle.zoneIndex % 2;
+          break;
+
+        case "scanner": {
+          const head = 0.5 + (0.5 * Math.sin(timePhase * 0.8));
+
+          luminosity = Math.max(
+            0.025,
+            1 - (
+              Math.abs(base - head) /
+              (0.04 + (intensity * 0.22))
+            )
+          );
+          colorPosition = head;
+          break;
+        }
+
+        case "twinkle": {
+          const rate = (
+            1.1 +
+            ((seed % 9) * 0.09) +
+            ((particle.zoneIndex % 7) * 0.13)
+          );
+          const randomPhase = (
+            (particle.zoneIndex * 12.9898) +
+            (seed * 78.233)
+          ) % 6.283;
+
+          luminosity = 0.035 + (
+            0.965 * Math.pow(
+              0.5 + (0.5 * Math.sin((timePhase * rate) + randomPhase)),
+              14
+            )
+          );
+          break;
+        }
+
+        case "starlight": {
+          const cycle = (
+            (timePhase * 0.09) +
+            (particle.zoneIndex * 0.173) +
+            (seed * 0.011)
+          ) % 1;
+          const normalizedCycle = cycle < 0 ? cycle + 1 : cycle;
+
+          luminosity = normalizedCycle < 0.12
+            ? normalizedCycle / 0.12
+            : Math.max(0.025, 1 - ((normalizedCycle - 0.12) / 0.88));
+          luminosity = Math.pow(luminosity, 2.2);
+          break;
+        }
+
+        case "sections": {
+          const sectionSize = Math.max(
+            4,
+            Math.round(16 - (intensity * 10))
+          );
+          const section = Math.floor(particle.zoneIndex / sectionSize);
+          const sectionDirection = section % 2 ? -1 : 1;
+          const value = (
+            (base * sectionDirection) +
+            (timePhase * (0.12 + ((section % 4) * 0.025))) +
+            (section * 0.19)
+          ) % 1;
+          const normalizedValue = value < 0 ? value + 1 : value;
+
+          luminosity = normalizedValue < 0.18 + (0.22 * intensity)
+            ? 1
+            : 0.04;
+          colorPosition = (normalizedValue + (section * 0.17)) % 1;
+          break;
+        }
+
+        case "rainbow":
+          colorPosition = base + (timePhase * 0.08);
+          break;
+
+        case "solid":
+        default:
+          luminosity = 1;
+          colorPosition = 0;
+          break;
+      }
+
+      if (particle.glowOnly) {
+        luminosity = 0.45;
+      }
+
+      const opacity = Math.min(
+        1,
+        (settings.brightness / 100) *
+        brightnessMultiplier *
+        luminosity *
+        particle.alpha
+      );
+
+      return {
+        ...particle,
+        preset,
+        color: colorForPosition(settings, colorPosition),
+        opacity,
+        size: particle.size * lightSize
+      };
+    }
+
+    draw(time) {
+      this.resize();
+
+      const scene = currentScene();
+
+      if (!scene) {
+        return;
+      }
+
+      const context = this.context;
+      const scaleX = this.canvas.width / scene.width;
+      const scaleY = this.canvas.height / scene.height;
+      const particleScale = Math.min(scaleX, scaleY);
+
+      context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      context.globalCompositeOperation = "lighter";
+
+      for (const sourceParticle of ledParticles) {
+        const particle = this.calculateParticle(sourceParticle, time);
+        const x = particle.x * scaleX;
+        const y = particle.y * scaleY;
+        const radius = Math.max(0.8, particle.size * particleScale * 0.5);
+        const [red, green, blue] = particle.color;
+        const gradient = context.createRadialGradient(
+          x,
+          y,
+          0,
+          x,
+          y,
+          radius
+        );
+
+        gradient.addColorStop(
+          0,
+          `rgba(${red | 0}, ${green | 0}, ${blue | 0}, ${particle.opacity})`
+        );
+        gradient.addColorStop(
+          0.16,
+          `rgba(${red | 0}, ${green | 0}, ${blue | 0}, ${particle.opacity * 0.96})`
+        );
+        gradient.addColorStop(
+          0.48,
+          `rgba(${red | 0}, ${green | 0}, ${blue | 0}, ${particle.opacity * 0.42})`
+        );
+        gradient.addColorStop(
+          1,
+          `rgba(${red | 0}, ${green | 0}, ${blue | 0}, 0)`
+        );
+
+        context.fillStyle = gradient;
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      context.globalCompositeOperation = "source-over";
+    }
+  }
+  // END OBJECT: Canvas LED renderer and effect animation engine.
+
+  let renderer = null;
+
+  // BEGIN OBJECT: Fixed SVG hotspot rendering.
+  function createPathGroup(zone, run) {
+    const group = document.createElementNS(SVG_NAMESPACE, "g");
+    const hitPath = document.createElementNS(SVG_NAMESPACE, "path");
+    const hoverPath = document.createElementNS(SVG_NAMESPACE, "path");
+    const data = pathData(run);
+
+    group.classList.add("home-zone-group");
+    group.dataset.zone = zone.id;
+    group.setAttribute("role", "button");
+    group.setAttribute("tabindex", "0");
+    group.setAttribute("aria-label", `Configure ${zone.label}`);
+
+    if (selectedZones.has(zone.id)) {
+      group.classList.add("is-selected");
+    }
+
+    hitPath.classList.add("home-zone-hit");
+    hitPath.setAttribute("d", data);
+
+    hoverPath.classList.add("home-zone-hover");
+    hoverPath.setAttribute("d", data);
+
+    group.append(hitPath, hoverPath);
+
+    return group;
+  }
+
+  function createFixtureGroup(zone, point) {
+    const group = document.createElementNS(SVG_NAMESPACE, "g");
+    const hitCircle = document.createElementNS(SVG_NAMESPACE, "circle");
+    const hoverCircle = document.createElementNS(SVG_NAMESPACE, "circle");
+
+    group.classList.add("home-zone-group");
+    group.dataset.zone = zone.id;
+    group.setAttribute("role", "button");
+    group.setAttribute("tabindex", "0");
+    group.setAttribute("aria-label", `Configure ${zone.label}`);
+
+    if (selectedZones.has(zone.id)) {
+      group.classList.add("is-selected");
+    }
+
+    hitCircle.classList.add("home-zone-hit");
+    hitCircle.setAttribute("cx", point[0]);
+    hitCircle.setAttribute("cy", point[1]);
+    hitCircle.setAttribute("r", "23");
+    hitCircle.style.pointerEvents = "all";
+
+    hoverCircle.classList.add("home-zone-hover");
+    hoverCircle.setAttribute("cx", point[0]);
+    hoverCircle.setAttribute("cy", point[1]);
+    hoverCircle.setAttribute("r", "11");
+
+    group.append(hitCircle, hoverCircle);
+
+    return group;
+  }
+
+  function renderTrace() {
+    elements.traceSvg.replaceChildren();
+
+    for (const zone of currentScene().zones) {
+      for (const run of zone.runs) {
+        if (run.kind === "fixture") {
+          for (const point of run.points) {
+            elements.traceSvg.append(createFi

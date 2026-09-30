@@ -1,0 +1,1 @@
+SIM Auto live route uses the LED Bike Simulator RGB gradient, pixel dash animation, twinkle timing, and glow treatment with the user-approved 1060 x 590 vehicle-zone alignment. Rollback: rollback/sim-auto-placeholder-20260729.

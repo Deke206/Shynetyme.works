@@ -1,0 +1,66 @@
+(() => {
+  "use strict";
+
+  // BEGIN OBJECT: Approved Home image fetch bridge.
+  // GitHub Pages serves the approved images as small text chunks. This bridge
+  // joins those chunks before the existing locked Home SIM controller requests
+  // its image data. Geometry, effects, dialogs, and zone state are untouched.
+  const nativeFetch = window.fetch.bind(window);
+
+  const APPROVED_IMAGE_CHUNKS = Object.freeze({
+    "home-sim-front-1.b64": [
+      "home-sim-front-approved-part-01.b64",
+      "home-sim-front-approved-part-02.b64",
+      "home-sim-front-approved-part-03.b64"
+    ],
+    "home-sim-rear-1.b64": [
+      "home-sim-back-approved-part-01.b64",
+      "home-sim-back-approved-part-02.b64",
+      "home-sim-back-approved-part-03.b64"
+    ]
+  });
+
+  window.fetch = async function shynetymeApprovedImageFetch(input, init) {
+    const requestUrl = new URL(
+      input instanceof URL
+        ? input.href
+        : (typeof input === "string" ? input : input.url),
+      window.location.href
+    );
+    const fileName = requestUrl.pathname.split("/").pop();
+    const chunks = APPROVED_IMAGE_CHUNKS[fileName];
+
+    if (!chunks) {
+      return nativeFetch(input, init);
+    }
+
+    const base64Parts = await Promise.all(
+      chunks.map(async (chunkName) => {
+        const chunkUrl = new URL(chunkName, requestUrl);
+        chunkUrl.searchParams.set("v", "20260806-approved-home-images-v4");
+
+        const response = await nativeFetch(chunkUrl, {
+          cache: "no-store",
+          credentials: "same-origin"
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Approved Home image chunk failed: ${chunkName} (${response.status})`
+          );
+        }
+
+        return (await response.text()).trim();
+      })
+    );
+
+    return new Response(base64Parts.join(""), {
+      status: 200,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store"
+      }
+    });
+  };
+  // END OBJECT: Approved Home image fetch bridge.
+})();

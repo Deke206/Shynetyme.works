@@ -1,0 +1,354 @@
+/* Canonical site-wide Chuck stylesheet. */
+
+/* Shared animated Chuck helper used throughout ShyneTyme.Works. */
+:root {
+  --chuck-thought-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20626%20626%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M48%20561%2040%20570%2040%20584%2049%20593%2061%20594%2068%20590%2073%20582%2072%20570%2064%20561Z%20M99%20514%2090%20518%2083%20525%2079%20536%2079%20545%2083%20555%2093%20564%20112%20566%20122%20561%20128%20554%20132%20543%20131%20532%20121%20518%20112%20514Z%20M473%20150%20458%20141%20450%20139%20447%20134%20444%20134%20442%20137%20422%20137%20420%20134%20417%20134%20413%20140%20397%20147%20394%20143%20394%20134%20388%20133%20381%20121%20368%20113%20366%20106%20359%20108%20345%20102%20329%20100%20328%2095%20325%2093%20321%20100%20304%20103%20294%20108%20284%20107%20283%20114%20276%20120%20270%20121%20270%20127%20265%20133%20254%20134%20239%20128%20223%20127%20222%20121%20219%20120%20216%20127%20203%20129%20185%20137%20178%20134%20179%20141%20170%20148%20165%20147%20164%20155%20158%20162%20150%20162%20154%20170%20146%20193%20117%20204%20110%20202%20109%20209%20101%20216%2095%20217%2096%20221%2088%20231%2082%20231%2085%20237%2079%20248%2074%20270%2068%20272%2069%20275%2073%20276%2074%20297%2069%20298%2068%20301%2076%20303%2086%20329%20107%20353%20130%20366%20135%20371%20145%20370%20161%20373%20162%20388%20159%20391%20159%20395%20164%20399%20175%20423%20171%20433%20177%20434%20181%20431%20187%20438%20181%20447%20160%20440%20156%20444%20141%20449%20130%20460%20125%20470%20122%20486%20129%20502%20139%20513%20154%20521%20179%20517%20182%20521%20182%20514%20191%20507%20195%20509%20198%20507%20195%20502%20200%20490%20201%20477%20196%20462%20200%20460%20201%20456%20199%20454%20191%20456%20184%20450%20188%20446%20189%20441%20205%20451%20218%20456%20221%20460%20231%20459%20248%20462%20268%20458%20274%20462%20281%20453%20301%20442%20319%20422%20323%20424%20319%20430%20319%20435%20323%20439%20330%20436%20332%20429%20343%20431%20349%20439%20354%20438%20357%20433%20369%20432%20373%20438%20378%20438%20381%20435%20381%20427%20391%20425%20398%20414%20406%20407%20419%20412%20434%20414%20434%20420%20440%20422%20442%20414%20462%20407%20475%20394%20482%20379%20483%20369%20490%20369%20492%20367%20490%20363%20484%20363%20485%20359%20497%20356%20502%20357%20528%20338%20540%20322%20547%20304%20549%20277%20546%20264%20539%20248%20525%20231%20503%20215%20495%20214%20496%20195%20501%20194%20503%20191%20501%20188%20495%20188%20488%20167Z%22%2F%3E%3C%2Fsvg%3E");
+  --chuck-thought-arcs: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20626%20626%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23171717%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M171%20226C169%20183%20188%20149%20226%20143C247%20140%20264%20147%20279%20159%22%2F%3E%3Cpath%20d%3D%22M281%20160C286%20128%20304%20109%20329%20109C349%20109%20365%20120%20378%20139%22%2F%3E%3Cpath%20d%3D%22M190%20369C190%20408%20215%20431%20249%20431C270%20431%20289%20424%20302%20411%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+.deke-chuck-widget {
+  position: fixed;
+  right: clamp(.65rem, 2vw, 1.15rem);
+  bottom: .7rem;
+  z-index: 1090;
+  width: 132px;
+  height: 132px;
+  pointer-events: none;
+}
+
+.deke-chuck-trigger {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  width: 118px;
+  height: 118px;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(circle at 38% 28%, rgba(255,255,255,.18), transparent 24%),
+    radial-gradient(circle, rgba(49,230,255,.16), rgba(7,2,18,.98) 69%);
+  box-shadow: 0 6px 0 #351054, 0 13px 27px rgba(0,0,0,.5), 0 0 24px rgba(49,230,255,.38);
+  cursor: pointer;
+  pointer-events: auto;
+  isolation: isolate;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.deke-chuck-trigger::before {
+  content: "";
+  position: absolute;
+  inset: -13px;
+  z-index: 6;
+  border: 8px solid rgba(33,7,57,.98);
+  border-top-color: #31e6ff;
+  border-right-color: rgba(155,131,255,.96);
+  border-bottom-color: rgba(49,12,79,.99);
+  border-left-color: rgba(20,3,37,.99);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(4,0,13,.92), 0 0 14px rgba(49,230,255,.48), inset 0 0 10px rgba(0,0,0,.92);
+  pointer-events: none;
+  animation: deke-chuck-orbit 5s linear infinite;
+}
+
+.deke-chuck-trigger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border: 8px solid rgba(28,5,49,.96);
+  border-radius: 50%;
+  box-shadow: inset 0 0 18px rgba(0,0,0,.92), 0 0 9px rgba(124,82,190,.48);
+  pointer-events: none;
+  animation: deke-chuck-pulse 2.8s ease-in-out infinite;
+}
+
+.deke-chuck-trigger img {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 42%;
+  filter: drop-shadow(0 0 9px rgba(49,230,255,.68));
+  transform: none;
+  animation: none;
+}
+
+.deke-chuck-trigger .chuck-frame-sprite {
+  position: absolute !important;
+  inset: 5px 7px 4px !important;
+  z-index: 2 !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  overflow: hidden;
+  border-radius: 42%;
+  background-color: transparent !important;
+  -webkit-mask-image: radial-gradient(ellipse 62% 59% at 50% 51%, #000 0 74%, rgba(0,0,0,.98) 80%, rgba(0,0,0,.72) 87%, transparent 100%);
+  mask-image: radial-gradient(ellipse 62% 59% at 50% 51%, #000 0 74%, rgba(0,0,0,.98) 80%, rgba(0,0,0,.72) 87%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  filter: drop-shadow(0 0 7px rgba(49,230,255,.62)) !important;
+}
+
+.deke-chuck-trigger:hover,
+.deke-chuck-trigger:focus-visible {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 9px 0 #351054, 0 18px 31px rgba(0,0,0,.5), 0 0 32px rgba(49,230,255,.55);
+}
+
+.deke-chuck-trigger:active { transform: translateY(3px) scale(.99); }
+.deke-chuck-trigger:focus-visible { outline: 3px solid #fff; outline-offset: 8px; }
+
+.deke-chuck-search-light {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 7;
+  width: 34px;
+  height: 34px;
+  opacity: 0;
+  border: 2px solid var(--cyan, #31e6ff);
+  border-radius: 50%;
+  background: rgba(3,9,24,.9);
+  box-shadow: 0 0 14px rgba(49,230,255,.8), inset 0 0 10px rgba(49,230,255,.32);
+  transform: translate(-8px, 8px) scale(.72);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.deke-chuck-search-light::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  bottom: -8px;
+  width: 15px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--cyan, #31e6ff);
+  box-shadow: 0 0 8px rgba(49,230,255,.8);
+  transform: rotate(47deg);
+}
+
+.deke-chuck-widget.is-searching .deke-chuck-search-light { opacity: 1; transform: translate(0, 0) scale(1); }
+.deke-chuck-widget.is-searching .deke-chuck-trigger img { transform: none !important; animation: none !important; }
+.deke-chuck-widget.is-searching .deke-chuck-trigger::before { animation-duration: 1.25s; }
+
+/* Exact attached thought-cloud silhouette: only the inside is colored; outside stays transparent. */
+.deke-chuck-thought {
+  --thought-fill: #ffe36e;
+  --thought-ink: #2c2100;
+  --thought-button-bg: #4338ca;
+  --thought-button-ink: #fff;
+  position: absolute;
+  right: 78px;
+  bottom: 94px;
+  z-index: 20;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .72rem;
+  width: min(360px, calc(100vw - 96px));
+  aspect-ratio: 1 / 1;
+  padding: 19% 14% 31%;
+  color: var(--thought-ink);
+  text-align: center;
+  background: transparent;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(16px, 18px) scale(.92);
+  transform-origin: right bottom;
+  pointer-events: none;
+  transition: opacity .34s ease, transform .34s ease, visibility 0s linear .34s;
+  filter: drop-shadow(0 16px 22px rgba(0,0,0,.28));
+}
+
+.deke-chuck-thought::before,
+.deke-chuck-thought::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: var(--chuck-thought-mask);
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-image: var(--chuck-thought-mask);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  pointer-events: none;
+}
+
+.deke-chuck-thought::after {
+  z-index: 0;
+  background: #171717;
+  transform: scale(1.035);
+  transform-origin: center;
+}
+
+.deke-chuck-thought::before {
+  z-index: 1;
+  background-color: var(--thought-fill);
+  background-image: var(--chuck-thought-arcs);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.deke-chuck-thought > * { position: relative; z-index: 2; }
+
+.deke-chuck-thought.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, 0) scale(1);
+  pointer-events: auto;
+  transition: opacity .34s ease, transform .34s ease;
+}
+
+.deke-chuck-thought--yellow { --thought-fill: #ffe36e; --thought-ink: #2c2100; --thought-button-bg: #4338ca; --thought-button-ink: #fff; }
+.deke-chuck-thought--pink { --thought-fill: #ffb4dc; --thought-ink: #3f1430; --thought-button-bg: #008fa8; --thought-button-ink: #fff; }
+.deke-chuck-thought--blue { --thought-fill: #bdefff; --thought-ink: #08283a; --thought-button-bg: #ef5b1a; --thought-button-ink: #fff; }
+.deke-chuck-thought--green { --thought-fill: #bff3cf; --thought-ink: #0d321b; --thought-button-bg: #a21caf; --thought-button-ink: #fff; }
+
+.deke-chuck-thought__close {
+  position: absolute;
+  top: 17%;
+  right: 17%;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--thought-ink);
+  background: rgba(255,255,255,.78);
+  font: 900 1.2rem/1 system-ui, sans-serif;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.deke-chuck-thought__text {
+  width: 100%;
+  margin: 0;
+  color: var(--thought-ink);
+  font-family: var(--heading-font, "Oxanium", system-ui, sans-serif);
+  font-size: clamp(.84rem, 2.3vw, 1rem);
+  font-weight: 800;
+  line-height: 1.28;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.deke-chuck-thought__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 124px;
+  min-height: 40px;
+  margin: 0 auto;
+  padding: .55rem .9rem;
+  border: 2px solid rgba(0,0,0,.16);
+  border-radius: 999px;
+  color: var(--thought-button-ink);
+  background: var(--thought-button-bg);
+  box-shadow: 0 5px 0 rgba(0,0,0,.18), 0 10px 18px rgba(0,0,0,.18);
+  font-family: var(--heading-font, "Oxanium", system-ui, sans-serif);
+  font-size: .84rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .16s ease, filter .16s ease;
+}
+
+.deke-chuck-thought__action:hover,
+.deke-chuck-thought__action:focus-visible { color: var(--thought-button-ink); filter: brightness(1.08); transform: translateY(-2px); }
+.deke-chuck-thought__action:focus-visible,
+.deke-chuck-thought__close:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+@keyframes deke-chuck-orbit { to { transform: rotate(360deg); } }
+@keyframes deke-chuck-pulse { 0%, 100% { opacity: .78; transform: scale(.98); } 50% { opacity: 1; transform: scale(1.025); } }
+
+@media (max-width: 575.98px) {
+  .deke-chuck-widget { width: 110px; height: 110px; }
+  .deke-chuck-trigger { right: 7px; bottom: 7px; width: 96px; height: 96px; }
+  .deke-chuck-trigger::before { inset: -11px; border-width: 7px; }
+  .deke-chuck-trigger::after { border-width: 7px; }
+  .deke-chuck-thought { right: 62px; bottom: 82px; width: min(310px, calc(100vw - 82px)); padding: 20% 14% 31%; gap: .55rem; }
+  .deke-chuck-thought__close { width: 27px; height: 27px; font-size: 1.05rem; }
+  .deke-chuck-thought__text { font-size: clamp(.76rem, 3.6vw, .9rem); }
+  .deke-chuck-thought__action { min-width: 108px; min-height: 36px; padding: .46rem .72rem; font-size: .76rem; }
+  .deke-chuck-search-light { width: 29px; height: 29px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deke-chuck-trigger::before,
+  .deke-chuck-trigger::after { animation-duration: 10s !important; }
+  .deke-chuck-trigger img,
+  .deke-chuck-widget.is-searching .deke-chuck-trigger img { transform: none !important; animation: none !important; }
+  .deke-chuck-thought { transition: opacity .15s ease; }
+}
+
+/* Final sitewide Chuck refinements: flip only the cloud art toward Chuck and keep copy inside. */
+.deke-chuck-thought {
+  padding: 22% 17% 33% !important;
+  gap: .42rem !important;
+}
+
+.deke-chuck-thought::before,
+.deke-chuck-thought::after {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
+
+.deke-chuck-thought__text {
+  max-width: 100%;
+  font-size: clamp(.68rem, 1.65vw, .82rem) !important;
+  line-height: 1.18 !important;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.deke-chuck-thought__action {
+  min-width: 104px;
+  min-height: 34px;
+  padding: .42rem .68rem;
+  font-size: .74rem;
+}
+
+.chuck-idle-image {
+  opacity: 1;
+  transition: opacity .12s ease;
+}
+
+.deke-chuck-widget.is-searching .chuck-idle-image {
+  opacity: 0 !important;
+}
+
+@media (max-width: 575.98px) {
+  .deke-chuck-thought {
+    right: 58px !important;
+    bottom: 80px !important;
+    padding: 22% 17% 33% !important;
+    gap: .34rem !important;
+  }
+
+  .deke-chuck-thought__text {
+    font-size: clamp(.62rem, 2.75vw, .74rem) !important;
+    line-height: 1.16 !important;
+  }
+
+  .deke-chuck-thought__action {
+    min-width: 96px;
+    min-height: 32px;
+    padding: .38rem .6rem;
+    font-size: .69rem;
+  }
+}

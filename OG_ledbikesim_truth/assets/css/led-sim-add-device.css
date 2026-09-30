@@ -1,0 +1,131 @@
+/* Shared ShyneTyme Add Device wizard. No strip-width controls by design. */
+html.sim-add-device-open,
+html.sim-add-device-open body { overflow: hidden; }
+
+.sim-add-device-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10080;
+  display: grid;
+  place-items: center;
+  padding: clamp(.55rem, 2vw, 1.25rem);
+  background: rgba(1, 5, 15, .84);
+  backdrop-filter: blur(8px);
+}
+.sim-add-device-overlay[hidden] { display: none !important; }
+
+.sim-add-device-dialog {
+  width: min(100%, 76rem);
+  max-height: min(94vh, 58rem);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border-radius: 1rem;
+  color: var(--sim-text, #eef8ff);
+  background: linear-gradient(145deg, rgba(10,30,56,.99), rgba(3,9,24,.99)) padding-box,
+              var(--sim-attention-border) border-box !important;
+  box-shadow: 0 1.5rem 5rem rgba(0,0,0,.55), 0 0 2rem rgba(49,230,255,.11) !important;
+}
+
+.sim-add-device-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .85rem 1rem;
+  border-bottom: 1px solid var(--sim-line, rgba(49,230,255,.32));
+}
+.sim-add-device-kicker { margin: 0 0 .1rem; color: var(--sim-cyan,#31e6ff); font-size: .68rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+.sim-add-device-title { margin: 0; font-family: var(--heading-font,"Oxanium",sans-serif); font-size: clamp(1.2rem,2.3vw,1.7rem); }
+.sim-add-device-close { width: 2.6rem; height: 2.6rem; border: 1px solid rgba(255,113,137,.52); border-radius: .72rem; color: #fff; background: rgba(72,15,34,.72); font-size: 1.7rem; line-height: 1; }
+
+.sim-add-device-stepper {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(7.2rem, 1fr));
+  gap: .35rem;
+  margin: 0;
+  padding: .55rem;
+  overflow-x: auto;
+  list-style: none;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  background: rgba(3,9,24,.78);
+}
+.sim-add-device-stepper__item { display:flex; align-items:center; gap:.42rem; min-width: 0; padding:.45rem .55rem; border:1px solid rgba(174,190,213,.16); border-radius:.62rem; color:var(--sim-muted,#aebed5); background:rgba(16,40,69,.32); font-size:.72rem; font-weight:800; }
+.sim-add-device-stepper__number { display:grid; place-items:center; flex:0 0 1.55rem; width:1.55rem; height:1.55rem; border-radius:999px; background:rgba(174,190,213,.14); }
+.sim-add-device-stepper__item.is-active { color:#fff; border-color:var(--sim-line-strong,rgba(49,230,255,.72)); background:rgba(49,230,255,.09); }
+.sim-add-device-stepper__item.is-active .sim-add-device-stepper__number { color:#06111f; background:var(--sim-cyan,#31e6ff); }
+.sim-add-device-stepper__item.is-complete .sim-add-device-stepper__number { color:#06111f; background:var(--sim-green,#55e6b5); }
+
+.sim-add-device-body { min-height:0; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(17rem,.7fr); gap:.8rem; padding:.8rem; overflow:auto; }
+.sim-add-device-panel { min-width:0; }
+.sim-add-device-section { display:grid; gap:.75rem; }
+.sim-add-device-section__title { margin:0; font-family:var(--heading-font,"Oxanium",sans-serif); font-size:1.15rem; }
+.sim-add-device-section__note { margin:0; color:var(--sim-muted,#aebed5); font-size:.84rem; }
+
+.sim-add-device-card-grid,
+.sim-add-device-strip-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); gap:.62rem; }
+.sim-add-device-template,
+.sim-add-device-strip,
+.sim-add-device-choice { border:1px solid rgba(49,230,255,.24); color:var(--sim-text,#eef8ff); background:linear-gradient(180deg,rgba(18,45,78,.92),rgba(7,22,42,.95)); box-shadow:inset 0 1px rgba(255,255,255,.05); }
+.sim-add-device-template,
+.sim-add-device-strip { display:grid; gap:.3rem; min-height:8rem; padding:.78rem; border-radius:.78rem; text-align:left; }
+.sim-add-device-template:hover,
+.sim-add-device-strip:hover,
+.sim-add-device-choice:hover { border-color:var(--sim-line-strong,rgba(49,230,255,.72)); }
+.sim-add-device-template.is-selected,
+.sim-add-device-strip.is-selected,
+.sim-add-device-choice.is-selected { border-color:transparent; background:linear-gradient(145deg,rgba(49,230,255,.18),rgba(155,124,255,.16)) padding-box, var(--sim-attention-border) border-box; box-shadow:0 0 1.1rem rgba(49,230,255,.12); }
+.sim-add-device-template__name,
+.sim-add-device-strip__code { color:#fff; font-family:var(--heading-font,"Oxanium",sans-serif); }
+.sim-add-device-template__meta,
+.sim-add-device-strip__label { color:var(--sim-cyan,#31e6ff); font-size:.78rem; font-weight:800; }
+.sim-add-device-template__copy,
+.sim-add-device-strip__capability { color:var(--sim-muted,#aebed5); line-height:1.35; }
+.sim-add-device-strip__badges { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.2rem; }
+.sim-add-device-badge { width:max-content; padding:.18rem .38rem; border:1px solid rgba(85,230,181,.35); border-radius:999px; color:var(--sim-green,#55e6b5); background:rgba(85,230,181,.08); font-size:.65rem; font-weight:900; }
+
+.sim-add-device-subchoice,
+.sim-add-device-custom-placement { display:grid; gap:.55rem; padding:.7rem; border:1px solid rgba(49,230,255,.18); border-radius:.75rem; background:rgba(3,9,24,.5); }
+.sim-add-device-subchoice__label,
+.sim-add-device-field__label { color:#dffaff; font-size:.74rem; font-weight:900; text-transform:uppercase; letter-spacing:.05em; }
+.sim-add-device-choice-row { display:flex; flex-wrap:wrap; gap:.45rem; }
+.sim-add-device-choice-row--large .sim-add-device-choice { min-width:9rem; }
+.sim-add-device-choice { min-height:2.55rem; padding:.48rem .72rem; border-radius:.66rem; font-weight:800; }
+.sim-add-device-count-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(5rem,1fr)); gap:.45rem; }
+.sim-add-device-placement-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(9rem,1fr)); gap:.45rem; }
+
+.sim-add-device-field { display:grid; gap:.35rem; }
+.sim-add-device-input { min-height:2.7rem; padding:.5rem .62rem; border:1px solid rgba(49,230,255,.32); border-radius:.66rem; color:var(--sim-text,#eef8ff); background:#06152b; }
+.sim-add-device-input:focus { outline:2px solid rgba(49,230,255,.24); border-color:var(--sim-line-strong,rgba(49,230,255,.72)); }
+
+.sim-add-device-warning,
+.sim-add-device-validation__warning,
+.sim-add-device-summary__warning { margin:0; padding:.55rem .62rem; border:1px solid rgba(255,231,106,.4); border-radius:.62rem; color:#fff2ae; background:rgba(95,72,5,.22); font-size:.78rem; line-height:1.35; }
+.sim-add-device-validation { display:grid; gap:.4rem; }
+.sim-add-device-validation__error { margin:0; padding:.55rem .62rem; border:1px solid rgba(255,113,137,.5); border-radius:.62rem; color:#ffdbe2; background:rgba(105,20,45,.28); font-size:.78rem; }
+
+.sim-add-device-summary { align-self:start; position:sticky; top:0; display:grid; gap:.5rem; padding:.75rem; border-radius:.8rem; background:linear-gradient(145deg,rgba(16,40,69,.96),rgba(4,13,30,.96)) padding-box, var(--sim-attention-border) border-box !important; }
+.sim-add-device-summary__title { margin:0 0 .15rem; font-family:var(--heading-font,"Oxanium",sans-serif); font-size:1rem; color:#fff; }
+.sim-add-device-summary__row { display:grid; grid-template-columns:minmax(5.5rem,.65fr) minmax(0,1fr); gap:.45rem; align-items:start; padding-bottom:.38rem; border-bottom:1px solid rgba(255,255,255,.06); }
+.sim-add-device-summary__key { color:var(--sim-muted,#aebed5); font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; }
+.sim-add-device-summary__value { min-width:0; overflow-wrap:anywhere; font-size:.76rem; }
+
+.sim-add-device-footer { display:flex; justify-content:space-between; gap:.65rem; padding:.7rem .8rem; border-top:1px solid rgba(255,255,255,.07); background:rgba(3,9,24,.88); }
+.sim-add-device-button { min-width:7rem; min-height:2.7rem; padding:.5rem .8rem; border:1px solid rgba(49,230,255,.3); border-radius:.7rem; color:var(--sim-text,#eef8ff); background:linear-gradient(180deg,#122c4d,#0a1e38); font-weight:850; }
+.sim-add-device-button--primary { color:#04111f; border-color:transparent; background:linear-gradient(135deg,var(--sim-cyan,#31e6ff),#7aa7ff 52%,var(--sim-violet,#9b7cff)); }
+.sim-add-device-button:disabled { opacity:.4; cursor:not-allowed; }
+
+@media (max-width: 760px) {
+  .sim-add-device-overlay { padding:0; }
+  .sim-add-device-dialog { width:100%; height:100dvh; max-height:none; border-radius:0; }
+  .sim-add-device-stepper { grid-template-columns:repeat(5,minmax(6.8rem,1fr)); }
+  .sim-add-device-stepper__label { white-space:nowrap; }
+  .sim-add-device-body { grid-template-columns:1fr; padding:.6rem; }
+  .sim-add-device-summary { position:static; }
+  .sim-add-device-card-grid,
+  .sim-add-device-strip-grid { grid-template-columns:1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim-add-device-overlay { backdrop-filter:none; }
+}

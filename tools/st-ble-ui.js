@@ -331,16 +331,28 @@
       card.className = `device-card${selected ? " selected" : ""}`;
 
       card.innerHTML = `
-        <div class="esp32-art">
-          <span class="esp32-chip">ESP32</span>
-          <span class="esp32-usb"></span>
+        <div class="device-underglow" aria-hidden="true"></div>
+        <div class="device-card-inner">
+          <div class="device-header-row">
+            <div class="device-title-wrap">
+              <div class="device-name"></div>
+              <div class="device-bt"></div>
+            </div>
+            <i class="ble-dot ${device.bleStatus}" title="Bluetooth status"></i>
+          </div>
+          <div class="device-module-body">
+            <div class="device-chip-badge">
+              <span class="chip-label">ESP32 MODULE</span>
+              <span class="chip-status ${device.bleStatus}">${device.bleStatus.toUpperCase()}</span>
+            </div>
+          </div>
+          <div class="device-footer-row">
+            <button class="device-power-btn power-ring ${device.powered ? "is-on on" : "is-off"}" aria-label="Toggle Power" title="${device.powered ? 'Power: ON (Click to turn OFF)' : 'Power: OFF (Click to turn ON)'}">
+              <span class="power-glyph">⏻</span>
+              <span class="power-text">${device.powered ? "POWER ON" : "POWER OFF"}</span>
+            </button>
+          </div>
         </div>
-        <div class="device-info">
-          <div class="device-name"></div>
-          <div class="device-bt"></div>
-        </div>
-        <i class="ble-dot ${device.bleStatus}"></i>
-        <button class="power-ring ${device.powered ? "on" : ""}" aria-label="Power">⏻</button>
       `;
 
       card.querySelector(".device-name").textContent = device.name;
@@ -348,12 +360,12 @@
         device.bluetoothName || "Bluetooth not assigned";
 
       card.addEventListener("click", (event) => {
-        if (!event.target.closest(".power-ring")) {
+        if (!event.target.closest(".device-power-btn, .power-ring")) {
           window.STWBLE.selectDevice(device.id);
         }
       });
 
-      card.querySelector(".power-ring").addEventListener("click", async (event) => {
+      card.querySelector(".device-power-btn").addEventListener("click", async (event) => {
         event.stopPropagation();
         await window.STWBLE.togglePower(device.id);
       });
@@ -430,6 +442,14 @@
   q("#unassignBluetooth")?.addEventListener("click", () => {
     const device = selectedDevice();
     if (device) window.STWBLE.unassignBluetooth(device.id);
+  });
+
+  q("#deleteLogicalDevice")?.addEventListener("click", () => {
+    const device = selectedDevice();
+    if (!device) return;
+    if (confirm(`Delete ${device.name}? This will remove it from this browser.`)) {
+      window.STWBLE.removeLogicalDevice(device.id);
+    }
   });
 
   function deviceFormConfig() {

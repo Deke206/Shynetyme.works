@@ -1,0 +1,447 @@
+/*
+  ShyneTyme LED SIM — shared Devices tab and reusable device card component.
+  Depends on sim-controls-shared.css design tokens and led-sim-core.css shell structure.
+*/
+
+.sim-devices-view {
+  min-height: 18rem;
+}
+
+.sim-devices-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: calc(var(--sim-core-gap, 1rem) * -1) calc(var(--sim-core-gap, 1rem) * -1) 1rem;
+  padding: 0.78rem 1rem;
+  border-bottom: 1px solid var(--sim-line, rgba(49, 230, 255, 0.32));
+  background:
+    linear-gradient(180deg, rgba(6, 21, 43, 0.98), rgba(3, 9, 24, 0.95));
+  backdrop-filter: blur(10px);
+}
+
+.sim-devices-toolbar__heading {
+  min-width: 0;
+}
+
+.sim-devices-toolbar__kicker {
+  margin: 0 0 0.1rem;
+  color: var(--sim-cyan, #31e6ff);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sim-devices-toolbar__title {
+  margin: 0;
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: clamp(1.15rem, 2.3vw, 1.55rem);
+  font-weight: 850;
+}
+
+.sim-devices-toolbar__summary {
+  margin: 0.15rem 0 0;
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.75rem;
+}
+
+.sim-devices-add,
+.sim-devices-empty__add {
+  min-height: 2.7rem;
+  border: 1px solid rgba(49, 230, 255, 0.7);
+  border-radius: 0.72rem;
+  color: #04111f;
+  background: linear-gradient(135deg, var(--sim-cyan, #31e6ff), #7aa7ff 55%, var(--sim-violet, #9b7cff));
+  box-shadow: 0 0 1.2rem rgba(49, 230, 255, 0.2);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}
+
+.sim-devices-add {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  padding: 0.55rem 0.82rem;
+  white-space: nowrap;
+}
+
+.sim-devices-add__glyph {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.sim-devices-add:hover,
+.sim-devices-add:focus-visible,
+.sim-devices-empty__add:hover,
+.sim-devices-empty__add:focus-visible {
+  outline: none;
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.sim-devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: clamp(0.7rem, 1.5vw, 1rem);
+  align-items: stretch;
+}
+
+.sim-device-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 0.9rem;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.sim-device-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--sim-shadow, 0 0.8rem 2.2rem rgba(0, 0, 0, 0.32)),
+    0 0 1.25rem rgba(49, 230, 255, 0.16) !important;
+}
+
+.sim-device-card.is-selected {
+  box-shadow:
+    var(--sim-shadow, 0 0.8rem 2.2rem rgba(0, 0, 0, 0.32)),
+    0 0 0 2px var(--sim-cyan, #31e6ff),
+    0 0 1.6rem rgba(49, 230, 255, 0.24) !important;
+}
+
+.sim-device-card__open {
+  width: 100%;
+  min-width: 0;
+  padding: 0.92rem;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+}
+
+.sim-device-card__open:focus-visible {
+  outline: 2px solid var(--sim-cyan, #31e6ff);
+  outline-offset: -3px;
+}
+
+.sim-device-card__heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: start;
+}
+
+.sim-device-card__heading-text {
+  min-width: 0;
+}
+
+.sim-device-card__name {
+  margin: 0;
+  overflow: hidden;
+  color: var(--sim-text, #eef8ff);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: 1rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sim-device-card__controller {
+  margin: 0.16rem 0 0;
+  overflow: hidden;
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.73rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sim-device-card__connection {
+  display: grid;
+  grid-template-columns: 1.65rem auto;
+  gap: 0.35rem;
+  align-items: center;
+  min-width: 6.6rem;
+  padding: 0.38rem 0.48rem;
+  border: 1px solid rgba(174, 190, 213, 0.22);
+  border-radius: 0.62rem;
+  background: rgba(3, 9, 24, 0.56);
+}
+
+.sim-device-card__connection-icon {
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  color: var(--sim-muted, #aebed5);
+  background: rgba(174, 190, 213, 0.1);
+}
+
+.sim-device-card__connection-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sim-device-card__connection-words {
+  display: grid;
+  line-height: 1.05;
+}
+
+.sim-device-card__connection-type {
+  font-size: 0.67rem;
+}
+
+.sim-device-card__connection-state {
+  margin-top: 0.14rem;
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.59rem;
+}
+
+.sim-device-card__connection[data-connection-state="connected"] {
+  border-color: rgba(85, 230, 181, 0.46);
+}
+
+.sim-device-card__connection[data-connection-state="connected"] .sim-device-card__connection-icon {
+  color: #061b13;
+  background: var(--sim-green, #55e6b5);
+  box-shadow: 0 0 0.9rem rgba(85, 230, 181, 0.35);
+}
+
+.sim-device-card__connection[data-connection-state="connecting"] {
+  border-color: rgba(255, 231, 106, 0.5);
+}
+
+.sim-device-card__connection[data-connection-state="connecting"] .sim-device-card__connection-icon {
+  color: #2a2200;
+  background: var(--sim-amber, #ffe76a);
+  animation: sim-device-connection-pulse 1.05s ease-in-out infinite;
+}
+
+.sim-device-card__connection[data-connection-state="offline"],
+.sim-device-card__connection[data-connection-state="unknown"] {
+  opacity: 0.58;
+}
+
+.sim-device-card__specs {
+  margin-top: 0.8rem;
+  padding-top: 0.68rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: #dcecff;
+  font-size: 0.74rem;
+}
+
+.sim-device-card__effect {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.65rem;
+  padding: 0.55rem 0.62rem;
+  border: 1px solid rgba(155, 124, 255, 0.24);
+  border-radius: 0.62rem;
+  background: rgba(155, 124, 255, 0.07);
+}
+
+.sim-device-card__effect-label {
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.63rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sim-device-card__effect-value {
+  min-width: 0;
+  overflow: hidden;
+  color: #f4f0ff;
+  font-size: 0.75rem;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sim-device-card__open-hint {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--sim-cyan, #31e6ff);
+  font-size: 0.64rem;
+  font-weight: 750;
+  text-align: right;
+}
+
+.sim-device-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.68rem 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(3, 9, 24, 0.62);
+}
+
+.sim-device-card__power-state {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.sim-device-card__power-dot {
+  width: 0.68rem;
+  height: 0.68rem;
+  border-radius: 50%;
+  background: var(--sim-danger, #ff7189);
+  box-shadow: 0 0 0.65rem rgba(255, 113, 137, 0.5);
+}
+
+.sim-device-card__power-state[data-power="on"] .sim-device-card__power-dot {
+  background: var(--sim-green, #55e6b5);
+  box-shadow: 0 0 0.75rem rgba(85, 230, 181, 0.6);
+}
+
+.sim-device-card__power-words {
+  display: grid;
+  line-height: 1.05;
+}
+
+.sim-device-card__power-caption {
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+
+.sim-device-card__power-value {
+  margin-top: 0.1rem;
+  color: var(--sim-danger, #ff7189);
+  font-size: 0.72rem;
+}
+
+.sim-device-card__power-state[data-power="on"] .sim-device-card__power-value {
+  color: var(--sim-green, #55e6b5);
+}
+
+.sim-device-card__power-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.32rem;
+  min-height: 2.35rem;
+  padding: 0.42rem 0.58rem;
+  border: 1px solid rgba(49, 230, 255, 0.3);
+  border-radius: 0.62rem;
+  color: var(--sim-text, #eef8ff);
+  background: linear-gradient(180deg, rgba(18, 45, 78, 0.96), rgba(7, 22, 42, 0.96));
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.sim-device-card__power-button[aria-pressed="true"] {
+  border-color: rgba(85, 230, 181, 0.48);
+  color: #071a12;
+  background: linear-gradient(135deg, var(--sim-green, #55e6b5), #8ff0cf);
+}
+
+.sim-device-card__power-button:hover,
+.sim-device-card__power-button:focus-visible {
+  outline: none;
+  border-color: var(--sim-line-strong, rgba(49, 230, 255, 0.72));
+  box-shadow: 0 0 0.9rem rgba(49, 230, 255, 0.16);
+}
+
+.sim-device-card[data-connection-state="offline"] .sim-device-card__open,
+.sim-device-card[data-connection-state="unknown"] .sim-device-card__open {
+  opacity: 0.78;
+}
+
+.sim-devices-empty {
+  display: grid;
+  place-items: center;
+  min-height: 14rem;
+  padding: 2rem 1rem;
+  border-radius: 0.9rem;
+  text-align: center;
+}
+
+.sim-devices-empty[hidden] {
+  display: none !important;
+}
+
+.sim-devices-empty__title {
+  margin: 0;
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: 1.15rem;
+}
+
+.sim-devices-empty__copy {
+  max-width: 36rem;
+  margin: 0.45rem 0 0.9rem;
+  color: var(--sim-muted, #aebed5);
+}
+
+.sim-devices-empty__add {
+  padding: 0.55rem 0.9rem;
+}
+
+@keyframes sim-device-connection-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    box-shadow: 0 0 0.3rem rgba(255, 231, 106, 0.22);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 1rem rgba(255, 231, 106, 0.65);
+  }
+}
+
+@media (max-width: 620px) {
+  .sim-devices-toolbar {
+    align-items: flex-end;
+  }
+
+  .sim-devices-add__words {
+    display: none;
+  }
+
+  .sim-devices-add {
+    width: 2.85rem;
+    padding-inline: 0;
+  }
+
+  .sim-device-card__heading {
+    grid-template-columns: 1fr;
+  }
+
+  .sim-device-card__connection {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim-device-card,
+  .sim-devices-add,
+  .sim-devices-empty__add {
+    transition: none;
+  }
+
+  .sim-device-card__connection[data-connection-state="connecting"] .sim-device-card__connection-icon {
+    animation: none;
+  }
+}

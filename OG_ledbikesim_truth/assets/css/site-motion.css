@@ -1,0 +1,273 @@
+/*
+ * ShyneTyme motion compatibility layer.
+ * Chrome on Samsung DeX can report prefers-reduced-motion even when the visitor
+ * still expects the site's LED previews and character cues to run. This file is
+ * loaded last and preserves the important visual demonstrations at gentler speeds.
+ */
+
+:root {
+  --bike-sim-stage-height: clamp(360px, 56vh, 500px);
+  --home-sim-stage-height: clamp(380px, 60vh, 520px);
+}
+
+/*
+ * Shared simulator viewport sizing. The owning Bike and Home CSS files still
+ * control their artwork and layout; this shared layer keeps both live previews
+ * inside the visitor's actual screen instead of relying on oversized fixed heights.
+ */
+.builder-page .bike-stage,
+.builder-page .bike-stage svg {
+  min-height: 0 !important;
+  height: var(--bike-sim-stage-height) !important;
+  max-height: var(--bike-sim-stage-height) !important;
+}
+
+.home-builder-page .home-stage,
+.home-builder-page .home-stage svg {
+  min-height: 0 !important;
+  height: var(--home-sim-stage-height) !important;
+  max-height: var(--home-sim-stage-height) !important;
+}
+
+.site-guide-button {
+  isolation: isolate;
+  overflow: visible;
+  width: clamp(84px, 10vw, 118px);
+  height: clamp(84px, 10vw, 118px);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.site-guide-button::before,
+.site-guide-button::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.site-guide-button::before {
+  inset: -7px;
+  z-index: -2;
+  border: 2px solid transparent;
+  border-top-color: var(--cyan);
+  border-right-color: rgba(155, 131, 255, .8);
+  border-bottom-color: rgba(255, 90, 185, .42);
+  filter: drop-shadow(0 0 8px rgba(49, 230, 255, .78));
+  animation: site-chuck-orbit 6s linear infinite;
+}
+
+.site-guide-button::after {
+  inset: 7px;
+  z-index: -1;
+  border: 1px solid rgba(49, 230, 255, .28);
+  box-shadow: inset 0 0 18px rgba(49, 230, 255, .2);
+  animation: site-chuck-pulse 3.2s ease-in-out infinite;
+}
+
+.site-guide-button img {
+  transform-origin: 52% 82%;
+  animation: site-chuck-float 3.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.site-guide-button.is-searching img {
+  animation: site-chuck-search .72s ease-in-out infinite alternate !important;
+}
+
+.site-guide-button.is-searching::before {
+  animation-duration: 1.35s !important;
+}
+
+.site-guide-button.is-searching {
+  box-shadow:
+    0 6px 0 #075f75,
+    0 12px 24px rgba(0, 0, 0, .42),
+    0 0 38px rgba(49, 230, 255, .78);
+}
+
+.site-guide-panel a[data-about-deke-link] {
+  color: #231126;
+  background: linear-gradient(180deg, #ffc0e7, #ff78bf);
+  box-shadow: 0 3px 0 #a62069, 0 0 13px rgba(255, 90, 185, .26);
+}
+
+@keyframes site-chuck-float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-5px) rotate(-2deg); }
+}
+
+@keyframes site-chuck-search {
+  from { transform: translate(-3px, 1px) rotate(-4deg) scale(1.01); }
+  to { transform: translate(3px, -3px) rotate(4deg) scale(1.035); }
+}
+
+@keyframes site-chuck-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes site-chuck-pulse {
+  0%, 100% { opacity: .42; transform: scale(.96); }
+  50% { opacity: .92; transform: scale(1.04); }
+}
+
+/*
+ * Do not completely freeze the site's demonstrations when DeX reports reduced
+ * motion. The distances and speeds below are intentionally calmer than normal.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .site-guide-button::before {
+    animation: site-chuck-orbit 12s linear infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .site-guide-button::after {
+    animation: site-chuck-pulse 5.8s ease-in-out infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .site-guide-button img {
+    animation: site-chuck-float 6s ease-in-out infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .site-guide-button.is-searching img {
+    animation: site-chuck-search 1.1s ease-in-out infinite alternate !important;
+    animation-play-state: running !important;
+  }
+
+  .builder-page .zone-on:not(.solid-green-zone):not(.flag-pole):not(.tail-light):not(.turn-signal) {
+    animation: rgbTwinkle 2.35s linear infinite !important;
+    animation-play-state: running !important;
+    will-change: stroke-dashoffset, opacity, filter;
+  }
+
+  .builder-page .legend-on {
+    animation: legendTwinkle 1.8s ease-in-out infinite alternate !important;
+    animation-play-state: running !important;
+  }
+
+  .builder-page .flag-flash-red #flagPoleLight,
+  .builder-page .flag-flash-orange #flagPoleLight {
+    animation: flagCautionFlash 1.25s steps(1, end) infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .builder-page .tail-animated.zone-on .tail-pixel {
+    animation: tailCenterOut 8s linear infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .builder-page .tail-animated .tail-center { animation-delay: 0s !important; }
+  .builder-page .tail-animated .tail-inner { animation-delay: .25s !important; }
+  .builder-page .tail-animated .tail-outer { animation-delay: .5s !important; }
+
+  .builder-page .signal-animated.zone-on .signal-segment {
+    animation: directionalSignal 1.55s linear infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .builder-page .signal-animated .signal-step-1 { animation-delay: 0s !important; }
+  .builder-page .signal-animated .signal-step-2 { animation-delay: .2s !important; }
+  .builder-page .signal-animated .signal-step-3 { animation-delay: .4s !important; }
+
+  .contact-page .contact-panel,
+  .contact-page .map-frame {
+    animation: contact-border-flow 22s linear infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .contact-page .social-launchpad {
+    animation: social-launchpad-border 16s linear infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .contact-page .social-launchpad::after {
+    animation: social-launchpad-scan 13s ease-in-out infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .contact-page .social-tile {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .contact-page .social-tile__icon-wrap {
+    animation: social-icon-float 7s ease-in-out infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .contact-page .social-tile__icon-wrap::before {
+    animation: social-icon-orbit 8s linear infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .deke-page .deke-alert,
+  .deke-page .deke-support {
+    animation: deke-border-flow 18s linear infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .deke-page .deke-alert::after {
+    animation: deke-shine 12s ease-in-out infinite !important;
+    animation-play-state: running !important;
+  }
+
+  .social-led-banner {
+    animation: hero-led-border-flow 14s linear infinite !important;
+    animation-play-state: running !important;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  :root {
+    --bike-sim-stage-height: clamp(340px, 53vh, 460px);
+    --home-sim-stage-height: clamp(360px, 56vh, 480px);
+  }
+}
+
+@media (max-width: 991.98px) {
+  :root {
+    --bike-sim-stage-height: clamp(320px, 50vh, 420px);
+    --home-sim-stage-height: clamp(340px, 53vh, 440px);
+  }
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --bike-sim-stage-height: clamp(290px, 72vw, 370px);
+    --home-sim-stage-height: clamp(300px, 75vw, 390px);
+  }
+}
+
+@media (max-width: 575.98px) {
+  :root {
+    --bike-sim-stage-height: clamp(255px, 76vw, 320px);
+    --home-sim-stage-height: clamp(270px, 80vw, 340px);
+  }
+
+  .site-guide-button {
+    width: 82px;
+    height: 82px;
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    --bike-sim-stage-height: clamp(240px, 74vw, 290px);
+    --home-sim-stage-height: clamp(250px, 78vw, 310px);
+  }
+}
+
+@media (max-height: 700px) and (min-width: 768px) {
+  :root {
+    --bike-sim-stage-height: clamp(300px, 49vh, 370px);
+    --home-sim-stage-height: clamp(320px, 52vh, 390px);
+  }
+}
+
+@media (max-height: 560px) and (min-width: 768px) {
+  :root {
+    --bike-sim-stage-height: clamp(270px, 46vh, 320px);
+    --home-sim-stage-height: clamp(285px, 49vh, 340px);
+  }
+}

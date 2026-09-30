@@ -1,0 +1,351 @@
+
+      return;
+    }
+
+    selectedZones.clear();
+    dialogSnapshot.selected.forEach((zoneId) => selectedZones.add(zoneId));
+
+    zoneSettings.clear();
+    dialogSnapshot.settings.forEach((value, key) => {
+      zoneSettings.set(key, presetApi.clone(value));
+    });
+  }
+
+  function closeDialog({ restore = false } = {}) {
+    if (restore) {
+      restoreDialogSnapshot();
+      synchronizeUi();
+    }
+
+    dialogZoneId = null;
+    dialogSnapshot = null;
+
+    if (elements.dialog.open && typeof elements.dialog.close === "function") {
+      elements.dialog.close();
+    } else {
+      elements.dialog.removeAttribute("open");
+    }
+  }
+
+  function applyDialog() {
+    if (!dialogZoneId) {
+      return;
+    }
+
+    const sourceId = dialogZoneId;
+    const sourceSettings = readDialogSettings();
+    const targetId = elements.mirrorTarget.value;
+    const mirrorDirection = elements.mirrorDirection.value;
+
+    breakIncomingLink(sourceId);
+    zoneSettings.set(sourceId, sourceSettings);
+
+    if (elements.zoneEnabled.checked) {
+      selectedZones.add(sourceId);
+    } else {
+      selectedZones.delete(sourceId);
+    }
+
+    for (const oldTarget of linkedTargets(sourceId)) {
+      if (oldTarget.id === targetId) {
+        continue;
+      }
+
+      const preservedSettings = effectiveSettings(oldTarget.id);
+
+      zoneSettings.set(oldTarget.id, {
+        ...presetApi.clone(preservedSettings),
+        syncTarget: "",
+        mirror: false,
+        mirrorDirection: "same"
+      });
+    }
+
+    if (targetId) {
+      const sourcePreset = presetFor(sourceSettings.effect);
+
+      zoneSettings.set(targetId, {
+        ...presetApi.clone(sourceSettings),
+        syncTarget: sourceId,
+        mirror: true,
+        mirrorDirection: sourcePreset.directional
+          ? mirrorDirection
+          : "same"
+      });
+      selectedZones.add(sourceId);
+      selectedZones.add(targetId);
+    }
+
+    closeDialog();
+    synchronizeUi();
+  }
+
+  function disableDialogZone() {
+    if (!dialogZoneId) {
+      return;
+    }
+
+    const sourceId = dialogZoneId;
+
+    for (const oldTarget of linkedTargets(sourceId)) {
+      const preservedSettings = effectiveSettings(oldTarget.id);
+
+      zoneSettings.set(oldTarget.id, {
+        ...presetApi.clone(preservedSettings),
+        syncTarget: "",
+        mirror: false,
+        mirrorDirection: "same"
+      });
+    }
+
+    breakIncomingLink(sourceId);
+    selectedZones.delete(sourceId);
+    closeDialog();
+    synchronizeUi();
+  }
+  // END OBJECT: Dialog open, cancel, apply, and disable actions.
+
+  // BEGIN OBJECT: Scene, light mode, and full UI synchronization.
+  async function setScene(sceneName) {
+    if (!scenes[sceneName]) {
+      return;
+    }
+
+    currentSceneName = sceneName;
+
+    const scene = currentScene();
+
+    elements.sourceImage.alt = sceneName === "front"
+      ? "Approved front view of the sample property"
+      : "Approved back view of the sample property";
+    elements.sceneLabel.textContent = scene.label;
+
+    document.querySelectorAll("[data-scene]").forEach((button) => {
+      const isActive = button.dataset.scene === sceneName;
+
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    renderZoneButtons();
+    renderTrace();
+    rebuildLedParticles();
+    updateSummary();
+    renderer?.resize();
+
+    elements.renderStatus.textContent = `Loading approved ${sceneName} image`;
+
+    try {
+      const imageSource = await loadSceneImage(sceneName);
+
+      if (currentSceneName === sceneName) {
+        elements.sourceImage.src = imageSource;
+        elements.renderStatus.textContent = (
+          "Approved geometry loaded · Canvas LED renderer active"
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      elements.renderStatus.textContent = `Approved ${sceneName} image failed to load`;
+    }
+  }
+
+  function setLight(lightName) {
+    currentLight = lightName;
+    elements.surface.dataset.light = lightName;
+
+    document.querySelectorAll("[data-light]").forEach((button) => {
+      const isActive = button.dataset.light === lightName;
+
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    saveBuild();
+  }
+
+  function synchronizeUi() {
+    renderZoneButtons();
+    renderTrace();
+    rebuildLedParticles();
+    updateSummary();
+    renderer?.resize();
+  }
+  // END OBJECT: Scene, light mode, and full UI synchronization.
+
+  // BEGIN OBJECT: Clipboard and reset actions.
+  function showToast(message) {
+    window.clearTimeout(toastTimer);
+    elements.toast.textContent = message;
+    elements.toast.classList.add("is-visible");
+
+    toastTimer = window.setTimeout(() => {
+      elements.toast.classList.remove("is-visible");
+    }, 1600);
+  }
+
+  async function copyBuild() {
+    if (!selectedZones.size) {
+      return;
+    }
+
+    const payload = saveBuild();
+    const copyText = buildCopyText(payload);
+
+    try {
+      await navigator.clipboard.writeText(copyText);
+      showToast("Build copied.");
+    } catch {
+      const temporary = document.createElement("textarea");
+
+      temporary.value = copyText;
+      temporary.setAttribute("readonly", "");
+      temporary.style.position = "fixed";
+      temporary.style.opacity = "0";
+      document.body.appendChild(temporary);
+      temporary.select();
+      document.execCommand("copy");
+      temporary.remove();
+      showToast("Build copied.");
+    }
+  }
+
+  function resetBuild() {
+    selectedZones.clear();
+    zoneSettings.clear();
+    localStorage.removeItem(STORAGE_KEY);
+    synchronizeUi();
+  }
+  // END OBJECT: Clipboard and reset actions.
+
+  // BEGIN OBJECT: Home SIM event bindings.
+  function bindEvents() {
+    document.addEventListener("click", (event) => {
+      const sceneButton = event.target.closest("[data-scene]");
+      const lightButton = event.target.closest("[data-light]");
+      const zoneControl = event.target.closest("[data-zone]");
+
+      if (sceneButton) {
+        void setScene(sceneButton.dataset.scene);
+        return;
+      }
+
+      if (lightButton) {
+        setLight(lightButton.dataset.light);
+        return;
+      }
+
+      if (zoneControl) {
+        openDialog(zoneControl.dataset.zone);
+      }
+    });
+
+    elements.traceSvg.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      const zoneControl = event.target.closest("[data-zone]");
+
+      if (!zoneControl) {
+        return;
+      }
+
+      event.preventDefault();
+      openDialog(zoneControl.dataset.zone);
+    });
+
+    const liveDialogControls = [
+      elements.zoneEnabled,
+      elements.zoneDirection,
+      elements.zoneBrightness,
+      elements.zoneSpeed,
+      elements.paletteMode,
+      elements.color1,
+      elements.color2,
+      elements.color3,
+      elements.mirrorTarget,
+      elements.mirrorDirection
+    ];
+
+    liveDialogControls.forEach((control) => {
+      control.addEventListener("input", previewDialogChanges);
+      control.addEventListener("change", previewDialogChanges);
+    });
+
+    elements.zoneEffect.addEventListener("change", () => {
+      const preset = presetFor(elements.zoneEffect.value);
+
+      elements.paletteMode.value = preset.colorMode;
+      previewDialogChanges();
+    });
+
+    elements.dialogClose.addEventListener("click", () => {
+      closeDialog({ restore: true });
+    });
+    elements.dialogCancel.addEventListener("click", () => {
+      closeDialog({ restore: true });
+    });
+    elements.dialogDisable.addEventListener("click", disableDialogZone);
+
+    elements.dialogForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      applyDialog();
+    });
+
+    elements.dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeDialog({ restore: true });
+    });
+
+    elements.resetBuild.addEventListener("click", resetBuild);
+    elements.copyBuild.addEventListener("click", copyBuild);
+  }
+  // END OBJECT: Home SIM event bindings.
+
+  // BEGIN OBJECT: Home SIM initialization and public test hooks.
+  async function initialize() {
+    try {
+      populatePresetMenu();
+      bindEvents();
+
+      geometry = await loadGeometry();
+      scenes = geometry.scenes || geometry.views;
+
+      renderer = new CanvasLedRenderer(
+        elements.ledCanvas,
+        elements.surface
+      );
+
+      elements.renderStatus.textContent = (
+        "Approved geometry loaded · Canvas LED renderer active"
+      );
+
+      await setScene("front");
+      setLight("dusk");
+      synchronizeUi();
+
+      window.ShynetymeHomeSim = {
+        initialized: true,
+        geometry,
+        selectedZones,
+        zoneSettings,
+        openDialog,
+        setScene,
+        setLight,
+        buildPayload,
+        resetBuild
+      };
+    } catch (error) {
+      console.error(error);
+      elements.renderStatus.textContent = "Home SIM failed to load";
+      elements.zoneGrid.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          The approved Home SIM geometry could not be loaded. Please refresh the page.
+        </div>`;
+    }
+  }
+
+  initialize();
+  // END OBJECT: Home SIM initialization and public test hooks.
+})();

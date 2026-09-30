@@ -1,0 +1,87 @@
+/* Exact-row catalog image treatment integrated with the ShyneTyme dark theme. */
+.catalog-card-visual.has-image::before,
+.catalog-card-visual.has-image::after {
+content: none !important;
+}
+
+.catalog-card-visual.has-image {
+min-height: 12rem;
+padding: .65rem;
+border-bottom-color: rgba(112, 231, 255, .2);
+background:
+radial-gradient(circle at 18% 16%, rgba(49, 230, 255, .14), transparent 11rem),
+radial-gradient(circle at 85% 82%, rgba(255, 90, 185, .11), transparent 12rem),
+linear-gradient(145deg, rgba(16, 39, 71, .98), rgba(3, 9, 24, .99));
+box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .035);
+}
+
+.catalog-card-visual.has-image img {
+display: block;
+width: 100%;
+height: 11rem;
+object-fit: contain;
+object-position: center;
+filter: drop-shadow(0 9px 16px rgba(0, 0, 0, .42));
+}
+
+.catalog-card-visual.has-image .catalog-card-code {
+position: absolute;
+left: .65rem;
+bottom: .65rem;
+max-width: calc(100% - 1.3rem);
+background: rgba(2, 15, 29, .9);
+}
+
+.catalog-product-title {
+font-size: .94rem;
+overflow-wrap: anywhere;
+}
+
+.catalog-product-description {
+display: -webkit-box;
+overflow: hidden;
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 4;
+}
+
+.catalog-card-meta dd {
+overflow-wrap: anywhere;
+}
+
+.catalog-modal-product-image {
+display: grid;
+place-items: center;
+min-height: 12rem;
+margin: 0 0 1rem;
+padding: 1rem;
+border: 1px solid rgba(112, 231, 255, .2);
+border-radius: .85rem;
+background:
+radial-gradient(circle at 16% 12%, rgba(49, 230, 255, .13), transparent 13rem),
+linear-gradient(145deg, rgba(16, 39, 71, .99), rgba(3, 9, 24, .99));
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+
+.catalog-modal-product-image img {
+display: block;
+max-width: 100%;
+max-height: 22rem;
+object-fit: contain;
+filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .46));
+}
+
+.catalog-modal-product-image span {
+color: #eefaff;
+font-family: "Oxanium", sans-serif;
+font-size: 1.2rem;
+font-weight: 900;
+}
+
+@media (max-width: 1199.98px) {
+.catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 767.98px) {
+.catalog-card-visual.has-image { min-height: 10rem; }
+.catalog-card-visual.has-image img { height: 9rem; }
+}

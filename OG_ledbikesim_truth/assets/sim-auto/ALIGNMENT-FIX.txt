@@ -1,0 +1,11 @@
+SIM Auto alignment repair
+
+Root cause: the deployed SVG coordinates were aligned to a 1060 x 590 editor guide but rendered over a different 975 x 450 vehicle image.
+
+Fix: use the exact 1060 x 590 editor guide, preserve a shared 1060:590 image/SVG aspect ratio at every responsive breakpoint, and define the RGB pixel-dash animation locally in ledautosim.html.
+
+Verified:
+- Eight image chunks match the prepared guide image Git blob hashes byte-for-byte.
+- Reconstructed WebP equals the local verified guide image (SHA-256 29077414a6709964e03174824c96431f107bfc649413ea26d3b375d6853f4d30).
+- HTML blob equals the locally syntax-checked page (Git blob a9963f9ed6163a55052864329c6bd5c018064075).
+- Inline JavaScript passes node --check.

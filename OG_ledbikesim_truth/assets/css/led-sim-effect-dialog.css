@@ -1,0 +1,263 @@
+/* ShyneTyme LED SIM — common effect dialog and capability-aware controls. */
+
+html.sim-effect-open,
+html.sim-effect-open body {
+  overflow: hidden;
+}
+
+.sim-effect-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: grid;
+  place-items: center;
+  padding: clamp(0.7rem, 2vw, 1.5rem);
+  background: rgba(1, 6, 18, 0.82);
+  backdrop-filter: blur(12px);
+}
+
+.sim-effect-overlay[hidden] {
+  display: none !important;
+}
+
+.sim-effect-dialog {
+  width: min(100%, 58rem);
+  max-height: min(92vh, 60rem);
+  overflow: auto;
+  border-radius: 1rem;
+  color: var(--sim-text, #eef8ff);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(49, 230, 255, 0.1), transparent 22rem),
+    linear-gradient(145deg, rgba(8, 24, 48, 0.99), rgba(3, 9, 24, 0.99));
+  box-shadow: 0 1.4rem 5rem rgba(0, 0, 0, 0.56), 0 0 2.2rem rgba(49, 230, 255, 0.12);
+}
+
+.sim-effect-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 0.85rem;
+  border-bottom: 1px solid var(--sim-line, rgba(49, 230, 255, 0.32));
+  background: rgba(4, 13, 31, 0.96);
+  backdrop-filter: blur(12px);
+}
+
+.sim-effect-heading { min-width: 0; }
+.sim-effect-kicker {
+  margin: 0 0 0.15rem;
+  color: var(--sim-cyan, #31e6ff);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.sim-effect-title {
+  margin: 0;
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+.sim-effect-target {
+  margin: 0.18rem 0 0;
+  overflow: hidden;
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sim-effect-close {
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgba(174, 190, 213, 0.26);
+  border-radius: 50%;
+  color: var(--sim-text, #eef8ff);
+  background: rgba(16, 40, 69, 0.55);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.sim-effect-capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  padding: 0.72rem 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sim-effect-capability {
+  padding: 0.28rem 0.52rem;
+  border: 1px solid rgba(49, 230, 255, 0.28);
+  border-radius: 999px;
+  color: var(--sim-cyan, #31e6ff);
+  background: rgba(49, 230, 255, 0.07);
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.sim-effect-body {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+}
+
+.sim-effect-section {
+  padding: 0.9rem;
+  border: 1px solid rgba(174, 190, 213, 0.14);
+  border-radius: 0.82rem;
+  background: rgba(7, 19, 40, 0.7);
+}
+
+.sim-effect-section__title {
+  margin: 0 0 0.68rem;
+  color: var(--sim-text, #eef8ff);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+}
+
+.sim-effect-note {
+  margin: 0.55rem 0 0;
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.sim-effect-control-grid,
+.sim-effect-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.75rem;
+}
+
+.sim-effect-field,
+.sim-effect-color {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.sim-effect-field__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.sim-effect-field__label,
+.sim-effect-color__label {
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.sim-effect-field__value {
+  color: var(--sim-cyan, #31e6ff);
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.sim-effect-select,
+.sim-effect-number {
+  width: 100%;
+  min-height: 2.65rem;
+  border: 1px solid rgba(49, 230, 255, 0.28);
+  border-radius: 0.62rem;
+  color: var(--sim-text, #eef8ff);
+  background: rgba(3, 9, 24, 0.9);
+  padding: 0.48rem 0.62rem;
+}
+
+.sim-effect-select--effect {
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-weight: 800;
+}
+
+.sim-effect-range {
+  width: 100%;
+  accent-color: var(--sim-cyan, #31e6ff);
+}
+
+.sim-effect-color__input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.2rem;
+  border: 1px solid rgba(49, 230, 255, 0.3);
+  border-radius: 0.62rem;
+  background: rgba(3, 9, 24, 0.9);
+}
+
+.sim-effect-number-row {
+  display: grid;
+  grid-template-columns: minmax(5rem, 8rem) minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sim-effect-number__suffix {
+  color: var(--sim-muted, #aebed5);
+  font-size: 0.66rem;
+}
+
+.sim-effect-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  padding: 0.85rem 1.1rem 1rem;
+  border-top: 1px solid var(--sim-line, rgba(49, 230, 255, 0.32));
+  background: rgba(4, 13, 31, 0.97);
+  backdrop-filter: blur(12px);
+}
+
+.sim-effect-button {
+  min-height: 2.65rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(174, 190, 213, 0.28);
+  border-radius: 0.68rem;
+  color: var(--sim-text, #eef8ff);
+  background: rgba(16, 40, 69, 0.64);
+  font-family: var(--heading-font, "Oxanium", sans-serif);
+  font-weight: 850;
+}
+
+.sim-effect-button--primary {
+  border-color: rgba(49, 230, 255, 0.68);
+  color: #04111f;
+  background: linear-gradient(135deg, var(--sim-cyan, #31e6ff), #7aa7ff 58%, var(--sim-violet, #9b7cff));
+}
+
+.sim-effect-close:hover,
+.sim-effect-close:focus-visible,
+.sim-effect-button:hover,
+.sim-effect-button:focus-visible,
+.sim-effect-select:focus-visible,
+.sim-effect-number:focus-visible,
+.sim-effect-color__input:focus-visible {
+  outline: 2px solid var(--sim-cyan, #31e6ff);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  .sim-effect-overlay { padding: 0; }
+  .sim-effect-dialog {
+    width: 100%;
+    max-height: 100vh;
+    min-height: 100vh;
+    border-radius: 0;
+  }
+  .sim-effect-footer { justify-content: stretch; }
+  .sim-effect-button { flex: 1 1 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim-effect-dialog,
+  .sim-effect-button,
+  .sim-effect-close { transition: none; }
+}

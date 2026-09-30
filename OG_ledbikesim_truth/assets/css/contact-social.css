@@ -1,0 +1,330 @@
+/* Contact-page social launchpad: modern action tiles and animated platform icons. */
+.social-launchpad {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 2px solid transparent;
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(145deg, rgba(4, 13, 31, .97), rgba(8, 26, 52, .95)) padding-box,
+    linear-gradient(110deg, var(--pink), var(--amber), var(--cyan), var(--mint), var(--violet), var(--pink)) border-box;
+  background-size: auto, 320% 100%;
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, .38),
+    0 0 34px rgba(49, 230, 255, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+  animation: social-launchpad-border 9s linear infinite;
+}
+
+.social-launchpad::before,
+.social-launchpad::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.social-launchpad::before {
+  inset: 0;
+  z-index: -2;
+  opacity: .52;
+  background:
+    radial-gradient(circle at 14% 20%, rgba(255, 90, 185, .2), transparent 18rem),
+    radial-gradient(circle at 86% 78%, rgba(49, 230, 255, .18), transparent 20rem),
+    radial-gradient(circle, rgba(134, 224, 255, .13) 0 1px, transparent 1.4px);
+  background-size: auto, auto, 9px 9px;
+}
+
+.social-launchpad::after {
+  top: 0;
+  bottom: 0;
+  left: -35%;
+  z-index: -1;
+  width: 28%;
+  transform: skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .08), transparent);
+  animation: social-launchpad-scan 7s ease-in-out infinite;
+}
+
+.social-launchpad__intro {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0 auto 1.25rem;
+  text-align: center;
+}
+
+.social-launchpad__intro .section-kicker { margin-bottom: .25rem; }
+.social-launchpad__intro h2 { margin-bottom: .35rem; }
+.social-launchpad__intro p { margin: 0; color: #c6d6e9; }
+
+.social-launchpad__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.social-tile {
+  --social-accent: var(--cyan);
+  --social-accent-soft: rgba(49, 230, 255, .18);
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: .9rem;
+  align-items: center;
+  min-height: 132px;
+  padding: 1rem;
+  overflow: hidden;
+  color: #fff;
+  background:
+    linear-gradient(145deg, rgba(12, 36, 67, .88), rgba(3, 11, 27, .94));
+  border: 1px solid color-mix(in srgb, var(--social-accent) 48%, transparent);
+  border-radius: 1.1rem;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, .32),
+    inset 0 1px 0 rgba(255, 255, 255, .08),
+    0 0 20px var(--social-accent-soft);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(22px) scale(.96);
+  animation: social-tile-arrive .8s cubic-bezier(.2, .9, .25, 1.2) forwards;
+  transition:
+    transform .24s ease,
+    border-color .24s ease,
+    box-shadow .24s ease,
+    background .24s ease;
+}
+
+.social-tile::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: 0;
+  opacity: 0;
+  transform: translateX(-75%) skewX(-18deg);
+  background: linear-gradient(100deg, transparent 28%, rgba(255, 255, 255, .16) 48%, transparent 68%);
+  transition: opacity .2s ease;
+}
+
+.social-tile::after {
+  content: "";
+  position: absolute;
+  inset: auto 8% 0;
+  height: 2px;
+  opacity: .65;
+  background: linear-gradient(90deg, transparent, var(--social-accent), transparent);
+  box-shadow: 0 0 12px var(--social-accent);
+}
+
+.social-tile--instagram {
+  --social-accent: #ff6ec7;
+  --social-accent-soft: rgba(255, 90, 185, .2);
+}
+
+.social-tile--facebook {
+  --social-accent: #68b8ff;
+  --social-accent-soft: rgba(72, 169, 255, .2);
+  animation-delay: .12s;
+}
+
+.social-tile--whatsapp {
+  --social-accent: #62f0bd;
+  --social-accent-soft: rgba(85, 230, 181, .2);
+  animation-delay: .24s;
+}
+
+.social-tile:hover,
+.social-tile:focus-visible {
+  color: #fff;
+  transform: translateY(-6px) scale(1.015);
+  border-color: var(--social-accent);
+  background: linear-gradient(145deg, rgba(17, 48, 86, .96), rgba(3, 11, 27, .98));
+  box-shadow:
+    0 20px 36px rgba(0, 0, 0, .4),
+    inset 0 1px 0 rgba(255, 255, 255, .12),
+    0 0 30px var(--social-accent-soft);
+}
+
+.social-tile:hover::before,
+.social-tile:focus-visible::before {
+  opacity: 1;
+  animation: social-tile-shine .85s ease forwards;
+}
+
+.social-tile:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+.social-tile__icon-wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: rgba(2, 8, 20, .88);
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, .06),
+    0 0 24px var(--social-accent-soft);
+  animation: social-icon-float 4.6s ease-in-out infinite;
+}
+
+.social-tile__icon-wrap::before,
+.social-tile__icon-wrap::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.social-tile__icon-wrap::before {
+  inset: -.35rem;
+  border: 2px solid transparent;
+  border-top-color: var(--social-accent);
+  border-right-color: color-mix(in srgb, var(--social-accent) 44%, transparent);
+  filter: drop-shadow(0 0 6px var(--social-accent));
+  animation: social-icon-orbit 3.8s linear infinite;
+}
+
+.social-tile__icon-wrap::after {
+  inset: .3rem;
+  border: 1px solid color-mix(in srgb, var(--social-accent) 55%, transparent);
+  box-shadow: inset 0 0 12px var(--social-accent-soft);
+}
+
+.social-tile__icon {
+  position: relative;
+  z-index: 1;
+  width: 2.15rem;
+  height: 2.15rem;
+  fill: currentColor;
+  color: var(--social-accent);
+  filter: drop-shadow(0 0 7px var(--social-accent));
+  transition: transform .24s ease, filter .24s ease;
+}
+
+.social-tile:hover .social-tile__icon,
+.social-tile:focus-visible .social-tile__icon {
+  transform: scale(1.13) rotate(-4deg);
+  filter: drop-shadow(0 0 11px var(--social-accent));
+}
+
+.social-tile__copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+
+.social-tile__platform {
+  color: var(--social-accent);
+  font-family: var(--heading-font);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  text-shadow: 0 0 9px var(--social-accent-soft);
+}
+
+.social-tile__action {
+  margin-top: .15rem;
+  color: #fff;
+  font-family: var(--heading-font);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 800;
+  letter-spacing: -.01em;
+  line-height: 1.18;
+}
+
+.social-tile__detail {
+  margin-top: .25rem;
+  color: #b8c9dc;
+  font-size: .82rem;
+  line-height: 1.35;
+}
+
+.social-tile__arrow {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  color: var(--social-accent);
+  font-family: var(--heading-font);
+  font-size: 1.5rem;
+  line-height: 1;
+  text-shadow: 0 0 10px var(--social-accent);
+  transition: transform .24s ease;
+}
+
+.social-tile:hover .social-tile__arrow,
+.social-tile:focus-visible .social-tile__arrow {
+  transform: translateX(5px);
+}
+
+@keyframes social-launchpad-border {
+  to { background-position: 0 0, 320% 0; }
+}
+
+@keyframes social-launchpad-scan {
+  0%, 24% { left: -35%; opacity: 0; }
+  38% { opacity: 1; }
+  72%, 100% { left: 115%; opacity: 0; }
+}
+
+@keyframes social-tile-arrive {
+  0% { opacity: 0; transform: translateY(22px) scale(.96); }
+  72% { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes social-tile-shine {
+  from { transform: translateX(-75%) skewX(-18deg); }
+  to { transform: translateX(85%) skewX(-18deg); }
+}
+
+@keyframes social-icon-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes social-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@media (max-width: 991.98px) {
+  .social-launchpad__grid { grid-template-columns: 1fr; }
+  .social-tile { min-height: 116px; }
+}
+
+@media (max-width: 575.98px) {
+  .social-launchpad { padding: 1rem; }
+  .social-tile {
+    grid-template-columns: auto minmax(0, 1fr);
+    min-height: 112px;
+    padding: .9rem;
+  }
+  .social-tile__icon-wrap { width: 3.45rem; height: 3.45rem; }
+  .social-tile__icon { width: 1.85rem; height: 1.85rem; }
+  .social-tile__arrow { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-launchpad,
+  .social-launchpad::after,
+  .social-tile,
+  .social-tile::before,
+  .social-tile__icon-wrap,
+  .social-tile__icon-wrap::before {
+    animation: none !important;
+  }
+
+  .social-tile {
+    opacity: 1;
+    transform: none;
+  }
+}
