@@ -131,12 +131,6 @@
   const SAVED_KEY = "stw-esp32-saved-colors-v3";
   const OLD_SAVED_KEY = "stw-esp32-saved-colors-v2";
   const PRESET_KEY = "stw-esp32-presets-v4";
-  const PLAYLIST_KEY = "stw-esp32-custom-v4";
-  const SHUFFLE_KEY = "stw-esp32-playlist-shuffle-v1";
-  const PLAYLIST_RUN_KEY = "stw-esp32-sequence-running-v1";
-  const PLAYLIST_POS_KEY = "stw-esp32-sequence-position-v1";
-
-  const DEFAULT_PLAYLIST_SECONDS = 5;
 
   // Permanent built-in swatches; user-created colors are stored separately.
   const BUILTIN_COLORS = [
@@ -176,13 +170,6 @@
   let activeFx = "RAINBOW";
   let activeRole = "main";
   let formDirty = false;
-
-  // Sequence scheduler state is runtime-only; intent/position are persisted below.
-  let playlistRunning = false;
-  let playlistShuffle = localStorage.getItem(SHUFFLE_KEY) === "1";
-  let playlistRunToken = 0;
-  let playlistTimer = 0;
-  let playlistLastIndex = -1;
 
   // Hue writes are coalesced so dragging updates the UI live but commits at release.
   let hueDragging = false;
