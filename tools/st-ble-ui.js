@@ -337,6 +337,7 @@
             <button class="device-power-btn power-ring ${device.powered ? "is-on on" : "is-off"}" aria-label="Toggle Power" title="${device.powered ? 'Power: ON (Click to turn OFF)' : 'Power: OFF (Click to turn ON)'}">
               <span class="power-glyph">⏻</span>
             </button>
+            <button class="glass-btn danger device-delete" aria-label="Remove controller">REMOVE</button>
           </div>
         </div>
       `;
@@ -345,13 +346,20 @@
       card.querySelector(".device-bt").textContent = device.bluetoothName || "";
 
       card.addEventListener("click", async (event) => {
-        if (!event.target.closest(".device-power-btn, .power-ring")) {
+        if (!event.target.closest(".device-power-btn, .power-ring, .device-delete")) {
           window.STWBLE.selectDevice(device.id);
           if (device.bluetoothId && device.bleStatus !== "connected") {
             try {
               await window.STWBLE.connectAssigned(device.id);
             } catch (_) {}
           }
+        }
+      });
+
+      card.querySelector(".device-delete").addEventListener("click", (event) => {
+        event.stopPropagation();
+        if (window.confirm(`Remove ${device.name}?`)) {
+          window.STWBLE.removeLogicalDevice(device.id);
         }
       });
 
