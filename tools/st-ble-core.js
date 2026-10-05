@@ -115,8 +115,9 @@ function normalizeDevice(device, index) {
   };
 }
 
-let devices = (loadJSON(STW_DEVICE_KEY, []) || []).map(normalizeDevice);
-if (!devices.length) {
+const storedDevices = loadJSON(STW_DEVICE_KEY, null);
+let devices = Array.isArray(storedDevices) ? storedDevices.map(normalizeDevice) : [];
+if (storedDevices == null) {
   devices = [newLogicalDevice("ESP32"), newLogicalDevice("ESP32 2")];
 }
 
