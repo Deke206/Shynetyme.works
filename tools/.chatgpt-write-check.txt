@@ -1,1 +1,0 @@
-GitHub write check for ShyneTyme controller integration.
