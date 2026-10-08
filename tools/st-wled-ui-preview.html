@@ -38,7 +38,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#020817">
   <meta name="robots" content="noindex,nofollow">
-  <title>ShyneTyme.Works — WLED Hub Control</title>
+  <title>ShyneTyme.Works — WLED Host + Clients</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -564,8 +564,6 @@
     /* WLED hub preview: only layout additions; all visual primitives stay on the accepted Iteration-2 source. */
     .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
     .tab:nth-child(5){--tab-rgb:24,233,255;--tab-color:#18e9ff}
-    .wled-target-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-    .wled-target.on{color:var(--cyan)!important;border-color:rgba(24,233,255,.52)!important;box-shadow:0 0 13px rgba(24,233,255,.16),inset 0 1px 0 rgba(255,255,255,.12)!important}
     .wled-status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
     .wled-status-card{padding:9px;border-radius:9px;background:rgba(2,8,23,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
     .wled-status-card strong{display:block;margin-top:3px;font:800 8pt Oxanium;color:#ff6e8c}
@@ -576,7 +574,6 @@
     .effects-stack .context-frame,.banner-stack .context-frame{margin-bottom:12px}
     .wled-preset-row{display:grid;grid-template-columns:minmax(80px,140px) repeat(3,minmax(0,1fr));gap:7px;align-items:center}
     @media(max-width:560px){
-      .wled-target-row{grid-template-columns:1fr}
       .wled-status-grid{grid-template-columns:1fr}
       .wled-preset-row{grid-template-columns:1fr 1fr}
       .wled-preset-row input{grid-column:1/-1}
@@ -591,7 +588,7 @@
     <div class="brand">
       <span class="brand-pink">SHYNE</span><span class="brand-yellow">TYME</span><i class="brand-led" aria-hidden="true"></i><span class="brand-blue">WORKS</span>
     </div>
-    <div id="bleSummary" class="ble-summary">NODE 3 HUB</div>
+    <div id="bleSummary" class="ble-summary">HOST · shynetyme.works1</div>
   </header>
 
   <nav class="tabs" aria-label="ShyneTyme WLED controller">
@@ -603,61 +600,57 @@
   </nav>
 
   <div class="status-compact">
-    <span>TARGET: <strong id="targetSummary">BOTH</strong></span>
+    <span>MODE: <strong>HOST → C1 + C2</strong></span>
     <span>FX: <strong id="effectSummary">NONE</strong></span>
   </div>
 
   <main class="workspace">
     <section id="device" class="page on">
       <div class="context-frame device-zone matrix-device">
-        <div class="context-title">WLED CONTROLLER NODES</div>
+        <div class="context-title">WLED HOST + BANNER CLIENTS</div>
         <div id="deviceList" class="device-list"></div>
       </div>
 
       <div class="device-tools">
         <section class="context-frame assignment-frame matrix-bluetooth">
-          <div class="context-title">NODE 3 — BLUETOOTH HUB</div>
+          <div class="context-title">HOST — BLUETOOTH CONTROLLER</div>
           <div class="assignment-grid">
-            <button id="connectHub" class="glass-btn primary">ADD BLUETOOTH</button>
+            <button id="connectHub" class="glass-btn primary">CONNECT HOST BLUETOOTH</button>
             <button id="disconnectHub" class="glass-btn danger" disabled>DISCONNECT</button>
           </div>
           <div class="microcopy">
-            The browser opens one BLE link to Node 3. Node 3 owns the private Wi-Fi and fans WLED JSON state to Node 1 and Node 2.
+            The browser connects only to the host over Bluetooth. The host broadcasts <strong>shynetyme.works1</strong> as its open Wi-Fi network and controls both banner clients.
           </div>
         </section>
 
         <section class="context-frame settings-frame matrix-settings">
-          <div class="context-title">CONTROL TARGET</div>
-          <div class="wled-target-row">
-            <button class="glass-btn wled-target on" data-target="BOTH" disabled>BOTH PANELS</button>
-            <button class="glass-btn wled-target" data-target="1" disabled>NODE 1</button>
-            <button class="glass-btn wled-target" data-target="2" disabled>NODE 2</button>
-          </div>
+          <div class="context-title">WI-FI CLIENT CONNECTIONS</div>
           <div class="wled-status-grid">
             <div class="wled-status-card">
-              <span class="microcopy">NODE 1 · WLED · 192.168.4.11</span>
+              <span class="microcopy">CLIENT 1 · shynetyme.worksC1 · WI-FI ONLY</span>
               <strong id="worker1State">OFFLINE</strong>
             </div>
             <div class="wled-status-card">
-              <span class="microcopy">NODE 2 · WLED · 192.168.4.12</span>
+              <span class="microcopy">CLIENT 2 · shynetyme.worksC2 · WI-FI ONLY</span>
               <strong id="worker2State">OFFLINE</strong>
             </div>
           </div>
+          <div class="microcopy" style="margin-top:8px">No Bluetooth is used on either client. Both clients receive control from the host only.</div>
         </section>
 
         <section class="context-frame debug-frame matrix-debug">
-          <div class="context-title">HUB STATUS</div>
+          <div class="context-title">HOST STATUS</div>
           <div class="button-row">
             <button id="readStatus" class="glass-btn" disabled>READ STATUS</button>
             <button id="blackout" class="glass-btn danger" disabled>BLACKOUT</button>
           </div>
-          <pre id="hubStatus" class="debug-log wled-status-line">Node 3 not connected.</pre>
+          <pre id="hubStatus" class="debug-log wled-status-line">Host not connected.</pre>
         </section>
       </div>
     </section>
 
     <section id="effects" class="page locked-page">
-      <div class="lock-message">CONNECT NODE 3 IN DEVICE</div>
+      <div class="lock-message">CONNECT HOST IN DEVICE</div>
       <div class="page-content effects-stack">
         <section class="context-frame effects-frame matrix-effects">
           <div class="effects-head">
@@ -777,7 +770,7 @@
     </section>
 
     <section id="banner" class="page locked-page">
-      <div class="lock-message">CONNECT NODE 3 IN DEVICE</div>
+      <div class="lock-message">CONNECT HOST IN DEVICE</div>
       <div class="page-content banner-stack">
         <section class="context-frame colors-frame matrix-colors">
           <div class="context-title">BANNER / PANEL TEXT</div>
@@ -786,7 +779,7 @@
             <button id="sendBannerText" class="glass-btn primary">SEND TEXT</button>
             <button id="clearBannerText" class="glass-btn">CLEAR TEXT</button>
           </div>
-          <div class="microcopy">Text is written into WLED segment 0 name and starts native WLED Scrolling Text.</div>
+          <div class="microcopy">Text is sent to the host, then delivered to both Wi-Fi banner clients using native WLED Scrolling Text.</div>
         </section>
 
         <section class="context-frame effects-frame matrix-effects">
@@ -804,7 +797,7 @@
     </section>
 
     <section id="presets" class="page locked-page">
-      <div class="lock-message">CONNECT NODE 3 IN DEVICE</div>
+      <div class="lock-message">CONNECT HOST IN DEVICE</div>
       <div class="page-content centered-content">
         <section class="context-frame presets-frame matrix-presets">
           <div class="context-title">WLED PRESETS</div>
@@ -814,13 +807,13 @@
             <button id="savePreset" class="glass-btn">SAVE</button>
             <button id="deletePreset" class="glass-btn danger">DELETE</button>
           </div>
-          <div class="microcopy" style="margin-top:8px">Preset command is sent to whichever worker target is active: BOTH, NODE 1, or NODE 2.</div>
+          <div class="microcopy" style="margin-top:8px">Preset commands go to the Bluetooth host; the host applies the same control state to both Wi-Fi banner clients.</div>
         </section>
       </div>
     </section>
 
     <section id="custom" class="page locked-page">
-      <div class="lock-message">CONNECT NODE 3 IN DEVICE</div>
+      <div class="lock-message">CONNECT HOST IN DEVICE</div>
       <div class="page-content centered-content">
         <section class="context-frame playlist-frame matrix-playlist">
           <div class="context-title">CUSTOM PLAYLIST</div>
@@ -847,6 +840,6 @@
   </main>
 </div>
 
-<script src="st-wled-hub-ui.js?v=20261007-iter2style1"></script>
+<script src="st-wled-hub-ui.js?v=20261007-hostclient-preview1"></script>
 </body>
 </html>
