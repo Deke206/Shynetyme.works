@@ -202,6 +202,10 @@
   let colors = { main: "#FFFFFF", bg: "#000000", fg: "#8000FF" };
   let client1Online = false;
   let client2Online = false;
+  let client1EverSeen = false;
+  let client2EverSeen = false;
+  let client1LastSeen = 0;
+  let client2LastSeen = 0;
   let lastStatusText = "";
   let playlistRunToken = 0;
 
@@ -256,7 +260,7 @@
     if (q("#blackout")) q("#blackout").disabled = !connected;
     if (q("#bleSummary")) q("#bleSummary").textContent = connected ? "HOST · CONNECTED" : "HOST · shynetyme.works1";
     updateGate();
-    renderDeviceCards();
+    updateClientStatus();
   }
 
   function chipClass(ok, hub) {
@@ -264,9 +268,26 @@
     return ok ? "connected" : "unassigned";
   }
 
+  function getClientVisual(online, everSeen) {
+    if (!connected) return { label: "OFFLINE", className: "unassigned" };
+    if (online) return { label: "CONNECTED", className: "connected" };
+    if (!everSeen) return { label: "WAITING", className: "connecting" };
+    return { label: "OFFLINE", className: "unassigned" };
+  }
+
+  function formatLastSeen(timestamp) {
+    if (!timestamp) return "Last seen: —";
+    const seconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+    if (seconds < 2) return "Last seen: just now";
+    return "Last seen: " + seconds + "s ago";
+  }
+
   function renderDeviceCards() {
     const host = q("#deviceList");
     if (!host) return;
+
+    const c1 = getClientVisual(client1Online, client1EverSeen);
+    const c2 = getClientVisual(client2Online, client2EverSeen);
 
     host.innerHTML =
       '<article class="device-card">' +
@@ -288,10 +309,10 @@
         '<div class="device-underglow"></div>' +
         '<div class="device-card-inner">' +
           '<div class="device-header-row"><div class="device-title-wrap"><div class="device-name">CLIENT 1 · shynetyme.worksC1</div><div class="device-bt">Wi-Fi only · host controlled</div></div>' +
-            '<span class="ble-dot ' + chipClass(client1Online, false) + '"></span></div>' +
+            '<span class="ble-dot ' + c1.className + '"></span></div>' +
           '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">BANNER CLIENT</span><span class="chip-status ' +
-            chipClass(client1Online, false) + '">' + (client1Online ? "ONLINE" : "OFFLINE") + '</span></div></div>' +
-          '<div class="device-footer-row"><span class="microcopy">No Bluetooth · receives HOST commands only</span></div>' +
+            c1.className + '">' + c1.label + '</span></div></div>' +
+          '<div class="device-footer-row"><span class="microcopy">' + formatLastSeen(client1LastSeen) + '</span></div>' +
         '</div>' +
       '</article>' +
 
@@ -299,10 +320,10 @@
         '<div class="device-underglow"></div>' +
         '<div class="device-card-inner">' +
           '<div class="device-header-row"><div class="device-title-wrap"><div class="device-name">CLIENT 2 · shynetyme.worksC2</div><div class="device-bt">Wi-Fi only · host controlled</div></div>' +
-            '<span class="ble-dot ' + chipClass(client2Online, false) + '"></span></div>' +
+            '<span class="ble-dot ' + c2.className + '"></span></div>' +
           '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">BANNER CLIENT</span><span class="chip-status ' +
-            chipClass(client2Online, false) + '">' + (client2Online ? "ONLINE" : "OFFLINE") + '</span></div></div>' +
-          '<div class="device-footer-row"><span class="microcopy">No Bluetooth · receives HOST commands only</span></div>' +
+            c2.className + '">' + c2.label + '</span></div></div>' +
+          '<div class="device-footer-row"><span class="microcopy">' + formatLastSeen(client2LastSeen) + '</span></div>' +
         '</div>' +
       '</article>';
   }
@@ -318,6 +339,10 @@
     statusChar = null;
     client1Online = false;
     client2Online = false;
+    client1EverSeen = false;
+    client2EverSeen = false;
+    client1LastSeen = 0;
+    client2LastSeen = 0;
     setConnectionUI(false);
     updateClientStatus();
     log("Host disconnected");
@@ -403,8 +428,20 @@
       if (index > 0) fields[part.slice(0, index)] = part.slice(index + 1);
     });
 
+    const now = Date.now();
+
     client1Online = fields.C1 === "1";
     client2Online = fields.C2 === "1";
+
+    if (client1Online) {
+      client1EverSeen = true;
+      client1LastSeen = now;
+    }
+
+    if (client2Online) {
+      client2EverSeen = true;
+      client2LastSeen = now;
+    }
 
     if (fields.ERR && fields.ERR !== "0") log("HOST ERR=" + fields.ERR);
 
@@ -412,14 +449,24 @@
   }
 
   function updateClientStatus() {
-    if (q("#worker1State")) {
-      q("#worker1State").textContent = client1Online ? "ONLINE" : "OFFLINE";
-      q("#worker1State").classList.toggle("ok", client1Online);
+    const c1 = getClientVisual(client1Online, client1EverSeen);
+    const c2 = getClientVisual(client2Online, client2EverSeen);
+
+    if (q("#client1State")) {
+      q("#client1State").textContent = c1.label;
+      q("#client1State").classList.toggle("ok", c1.label === "CONNECTED");
+      q("#client1State").classList.toggle("waiting", c1.label === "WAITING");
     }
-    if (q("#worker2State")) {
-      q("#worker2State").textContent = client2Online ? "ONLINE" : "OFFLINE";
-      q("#worker2State").classList.toggle("ok", client2Online);
+
+    if (q("#client2State")) {
+      q("#client2State").textContent = c2.label;
+      q("#client2State").classList.toggle("ok", c2.label === "CONNECTED");
+      q("#client2State").classList.toggle("waiting", c2.label === "WAITING");
     }
+
+    if (q("#client1LastSeen")) q("#client1LastSeen").textContent = formatLastSeen(client1LastSeen);
+    if (q("#client2LastSeen")) q("#client2LastSeen").textContent = formatLastSeen(client2LastSeen);
+
     renderDeviceCards();
   }
 
@@ -1011,6 +1058,10 @@
   setConnectionUI(false);
   updateClientStatus();
   log("WLED host/client preview ready. Connect shynetyme.works1 over Bluetooth.");
+
+  setInterval(() => {
+    updateClientStatus();
+  }, 1000);
 
   setInterval(() => {
     if (connected) readStatus();
