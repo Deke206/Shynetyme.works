@@ -6,7 +6,7 @@
    *
    * ARCHITECTURE
    * ------------
-   * Browser --BLE--> Node 3 hub --private Wi-Fi/HTTP--> WLED Node 1 + Node 2.
+   * Browser --BLE--> HOST --Wi-Fi--> CLIENT 1 + CLIENT 2. Clients have no Bluetooth.
    *
    * This file intentionally reuses the accepted Iteration-2 presentation layer.
    * It owns only the WLED hub transport and WLED-specific UI behavior.
@@ -195,14 +195,13 @@
   let statusChar = null;
   let writeQueue = Promise.resolve();
   let connected = false;
-  let currentTarget = "BOTH";
   let currentFx = { id: 9, name: "Rainbow", kind: "1D", page: "effects" };
   let activeRole = "main";
   let mirrorOn = false;
   let direction = "FWD";
   let colors = { main: "#FFFFFF", bg: "#000000", fg: "#8000FF" };
-  let worker1Online = false;
-  let worker2Online = false;
+  let client1Online = false;
+  let client2Online = false;
   let lastStatusText = "";
   let playlistRunToken = 0;
 
@@ -229,7 +228,6 @@
   }
 
   function setSummary() {
-    if (q("#targetSummary")) q("#targetSummary").textContent = currentTarget;
     if (q("#effectSummary")) q("#effectSummary").textContent = currentFx ? currentFx.name.toUpperCase() : "NONE";
   }
 
@@ -250,14 +248,13 @@
   function setConnectionUI(ok) {
     connected = !!ok;
     if (q("#connectHub")) {
-      q("#connectHub").textContent = connected ? "HUB CONNECTED" : "ADD BLUETOOTH";
+      q("#connectHub").textContent = connected ? "HOST CONNECTED" : "CONNECT HOST BLUETOOTH";
       q("#connectHub").disabled = connected;
     }
     if (q("#disconnectHub")) q("#disconnectHub").disabled = !connected;
     if (q("#readStatus")) q("#readStatus").disabled = !connected;
     if (q("#blackout")) q("#blackout").disabled = !connected;
-    qa("[data-target]").forEach((button) => button.disabled = !connected);
-    if (q("#bleSummary")) q("#bleSummary").textContent = connected ? "NODE 3 · CONNECTED" : "NODE 3 HUB";
+    if (q("#bleSummary")) q("#bleSummary").textContent = connected ? "HOST · CONNECTED" : "HOST · shynetyme.works1";
     updateGate();
     renderDeviceCards();
   }
@@ -271,53 +268,43 @@
     const host = q("#deviceList");
     if (!host) return;
 
-    const node1Selected = currentTarget === "BOTH" || currentTarget === "1";
-    const node2Selected = currentTarget === "BOTH" || currentTarget === "2";
-
     host.innerHTML =
       '<article class="device-card">' +
         '<div class="device-underglow"></div>' +
         '<div class="device-card-inner">' +
           '<div class="device-header-row">' +
-            '<div class="device-title-wrap"><div class="device-name">NODE 3 · HUB</div><div class="device-bt">' +
-              (connected ? (btDevice && btDevice.name ? btDevice.name : "ShyneTyme WLED Hub") : "Bluetooth not connected") +
+            '<div class="device-title-wrap"><div class="device-name">HOST · shynetyme.works1</div><div class="device-bt">' +
+              (connected ? (btDevice && btDevice.name ? btDevice.name : "Bluetooth connected") : "Bluetooth waiting") +
             '</div></div>' +
             '<span class="ble-dot ' + chipClass(false, true) + '"></span>' +
           '</div>' +
-          '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">ESP32 HUB</span><span class="chip-status ' +
+          '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">ESP32 HOST</span><span class="chip-status ' +
             chipClass(false, true) + '">' + (connected ? "CONNECTED" : "PAIR") + '</span></div></div>' +
-          '<div class="device-footer-row"><span class="microcopy">BLE → private Wi-Fi → WLED</span></div>' +
+          '<div class="device-footer-row"><span class="microcopy">PHONE / WEB → BLE → HOST</span></div>' +
         '</div>' +
       '</article>' +
 
-      '<article class="device-card' + (node1Selected ? " selected" : "") + '" data-worker-card="1">' +
+      '<article class="device-card">' +
         '<div class="device-underglow"></div>' +
         '<div class="device-card-inner">' +
-          '<div class="device-header-row"><div class="device-title-wrap"><div class="device-name">NODE 1 · WLED</div><div class="device-bt">192.168.4.11</div></div>' +
-            '<span class="ble-dot ' + chipClass(worker1Online, false) + '"></span></div>' +
-          '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">PANEL / BANNER</span><span class="chip-status ' +
-            chipClass(worker1Online, false) + '">' + (worker1Online ? "ONLINE" : "OFFLINE") + '</span></div></div>' +
-          '<div class="device-footer-row"><span class="microcopy">Tap card to target Node 1</span></div>' +
+          '<div class="device-header-row"><div class="device-title-wrap"><div class="device-name">CLIENT 1 · shynetyme.worksC1</div><div class="device-bt">Wi-Fi only · host controlled</div></div>' +
+            '<span class="ble-dot ' + chipClass(client1Online, false) + '"></span></div>' +
+          '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">BANNER CLIENT</span><span class="chip-status ' +
+            chipClass(client1Online, false) + '">' + (client1Online ? "ONLINE" : "OFFLINE") + '</span></div></div>' +
+          '<div class="device-footer-row"><span class="microcopy">No Bluetooth · receives HOST commands only</span></div>' +
         '</div>' +
       '</article>' +
 
-      '<article class="device-card' + (node2Selected ? " selected" : "") + '" data-worker-card="2">' +
+      '<article class="device-card">' +
         '<div class="device-underglow"></div>' +
         '<div class="device-card-inner">' +
-          '<div class="device-header-row"><div class="device-title-wrap"><div class="device-name">NODE 2 · WLED</div><div class="device-bt">192.168.4.12</div></div>' +
-            '<span class="ble-dot ' + chipClass(worker2Online, false) + '"></span></div>' +
-          '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">PANEL / BANNER</span><span class="chip-status ' +
-            chipClass(worker2Online, false) + '">' + (worker2Online ? "ONLINE" : "OFFLINE") + '</span></div></div>' +
-          '<div class="device-footer-row"><span class="microcopy">Tap card to target Node 2</span></div>' +
+          '<div class="device-header-row"><div class="device-title-wrap"><div class="device-name">CLIENT 2 · shynetyme.worksC2</div><div class="device-bt">Wi-Fi only · host controlled</div></div>' +
+            '<span class="ble-dot ' + chipClass(client2Online, false) + '"></span></div>' +
+          '<div class="device-module-body"><div class="device-chip-badge"><span class="chip-label">BANNER CLIENT</span><span class="chip-status ' +
+            chipClass(client2Online, false) + '">' + (client2Online ? "ONLINE" : "OFFLINE") + '</span></div></div>' +
+          '<div class="device-footer-row"><span class="microcopy">No Bluetooth · receives HOST commands only</span></div>' +
         '</div>' +
       '</article>';
-
-    qa("[data-worker-card]").forEach((card) => {
-      card.addEventListener("click", () => {
-        if (!connected) return;
-        selectTarget(card.dataset.workerCard);
-      });
-    });
   }
 
   function showPage(id) {
@@ -329,11 +316,11 @@
   function onDisconnected() {
     commandChar = null;
     statusChar = null;
-    worker1Online = false;
-    worker2Online = false;
+    client1Online = false;
+    client2Online = false;
     setConnectionUI(false);
-    updateWorkerStatus();
-    log("Hub disconnected");
+    updateClientStatus();
+    log("Host disconnected");
   }
 
   async function connectHub() {
@@ -361,8 +348,7 @@
       } catch (_) {}
 
       setConnectionUI(true);
-      log("Connected: " + (btDevice.name || "ShyneTyme WLED Hub"));
-      await selectTarget("BOTH");
+      log("Connected: " + (btDevice.name || "shynetyme.works1"));
       await readStatus();
     } catch (error) {
       log("CONNECT FAILED: " + error.message);
@@ -378,7 +364,7 @@
   }
 
   async function rawWrite(text) {
-    if (!commandChar || !connected) throw new Error("Hub not connected");
+    if (!commandChar || !connected) throw new Error("Host not connected");
     const command = String(text || "").trim();
     if (!command) return;
     if (command.length > 18) throw new Error("BLE command too long: " + command);
@@ -407,20 +393,6 @@
     return writeQueue;
   }
 
-  async function selectTarget(target, transmit = true) {
-    const normalized = String(target || "BOTH").toUpperCase();
-    currentTarget = normalized === "1" || normalized === "2" ? normalized : "BOTH";
-
-    qa("[data-target]").forEach((button) => {
-      button.classList.toggle("on", button.dataset.target === currentTarget);
-    });
-
-    setSummary();
-    renderDeviceCards();
-
-    if (transmit && connected) await send("TARGET=" + currentTarget);
-  }
-
   function parseStatus(text) {
     lastStatusText = String(text || "");
     if (q("#hubStatus")) q("#hubStatus").textContent = lastStatusText || "No status returned.";
@@ -431,24 +403,22 @@
       if (index > 0) fields[part.slice(0, index)] = part.slice(index + 1);
     });
 
-    worker1Online = fields.W1 === "1";
-    worker2Online = fields.W2 === "1";
+    client1Online = fields.C1 === "1";
+    client2Online = fields.C2 === "1";
 
-    if (fields.TARGET) selectTarget(fields.TARGET, false);
+    if (fields.ERR && fields.ERR !== "0") log("HOST ERR=" + fields.ERR);
 
-    if (fields.ERR && fields.ERR !== "0") log("HUB ERR=" + fields.ERR);
-
-    updateWorkerStatus();
+    updateClientStatus();
   }
 
-  function updateWorkerStatus() {
+  function updateClientStatus() {
     if (q("#worker1State")) {
-      q("#worker1State").textContent = worker1Online ? "ONLINE" : "OFFLINE";
-      q("#worker1State").classList.toggle("ok", worker1Online);
+      q("#worker1State").textContent = client1Online ? "ONLINE" : "OFFLINE";
+      q("#worker1State").classList.toggle("ok", client1Online);
     }
     if (q("#worker2State")) {
-      q("#worker2State").textContent = worker2Online ? "ONLINE" : "OFFLINE";
-      q("#worker2State").classList.toggle("ok", worker2Online);
+      q("#worker2State").textContent = client2Online ? "ONLINE" : "OFFLINE";
+      q("#worker2State").classList.toggle("ok", client2Online);
     }
     renderDeviceCards();
   }
@@ -982,10 +952,6 @@
   if (q("#readStatus")) q("#readStatus").addEventListener("click", readStatus);
   if (q("#blackout")) q("#blackout").addEventListener("click", () => send("OFF"));
 
-  qa("[data-target]").forEach((button) => {
-    button.addEventListener("click", () => selectTarget(button.dataset.target));
-  });
-
   if (q("#sendBannerText")) q("#sendBannerText").addEventListener("click", () => sendText(q("#bannerText").value));
   if (q("#clearBannerText")) q("#clearBannerText").addEventListener("click", () => {
     q("#bannerText").value = "";
@@ -1042,10 +1008,9 @@
   bindDirectionMirror();
   renderPlaylists();
   setSummary();
-  selectTarget("BOTH", false);
   setConnectionUI(false);
-  updateWorkerStatus();
-  log("WLED Iteration-2-style controller ready. Connect Node 3 over Bluetooth.");
+  updateClientStatus();
+  log("WLED host/client preview ready. Connect shynetyme.works1 over Bluetooth.");
 
   setInterval(() => {
     if (connected) readStatus();
