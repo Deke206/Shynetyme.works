@@ -1456,7 +1456,7 @@ window.SHYNETYME_BTF_RECOMMENDATION_SETS = {
 
   const DESIGN_KEY = "shynetymeDesignChainDraft";
   const CONTACT_KEY = "shynetymeContactDraft";
-  const RECOMMENDATIONS_URL = new URL("project-recommendations.html", siteRoot);
+  const RECOMMENDATIONS_URL = new URL("project-power.html", siteRoot);
   const CONTACT_URL = new URL("contact.html", siteRoot);
 
   const projectPages = {
