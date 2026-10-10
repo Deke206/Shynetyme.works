@@ -1160,7 +1160,7 @@ window.SHYNETYME_BTF_RECOMMENDATION_SETS = {
   const fallbackImageUrl = new URL("assets/brand/pet-chuck-mark.png", siteRoot).href;
   const bikeBuilderUrl = new URL("ledbikesim.html", siteRoot).href;
   const homeBuilderUrl = new URL("ledhomesim.html", siteRoot).href;
-  const autoBuilderUrl = new URL("LEDAutoSim.html", siteRoot).href;
+  const autoBuilderUrl = new URL("ledautosim.html", siteRoot).href;
   const aboutDekeUrl = new URL("aboutme.html", siteRoot).href;
 
   const ensureWidget = () => {
